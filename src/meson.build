@@ -170,7 +170,7 @@ if systemd_dep.found()
 endif
 
 libvte_common_doc_sources = files(
-  # These file contain ctk-doc comments to be extracted for docs and gir
+  # These file contain gtk-doc comments to be extracted for docs and gir
   'vtectk.cc',
   'vtepty.cc',
   'vteregex.cc',

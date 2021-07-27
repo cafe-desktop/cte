@@ -60,7 +60,7 @@ if test "x$SGML_DOCS" = x; then
 	func_regexp='^[^:]*:[/ ][*]\(\|[ \t].*\)'$func_regexp
 fi
 
-# We need to filter out ctk-doc markup errors for program listings.
+# We need to filter out gtk-doc markup errors for program listings.
 if echo $FILES | xargs grep . /dev/null | sed -e '/<programlisting>/,/<\/programlisting>/d' | grep "$func_regexp" | grep -v '^[^:]*: [*] [a-z_0-9]*:$' | grep -v '#####'; then
 	stat=1
 	echo Error: some function names in the docs are not followed by parentheses.
