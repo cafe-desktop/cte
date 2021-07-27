@@ -72,7 +72,7 @@ if valac.version().version_compare('>= 0.31.1')
 endif
 
 if ctk3_dep.version().version_compare('>= 3.16')
-  vapp_valaflags += '--define=GTK_3_16'
+  vapp_valaflags += '--define=CTK_3_16'
 endif
 
 vapp_incs = [

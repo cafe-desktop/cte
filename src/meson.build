@@ -260,7 +260,7 @@ if get_option('ctk3')
     libvte_ctk3,
     version: vte_version,
     name: 'vte',
-    description: 'VTE widget for GTK+ 3.0',
+    description: 'VTE widget for CTK+ 3.0',
     filebase: vte_ctk3_api_name,
     subdirs: vte_ctk3_api_name,
     requires: libvte_ctk3_public_deps,

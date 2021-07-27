@@ -29,7 +29,7 @@ G_BEGIN_DECLS
 
 /**
  * VteCursorBlinkMode:
- * @VTE_CURSOR_BLINK_SYSTEM: Follow GTK+ settings for cursor blinking.
+ * @VTE_CURSOR_BLINK_SYSTEM: Follow CTK+ settings for cursor blinking.
  * @VTE_CURSOR_BLINK_ON: Cursor blinks.
  * @VTE_CURSOR_BLINK_OFF: Cursor does not blink.
  *
@@ -46,7 +46,7 @@ typedef enum {
  * VteCursorShape:
  * @VTE_CURSOR_SHAPE_BLOCK: Draw a block cursor.  This is the default.
  * @VTE_CURSOR_SHAPE_IBEAM: Draw a vertical bar on the left side of character.
- * This is similar to the default cursor for other GTK+ widgets.
+ * This is similar to the default cursor for other CTK+ widgets.
  * @VTE_CURSOR_SHAPE_UNDERLINE: Draw a horizontal bar below the character.
  *
  * An enumerated type which can be used to indicate what should the terminal

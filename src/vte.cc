@@ -1652,7 +1652,7 @@ Terminal::selection_grid_halfcoords_from_view_coords(vte::view::coords const& po
  * Swaps the two endpoints of the selection if needed, so that m_selection_origin
  * contains the new fixed point and m_selection_last is the newly dragged end.
  * In block mode it might even switch to the other two corners.
- * As per GTK+'s generic selection behavior, retains the origin and last
+ * As per CTK+'s generic selection behavior, retains the origin and last
  * endpoints if the Shift+click happened inside the selection.
  */
 void
@@ -7317,8 +7317,8 @@ Terminal::set_font_desc(PangoFontDescription const* font_desc)
 
         auto context = ctk_widget_get_style_context(m_widget);
         ctk_style_context_save(context);
-        ctk_style_context_set_state (context, GTK_STATE_FLAG_NORMAL);
-        ctk_style_context_get(context, GTK_STATE_FLAG_NORMAL, "font", &desc, nullptr);
+        ctk_style_context_set_state (context, CTK_STATE_FLAG_NORMAL);
+        ctk_style_context_get(context, CTK_STATE_FLAG_NORMAL, "font", &desc, nullptr);
         ctk_style_context_restore(context);
 
 	pango_font_description_set_family_static (desc, "monospace");
@@ -7674,7 +7674,7 @@ Terminal::widget_set_vadjustment(vte::glib::RefPtr<GtkAdjustment>&& adjustment)
         if (adjustment)
                 m_vadjustment = std::move(adjustment);
         else
-                m_vadjustment = vte::glib::make_ref_sink(GTK_ADJUSTMENT(ctk_adjustment_new(0, 0, 0, 0, 0, 0)));
+                m_vadjustment = vte::glib::make_ref_sink(CTK_ADJUSTMENT(ctk_adjustment_new(0, 0, 0, 0, 0, 0)));
 
 	/* We care about the offset, not the top or bottom. */
         g_signal_connect_swapped(m_vadjustment.get(),
@@ -8367,7 +8367,7 @@ Terminal::draw_cells(vte::view::DrawingContext::TextRequest* items,
                        &fg, VTE_DRAW_OPAQUE);
 }
 
-/* FIXME: we don't have a way to tell GTK+ what the default text attributes
+/* FIXME: we don't have a way to tell CTK+ what the default text attributes
  * should be, so for now at least it's assuming white-on-black is the norm and
  * is using "black-on-white" to signify "inverse".  Pick up on that state and
  * fix things.  Do this here, so that if we suddenly get red-on-black, we'll do
@@ -10819,7 +10819,7 @@ Terminal::set_input_enabled (bool enabled)
                 if (m_has_focus)
                         widget()->im_focus_in();
 
-                ctk_style_context_remove_class (context, GTK_STYLE_CLASS_READ_ONLY);
+                ctk_style_context_remove_class (context, CTK_STYLE_CLASS_READ_ONLY);
         } else {
                 im_reset();
                 if (m_has_focus)
@@ -10828,7 +10828,7 @@ Terminal::set_input_enabled (bool enabled)
                 disconnect_pty_write();
                 _vte_byte_array_clear(m_outgoing);
 
-                ctk_style_context_add_class (context, GTK_STYLE_CLASS_READ_ONLY);
+                ctk_style_context_add_class (context, CTK_STYLE_CLASS_READ_ONLY);
         }
 
         return true;

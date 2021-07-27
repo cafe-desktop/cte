@@ -1,7 +1,7 @@
 Virtual TErminal
 ================
 
-VTE provides a virtual terminal widget for GTK applications.
+VTE provides a virtual terminal widget for CTK applications.
 
 Installation
 ------------

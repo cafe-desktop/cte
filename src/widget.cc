@@ -138,8 +138,8 @@ catch (...)
 
 Widget::Widget(VteTerminal* t)
         : m_widget{&t->widget},
-          m_hscroll_policy{GTK_SCROLL_NATURAL},
-          m_vscroll_policy{GTK_SCROLL_NATURAL}
+          m_hscroll_policy{CTK_SCROLL_NATURAL},
+          m_vscroll_policy{CTK_SCROLL_NATURAL}
 {
         ctk_widget_set_can_focus(ctk(), true);
 
@@ -223,7 +223,7 @@ Widget::set_cursor(Cursor const& cursor) noexcept
 void
 Widget::constructed() noexcept
 {
-        /* Set the style as early as possible, before GTK+ starts
+        /* Set the style as early as possible, before CTK+ starts
          * invoking various callbacks. This is needed in order to
          * compute the initial geometry correctly in presence of
          * non-default padding, see bug 787710.
@@ -478,9 +478,9 @@ Widget::realize() noexcept
 
         assert(!m_im_context);
 	m_im_context.reset(ctk_im_multicontext_new());
-#if GTK_CHECK_VERSION (3, 24, 14)
+#if CTK_CHECK_VERSION (3, 24, 14)
         g_object_set(m_im_context.get(),
-                     "input-purpose", GTK_INPUT_PURPOSE_TERMINAL,
+                     "input-purpose", CTK_INPUT_PURPOSE_TERMINAL,
                      nullptr);
 #endif
 	ctk_im_context_set_client_window(m_im_context.get(), m_event_window);
