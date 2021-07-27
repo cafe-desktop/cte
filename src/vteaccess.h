@@ -42,11 +42,11 @@ typedef struct _VteTerminalAccessibleClass VteTerminalAccessibleClass;
  * The accessible peer for #VteTerminal.
  */
 struct _VteTerminalAccessible {
-	GtkWidgetAccessible parent;
+	CtkWidgetAccessible parent;
 };
 
 struct _VteTerminalAccessibleClass {
-	GtkWidgetAccessibleClass parent_class;
+	CtkWidgetAccessibleClass parent_class;
 };
 
 GType _vte_terminal_accessible_get_type(void);

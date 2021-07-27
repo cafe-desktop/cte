@@ -111,7 +111,7 @@ public:
         VteCursorBlinkMode cursor_blink_mode{VTE_CURSOR_BLINK_SYSTEM};
         VteCursorShape cursor_shape{VTE_CURSOR_SHAPE_BLOCK};
         VteTextBlinkMode text_blink_mode{VTE_TEXT_BLINK_ALWAYS};
-        vte::glib::RefPtr<GtkCssProvider> css{};
+        vte::glib::RefPtr<CtkCssProvider> css{};
 
         ~Options() {
                 g_clear_object(&background_pixbuf);
@@ -745,19 +745,19 @@ typedef struct _VteappSearchPopover        VteappSearchPopover;
 typedef struct _VteappSearchPopoverClass   VteappSearchPopoverClass;
 
 struct _VteappSearchPopover {
-        GtkPopover parent;
+        CtkPopover parent;
 
-        /* from GtkWidget template */
-        GtkWidget* search_entry;
-        GtkWidget* search_prev_button;
-        GtkWidget* search_next_button;
-        GtkWidget* close_button;
-        GtkToggleButton* match_case_checkbutton;
-        GtkToggleButton* entire_word_checkbutton;
-        GtkToggleButton* regex_checkbutton;
-        GtkToggleButton* wrap_around_checkbutton;
-        GtkWidget* reveal_button;
-        GtkWidget* revealer;
+        /* from CtkWidget template */
+        CtkWidget* search_entry;
+        CtkWidget* search_prev_button;
+        CtkWidget* search_next_button;
+        CtkWidget* close_button;
+        CtkToggleButton* match_case_checkbutton;
+        CtkToggleButton* entire_word_checkbutton;
+        CtkToggleButton* regex_checkbutton;
+        CtkToggleButton* wrap_around_checkbutton;
+        CtkWidget* reveal_button;
+        CtkWidget* revealer;
         /* end */
 
         VteTerminal *terminal;
@@ -767,7 +767,7 @@ struct _VteappSearchPopover {
 };
 
 struct _VteappSearchPopoverClass {
-        GtkPopoverClass parent;
+        CtkPopoverClass parent;
 };
 
 static GType vteapp_search_popover_get_type(void);
@@ -839,7 +839,7 @@ vteapp_search_popover_update_regex(VteappSearchPopover* popover)
 }
 
 static void
-vteapp_search_popover_wrap_around_toggled(GtkToggleButton* button,
+vteapp_search_popover_wrap_around_toggled(CtkToggleButton* button,
                                           VteappSearchPopover* popover)
 {
         vte_terminal_search_set_wrap_around(popover->terminal, ctk_toggle_button_get_active(button));
@@ -937,7 +937,7 @@ vteapp_search_popover_class_init(VteappSearchPopoverClass* klass)
 
         g_object_class_install_properties(gobject_class, G_N_ELEMENTS(search_popover_pspecs), search_popover_pspecs);
 
-        GtkWidgetClass* widget_class = CTK_WIDGET_CLASS(klass);
+        CtkWidgetClass* widget_class = CTK_WIDGET_CLASS(klass);
         ctk_widget_class_set_template_from_resource(widget_class, "/org/gnome/vte/app/ui/search-popover.ui");
         ctk_widget_class_bind_template_child(widget_class, VteappSearchPopover, search_entry);
         ctk_widget_class_bind_template_child(widget_class, VteappSearchPopover, search_prev_button);
@@ -953,11 +953,11 @@ vteapp_search_popover_class_init(VteappSearchPopoverClass* klass)
         ctk_widget_class_set_css_name(widget_class, "vteapp-search-popover");
 }
 
-static GtkWidget*
+static CtkWidget*
 vteapp_search_popover_new(VteTerminal* terminal,
-                          GtkWidget* relative_to)
+                          CtkWidget* relative_to)
 {
-        return reinterpret_cast<GtkWidget*>(g_object_new(VTEAPP_TYPE_SEARCH_POPOVER,
+        return reinterpret_cast<CtkWidget*>(g_object_new(VTEAPP_TYPE_SEARCH_POPOVER,
                                                          "terminal", terminal,
                                                          "relative-to", relative_to,
                                                          nullptr));
@@ -994,7 +994,7 @@ G_DEFINE_TYPE(VteappTerminal, vteapp_terminal, VTE_TYPE_TERMINAL)
 #define BACKDROP_ALPHA (0.2)
 
 static void
-vteapp_terminal_realize(GtkWidget* widget)
+vteapp_terminal_realize(CtkWidget* widget)
 {
         CTK_WIDGET_CLASS(vteapp_terminal_parent_class)->realize(widget);
 
@@ -1011,7 +1011,7 @@ vteapp_terminal_realize(GtkWidget* widget)
 }
 
 static void
-vteapp_terminal_unrealize(GtkWidget* widget)
+vteapp_terminal_unrealize(CtkWidget* widget)
 {
         VteappTerminal* terminal = VTEAPP_TERMINAL(widget);
         if (terminal->background_pattern != nullptr) {
@@ -1023,7 +1023,7 @@ vteapp_terminal_unrealize(GtkWidget* widget)
 }
 
 static gboolean
-vteapp_terminal_draw(GtkWidget* widget,
+vteapp_terminal_draw(CtkWidget* widget,
                      cairo_t* cr)
 {
         VteappTerminal* terminal = VTEAPP_TERMINAL(widget);
@@ -1067,7 +1067,7 @@ vteapp_terminal_draw(GtkWidget* widget,
 static auto dti(double d) -> unsigned { return CLAMP((d*255), 0, 255); }
 
 static void
-vteapp_terminal_style_updated(GtkWidget* widget)
+vteapp_terminal_style_updated(CtkWidget* widget)
 {
         CTK_WIDGET_CLASS(vteapp_terminal_parent_class)->style_updated(widget);
 
@@ -1098,7 +1098,7 @@ vteapp_terminal_style_updated(GtkWidget* widget)
 static void
 vteapp_terminal_class_init(VteappTerminalClass *klass)
 {
-        GtkWidgetClass *widget_class = CTK_WIDGET_CLASS(klass);
+        CtkWidgetClass *widget_class = CTK_WIDGET_CLASS(klass);
         widget_class->realize = vteapp_terminal_realize;
         widget_class->unrealize = vteapp_terminal_unrealize;
         widget_class->draw = vteapp_terminal_draw;
@@ -1118,10 +1118,10 @@ vteapp_terminal_init(VteappTerminal *terminal)
                 vte_terminal_set_clear_background(VTE_TERMINAL(terminal), false);
 }
 
-static GtkWidget *
+static CtkWidget *
 vteapp_terminal_new(void)
 {
-        return reinterpret_cast<GtkWidget*>(g_object_new(VTEAPP_TYPE_TERMINAL, nullptr));
+        return reinterpret_cast<CtkWidget*>(g_object_new(VTEAPP_TYPE_TERMINAL, nullptr));
 }
 
 /* terminal window */
@@ -1137,23 +1137,23 @@ typedef struct _VteappWindow       VteappWindow;
 typedef struct _VteappWindowClass  VteappWindowClass;
 
 struct _VteappWindow {
-        GtkApplicationWindow parent;
+        CtkApplicationWindow parent;
 
-        /* from GtkWidget template */
-        GtkWidget* window_box;
-        GtkScrollbar* scrollbar;
-        /* GtkBox* notifications_box; */
-        GtkWidget* readonly_emblem;
-        /* GtkButton* copy_button; */
-        /* GtkButton* paste_button; */
-        GtkToggleButton* find_button;
-        GtkMenuButton* gear_button;
+        /* from CtkWidget template */
+        CtkWidget* window_box;
+        CtkScrollbar* scrollbar;
+        /* CtkBox* notifications_box; */
+        CtkWidget* readonly_emblem;
+        /* CtkButton* copy_button; */
+        /* CtkButton* paste_button; */
+        CtkToggleButton* find_button;
+        CtkMenuButton* gear_button;
         /* end */
 
         VteTerminal* terminal;
-        GtkClipboard* clipboard;
+        CtkClipboard* clipboard;
         GPid child_pid;
-        GtkWidget* search_popover;
+        CtkWidget* search_popover;
 
         bool fullscreen{false};
 
@@ -1167,7 +1167,7 @@ struct _VteappWindow {
 };
 
 struct _VteappWindowClass {
-        GtkApplicationWindowClass parent;
+        CtkApplicationWindowClass parent;
 };
 
 static GType vteapp_window_get_type(void);
@@ -1208,8 +1208,8 @@ vteapp_window_add_dingus(VteappWindow* window,
 static void
 vteapp_window_update_geometry(VteappWindow* window)
 {
-        GtkWidget* window_widget = CTK_WIDGET(window);
-        GtkWidget* terminal_widget = CTK_WIDGET(window->terminal);
+        CtkWidget* window_widget = CTK_WIDGET(window);
+        CtkWidget* terminal_widget = CTK_WIDGET(window->terminal);
 
         int columns = vte_terminal_get_column_count(window->terminal);
         int rows = vte_terminal_get_row_count(window->terminal);
@@ -1220,7 +1220,7 @@ vteapp_window_update_geometry(VteappWindow* window)
          * natural size requisition and the terminal grid's size.
          * This includes the terminal's padding in the chrome.
          */
-        GtkRequisition contents_req;
+        CtkRequisition contents_req;
         ctk_widget_get_preferred_size(window->window_box, nullptr, &contents_req);
         int chrome_width = contents_req.width - cell_width * columns;
         int chrome_height = contents_req.height - cell_height * rows;
@@ -1233,7 +1233,7 @@ vteapp_window_update_geometry(VteappWindow* window)
                 /* Calculate the CSD size as difference between the toplevel's
                  * and content's allocation.
                  */
-                GtkAllocation toplevel, contents;
+                CtkAllocation toplevel, contents;
                 ctk_widget_get_allocation(window_widget, &toplevel);
                 ctk_widget_get_allocation(window->window_box, &contents);
 
@@ -1735,14 +1735,14 @@ vteapp_window_show_context_menu(VteappWindow* window,
 }
 
 static gboolean
-window_popup_menu_cb(GtkWidget* widget,
+window_popup_menu_cb(CtkWidget* widget,
                      VteappWindow* window)
 {
         return vteapp_window_show_context_menu(window, 0, ctk_get_current_event_time(), nullptr);
 }
 
 static gboolean
-window_button_press_cb(GtkWidget* widget,
+window_button_press_cb(CtkWidget* widget,
                        GdkEventButton* event,
                        VteappWindow* window)
 {
@@ -1802,7 +1802,7 @@ window_child_exited_cb(VteTerminal* term,
 }
 
 static void
-window_clipboard_owner_change_cb(GtkClipboard* clipboard,
+window_clipboard_owner_change_cb(CtkClipboard* clipboard,
                                  GdkEvent* event,
                                  VteappWindow* window)
 {
@@ -1974,7 +1974,7 @@ window_input_enabled_state_cb(GAction* action,
 }
 
 static void
-window_search_popover_closed_cb(GtkPopover* popover,
+window_search_popover_closed_cb(CtkPopover* popover,
                                 VteappWindow* window)
 {
         if (ctk_toggle_button_get_active(window->find_button))
@@ -1982,7 +1982,7 @@ window_search_popover_closed_cb(GtkPopover* popover,
 }
 
 static void
-window_find_button_toggled_cb(GtkToggleButton* button,
+window_find_button_toggled_cb(CtkToggleButton* button,
                               VteappWindow* window)
 {
         auto active = ctk_toggle_button_get_active(button);
@@ -2194,7 +2194,7 @@ vteapp_window_dispose(GObject *object)
 }
 
 static void
-vteapp_window_realize(GtkWidget* widget)
+vteapp_window_realize(CtkWidget* widget)
 {
         CTK_WIDGET_CLASS(vteapp_window_parent_class)->realize(widget);
 
@@ -2205,7 +2205,7 @@ vteapp_window_realize(GtkWidget* widget)
 }
 
 static void
-vteapp_window_show(GtkWidget* widget)
+vteapp_window_show(CtkWidget* widget)
 {
         CTK_WIDGET_CLASS(vteapp_window_parent_class)->show(widget);
 
@@ -2216,7 +2216,7 @@ vteapp_window_show(GtkWidget* widget)
 }
 
 static void
-vteapp_window_style_updated(GtkWidget* widget)
+vteapp_window_style_updated(CtkWidget* widget)
 {
         CTK_WIDGET_CLASS(vteapp_window_parent_class)->style_updated(widget);
 
@@ -2227,7 +2227,7 @@ vteapp_window_style_updated(GtkWidget* widget)
 }
 
 static gboolean
-vteapp_window_state_event (GtkWidget* widget,
+vteapp_window_state_event (CtkWidget* widget,
                            GdkEventWindowState* event)
 {
         VteappWindow* window = VTEAPP_WINDOW(widget);
@@ -2249,7 +2249,7 @@ vteapp_window_class_init(VteappWindowClass* klass)
         gobject_class->constructed  = vteapp_window_constructed;
         gobject_class->dispose  = vteapp_window_dispose;
 
-        GtkWidgetClass* widget_class = CTK_WIDGET_CLASS(klass);
+        CtkWidgetClass* widget_class = CTK_WIDGET_CLASS(klass);
         widget_class->realize = vteapp_window_realize;
         widget_class->show = vteapp_window_show;
         widget_class->style_updated = vteapp_window_style_updated;
@@ -2289,13 +2289,13 @@ typedef struct _VteappApplication       VteappApplication;
 typedef struct _VteappApplicationClass  VteappApplicationClass;
 
 struct _VteappApplication {
-        GtkApplication parent;
+        CtkApplication parent;
 
         guint input_source;
 };
 
 struct _VteappApplicationClass {
-        GtkApplicationClass parent;
+        CtkApplicationClass parent;
 };
 
 static GType vteapp_application_get_type(void);
@@ -2317,7 +2317,7 @@ app_action_close_cb(GSimpleAction* action,
                     GVariant* parameter,
                     void* data)
 {
-        GtkApplication* application = CTK_APPLICATION(data);
+        CtkApplication* application = CTK_APPLICATION(data);
         auto window = ctk_application_get_active_window(application);
         if (window != nullptr)
                 ctk_widget_destroy(CTK_WIDGET(window));

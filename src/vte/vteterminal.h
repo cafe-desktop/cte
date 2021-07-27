@@ -51,7 +51,7 @@ typedef struct _VteCharAttributes       VteCharAttributes;
  * VteTerminal:
  */
 struct _VteTerminal {
-	GtkWidget widget;
+	CtkWidget widget;
         /*< private >*/
 	gpointer *_unused_padding[1]; /* FIXMEchpe: remove this field on the next ABI break */
 };
@@ -64,7 +64,7 @@ struct _VteTerminal {
 struct _VteTerminalClass {
 	/*< public > */
 	/* Inherited parent class. */
-	GtkWidgetClass parent_class;
+	CtkWidgetClass parent_class;
 
 	/*< protected > */
 	/* Default signal handlers. */
@@ -128,7 +128,7 @@ _VTE_PUBLIC
 GType vte_terminal_get_type(void);
 
 _VTE_PUBLIC
-GtkWidget *vte_terminal_new(void) _VTE_CXX_NOEXCEPT;
+CtkWidget *vte_terminal_new(void) _VTE_CXX_NOEXCEPT;
 
 _VTE_PUBLIC
 VtePty *vte_terminal_pty_new_sync (VteTerminal *terminal,

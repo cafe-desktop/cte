@@ -35,18 +35,18 @@ static GArray *contents = NULL;
  * Implementation for a TextView widget.
  */
 static void
-terminal_init_text_view(GtkWidget **widget)
+terminal_init_text_view(CtkWidget **widget)
 {
 	*widget = ctk_text_view_new();
 	ctk_text_view_set_editable(CTK_TEXT_VIEW(*widget), TRUE);
 }
 static void
-terminal_shell_text_view(GtkWidget *widget)
+terminal_shell_text_view(CtkWidget *widget)
 {
 	/* no-op */
 }
-static GtkAdjustment *
-terminal_adjustment_text_view(GtkWidget *terminal)
+static CtkAdjustment *
+terminal_adjustment_text_view(CtkWidget *terminal)
 {
         return ctk_scrollable_get_vadjustment(CTK_SCROLLABLE(terminal));
 }
@@ -56,7 +56,7 @@ terminal_adjustment_text_view(GtkWidget *terminal)
  * Implementation for a VteTerminal widget.
  */
 static void
-terminal_init_vte(GtkWidget **terminal)
+terminal_init_vte(CtkWidget **terminal)
 {
 	*terminal = vte_terminal_new();
 	g_signal_connect(G_OBJECT(*terminal), "eof",
@@ -65,7 +65,7 @@ terminal_init_vte(GtkWidget **terminal)
 			 G_CALLBACK(ctk_main_quit), NULL);
 }
 static void
-terminal_shell_vte(GtkWidget *terminal)
+terminal_shell_vte(CtkWidget *terminal)
 {
         char *argv[2];
 
@@ -87,7 +87,7 @@ terminal_shell_vte(GtkWidget *terminal)
  * Update the contents of the widget with the data from our contents array.
  */
 static void
-update_contents(AtkObject *obj, GtkWidget *widget)
+update_contents(AtkObject *obj, CtkWidget *widget)
 {
 	guint caret, i;
 	GString *s;
@@ -200,7 +200,7 @@ text_selection_changed(AtkObject *obj, gpointer data)
 
 /* Wrapper versions. */
 static void
-terminal_init(GtkWidget **terminal)
+terminal_init(CtkWidget **terminal)
 {
 	*terminal = NULL;
 #ifdef USE_TEXT_VIEW
@@ -214,7 +214,7 @@ terminal_init(GtkWidget **terminal)
 	g_assert_not_reached();
 }
 static void
-terminal_shell(GtkWidget *terminal)
+terminal_shell(CtkWidget *terminal)
 {
 #ifdef USE_TEXT_VIEW
 	terminal_shell_text_view(terminal);
@@ -226,8 +226,8 @@ terminal_shell(GtkWidget *terminal)
 #endif
 	g_assert_not_reached();
 }
-static GtkAdjustment *
-terminal_adjustment(GtkWidget *terminal)
+static CtkAdjustment *
+terminal_adjustment(CtkWidget *terminal)
 {
 #ifdef USE_TEXT_VIEW
 	return terminal_adjustment_text_view(terminal);
@@ -241,7 +241,7 @@ terminal_adjustment(GtkWidget *terminal)
 int
 main(int argc, char **argv)
 {
-	GtkWidget *label, *terminal, *tophalf, *pane, *window, *sw;
+	CtkWidget *label, *terminal, *tophalf, *pane, *window, *sw;
 	AtkObject *obj;
 	char *text, *p;
 	gunichar c;
@@ -265,7 +265,7 @@ main(int argc, char **argv)
         ctk_grid_attach(CTK_GRID(tophalf), terminal, 0, 0, 1, 1);
 	ctk_widget_show(terminal);
 
-        GtkWidget* scrollbar = ctk_scrollbar_new(CTK_ORIENTATION_VERTICAL,
+        CtkWidget* scrollbar = ctk_scrollbar_new(CTK_ORIENTATION_VERTICAL,
                                                  terminal_adjustment(terminal));
         ctk_grid_attach(CTK_GRID(tophalf), scrollbar, 1, 0, 1, 1);
 	ctk_widget_show(scrollbar);

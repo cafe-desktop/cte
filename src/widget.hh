@@ -53,7 +53,7 @@ public:
         Widget& operator= (Widget&&) = delete;
 
         GObject* object() const noexcept { return reinterpret_cast<GObject*>(m_widget); }
-        GtkWidget* ctk() const noexcept { return m_widget; }
+        CtkWidget* ctk() const noexcept { return m_widget; }
         VteTerminal* vte() const noexcept { return reinterpret_cast<VteTerminal*>(m_widget); }
 
         inline constexpr vte::terminal::Terminal* terminal() const noexcept { return m_terminal; }
@@ -70,7 +70,7 @@ public:
                                  int *natural_width) const noexcept { m_terminal->widget_get_preferred_width(minimum_width, natural_width); }
         void get_preferred_height(int *minimum_height,
                                   int *natural_height) const noexcept { m_terminal->widget_get_preferred_height(minimum_height, natural_height); }
-        void size_allocate(GtkAllocation *allocation) noexcept;
+        void size_allocate(CtkAllocation *allocation) noexcept;
 
         void focus_in(GdkEventFocus *event) noexcept { m_terminal->widget_focus_in(); }
         void focus_out(GdkEventFocus *event) noexcept { m_terminal->widget_focus_out(); }
@@ -90,9 +90,9 @@ public:
         void copy(VteSelection sel,
                   VteFormat format) noexcept { m_terminal->widget_copy(sel, format); }
         void paste_received(char const* text) noexcept { m_terminal->widget_paste_received(text); }
-        void clipboard_cleared(GtkClipboard *clipboard) noexcept { m_terminal->widget_clipboard_cleared(clipboard); }
-        void clipboard_requested(GtkClipboard *target_clipboard,
-                                 GtkSelectionData *data,
+        void clipboard_cleared(CtkClipboard *clipboard) noexcept { m_terminal->widget_clipboard_cleared(clipboard); }
+        void clipboard_requested(CtkClipboard *target_clipboard,
+                                 CtkSelectionData *data,
                                  guint info) noexcept { m_terminal->widget_clipboard_requested(target_clipboard, data, info); }
 
         void screen_changed (GdkScreen *previous_screen) noexcept;
@@ -100,12 +100,12 @@ public:
 
         void beep() noexcept;
 
-        void set_hadjustment(vte::glib::RefPtr<GtkAdjustment>&& adjustment) noexcept { m_hadjustment = std::move(adjustment); }
-        void set_vadjustment(vte::glib::RefPtr<GtkAdjustment>&& adjustment) { terminal()->widget_set_vadjustment(std::move(adjustment)); }
+        void set_hadjustment(vte::glib::RefPtr<CtkAdjustment>&& adjustment) noexcept { m_hadjustment = std::move(adjustment); }
+        void set_vadjustment(vte::glib::RefPtr<CtkAdjustment>&& adjustment) { terminal()->widget_set_vadjustment(std::move(adjustment)); }
         auto hadjustment() noexcept { return m_hadjustment.get(); }
         auto vadjustment() noexcept { return terminal()->vadjustment(); }
-        void set_hscroll_policy(GtkScrollablePolicy policy) noexcept { m_hscroll_policy = policy; }
-        void set_vscroll_policy(GtkScrollablePolicy policy) noexcept { m_vscroll_policy = policy; }
+        void set_hscroll_policy(CtkScrollablePolicy policy) noexcept { m_hscroll_policy = policy; }
+        void set_vscroll_policy(CtkScrollablePolicy policy) noexcept { m_vscroll_policy = policy; }
         auto hscroll_policy() const noexcept { return m_hscroll_policy; }
         auto vscroll_policy() const noexcept { return m_vscroll_policy; }
         auto padding() const noexcept { return terminal()->padding(); }
@@ -225,7 +225,7 @@ private:
         vte::terminal::KeyEvent key_event_from_gdk(GdkEventKey* event) const;
         std::optional<vte::terminal::MouseEvent> mouse_event_from_gdk(GdkEvent* event) const;
 
-        GtkWidget* m_widget;
+        CtkWidget* m_widget;
 
         vte::terminal::Terminal* m_terminal;
 
@@ -239,7 +239,7 @@ private:
         vte::glib::RefPtr<GdkCursor> m_hyperlink_cursor;
 
         /* Input method */
-        vte::glib::RefPtr<GtkIMContext> m_im_context;
+        vte::glib::RefPtr<CtkIMContext> m_im_context;
 
         /* PTY */
         vte::glib::RefPtr<VtePty> m_pty;
@@ -247,7 +247,7 @@ private:
         /* Misc */
         std::optional<std::string> m_word_char_exceptions{};
 
-        vte::glib::RefPtr<GtkAdjustment> m_hadjustment{};
+        vte::glib::RefPtr<CtkAdjustment> m_hadjustment{};
         uint32_t m_hscroll_policy : 1;
         uint32_t m_vscroll_policy : 1;
 };

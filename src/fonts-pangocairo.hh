@@ -274,7 +274,7 @@ private:
                                            PangoLanguage* language);
 public:
 
-        static FontInfo *create_for_widget(GtkWidget* widget,
+        static FontInfo *create_for_widget(CtkWidget* widget,
                                            PangoFontDescription const* desc);
 
 private:

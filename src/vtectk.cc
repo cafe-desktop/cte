@@ -22,11 +22,11 @@
  *
  * A VteTerminal is a terminal emulator implemented as a CTK3 widget.
  *
- * Note that altough #VteTerminal implements the #GtkScrollable interface,
- * you should not place a #VteTerminal inside a #GtkScrolledWindow
+ * Note that altough #VteTerminal implements the #CtkScrollable interface,
+ * you should not place a #VteTerminal inside a #CtkScrolledWindow
  * container, since they are incompatible. Instead, pack the terminal in
- * a horizontal #GtkBox together with a #GtkScrollbar which uses the
- * #GtkAdjustment returned from ctk_scrollable_get_vadjustment().
+ * a horizontal #CtkBox together with a #CtkScrollbar which uses the
+ * #CtkAdjustment returned from ctk_scrollable_get_vadjustment().
  */
 
 #include "config.h"
@@ -75,11 +75,11 @@
 #define VTE_TERMINAL_CSS_NAME "vte-terminal"
 
 struct _VteTerminalClassPrivate {
-        GtkStyleProvider *fallback_style_provider;
-        GtkStyleProvider *style_provider;
+        CtkStyleProvider *fallback_style_provider;
+        CtkStyleProvider *style_provider;
 };
 
-static void vte_terminal_scrollable_iface_init(GtkScrollableInterface* iface) noexcept;
+static void vte_terminal_scrollable_iface_init(CtkScrollableInterface* iface) noexcept;
 
 #ifdef VTE_DEBUG
 G_DEFINE_TYPE_WITH_CODE(VteTerminal, vte_terminal, CTK_TYPE_WIDGET,
@@ -134,7 +134,7 @@ valid_color(GdkRGBA const* color) noexcept
 
 static void
 vte_terminal_set_hadjustment(VteTerminal *terminal,
-                             GtkAdjustment *adjustment) noexcept
+                             CtkAdjustment *adjustment) noexcept
 try
 {
         g_return_if_fail(adjustment == nullptr || CTK_IS_ADJUSTMENT(adjustment));
@@ -147,7 +147,7 @@ catch (...)
 
 static void
 vte_terminal_set_vadjustment(VteTerminal *terminal,
-                             GtkAdjustment *adjustment) noexcept
+                             CtkAdjustment *adjustment) noexcept
 try
 {
         g_return_if_fail(adjustment == nullptr || CTK_IS_ADJUSTMENT(adjustment));
@@ -160,7 +160,7 @@ catch (...)
 
 static void
 vte_terminal_set_hscroll_policy(VteTerminal *terminal,
-                                GtkScrollablePolicy policy) noexcept
+                                CtkScrollablePolicy policy) noexcept
 try
 {
         WIDGET(terminal)->set_hscroll_policy(policy);
@@ -173,7 +173,7 @@ catch (...)
 
 static void
 vte_terminal_set_vscroll_policy(VteTerminal *terminal,
-                                GtkScrollablePolicy policy) noexcept
+                                CtkScrollablePolicy policy) noexcept
 try
 {
         WIDGET(terminal)->set_vscroll_policy(policy);
@@ -207,7 +207,7 @@ catch (...)
 }
 
 static void
-vte_terminal_style_updated (GtkWidget *widget) noexcept
+vte_terminal_style_updated (CtkWidget *widget) noexcept
 try
 {
 	VteTerminal *terminal = VTE_TERMINAL(widget);
@@ -222,20 +222,20 @@ catch (...)
 }
 
 static gboolean
-vte_terminal_key_press(GtkWidget *widget,
+vte_terminal_key_press(CtkWidget *widget,
                        GdkEventKey *event) noexcept
 try
 {
 	VteTerminal *terminal = VTE_TERMINAL(widget);
 
-        /* We do NOT want chain up to GtkWidget::key-press-event, since that would
-         * cause GtkWidget's keybindings to be handled and consumed. However we'll
+        /* We do NOT want chain up to CtkWidget::key-press-event, since that would
+         * cause CtkWidget's keybindings to be handled and consumed. However we'll
          * have to handle the one sane binding (Shift-F10 or MenuKey, to pop up the
          * context menu) ourself, so for now we simply skip the offending keybinding
          * in class_init.
          */
 
-	/* First, check if GtkWidget's behavior already does something with
+	/* First, check if CtkWidget's behavior already does something with
 	 * this key. */
 	if (CTK_WIDGET_CLASS(vte_terminal_parent_class)->key_press_event) {
 		if ((CTK_WIDGET_CLASS(vte_terminal_parent_class))->key_press_event(widget,
@@ -253,7 +253,7 @@ catch (...)
 }
 
 static gboolean
-vte_terminal_key_release(GtkWidget *widget,
+vte_terminal_key_release(CtkWidget *widget,
                          GdkEventKey *event) noexcept
 try
 {
@@ -267,7 +267,7 @@ catch (...)
 }
 
 static gboolean
-vte_terminal_motion_notify(GtkWidget *widget,
+vte_terminal_motion_notify(CtkWidget *widget,
                            GdkEventMotion *event) noexcept
 try
 {
@@ -281,7 +281,7 @@ catch (...)
 }
 
 static gboolean
-vte_terminal_button_press(GtkWidget *widget,
+vte_terminal_button_press(CtkWidget *widget,
                           GdkEventButton *event) noexcept
 try
 {
@@ -295,7 +295,7 @@ catch (...)
 }
 
 static gboolean
-vte_terminal_button_release(GtkWidget *widget,
+vte_terminal_button_release(CtkWidget *widget,
                             GdkEventButton *event) noexcept
 try
 {
@@ -309,7 +309,7 @@ catch (...)
 }
 
 static gboolean
-vte_terminal_scroll(GtkWidget *widget,
+vte_terminal_scroll(CtkWidget *widget,
                     GdkEventScroll *event) noexcept
 try
 {
@@ -324,7 +324,7 @@ catch (...)
 }
 
 static gboolean
-vte_terminal_focus_in(GtkWidget *widget,
+vte_terminal_focus_in(CtkWidget *widget,
                       GdkEventFocus *event) noexcept
 try
 {
@@ -339,7 +339,7 @@ catch (...)
 }
 
 static gboolean
-vte_terminal_focus_out(GtkWidget *widget,
+vte_terminal_focus_out(CtkWidget *widget,
                        GdkEventFocus *event) noexcept
 try
 {
@@ -354,7 +354,7 @@ catch (...)
 }
 
 static gboolean
-vte_terminal_enter(GtkWidget *widget,
+vte_terminal_enter(CtkWidget *widget,
                    GdkEventCrossing *event) noexcept
 try
 {
@@ -376,7 +376,7 @@ catch (...)
 }
 
 static gboolean
-vte_terminal_leave(GtkWidget *widget,
+vte_terminal_leave(CtkWidget *widget,
                    GdkEventCrossing *event) noexcept
 try
 {
@@ -398,7 +398,7 @@ catch (...)
 }
 
 static void
-vte_terminal_get_preferred_width(GtkWidget *widget,
+vte_terminal_get_preferred_width(CtkWidget *widget,
 				 int       *minimum_width,
 				 int       *natural_width) noexcept
 try
@@ -412,7 +412,7 @@ catch (...)
 }
 
 static void
-vte_terminal_get_preferred_height(GtkWidget *widget,
+vte_terminal_get_preferred_height(CtkWidget *widget,
 				  int       *minimum_height,
 				  int       *natural_height) noexcept
 try
@@ -426,8 +426,8 @@ catch (...)
 }
 
 static void
-vte_terminal_size_allocate(GtkWidget *widget,
-                           GtkAllocation *allocation) noexcept
+vte_terminal_size_allocate(CtkWidget *widget,
+                           CtkAllocation *allocation) noexcept
 try
 {
 	VteTerminal *terminal = VTE_TERMINAL(widget);
@@ -439,7 +439,7 @@ catch (...)
 }
 
 static gboolean
-vte_terminal_draw(GtkWidget *widget,
+vte_terminal_draw(CtkWidget *widget,
                   cairo_t *cr) noexcept
 try
 {
@@ -454,7 +454,7 @@ catch (...)
 }
 
 static void
-vte_terminal_realize(GtkWidget *widget) noexcept
+vte_terminal_realize(CtkWidget *widget) noexcept
 try
 {
 	_vte_debug_print(VTE_DEBUG_LIFECYCLE, "vte_terminal_realize()\n");
@@ -470,7 +470,7 @@ catch (...)
 }
 
 static void
-vte_terminal_unrealize(GtkWidget *widget) noexcept
+vte_terminal_unrealize(CtkWidget *widget) noexcept
 {
 	_vte_debug_print(VTE_DEBUG_LIFECYCLE, "vte_terminal_unrealize()\n");
 
@@ -485,7 +485,7 @@ vte_terminal_unrealize(GtkWidget *widget) noexcept
 }
 
 static void
-vte_terminal_map(GtkWidget *widget) noexcept
+vte_terminal_map(CtkWidget *widget) noexcept
 try
 {
         _vte_debug_print(VTE_DEBUG_LIFECYCLE, "vte_terminal_map()\n");
@@ -501,7 +501,7 @@ catch (...)
 }
 
 static void
-vte_terminal_unmap(GtkWidget *widget) noexcept
+vte_terminal_unmap(CtkWidget *widget) noexcept
 {
         _vte_debug_print(VTE_DEBUG_LIFECYCLE, "vte_terminal_unmap()\n");
 
@@ -516,7 +516,7 @@ vte_terminal_unmap(GtkWidget *widget) noexcept
 }
 
 static void
-vte_terminal_screen_changed (GtkWidget *widget,
+vte_terminal_screen_changed (CtkWidget *widget,
                              GdkScreen *previous_screen) noexcept
 try
 {
@@ -553,7 +553,7 @@ vte_terminal_init(VteTerminal *terminal)
 try
 {
         void *place;
-	GtkStyleContext *context;
+	CtkStyleContext *context;
 
 	_vte_debug_print(VTE_DEBUG_LIFECYCLE, "vte_terminal_init()\n");
 
@@ -753,16 +753,16 @@ try
 	switch (prop_id)
                 {
                 case PROP_HADJUSTMENT:
-                        vte_terminal_set_hadjustment (terminal, (GtkAdjustment *)g_value_get_object (value));
+                        vte_terminal_set_hadjustment (terminal, (CtkAdjustment *)g_value_get_object (value));
                         break;
                 case PROP_VADJUSTMENT:
-                        vte_terminal_set_vadjustment (terminal, (GtkAdjustment *)g_value_get_object (value));
+                        vte_terminal_set_vadjustment (terminal, (CtkAdjustment *)g_value_get_object (value));
                         break;
                 case PROP_HSCROLL_POLICY:
-                        vte_terminal_set_hscroll_policy(terminal, (GtkScrollablePolicy)g_value_get_enum(value));
+                        vte_terminal_set_hscroll_policy(terminal, (CtkScrollablePolicy)g_value_get_enum(value));
                         break;
                 case PROP_VSCROLL_POLICY:
-                        vte_terminal_set_vscroll_policy(terminal, (GtkScrollablePolicy)g_value_get_enum(value));
+                        vte_terminal_set_vscroll_policy(terminal, (CtkScrollablePolicy)g_value_get_enum(value));
                         break;
                 case PROP_ALLOW_BOLD:
                         vte_terminal_set_allow_bold (terminal, g_value_get_boolean (value));
@@ -866,8 +866,8 @@ static void
 vte_terminal_class_init(VteTerminalClass *klass)
 {
 	GObjectClass *gobject_class;
-	GtkWidgetClass *widget_class;
-	GtkBindingSet  *binding_set;
+	CtkWidgetClass *widget_class;
+	CtkBindingSet  *binding_set;
 
 #ifdef VTE_DEBUG
 	{
@@ -964,7 +964,7 @@ vte_terminal_class_init(VteTerminalClass *klass)
 
         klass->bell = NULL;
 
-        /* GtkScrollable interface properties */
+        /* CtkScrollable interface properties */
         g_object_class_override_property (gobject_class, PROP_HADJUSTMENT, "hadjustment");
         g_object_class_override_property (gobject_class, PROP_VADJUSTMENT, "vadjustment");
         g_object_class_override_property (gobject_class, PROP_HSCROLL_POLICY, "hscroll-policy");
@@ -1729,7 +1729,7 @@ vte_terminal_class_init(VteTerminalClass *klass)
          * VteTerminal:cursor-blink-mode:
          *
          * Sets whether or not the cursor will blink. Using %VTE_CURSOR_BLINK_SYSTEM
-         * will use the #GtkSettings::ctk-cursor-blink setting.
+         * will use the #CtkSettings::ctk-cursor-blink setting.
          */
         pspecs[PROP_CURSOR_BLINK_MODE] =
                 g_param_spec_enum ("cursor-blink-mode", NULL, NULL,
@@ -2008,7 +2008,7 @@ vte_terminal_class_init(VteTerminalClass *klass)
 
         g_object_class_install_properties(gobject_class, LAST_PROP, pspecs);
 
-	/* Disable GtkWidget's keybindings except for Shift-F10 and MenuKey
+	/* Disable CtkWidget's keybindings except for Shift-F10 and MenuKey
          * which pop up the context menu.
          */
 	binding_set = ctk_binding_set_by_class(vte_terminal_parent_class);
@@ -2044,8 +2044,8 @@ vte_terminal_class_init(VteTerminalClass *klass)
 }
 
 static gboolean
-vte_terminal_scrollable_get_border(GtkScrollable* scrollable,
-                                   GtkBorder* border) noexcept
+vte_terminal_scrollable_get_border(CtkScrollable* scrollable,
+                                   CtkBorder* border) noexcept
 try
 {
         *border = *WIDGET(VTE_TERMINAL(scrollable))->padding();
@@ -2058,7 +2058,7 @@ catch (...)
 }
 
 static void
-vte_terminal_scrollable_iface_init(GtkScrollableInterface* iface) noexcept
+vte_terminal_scrollable_iface_init(CtkScrollableInterface* iface) noexcept
 {
         iface->get_border = vte_terminal_scrollable_get_border;
 }
@@ -2303,10 +2303,10 @@ catch (...)
  *
  * Returns: (transfer none) (type Vte.Terminal): a new #VteTerminal object
  */
-GtkWidget *
+CtkWidget *
 vte_terminal_new(void) noexcept
 {
-	return (GtkWidget *)g_object_new(VTE_TYPE_TERMINAL, nullptr);
+	return (CtkWidget *)g_object_new(VTE_TYPE_TERMINAL, nullptr);
 }
 
 /**
@@ -2340,7 +2340,7 @@ catch (...)
  * Places the selected text in the terminal in the #GDK_SELECTION_CLIPBOARD
  * selection in the form specified by @format.
  *
- * For all formats, the selection data (see #GtkSelectionData) will include the
+ * For all formats, the selection data (see #CtkSelectionData) will include the
  * text targets (see ctk_target_list_add_text_targets() and
  * ctk_selection_data_targets_includes_text()). For %VTE_FORMAT_HTML,
  * the selection will also include the "text/html" target, which when requested,
@@ -4525,7 +4525,7 @@ catch (...)
  * @mode: the #VteCursorBlinkMode to use
  *
  * Sets whether or not the cursor will blink. Using %VTE_CURSOR_BLINK_SYSTEM
- * will use the #GtkSettings::ctk-cursor-blink setting.
+ * will use the #CtkSettings::ctk-cursor-blink setting.
  */
 void
 vte_terminal_set_cursor_blink_mode(VteTerminal *terminal,
@@ -4996,8 +4996,8 @@ vte_terminal_get_geometry_hints(VteTerminal *terminal,
                                 int min_rows,
                                 int min_columns) noexcept
 {
-        GtkWidget *widget;
-        GtkBorder padding;
+        CtkWidget *widget;
+        CtkBorder padding;
 
         g_return_if_fail(VTE_IS_TERMINAL(terminal));
         g_return_if_fail(hints != NULL);
@@ -5032,7 +5032,7 @@ vte_terminal_get_geometry_hints(VteTerminal *terminal,
 /**
  * vte_terminal_set_geometry_hints_for_window:
  * @terminal: a #VteTerminal
- * @window: a #GtkWindow
+ * @window: a #CtkWindow
  *
  * Sets @terminal as @window's geometry widget. See
  * ctk_window_set_geometry_hints() for more information.
@@ -5043,7 +5043,7 @@ vte_terminal_get_geometry_hints(VteTerminal *terminal,
  */
 void
 vte_terminal_set_geometry_hints_for_window(VteTerminal *terminal,
-                                           GtkWindow *window) noexcept
+                                           CtkWindow *window) noexcept
 {
         GdkGeometry hints;
 
@@ -5065,7 +5065,7 @@ vte_terminal_set_geometry_hints_for_window(VteTerminal *terminal,
  *
  * Checks if the terminal currently contains selected text.  Note that this
  * is different from determining if the terminal is the owner of any
- * #GtkClipboard items.
+ * #CtkClipboard items.
  *
  * Returns: %TRUE if part of the text in the terminal is selected.
  */
@@ -5608,7 +5608,7 @@ catch (...)
  * the color set by vte_terminal_set_color_background().
  *
  * Note: you must only call this function while handling the
- * GtkWidget::draw signal.
+ * CtkWidget::draw signal.
  *
  * This function is rarely useful. One use for it is if you disable
  * drawing the background (see vte_terminal_set_clear_background())

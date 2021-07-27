@@ -136,7 +136,7 @@ DrawingContext::clear(int x,
 }
 
 void
-DrawingContext::set_text_font(GtkWidget* widget,
+DrawingContext::set_text_font(CtkWidget* widget,
                               PangoFontDescription const* fontdesc,
                               double cell_width_scale,
                               double cell_height_scale)
@@ -209,7 +209,7 @@ DrawingContext::get_text_metrics(int* cell_width,
                                  int* cell_height,
                                  int* char_ascent,
                                  int* char_descent,
-                                 GtkBorder* char_spacing)
+                                 CtkBorder* char_spacing)
 {
 	g_return_if_fail (m_fonts[VTE_DRAW_NORMAL] != nullptr);
 
