@@ -29,7 +29,7 @@
 #include <glib/gprintf.h>
 #include <glib/gi18n.h>
 #include <glib-unix.h>
-#include <cdk-pixbuf/cdk-pixbuf.h>
+#include <gdk-pixbuf/gdk-pixbuf.h>
 #include <ctk/ctk.h>
 #include <cairo/cairo-gobject.h>
 #include <vte/vte.h>
