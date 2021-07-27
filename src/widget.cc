@@ -310,8 +310,8 @@ Widget::read_modifiers_from_cdk(GdkEvent* event) const noexcept
 
         #if 1
         /* HACK! Treat META as ALT; see bug #663779. */
-        if (mods & GDK_META_MASK)
-                mods = GdkModifierType(mods | GDK_MOD1_MASK);
+        if (mods & CDK_META_MASK)
+                mods = GdkModifierType(mods | CDK_MOD1_MASK);
         #endif
 
         /* Map non-virtual modifiers to virtual modifiers (Super, Hyper, Meta) */
@@ -356,8 +356,8 @@ Widget::key_event_from_cdk(GdkEventKey* event) const
 {
         auto type = vte::terminal::EventBase::Type{};
         switch (cdk_event_get_event_type(reinterpret_cast<GdkEvent*>(event))) {
-        case GDK_KEY_PRESS: type = vte::terminal::KeyEvent::Type::eKEY_PRESS;     break;
-        case GDK_KEY_RELEASE: type = vte::terminal::KeyEvent::Type::eKEY_RELEASE; break;
+        case CDK_KEY_PRESS: type = vte::terminal::KeyEvent::Type::eKEY_PRESS;     break;
+        case CDK_KEY_RELEASE: type = vte::terminal::KeyEvent::Type::eKEY_RELEASE; break;
         default: g_assert_not_reached(); return {};
         }
 
@@ -377,14 +377,14 @@ Widget::mouse_event_from_cdk(GdkEvent* event) const
 {
         auto type = vte::terminal::EventBase::Type{};
         switch (cdk_event_get_event_type(event)) {
-        case GDK_2BUTTON_PRESS:  type = vte::terminal::MouseEvent::Type::eMOUSE_DOUBLE_PRESS; break;
-        case GDK_3BUTTON_PRESS:  type = vte::terminal::MouseEvent::Type::eMOUSE_TRIPLE_PRESS; break;
-        case GDK_BUTTON_PRESS:   type = vte::terminal::MouseEvent::Type::eMOUSE_PRESS;        break;
-        case GDK_BUTTON_RELEASE: type = vte::terminal::MouseEvent::Type::eMOUSE_RELEASE;      break;
-        case GDK_ENTER_NOTIFY:   type = vte::terminal::MouseEvent::Type::eMOUSE_ENTER;        break;
-        case GDK_LEAVE_NOTIFY:   type = vte::terminal::MouseEvent::Type::eMOUSE_LEAVE;        break;
-        case GDK_MOTION_NOTIFY:  type = vte::terminal::MouseEvent::Type::eMOUSE_MOTION;       break;
-        case GDK_SCROLL:         type = vte::terminal::MouseEvent::Type::eMOUSE_SCROLL;       break;
+        case CDK_2BUTTON_PRESS:  type = vte::terminal::MouseEvent::Type::eMOUSE_DOUBLE_PRESS; break;
+        case CDK_3BUTTON_PRESS:  type = vte::terminal::MouseEvent::Type::eMOUSE_TRIPLE_PRESS; break;
+        case CDK_BUTTON_PRESS:   type = vte::terminal::MouseEvent::Type::eMOUSE_PRESS;        break;
+        case CDK_BUTTON_RELEASE: type = vte::terminal::MouseEvent::Type::eMOUSE_RELEASE;      break;
+        case CDK_ENTER_NOTIFY:   type = vte::terminal::MouseEvent::Type::eMOUSE_ENTER;        break;
+        case CDK_LEAVE_NOTIFY:   type = vte::terminal::MouseEvent::Type::eMOUSE_LEAVE;        break;
+        case CDK_MOTION_NOTIFY:  type = vte::terminal::MouseEvent::Type::eMOUSE_MOTION;       break;
+        case CDK_SCROLL:         type = vte::terminal::MouseEvent::Type::eMOUSE_SCROLL;       break;
         default:
                 return std::nullopt;
         }
@@ -433,7 +433,7 @@ Widget::realize() noexcept
 
 	/* Create stock cursors */
 	m_default_cursor = create_cursor(VTE_DEFAULT_CURSOR);
-	m_invisible_cursor = create_cursor(GDK_BLANK_CURSOR);
+	m_invisible_cursor = create_cursor(CDK_BLANK_CURSOR);
 	m_mousing_cursor = create_cursor(VTE_MOUSING_CURSOR);
         if (_vte_debug_on(VTE_DEBUG_HYPERLINK))
                 /* Differ from the standard regex match cursor in debug mode. */
@@ -444,33 +444,33 @@ Widget::realize() noexcept
 	/* Create an input window for the widget. */
         auto allocation = m_terminal->get_allocated_rect();
 	GdkWindowAttr attributes;
-	attributes.window_type = GDK_WINDOW_CHILD;
+	attributes.window_type = CDK_WINDOW_CHILD;
 	attributes.x = allocation.x;
 	attributes.y = allocation.y;
 	attributes.width = allocation.width;
 	attributes.height = allocation.height;
-	attributes.wclass = GDK_INPUT_ONLY;
+	attributes.wclass = CDK_INPUT_ONLY;
 	attributes.visual = ctk_widget_get_visual(m_widget);
 	attributes.event_mask =
                 ctk_widget_get_events(m_widget) |
-                GDK_EXPOSURE_MASK |
-                GDK_FOCUS_CHANGE_MASK |
-                GDK_SMOOTH_SCROLL_MASK |
-                GDK_SCROLL_MASK |
-                GDK_BUTTON_PRESS_MASK |
-                GDK_BUTTON_RELEASE_MASK |
-                GDK_POINTER_MOTION_MASK |
-                GDK_BUTTON1_MOTION_MASK |
-                GDK_ENTER_NOTIFY_MASK |
-                GDK_LEAVE_NOTIFY_MASK |
-                GDK_KEY_PRESS_MASK |
-                GDK_KEY_RELEASE_MASK;
+                CDK_EXPOSURE_MASK |
+                CDK_FOCUS_CHANGE_MASK |
+                CDK_SMOOTH_SCROLL_MASK |
+                CDK_SCROLL_MASK |
+                CDK_BUTTON_PRESS_MASK |
+                CDK_BUTTON_RELEASE_MASK |
+                CDK_POINTER_MOTION_MASK |
+                CDK_BUTTON1_MOTION_MASK |
+                CDK_ENTER_NOTIFY_MASK |
+                CDK_LEAVE_NOTIFY_MASK |
+                CDK_KEY_PRESS_MASK |
+                CDK_KEY_RELEASE_MASK;
 	attributes.cursor = m_default_cursor.get();
 	guint attributes_mask =
-                GDK_WA_X |
-                GDK_WA_Y |
-                (attributes.visual ? GDK_WA_VISUAL : 0) |
-                GDK_WA_CURSOR;
+                CDK_WA_X |
+                CDK_WA_Y |
+                (attributes.visual ? CDK_WA_VISUAL : 0) |
+                CDK_WA_CURSOR;
 
 	m_event_window = cdk_window_new(ctk_widget_get_parent_window (m_widget),
                                         &attributes, attributes_mask);

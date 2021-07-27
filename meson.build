@@ -134,10 +134,10 @@ if get_option('ctk3')
   ctk3_version_cppflags = []
 
   ver = ctk3_min_req_version.split('.')
-  ctk3_version_cppflags += '-DGDK_VERSION_MIN_REQUIRED=(G_ENCODE_VERSION(' + ver[0] + ',' + ver[1] + '))'
+  ctk3_version_cppflags += '-DCDK_VERSION_MIN_REQUIRED=(G_ENCODE_VERSION(' + ver[0] + ',' + ver[1] + '))'
 
   ver = ctk3_max_allowed_version.split('.')
-  ctk3_version_cppflags += '-DGDK_VERSION_MAX_ALLOWED=(G_ENCODE_VERSION(' + ver[0] + ',' + ver[1] + '))'
+  ctk3_version_cppflags += '-DCDK_VERSION_MAX_ALLOWED=(G_ENCODE_VERSION(' + ver[0] + ',' + ver[1] + '))'
 endif
 
 # FIXME AC_USE_SYSTEM_EXTENSIONS also supported non-gnu systems

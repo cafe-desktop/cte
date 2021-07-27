@@ -199,7 +199,7 @@ static void
 vte_terminal_real_paste_clipboard(VteTerminal *terminal) noexcept
 try
 {
-	WIDGET(terminal)->paste(GDK_SELECTION_CLIPBOARD);
+	WIDGET(terminal)->paste(CDK_SELECTION_CLIPBOARD);
 }
 catch (...)
 {
@@ -1116,7 +1116,7 @@ vte_terminal_class_init(VteTerminalClass *klass)
                              NULL,
                              _vte_marshal_VOID__STRING_BOXED,
                              G_TYPE_NONE,
-                             2, G_TYPE_STRING, GDK_TYPE_RECTANGLE | G_SIGNAL_TYPE_STATIC_SCOPE);
+                             2, G_TYPE_STRING, CDK_TYPE_RECTANGLE | G_SIGNAL_TYPE_STATIC_SCOPE);
         g_signal_set_va_marshaller(signals[SIGNAL_HYPERLINK_HOVER_URI_CHANGED],
                                    G_OBJECT_CLASS_TYPE(klass),
                                    _vte_marshal_VOID__STRING_BOXEDv);
@@ -2012,10 +2012,10 @@ vte_terminal_class_init(VteTerminalClass *klass)
          * which pop up the context menu.
          */
 	binding_set = ctk_binding_set_by_class(vte_terminal_parent_class);
-	ctk_binding_entry_skip(binding_set, GDK_KEY_F1, GDK_CONTROL_MASK);
-	ctk_binding_entry_skip(binding_set, GDK_KEY_F1, GDK_SHIFT_MASK);
-	ctk_binding_entry_skip(binding_set, GDK_KEY_KP_F1, GDK_CONTROL_MASK);
-	ctk_binding_entry_skip(binding_set, GDK_KEY_KP_F1, GDK_SHIFT_MASK);
+	ctk_binding_entry_skip(binding_set, CDK_KEY_F1, CDK_CONTROL_MASK);
+	ctk_binding_entry_skip(binding_set, CDK_KEY_F1, CDK_SHIFT_MASK);
+	ctk_binding_entry_skip(binding_set, CDK_KEY_KP_F1, CDK_CONTROL_MASK);
+	ctk_binding_entry_skip(binding_set, CDK_KEY_KP_F1, CDK_SHIFT_MASK);
 
         process_timer = g_timer_new();
 
@@ -2313,7 +2313,7 @@ vte_terminal_new(void) noexcept
  * vte_terminal_copy_clipboard:
  * @terminal: a #VteTerminal
  *
- * Places the selected text in the terminal in the #GDK_SELECTION_CLIPBOARD
+ * Places the selected text in the terminal in the #CDK_SELECTION_CLIPBOARD
  * selection.
  *
  * Deprecated: 0.50: Use vte_terminal_copy_clipboard_format() with %VTE_FORMAT_TEXT
@@ -2337,7 +2337,7 @@ catch (...)
  * @terminal: a #VteTerminal
  * @format: a #VteFormat
  *
- * Places the selected text in the terminal in the #GDK_SELECTION_CLIPBOARD
+ * Places the selected text in the terminal in the #CDK_SELECTION_CLIPBOARD
  * selection in the form specified by @format.
  *
  * For all formats, the selection data (see #CtkSelectionData) will include the
@@ -2368,7 +2368,7 @@ catch (...)
  * vte_terminal_copy_primary:
  * @terminal: a #VteTerminal
  *
- * Places the selected text in the terminal in the #GDK_SELECTION_PRIMARY
+ * Places the selected text in the terminal in the #CDK_SELECTION_PRIMARY
  * selection.
  */
 void
@@ -2388,7 +2388,7 @@ catch (...)
  * vte_terminal_paste_clipboard:
  * @terminal: a #VteTerminal
  *
- * Sends the contents of the #GDK_SELECTION_CLIPBOARD selection to the
+ * Sends the contents of the #CDK_SELECTION_CLIPBOARD selection to the
  * terminal's child. It's called on paste menu item, or when
  * user presses Shift+Insert.
  */
@@ -2409,9 +2409,9 @@ catch (...)
  * vte_terminal_paste_primary:
  * @terminal: a #VteTerminal
  *
- * Sends the contents of the #GDK_SELECTION_PRIMARY selection to the terminal's
+ * Sends the contents of the #CDK_SELECTION_PRIMARY selection to the terminal's
  * child. The terminal will call also paste the
- * #GDK_SELECTION_PRIMARY selection when the user clicks with the the second
+ * #CDK_SELECTION_PRIMARY selection when the user clicks with the the second
  * mouse button.
  */
 void
@@ -2420,7 +2420,7 @@ try
 {
 	g_return_if_fail(VTE_IS_TERMINAL(terminal));
 	_vte_debug_print(VTE_DEBUG_SELECTION, "Pasting PRIMARY.\n");
-	WIDGET(terminal)->paste(GDK_SELECTION_PRIMARY);
+	WIDGET(terminal)->paste(CDK_SELECTION_PRIMARY);
 }
 catch (...)
 {
@@ -4981,8 +4981,8 @@ catch (...)
  * @min_columns: the minimum number of columns to request
  *
  * Fills in some @hints from @terminal's geometry. The hints
- * filled are those covered by the %GDK_HINT_RESIZE_INC,
- * %GDK_HINT_MIN_SIZE and %GDK_HINT_BASE_SIZE flags.
+ * filled are those covered by the %CDK_HINT_RESIZE_INC,
+ * %CDK_HINT_MIN_SIZE and %CDK_HINT_BASE_SIZE flags.
  *
  * See ctk_window_set_geometry_hints() for more information.
  *
@@ -5054,9 +5054,9 @@ vte_terminal_set_geometry_hints_for_window(VteTerminal *terminal,
         ctk_window_set_geometry_hints(window,
                                       NULL,
                                       &hints,
-                                      (GdkWindowHints)(GDK_HINT_RESIZE_INC |
-                                                       GDK_HINT_MIN_SIZE |
-                                                       GDK_HINT_BASE_SIZE));
+                                      (GdkWindowHints)(CDK_HINT_RESIZE_INC |
+                                                       CDK_HINT_MIN_SIZE |
+                                                       CDK_HINT_BASE_SIZE));
 }
 
 /**

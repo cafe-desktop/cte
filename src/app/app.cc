@@ -1265,9 +1265,9 @@ vteapp_window_update_geometry(VteappWindow* window)
                         ctk_window_set_geometry_hints(CTK_WINDOW(window),
                                                       nullptr,
                                                       &geometry,
-                                                      GdkWindowHints(GDK_HINT_RESIZE_INC |
-                                                                     GDK_HINT_MIN_SIZE |
-                                                                     GDK_HINT_BASE_SIZE));
+                                                      GdkWindowHints(CDK_HINT_RESIZE_INC |
+                                                                     CDK_HINT_MIN_SIZE |
+                                                                     CDK_HINT_BASE_SIZE));
 
                         verbose_print("Updating geometry hints base %dx%d inc %dx%d min %dx%d\n",
                                       geometry.base_width, geometry.base_height,
@@ -1296,9 +1296,9 @@ vteapp_window_resize(VteappWindow* window)
         /* Don't do this for maximised or tiled windows. */
         auto win = ctk_widget_get_window(CTK_WIDGET(window));
         if (win != nullptr &&
-            (cdk_window_get_state(win) & (GDK_WINDOW_STATE_MAXIMIZED |
-                                          GDK_WINDOW_STATE_FULLSCREEN |
-                                          GDK_WINDOW_STATE_TILED)) != 0)
+            (cdk_window_get_state(win) & (CDK_WINDOW_STATE_MAXIMIZED |
+                                          CDK_WINDOW_STATE_FULLSCREEN |
+                                          CDK_WINDOW_STATE_TILED)) != 0)
                 return;
 
         /* First, update the geometry hints, so that the cached_* members are up-to-date */
@@ -1618,7 +1618,7 @@ window_action_reset_cb(GSimpleAction* action,
         if (parameter != nullptr)
                 clear = g_variant_get_boolean(parameter);
         else if (ctk_get_current_event_state(&modifiers))
-                clear = (modifiers & GDK_CONTROL_MASK) != 0;
+                clear = (modifiers & CDK_CONTROL_MASK) != 0;
         else
                 clear = false;
 
@@ -1746,7 +1746,7 @@ window_button_press_cb(CtkWidget* widget,
                        GdkEventButton* event,
                        VteappWindow* window)
 {
-        if (event->button != GDK_BUTTON_SECONDARY)
+        if (event->button != CDK_BUTTON_SECONDARY)
                 return false;
 
         return vteapp_window_show_context_menu(window, event->button, event->time,
@@ -2059,7 +2059,7 @@ vteapp_window_constructed(GObject *object)
                          G_CALLBACK(window_find_button_toggled_cb), window);
 
         /* Clipboard */
-        window->clipboard = ctk_widget_get_clipboard(CTK_WIDGET(window), GDK_SELECTION_CLIPBOARD);
+        window->clipboard = ctk_widget_get_clipboard(CTK_WIDGET(window), CDK_SELECTION_CLIPBOARD);
         g_signal_connect(window->clipboard, "owner-change", G_CALLBACK(window_clipboard_owner_change_cb), window);
 
         /* Set ARGB visual */
@@ -2232,8 +2232,8 @@ vteapp_window_state_event (CtkWidget* widget,
 {
         VteappWindow* window = VTEAPP_WINDOW(widget);
 
-        if (event->changed_mask & GDK_WINDOW_STATE_FULLSCREEN) {
-                window->fullscreen = (event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN) != 0;
+        if (event->changed_mask & CDK_WINDOW_STATE_FULLSCREEN) {
+                window->fullscreen = (event->new_window_state & CDK_WINDOW_STATE_FULLSCREEN) != 0;
 
                 auto action = reinterpret_cast<GSimpleAction*>(g_action_map_lookup_action(G_ACTION_MAP(window), "fullscreen"));
                 g_simple_action_set_state(action, g_variant_new_boolean (window->fullscreen));

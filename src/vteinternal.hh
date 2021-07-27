@@ -434,11 +434,11 @@ public:
                 if (!is_mouse_scroll())
                         return ScrollDirection::eNONE;
                 switch (reinterpret_cast<GdkEventScroll*>(platform_event())->direction) {
-                case GDK_SCROLL_UP:     return ScrollDirection::eUP;
-                case GDK_SCROLL_DOWN:   return ScrollDirection::eDOWN;
-                case GDK_SCROLL_LEFT:   return ScrollDirection::eLEFT;
-                case GDK_SCROLL_RIGHT:  return ScrollDirection::eRIGHT;
-                case GDK_SCROLL_SMOOTH: return ScrollDirection::eSMOOTH;
+                case CDK_SCROLL_UP:     return ScrollDirection::eUP;
+                case CDK_SCROLL_DOWN:   return ScrollDirection::eDOWN;
+                case CDK_SCROLL_LEFT:   return ScrollDirection::eLEFT;
+                case CDK_SCROLL_RIGHT:  return ScrollDirection::eRIGHT;
+                case CDK_SCROLL_SMOOTH: return ScrollDirection::eSMOOTH;
                 default: return ScrollDirection::eNONE;
                 }
         }

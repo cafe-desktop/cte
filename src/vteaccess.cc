@@ -672,7 +672,7 @@ vte_terminal_accessible_visibility_notify(VteTerminal *terminal,
 	CtkWidget *widget;
 	gboolean visible;
 
-	visible = event->state != GDK_VISIBILITY_FULLY_OBSCURED;
+	visible = event->state != CDK_VISIBILITY_FULLY_OBSCURED;
 	/* The VISIBLE state indicates that this widget is "visible". */
 	atk_object_notify_state_change(ATK_OBJECT(accessible),
 				       ATK_STATE_VISIBLE,
