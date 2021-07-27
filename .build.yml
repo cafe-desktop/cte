@@ -1,0 +1,33 @@
+##########################################################
+# THE FOLLOWING LINES IS USED BY docker-build
+##########################################################
+requires:
+  debian:
+    - gettext
+    - gtk-doc-tools
+    - libgirepository1.0-dev
+    - libglib2.0-dev
+    - libgnutls28-dev
+    - libgtk-3-dev
+    - libpango1.0-dev
+    - libpcre2-dev
+    - libsystemd-dev
+    - libxml2-utils
+    - meson
+    - valac
+
+before_scripts:
+  - export TITLECPPCHECK="${REPO_NAME} (cppcheck `dpkg -s cppcheck|grep -i version|cut -d " " -f 2`)"
+  - cppcheck --xml --output-file=cppcheck.xml --enable=warning,style,performance,portability,information,missingInclude .
+  - cppcheck-htmlreport --title="$TITLECPPCHECK" --file=cppcheck.xml --report-dir=cppcheck-htmlreport
+
+build_scripts:
+  - export TITLESCANBUILD="${REPO_NAME} (clang-tools `dpkg -s clang-tools|grep -i version|cut -d " " -f 2`) - scan-build results"
+  - mkdir html-report
+  - cppcheck --enable=warning,style,performance,portability,information,missingInclude . 2>&1 | tee -a ./html-report/output_${TRAVIS_COMMIT}
+  - scan-build $CHECKERS --keep-cc meson _build 2>&1 | tee -a ./html-report/output_${TRAVIS_COMMIT}
+  - scan-build $CHECKERS --keep-cc -o html-report --html-title="$TITLESCANBUILD" ninja -C _build 2>&1 | tee -a ./html-report/output_${TRAVIS_COMMIT}
+  - echo Warnings detected in the logs `cat ./html-report/output_${TRAVIS_COMMIT} | grep -i warning | wc -l` 2>&1 | tee -a ./html-report/output_${TRAVIS_COMMIT}
+
+after_scripts:
+  - ./gen-index -l 20
