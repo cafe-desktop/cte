@@ -269,7 +269,7 @@ private:
                                             PangoFontDescription const* desc,
                                             PangoLanguage* language,
                                             guint fontconfig_timestamp);
-        static FontInfo *create_for_screen(GdkScreen* screen,
+        static FontInfo *create_for_screen(CdkScreen* screen,
                                            PangoFontDescription const* desc,
                                            PangoLanguage* language);
 public:

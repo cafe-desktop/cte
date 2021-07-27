@@ -36,7 +36,7 @@ static_assert(sizeof(vte::color::rgb) == sizeof(PangoColor), "vte::color::rgb si
 
 static_assert(sizeof(vte::libc::FD) == sizeof(int), "vte::libc::FD size wrong");
 
-vte::color::rgb::rgb(GdkRGBA const* rgba) {
+vte::color::rgb::rgb(CdkRGBA const* rgba) {
         g_assert(rgba);
         /* FIXME: equal distribution! */
         red   = rgba->red   * 65535.;

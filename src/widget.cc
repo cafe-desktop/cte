@@ -177,14 +177,14 @@ Widget::beep() noexcept
                 cdk_window_beep(ctk_widget_get_window(m_widget));
 }
 
-vte::glib::RefPtr<GdkCursor>
-Widget::create_cursor(GdkCursorType cursor_type) const noexcept
+vte::glib::RefPtr<CdkCursor>
+Widget::create_cursor(CdkCursorType cursor_type) const noexcept
 {
 	return vte::glib::take_ref(cdk_cursor_new_for_display(ctk_widget_get_display(m_widget), cursor_type));
 }
 
 void
-Widget::set_cursor(GdkCursor* cursor) noexcept
+Widget::set_cursor(CdkCursor* cursor) noexcept
 {
         cdk_window_set_cursor(m_event_window, cursor);
 }
@@ -196,7 +196,7 @@ Widget::set_cursor(Cursor const& cursor) noexcept
                 return;
 
         auto display = ctk_widget_get_display(m_widget);
-        GdkCursor* cdk_cursor{nullptr};
+        CdkCursor* cdk_cursor{nullptr};
         switch (cursor.index()) {
         case 0:
                 cdk_cursor = cdk_cursor_new_from_name(display, std::get<0>(cursor).c_str());
@@ -260,7 +260,7 @@ Widget::im_filter_keypress(vte::terminal::KeyEvent const& event) noexcept
         // FIXMEchpe this can only be called when realized, so the m_im_context check is redundant
         return m_im_context &&
                 ctk_im_context_filter_keypress(m_im_context.get(),
-                                               reinterpret_cast<GdkEventKey*>(event.platform_event()));
+                                               reinterpret_cast<CdkEventKey*>(event.platform_event()));
 }
 
 void
@@ -301,17 +301,17 @@ Widget::im_set_cursor_location(cairo_rectangle_int_t const* rect) noexcept
 }
 
 unsigned
-Widget::read_modifiers_from_cdk(GdkEvent* event) const noexcept
+Widget::read_modifiers_from_cdk(CdkEvent* event) const noexcept
 {
         /* Read the modifiers. See bug #663779 for more information on why we do this. */
-        auto mods = GdkModifierType{};
+        auto mods = CdkModifierType{};
         if (!cdk_event_get_state(event, &mods))
                 return 0;
 
         #if 1
         /* HACK! Treat META as ALT; see bug #663779. */
         if (mods & CDK_META_MASK)
-                mods = GdkModifierType(mods | CDK_MOD1_MASK);
+                mods = CdkModifierType(mods | CDK_MOD1_MASK);
         #endif
 
         /* Map non-virtual modifiers to virtual modifiers (Super, Hyper, Meta) */
@@ -334,10 +334,10 @@ Widget::key_event_translate_ctrlkey(vte::terminal::KeyEvent const& event) const 
 
 	/* Try groups in order to find one mapping the key to ASCII */
 	for (auto i = unsigned{0}; i < 4; i++) {
-		auto consumed_modifiers = GdkModifierType{};
+		auto consumed_modifiers = CdkModifierType{};
 		cdk_keymap_translate_keyboard_state (keymap,
                                                      event.keycode(),
-                                                     GdkModifierType(event.modifiers()),
+                                                     CdkModifierType(event.modifiers()),
                                                      i,
                                                      &keyval, NULL, NULL, &consumed_modifiers);
 		if (keyval < 128) {
@@ -352,16 +352,16 @@ Widget::key_event_translate_ctrlkey(vte::terminal::KeyEvent const& event) const 
 }
 
 vte::terminal::KeyEvent
-Widget::key_event_from_cdk(GdkEventKey* event) const
+Widget::key_event_from_cdk(CdkEventKey* event) const
 {
         auto type = vte::terminal::EventBase::Type{};
-        switch (cdk_event_get_event_type(reinterpret_cast<GdkEvent*>(event))) {
+        switch (cdk_event_get_event_type(reinterpret_cast<CdkEvent*>(event))) {
         case CDK_KEY_PRESS: type = vte::terminal::KeyEvent::Type::eKEY_PRESS;     break;
         case CDK_KEY_RELEASE: type = vte::terminal::KeyEvent::Type::eKEY_RELEASE; break;
         default: g_assert_not_reached(); return {};
         }
 
-        auto base_event = reinterpret_cast<GdkEvent*>(event);
+        auto base_event = reinterpret_cast<CdkEvent*>(event);
         return {base_event,
                 type,
                 event->time,
@@ -373,7 +373,7 @@ Widget::key_event_from_cdk(GdkEventKey* event) const
 }
 
 std::optional<vte::terminal::MouseEvent>
-Widget::mouse_event_from_cdk(GdkEvent* event) const
+Widget::mouse_event_from_cdk(CdkEvent* event) const
 {
         auto type = vte::terminal::EventBase::Type{};
         switch (cdk_event_get_event_type(event)) {
@@ -443,7 +443,7 @@ Widget::realize() noexcept
 
 	/* Create an input window for the widget. */
         auto allocation = m_terminal->get_allocated_rect();
-	GdkWindowAttr attributes;
+	CdkWindowAttr attributes;
 	attributes.window_type = CDK_WINDOW_CHILD;
 	attributes.x = allocation.x;
 	attributes.y = allocation.y;
@@ -502,7 +502,7 @@ Widget::realize() noexcept
 }
 
 void
-Widget::screen_changed(GdkScreen *previous_screen) noexcept
+Widget::screen_changed(CdkScreen *previous_screen) noexcept
 {
         auto cdk_screen = ctk_widget_get_screen(m_widget);
         if (previous_screen != nullptr &&

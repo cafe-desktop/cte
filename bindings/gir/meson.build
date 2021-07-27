@@ -18,7 +18,7 @@ gir_dep = dependency('gobject-introspection-1.0', version: '>= 0.9.0')
 
 if get_option('ctk3')
   libvte_ctk3_gir_includes = [
-    'Gdk-3.0',
+    'Cdk-3.0',
     'Ctk-3.0',
     'Pango-1.0',
   ]

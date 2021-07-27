@@ -181,8 +181,8 @@ namespace color {
         public:
                 rgb() = default;
                 rgb(PangoColor const& c) { *static_cast<PangoColor*>(this) = c; }
-                rgb(GdkRGBA const* c);
-                rgb(GdkRGBA const& c) : rgb(&c) { }
+                rgb(CdkRGBA const* c);
+                rgb(CdkRGBA const& c) : rgb(&c) { }
                 rgb(uint16_t r, uint16_t g, uint16_t b)
                         : PangoColor{r, g, b} { }
 

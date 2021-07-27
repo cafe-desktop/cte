@@ -124,7 +124,7 @@ GTimer *process_timer;
 uint64_t g_test_flags = 0;
 
 static bool
-valid_color(GdkRGBA const* color) noexcept
+valid_color(CdkRGBA const* color) noexcept
 {
         return color->red >= 0. && color->red <= 1. &&
                color->green >= 0. && color->green <= 1. &&
@@ -223,7 +223,7 @@ catch (...)
 
 static gboolean
 vte_terminal_key_press(CtkWidget *widget,
-                       GdkEventKey *event) noexcept
+                       CdkEventKey *event) noexcept
 try
 {
 	VteTerminal *terminal = VTE_TERMINAL(widget);
@@ -254,7 +254,7 @@ catch (...)
 
 static gboolean
 vte_terminal_key_release(CtkWidget *widget,
-                         GdkEventKey *event) noexcept
+                         CdkEventKey *event) noexcept
 try
 {
 	VteTerminal *terminal = VTE_TERMINAL(widget);
@@ -268,7 +268,7 @@ catch (...)
 
 static gboolean
 vte_terminal_motion_notify(CtkWidget *widget,
-                           GdkEventMotion *event) noexcept
+                           CdkEventMotion *event) noexcept
 try
 {
         VteTerminal *terminal = VTE_TERMINAL(widget);
@@ -282,7 +282,7 @@ catch (...)
 
 static gboolean
 vte_terminal_button_press(CtkWidget *widget,
-                          GdkEventButton *event) noexcept
+                          CdkEventButton *event) noexcept
 try
 {
 	VteTerminal *terminal = VTE_TERMINAL(widget);
@@ -296,7 +296,7 @@ catch (...)
 
 static gboolean
 vte_terminal_button_release(CtkWidget *widget,
-                            GdkEventButton *event) noexcept
+                            CdkEventButton *event) noexcept
 try
 {
 	VteTerminal *terminal = VTE_TERMINAL(widget);
@@ -310,7 +310,7 @@ catch (...)
 
 static gboolean
 vte_terminal_scroll(CtkWidget *widget,
-                    GdkEventScroll *event) noexcept
+                    CdkEventScroll *event) noexcept
 try
 {
 	VteTerminal *terminal = VTE_TERMINAL(widget);
@@ -325,7 +325,7 @@ catch (...)
 
 static gboolean
 vte_terminal_focus_in(CtkWidget *widget,
-                      GdkEventFocus *event) noexcept
+                      CdkEventFocus *event) noexcept
 try
 {
 	VteTerminal *terminal = VTE_TERMINAL(widget);
@@ -340,7 +340,7 @@ catch (...)
 
 static gboolean
 vte_terminal_focus_out(CtkWidget *widget,
-                       GdkEventFocus *event) noexcept
+                       CdkEventFocus *event) noexcept
 try
 {
 	VteTerminal *terminal = VTE_TERMINAL(widget);
@@ -355,7 +355,7 @@ catch (...)
 
 static gboolean
 vte_terminal_enter(CtkWidget *widget,
-                   GdkEventCrossing *event) noexcept
+                   CdkEventCrossing *event) noexcept
 try
 {
 	VteTerminal *terminal = VTE_TERMINAL(widget);
@@ -377,7 +377,7 @@ catch (...)
 
 static gboolean
 vte_terminal_leave(CtkWidget *widget,
-                   GdkEventCrossing *event) noexcept
+                   CdkEventCrossing *event) noexcept
 try
 {
 	VteTerminal *terminal = VTE_TERMINAL(widget);
@@ -517,7 +517,7 @@ vte_terminal_unmap(CtkWidget *widget) noexcept
 
 static void
 vte_terminal_screen_changed (CtkWidget *widget,
-                             GdkScreen *previous_screen) noexcept
+                             CdkScreen *previous_screen) noexcept
 try
 {
         VteTerminal *terminal = VTE_TERMINAL (widget);
@@ -2526,7 +2526,7 @@ catch (...)
 /**
  * vte_terminal_match_check_event:
  * @terminal: a #VteTerminal
- * @event: a #GdkEvent
+ * @event: a #CdkEvent
  * @tag: (out) (allow-none): a location to store the tag, or %NULL
  *
  * Checks if the text in and around the position of the event matches any of the
@@ -2543,7 +2543,7 @@ catch (...)
  */
 char *
 vte_terminal_match_check_event(VteTerminal *terminal,
-                               GdkEvent *event,
+                               CdkEvent *event,
                                int *tag) noexcept
 try
 {
@@ -2559,7 +2559,7 @@ catch (...)
 /**
  * vte_terminal_hyperlink_check_event:
  * @terminal: a #VteTerminal
- * @event: a #GdkEvent
+ * @event: a #CdkEvent
  *
  * Returns a nonempty string: the target of the explicit hyperlink (printed using the OSC 8
  * escape sequence) at the position of the event, or %NULL.
@@ -2575,7 +2575,7 @@ catch (...)
  */
 char *
 vte_terminal_hyperlink_check_event(VteTerminal *terminal,
-                                   GdkEvent *event) noexcept
+                                   CdkEvent *event) noexcept
 try
 {
         g_return_val_if_fail(VTE_IS_TERMINAL(terminal), nullptr);
@@ -2590,7 +2590,7 @@ catch (...)
 /**
  * vte_terminal_event_check_regex_array: (rename-to vte_terminal_event_check_regex_simple)
  * @terminal: a #VteTerminal
- * @event: a #GdkEvent
+ * @event: a #CdkEvent
  * @regexes: (array length=n_regexes): an array of #VteRegex
  * @n_regexes: number of items in @regexes
  * @match_flags: PCRE2 match flags, or 0
@@ -2610,7 +2610,7 @@ catch (...)
  */
 char**
 vte_terminal_event_check_regex_array(VteTerminal *terminal,
-                                     GdkEvent *event,
+                                     CdkEvent *event,
                                      VteRegex **regexes,
                                      gsize n_regexes,
                                      guint32 match_flags,
@@ -2643,7 +2643,7 @@ catch (...)
 /**
  * vte_terminal_event_check_regex_simple: (skip)
  * @terminal: a #VteTerminal
- * @event: a #GdkEvent
+ * @event: a #CdkEvent
  * @regexes: (array length=n_regexes): an array of #VteRegex
  * @n_regexes: number of items in @regexes
  * @match_flags: PCRE2 match flags, or 0
@@ -2663,7 +2663,7 @@ catch (...)
  */
 gboolean
 vte_terminal_event_check_regex_simple(VteTerminal *terminal,
-                                      GdkEvent *event,
+                                      CdkEvent *event,
                                       VteRegex **regexes,
                                       gsize n_regexes,
                                       guint32 match_flags,
@@ -2694,7 +2694,7 @@ catch (...)
 /**
  * vte_terminal_event_check_gregex_simple:
  * @terminal: a #VteTerminal
- * @event: a #GdkEvent
+ * @event: a #CdkEvent
  * @regexes: (array length=n_regexes): an array of #GRegex
  * @n_regexes: number of items in @regexes
  * @match_flags: the #GRegexMatchFlags to use when matching the regexes
@@ -2709,7 +2709,7 @@ catch (...)
  */
 gboolean
 vte_terminal_event_check_gregex_simple(VteTerminal *terminal,
-                                       GdkEvent *event,
+                                       CdkEvent *event,
                                        GRegex **regexes,
                                        gsize n_regexes,
                                        GRegexMatchFlags match_flags,
@@ -2722,7 +2722,7 @@ vte_terminal_event_check_gregex_simple(VteTerminal *terminal,
  * vte_terminal_match_set_cursor:
  * @terminal: a #VteTerminal
  * @tag: the tag of the regex which should use the specified cursor
- * @cursor: (allow-none): the #GdkCursor which the terminal should use when the pattern is
+ * @cursor: (allow-none): the #CdkCursor which the terminal should use when the pattern is
  *   highlighted, or %NULL to use the standard cursor
  *
  * Sets which cursor the terminal will use if the pointer is over the pattern
@@ -2733,13 +2733,13 @@ vte_terminal_event_check_gregex_simple(VteTerminal *terminal,
 void
 vte_terminal_match_set_cursor(VteTerminal *terminal,
                               int tag,
-                              GdkCursor *cursor) noexcept
+                              CdkCursor *cursor) noexcept
 try
 {
 	g_return_if_fail(VTE_IS_TERMINAL(terminal));
         g_return_if_fail(tag >= 0);
         if (auto rem = IMPL(terminal)->regex_match_get(tag))
-                rem->set_cursor(vte::glib::make_ref<GdkCursor>(cursor));
+                rem->set_cursor(vte::glib::make_ref<CdkCursor>(cursor));
 }
 catch (...)
 {
@@ -2750,7 +2750,7 @@ catch (...)
  * vte_terminal_match_set_cursor_type:
  * @terminal: a #VteTerminal
  * @tag: the tag of the regex which should use the specified cursor
- * @cursor_type: a #GdkCursorType
+ * @cursor_type: a #CdkCursorType
  *
  * Sets which cursor the terminal will use if the pointer is over the pattern
  * specified by @tag.
@@ -2760,7 +2760,7 @@ catch (...)
 void
 vte_terminal_match_set_cursor_type(VteTerminal *terminal,
 				   int tag,
-                                   GdkCursorType cursor_type) noexcept
+                                   CdkCursorType cursor_type) noexcept
 try
 {
 	g_return_if_fail(VTE_IS_TERMINAL(terminal));
@@ -4172,7 +4172,7 @@ catch (...)
  */
 void
 vte_terminal_set_color_background(VteTerminal *terminal,
-                                  const GdkRGBA *background) noexcept
+                                  const CdkRGBA *background) noexcept
 try
 {
         g_return_if_fail(VTE_IS_TERMINAL(terminal));
@@ -4198,7 +4198,7 @@ catch (...)
  */
 void
 vte_terminal_set_color_bold(VteTerminal *terminal,
-                            const GdkRGBA *bold) noexcept
+                            const CdkRGBA *bold) noexcept
 try
 {
         g_return_if_fail(VTE_IS_TERMINAL(terminal));
@@ -4226,7 +4226,7 @@ catch (...)
  */
 void
 vte_terminal_set_color_cursor(VteTerminal *terminal,
-                              const GdkRGBA *cursor_background) noexcept
+                              const CdkRGBA *cursor_background) noexcept
 try
 {
         g_return_if_fail(VTE_IS_TERMINAL(terminal));
@@ -4256,7 +4256,7 @@ catch (...)
  */
 void
 vte_terminal_set_color_cursor_foreground(VteTerminal *terminal,
-                                         const GdkRGBA *cursor_foreground) noexcept
+                                         const CdkRGBA *cursor_foreground) noexcept
 try
 {
         g_return_if_fail(VTE_IS_TERMINAL(terminal));
@@ -4282,7 +4282,7 @@ catch (...)
  */
 void
 vte_terminal_set_color_foreground(VteTerminal *terminal,
-                                  const GdkRGBA *foreground) noexcept
+                                  const CdkRGBA *foreground) noexcept
 try
 {
         g_return_if_fail(VTE_IS_TERMINAL(terminal));
@@ -4308,7 +4308,7 @@ catch (...)
  */
 void
 vte_terminal_set_color_highlight(VteTerminal *terminal,
-                                 const GdkRGBA *highlight_background) noexcept
+                                 const CdkRGBA *highlight_background) noexcept
 try
 {
         g_return_if_fail(VTE_IS_TERMINAL(terminal));
@@ -4337,7 +4337,7 @@ catch (...)
  */
 void
 vte_terminal_set_color_highlight_foreground(VteTerminal *terminal,
-                                            const GdkRGBA *highlight_foreground) noexcept
+                                            const CdkRGBA *highlight_foreground) noexcept
 try
 {
         g_return_if_fail(VTE_IS_TERMINAL(terminal));
@@ -4359,7 +4359,7 @@ catch (...)
  * @terminal: a #VteTerminal
  * @foreground: (allow-none): the new foreground color, or %NULL
  * @background: (allow-none): the new background color, or %NULL
- * @palette: (array length=palette_size zero-terminated=0) (element-type Gdk.RGBA) (allow-none): the color palette
+ * @palette: (array length=palette_size zero-terminated=0) (element-type Cdk.RGBA) (allow-none): the color palette
  * @palette_size: the number of entries in @palette
  *
  * @palette specifies the new values for the 256 palette colors: 8 standard colors,
@@ -4374,9 +4374,9 @@ catch (...)
  */
 void
 vte_terminal_set_colors(VteTerminal *terminal,
-                        const GdkRGBA *foreground,
-                        const GdkRGBA *background,
-                        const GdkRGBA *palette,
+                        const CdkRGBA *foreground,
+                        const CdkRGBA *background,
+                        const CdkRGBA *palette,
                         gsize palette_size) noexcept
 try
 {
@@ -4976,7 +4976,7 @@ catch (...)
 /**
  * vte_terminal_get_geometry_hints:
  * @terminal: a #VteTerminal
- * @hints: (out caller-allocates): a #GdkGeometry to fill in
+ * @hints: (out caller-allocates): a #CdkGeometry to fill in
  * @min_rows: the minimum number of rows to request
  * @min_columns: the minimum number of columns to request
  *
@@ -4992,7 +4992,7 @@ catch (...)
  */
 void
 vte_terminal_get_geometry_hints(VteTerminal *terminal,
-                                GdkGeometry *hints,
+                                CdkGeometry *hints,
                                 int min_rows,
                                 int min_columns) noexcept
 {
@@ -5045,7 +5045,7 @@ void
 vte_terminal_set_geometry_hints_for_window(VteTerminal *terminal,
                                            CtkWindow *window) noexcept
 {
-        GdkGeometry hints;
+        CdkGeometry hints;
 
         g_return_if_fail(VTE_IS_TERMINAL(terminal));
         g_return_if_fail(ctk_widget_get_realized(&terminal->widget));
@@ -5054,7 +5054,7 @@ vte_terminal_set_geometry_hints_for_window(VteTerminal *terminal,
         ctk_window_set_geometry_hints(window,
                                       NULL,
                                       &hints,
-                                      (GdkWindowHints)(CDK_HINT_RESIZE_INC |
+                                      (CdkWindowHints)(CDK_HINT_RESIZE_INC |
                                                        CDK_HINT_MIN_SIZE |
                                                        CDK_HINT_BASE_SIZE));
 }
@@ -5618,7 +5618,7 @@ catch (...)
  */
 void
 vte_terminal_get_color_background_for_draw(VteTerminal* terminal,
-                                           GdkRGBA* color) noexcept
+                                           CdkRGBA* color) noexcept
 try
 {
         g_return_if_fail(VTE_IS_TERMINAL(terminal));
