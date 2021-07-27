@@ -38,7 +38,7 @@ static void
 terminal_init_text_view(GtkWidget **widget)
 {
 	*widget = ctk_text_view_new();
-	ctk_text_view_set_editable(GTK_TEXT_VIEW(*widget), TRUE);
+	ctk_text_view_set_editable(CTK_TEXT_VIEW(*widget), TRUE);
 }
 static void
 terminal_shell_text_view(GtkWidget *widget)
@@ -48,7 +48,7 @@ terminal_shell_text_view(GtkWidget *widget)
 static GtkAdjustment *
 terminal_adjustment_text_view(GtkWidget *terminal)
 {
-        return ctk_scrollable_get_vadjustment(GTK_SCROLLABLE(terminal));
+        return ctk_scrollable_get_vadjustment(CTK_SCROLLABLE(terminal));
 }
 #endif
 #ifdef USE_VTE
@@ -106,16 +106,16 @@ update_contents(AtkObject *obj, GtkWidget *widget)
 	if (i == caret) {
 		s = g_string_append(s, "[CARET]");
 	}
-	if (GTK_IS_LABEL(widget)) {
-		ctk_label_set_text(GTK_LABEL(widget), s->str);
-		ctk_label_set_selectable(GTK_LABEL(widget),
+	if (CTK_IS_LABEL(widget)) {
+		ctk_label_set_text(CTK_LABEL(widget), s->str);
+		ctk_label_set_selectable(CTK_LABEL(widget),
 					 atk_text_get_n_selections(ATK_TEXT(obj)) > 0);
-		if (ctk_label_get_selectable(GTK_LABEL(widget))) {
+		if (ctk_label_get_selectable(CTK_LABEL(widget))) {
 			int selection_start, selection_end;
 			atk_text_get_selection(ATK_TEXT(obj), 0,
 					       &selection_start,
 					       &selection_end);
-			ctk_label_select_region(GTK_LABEL(widget),
+			ctk_label_select_region(CTK_LABEL(widget),
 						selection_start, selection_end);
 		}
 	}
@@ -163,7 +163,7 @@ text_changed_insert(AtkObject *obj, gint offset, gint length, gpointer data)
 
 	g_free(inserted);
 
-	update_contents(obj, GTK_WIDGET(data));
+	update_contents(obj, CTK_WIDGET(data));
 }
 
 /* Handle deleted text by removing the text from our gunichar array. */
@@ -183,19 +183,19 @@ text_changed_delete(AtkObject *obj, gint offset, gint length, gpointer data)
 		g_printerr("Deleted %d chars at %d.\n", length, offset);
 	}
 #endif
-	update_contents(obj, GTK_WIDGET(data));
+	update_contents(obj, CTK_WIDGET(data));
 }
 
 static void
 text_caret_moved(AtkObject *obj, gint offset, gpointer data)
 {
-	update_contents(obj, GTK_WIDGET(data));
+	update_contents(obj, CTK_WIDGET(data));
 }
 
 static void
 text_selection_changed(AtkObject *obj, gpointer data)
 {
-	update_contents(obj, GTK_WIDGET(data));
+	update_contents(obj, CTK_WIDGET(data));
 }
 
 /* Wrapper versions. */
@@ -233,7 +233,7 @@ terminal_adjustment(GtkWidget *terminal)
 	return terminal_adjustment_text_view(terminal);
 #endif
 #ifdef USE_VTE
-	return ctk_scrollable_get_vadjustment(GTK_SCROLLABLE(terminal));
+	return ctk_scrollable_get_vadjustment(CTK_SCROLLABLE(terminal));
 #endif
 	g_assert_not_reached();
 }
@@ -255,42 +255,42 @@ main(int argc, char **argv)
 
 #ifdef USE_TEXT_VIEW
 	tophalf = ctk_scrolled_window_new(NULL, terminal_adjustment(terminal));
-	ctk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(tophalf),
-				       GTK_POLICY_AUTOMATIC,
-				       GTK_POLICY_AUTOMATIC);
-	ctk_container_add(GTK_CONTAINER(tophalf), terminal);
+	ctk_scrolled_window_set_policy(CTK_SCROLLED_WINDOW(tophalf),
+				       CTK_POLICY_AUTOMATIC,
+				       CTK_POLICY_AUTOMATIC);
+	ctk_container_add(CTK_CONTAINER(tophalf), terminal);
 #else
         tophalf = ctk_grid_new();
 
-        ctk_grid_attach(GTK_GRID(tophalf), terminal, 0, 0, 1, 1);
+        ctk_grid_attach(CTK_GRID(tophalf), terminal, 0, 0, 1, 1);
 	ctk_widget_show(terminal);
 
-        GtkWidget* scrollbar = ctk_scrollbar_new(GTK_ORIENTATION_VERTICAL,
+        GtkWidget* scrollbar = ctk_scrollbar_new(CTK_ORIENTATION_VERTICAL,
                                                  terminal_adjustment(terminal));
-        ctk_grid_attach(GTK_GRID(tophalf), scrollbar, 1, 0, 1, 1);
+        ctk_grid_attach(CTK_GRID(tophalf), scrollbar, 1, 0, 1, 1);
 	ctk_widget_show(scrollbar);
 #endif
 	ctk_widget_show(terminal);
 
 	label = ctk_label_new("");
-	ctk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
-        ctk_label_set_xalign(GTK_LABEL(label), 0.0);
-        ctk_label_set_yalign(GTK_LABEL(label), 0.0);
+	ctk_label_set_justify(CTK_LABEL(label), CTK_JUSTIFY_LEFT);
+        ctk_label_set_xalign(CTK_LABEL(label), 0.0);
+        ctk_label_set_yalign(CTK_LABEL(label), 0.0);
 
 	sw = ctk_scrolled_window_new(NULL, NULL);
-        ctk_container_add(GTK_CONTAINER(sw), label);
+        ctk_container_add(CTK_CONTAINER(sw), label);
 	ctk_widget_show(label);
 
-	pane = ctk_paned_new (GTK_ORIENTATION_VERTICAL);
-	ctk_paned_pack1(GTK_PANED(pane), tophalf, TRUE, FALSE);
-	ctk_paned_pack2(GTK_PANED(pane), sw, TRUE, FALSE);
+	pane = ctk_paned_new (CTK_ORIENTATION_VERTICAL);
+	ctk_paned_pack1(CTK_PANED(pane), tophalf, TRUE, FALSE);
+	ctk_paned_pack2(CTK_PANED(pane), sw, TRUE, FALSE);
 	ctk_widget_show(tophalf);
 	ctk_widget_show(sw);
 
-	window = ctk_window_new(GTK_WINDOW_TOPLEVEL);
+	window = ctk_window_new(CTK_WINDOW_TOPLEVEL);
 	g_signal_connect(G_OBJECT(window), "delete_event",
 			 G_CALLBACK(ctk_main_quit), NULL);
-	ctk_container_add(GTK_CONTAINER(window), pane);
+	ctk_container_add(CTK_CONTAINER(window), pane);
 	ctk_widget_show(pane);
 
 	obj = ctk_widget_get_accessible(terminal);
@@ -319,7 +319,7 @@ main(int argc, char **argv)
 	}
 	terminal_shell(terminal);
 
-	ctk_window_set_default_size(GTK_WINDOW(window), 600, 450);
+	ctk_window_set_default_size(CTK_WINDOW(window), 600, 450);
 	ctk_widget_show(window);
 
 	update_contents(obj, terminal);

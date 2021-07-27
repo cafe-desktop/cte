@@ -47,7 +47,7 @@ class SearchPopover : Gtk.Popover
     close_button.clicked.connect(() => { hide(); });
     reveal_button.bind_property("active", revealer, "reveal-child");
 
-#if GTK_3_16
+#if CTK_3_16
     search_entry.next_match.connect(() => { search(false); });
     search_entry.previous_match.connect(() => { search(true); });
 #endif
@@ -436,7 +436,7 @@ class Window : Gtk.ApplicationWindow
       } else
         printerr("Failed to parse geometry spec \"%s\"\n", Options.geometry);
     } else {
-      /* In GTK+ 3.0, the default size of a window comes from its minimum
+      /* In CTK+ 3.0, the default size of a window comes from its minimum
        * size not its natural size, so we need to set the right default size
        * explicitly */
       set_default_geometry((int)terminal.get_column_count(),

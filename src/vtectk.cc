@@ -20,7 +20,7 @@
  * SECTION: vte-terminal
  * @short_description: A terminal widget implementation
  *
- * A VteTerminal is a terminal emulator implemented as a GTK3 widget.
+ * A VteTerminal is a terminal emulator implemented as a CTK3 widget.
  *
  * Note that altough #VteTerminal implements the #GtkScrollable interface,
  * you should not place a #VteTerminal inside a #GtkScrolledWindow
@@ -82,24 +82,24 @@ struct _VteTerminalClassPrivate {
 static void vte_terminal_scrollable_iface_init(GtkScrollableInterface* iface) noexcept;
 
 #ifdef VTE_DEBUG
-G_DEFINE_TYPE_WITH_CODE(VteTerminal, vte_terminal, GTK_TYPE_WIDGET,
+G_DEFINE_TYPE_WITH_CODE(VteTerminal, vte_terminal, CTK_TYPE_WIDGET,
                         {
                                 VteTerminal_private_offset =
                                         g_type_add_instance_private(g_define_type_id, sizeof(vte::platform::Widget));
                         }
                         g_type_add_class_private (g_define_type_id, sizeof (VteTerminalClassPrivate));
-                        G_IMPLEMENT_INTERFACE(GTK_TYPE_SCROLLABLE, vte_terminal_scrollable_iface_init)
+                        G_IMPLEMENT_INTERFACE(CTK_TYPE_SCROLLABLE, vte_terminal_scrollable_iface_init)
                         if (_vte_debug_on(VTE_DEBUG_LIFECYCLE)) {
                                 g_printerr("vte_terminal_get_type()\n");
                         })
 #else
-G_DEFINE_TYPE_WITH_CODE(VteTerminal, vte_terminal, GTK_TYPE_WIDGET,
+G_DEFINE_TYPE_WITH_CODE(VteTerminal, vte_terminal, CTK_TYPE_WIDGET,
                         {
                                 VteTerminal_private_offset =
                                         g_type_add_instance_private(g_define_type_id, sizeof(vte::platform::Widget));
                         }
                         g_type_add_class_private (g_define_type_id, sizeof (VteTerminalClassPrivate));
-                        G_IMPLEMENT_INTERFACE(GTK_TYPE_SCROLLABLE, vte_terminal_scrollable_iface_init))
+                        G_IMPLEMENT_INTERFACE(CTK_TYPE_SCROLLABLE, vte_terminal_scrollable_iface_init))
 #endif
 
 static inline
@@ -137,7 +137,7 @@ vte_terminal_set_hadjustment(VteTerminal *terminal,
                              GtkAdjustment *adjustment) noexcept
 try
 {
-        g_return_if_fail(adjustment == nullptr || GTK_IS_ADJUSTMENT(adjustment));
+        g_return_if_fail(adjustment == nullptr || CTK_IS_ADJUSTMENT(adjustment));
         WIDGET(terminal)->set_hadjustment(vte::glib::make_ref_sink(adjustment));
 }
 catch (...)
@@ -150,7 +150,7 @@ vte_terminal_set_vadjustment(VteTerminal *terminal,
                              GtkAdjustment *adjustment) noexcept
 try
 {
-        g_return_if_fail(adjustment == nullptr || GTK_IS_ADJUSTMENT(adjustment));
+        g_return_if_fail(adjustment == nullptr || CTK_IS_ADJUSTMENT(adjustment));
         WIDGET(terminal)->set_vadjustment(vte::glib::make_ref_sink(adjustment));
 }
 catch (...)
@@ -164,7 +164,7 @@ vte_terminal_set_hscroll_policy(VteTerminal *terminal,
 try
 {
         WIDGET(terminal)->set_hscroll_policy(policy);
-        ctk_widget_queue_resize_no_redraw (GTK_WIDGET (terminal));
+        ctk_widget_queue_resize_no_redraw (CTK_WIDGET (terminal));
 }
 catch (...)
 {
@@ -177,7 +177,7 @@ vte_terminal_set_vscroll_policy(VteTerminal *terminal,
 try
 {
         WIDGET(terminal)->set_vscroll_policy(policy);
-        ctk_widget_queue_resize_no_redraw (GTK_WIDGET (terminal));
+        ctk_widget_queue_resize_no_redraw (CTK_WIDGET (terminal));
 }
 catch (...)
 {
@@ -212,7 +212,7 @@ try
 {
 	VteTerminal *terminal = VTE_TERMINAL(widget);
 
-        GTK_WIDGET_CLASS (vte_terminal_parent_class)->style_updated (widget);
+        CTK_WIDGET_CLASS (vte_terminal_parent_class)->style_updated (widget);
 
         WIDGET(terminal)->style_updated();
 }
@@ -237,8 +237,8 @@ try
 
 	/* First, check if GtkWidget's behavior already does something with
 	 * this key. */
-	if (GTK_WIDGET_CLASS(vte_terminal_parent_class)->key_press_event) {
-		if ((GTK_WIDGET_CLASS(vte_terminal_parent_class))->key_press_event(widget,
+	if (CTK_WIDGET_CLASS(vte_terminal_parent_class)->key_press_event) {
+		if ((CTK_WIDGET_CLASS(vte_terminal_parent_class))->key_press_event(widget,
                                                                                    event)) {
 			return TRUE;
 		}
@@ -361,8 +361,8 @@ try
 	VteTerminal *terminal = VTE_TERMINAL(widget);
         gboolean ret = FALSE;
 
-	if (GTK_WIDGET_CLASS (vte_terminal_parent_class)->enter_notify_event) {
-		ret = GTK_WIDGET_CLASS (vte_terminal_parent_class)->enter_notify_event (widget, event);
+	if (CTK_WIDGET_CLASS (vte_terminal_parent_class)->enter_notify_event) {
+		ret = CTK_WIDGET_CLASS (vte_terminal_parent_class)->enter_notify_event (widget, event);
 	}
 
         WIDGET(terminal)->enter(event);
@@ -383,8 +383,8 @@ try
 	VteTerminal *terminal = VTE_TERMINAL(widget);
 	gboolean ret = FALSE;
 
-	if (GTK_WIDGET_CLASS (vte_terminal_parent_class)->leave_notify_event) {
-		ret = GTK_WIDGET_CLASS (vte_terminal_parent_class)->leave_notify_event (widget, event);
+	if (CTK_WIDGET_CLASS (vte_terminal_parent_class)->leave_notify_event) {
+		ret = CTK_WIDGET_CLASS (vte_terminal_parent_class)->leave_notify_event (widget, event);
 	}
 
         WIDGET(terminal)->leave(event);
@@ -459,7 +459,7 @@ try
 {
 	_vte_debug_print(VTE_DEBUG_LIFECYCLE, "vte_terminal_realize()\n");
 
-        GTK_WIDGET_CLASS(vte_terminal_parent_class)->realize(widget);
+        CTK_WIDGET_CLASS(vte_terminal_parent_class)->realize(widget);
 
         VteTerminal *terminal= VTE_TERMINAL(widget);
         WIDGET(terminal)->realize();
@@ -481,7 +481,7 @@ vte_terminal_unrealize(GtkWidget *widget) noexcept
                 vte::log_exception();
         }
 
-        GTK_WIDGET_CLASS(vte_terminal_parent_class)->unrealize(widget);
+        CTK_WIDGET_CLASS(vte_terminal_parent_class)->unrealize(widget);
 }
 
 static void
@@ -491,7 +491,7 @@ try
         _vte_debug_print(VTE_DEBUG_LIFECYCLE, "vte_terminal_map()\n");
 
         VteTerminal *terminal = VTE_TERMINAL(widget);
-        GTK_WIDGET_CLASS(vte_terminal_parent_class)->map(widget);
+        CTK_WIDGET_CLASS(vte_terminal_parent_class)->map(widget);
 
         WIDGET(terminal)->map();
 }
@@ -512,7 +512,7 @@ vte_terminal_unmap(GtkWidget *widget) noexcept
                 vte::log_exception();
         }
 
-        GTK_WIDGET_CLASS(vte_terminal_parent_class)->unmap(widget);
+        CTK_WIDGET_CLASS(vte_terminal_parent_class)->unmap(widget);
 }
 
 static void
@@ -522,8 +522,8 @@ try
 {
         VteTerminal *terminal = VTE_TERMINAL (widget);
 
-        if (GTK_WIDGET_CLASS (vte_terminal_parent_class)->screen_changed) {
-                GTK_WIDGET_CLASS (vte_terminal_parent_class)->screen_changed (widget, previous_screen);
+        if (CTK_WIDGET_CLASS (vte_terminal_parent_class)->screen_changed) {
+                CTK_WIDGET_CLASS (vte_terminal_parent_class)->screen_changed (widget, previous_screen);
         }
 
         WIDGET(terminal)->screen_changed(previous_screen);
@@ -560,10 +560,10 @@ try
         context = ctk_widget_get_style_context(&terminal->widget);
         ctk_style_context_add_provider (context,
                                         VTE_TERMINAL_GET_CLASS (terminal)->priv->fallback_style_provider,
-                                        GTK_STYLE_PROVIDER_PRIORITY_FALLBACK);
+                                        CTK_STYLE_PROVIDER_PRIORITY_FALLBACK);
         ctk_style_context_add_provider (context,
                                         VTE_TERMINAL_GET_CLASS (terminal)->priv->style_provider,
-                                        GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+                                        CTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
         ctk_widget_set_has_window(&terminal->widget, FALSE);
 
@@ -898,7 +898,7 @@ vte_terminal_class_init(VteTerminalClass *klass)
 	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
 
 	gobject_class = G_OBJECT_CLASS(klass);
-	widget_class = GTK_WIDGET_CLASS(klass);
+	widget_class = CTK_WIDGET_CLASS(klass);
 
 	/* Override some of the default handlers. */
         gobject_class->constructed = vte_terminal_constructed;
@@ -2021,17 +2021,17 @@ vte_terminal_class_init(VteTerminalClass *klass)
 
         klass->priv = G_TYPE_CLASS_GET_PRIVATE (klass, VTE_TYPE_TERMINAL, VteTerminalClassPrivate);
 
-        klass->priv->fallback_style_provider = GTK_STYLE_PROVIDER (ctk_css_provider_new ());
+        klass->priv->fallback_style_provider = CTK_STYLE_PROVIDER (ctk_css_provider_new ());
         /* Some themes don't define text_view_bg */
-        ctk_css_provider_load_from_data (GTK_CSS_PROVIDER (klass->priv->fallback_style_provider),
+        ctk_css_provider_load_from_data (CTK_CSS_PROVIDER (klass->priv->fallback_style_provider),
                                          "@define-color text_view_bg @theme_base_color;\n"
                                          "VteTerminal, " VTE_TERMINAL_CSS_NAME " {\n"
                                          "background-color: @text_view_bg;\n"
                                          "color: @theme_text_color;\n"
                                          "}\n",
                                          -1, NULL);
-        klass->priv->style_provider = GTK_STYLE_PROVIDER (ctk_css_provider_new ());
-        ctk_css_provider_load_from_data (GTK_CSS_PROVIDER (klass->priv->style_provider),
+        klass->priv->style_provider = CTK_STYLE_PROVIDER (ctk_css_provider_new ());
+        ctk_css_provider_load_from_data (CTK_CSS_PROVIDER (klass->priv->style_provider),
                                          "VteTerminal, " VTE_TERMINAL_CSS_NAME " {\n"
                                          "padding: 1px 1px 1px 1px;\n"
                                          "}\n",
