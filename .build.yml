@@ -3,6 +3,8 @@
 ##########################################################
 requires:
   debian:
+    - clang-tools
+    - cppcheck
     - gettext
     - gtk-doc-tools
     - libgirepository1.0-dev
