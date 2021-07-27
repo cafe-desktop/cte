@@ -103,7 +103,7 @@ static gboolean process_timeout (gpointer data) noexcept;
 static gboolean update_timeout (gpointer data) noexcept;
 static cairo_region_t *vte_cairo_get_clip_region (cairo_t *cr);
 
-/* these static variables are guarded by the GDK mutex */
+/* these static variables are guarded by the CDK mutex */
 static guint process_timeout_tag = 0;
 static gboolean in_process_timeout;
 static guint update_timeout_tag = 0;
@@ -4541,11 +4541,11 @@ Terminal::widget_key_press(KeyEvent const& event)
 		/* We steal many keypad keys here. */
 		if (!m_im_preedit_active) {
 			switch (keyval) {
-			case GDK_KEY_KP_Add:
-			case GDK_KEY_KP_Subtract:
-			case GDK_KEY_KP_Multiply:
-			case GDK_KEY_KP_Divide:
-			case GDK_KEY_KP_Enter:
+			case CDK_KEY_KP_Add:
+			case CDK_KEY_KP_Subtract:
+			case CDK_KEY_KP_Multiply:
+			case CDK_KEY_KP_Divide:
+			case CDK_KEY_KP_Enter:
 				steal = TRUE;
 				break;
 			default:
@@ -4555,67 +4555,67 @@ Terminal::widget_key_press(KeyEvent const& event)
 				steal = TRUE;
 			}
 			switch (keyval) {
-                        case GDK_KEY_ISO_Lock:
-                        case GDK_KEY_ISO_Level2_Latch:
-                        case GDK_KEY_ISO_Level3_Shift:
-                        case GDK_KEY_ISO_Level3_Latch:
-                        case GDK_KEY_ISO_Level3_Lock:
-                        case GDK_KEY_ISO_Level5_Shift:
-                        case GDK_KEY_ISO_Level5_Latch:
-                        case GDK_KEY_ISO_Level5_Lock:
-                        case GDK_KEY_ISO_Group_Shift:
-                        case GDK_KEY_ISO_Group_Latch:
-                        case GDK_KEY_ISO_Group_Lock:
-                        case GDK_KEY_ISO_Next_Group:
-                        case GDK_KEY_ISO_Next_Group_Lock:
-                        case GDK_KEY_ISO_Prev_Group:
-                        case GDK_KEY_ISO_Prev_Group_Lock:
-                        case GDK_KEY_ISO_First_Group:
-                        case GDK_KEY_ISO_First_Group_Lock:
-                        case GDK_KEY_ISO_Last_Group:
-                        case GDK_KEY_ISO_Last_Group_Lock:
-			case GDK_KEY_Multi_key:
-			case GDK_KEY_Codeinput:
-			case GDK_KEY_SingleCandidate:
-			case GDK_KEY_MultipleCandidate:
-			case GDK_KEY_PreviousCandidate:
-			case GDK_KEY_Kanji:
-			case GDK_KEY_Muhenkan:
-                        case GDK_KEY_Henkan_Mode:
-                        /* case GDK_KEY_Henkan: is GDK_KEY_Henkan_Mode */
-			case GDK_KEY_Romaji:
-			case GDK_KEY_Hiragana:
-			case GDK_KEY_Katakana:
-			case GDK_KEY_Hiragana_Katakana:
-			case GDK_KEY_Zenkaku:
-			case GDK_KEY_Hankaku:
-			case GDK_KEY_Zenkaku_Hankaku:
-			case GDK_KEY_Touroku:
-			case GDK_KEY_Massyo:
-			case GDK_KEY_Kana_Lock:
-			case GDK_KEY_Kana_Shift:
-			case GDK_KEY_Eisu_Shift:
-			case GDK_KEY_Eisu_toggle:
-                        /* case GDK_KEY_Kanji_Bangou: is GDK_KEY_Codeinput */
-                        /* case GDK_KEY_Zen_Koho: is GDK_KEY_MultipleCandidate */
-                        /* case GDK_KEY_Mae_Koho: is GDK_KEY_PreviousCandidate */
-                        /* case GDK_KEY_kana_switch: is GDK_KEY_ISO_Group_Shift */
-                        case GDK_KEY_Hangul:
-                        case GDK_KEY_Hangul_Start:
-                        case GDK_KEY_Hangul_End:
-                        case GDK_KEY_Hangul_Hanja:
-                        case GDK_KEY_Hangul_Jamo:
-                        case GDK_KEY_Hangul_Romaja:
-                        /* case GDK_KEY_Hangul_Codeinput: is GDK_KEY_Codeinput */
-                        case GDK_KEY_Hangul_Jeonja:
-                        case GDK_KEY_Hangul_Banja:
-                        case GDK_KEY_Hangul_PreHanja:
-                        case GDK_KEY_Hangul_PostHanja:
-                        /* case GDK_KEY_Hangul_SingleCandidate: is GDK_KEY_SingleCandidate */
-                        /* case GDK_KEY_Hangul_MultipleCandidate: is GDK_KEY_MultipleCandidate */
-                        /* case GDK_KEY_Hangul_PreviousCandidate: is GDK_KEY_PreviousCandidate */
-                        case GDK_KEY_Hangul_Special:
-                        /* case GDK_KEY_Hangul_switch: is GDK_KEY_ISO_Group_Shift */
+                        case CDK_KEY_ISO_Lock:
+                        case CDK_KEY_ISO_Level2_Latch:
+                        case CDK_KEY_ISO_Level3_Shift:
+                        case CDK_KEY_ISO_Level3_Latch:
+                        case CDK_KEY_ISO_Level3_Lock:
+                        case CDK_KEY_ISO_Level5_Shift:
+                        case CDK_KEY_ISO_Level5_Latch:
+                        case CDK_KEY_ISO_Level5_Lock:
+                        case CDK_KEY_ISO_Group_Shift:
+                        case CDK_KEY_ISO_Group_Latch:
+                        case CDK_KEY_ISO_Group_Lock:
+                        case CDK_KEY_ISO_Next_Group:
+                        case CDK_KEY_ISO_Next_Group_Lock:
+                        case CDK_KEY_ISO_Prev_Group:
+                        case CDK_KEY_ISO_Prev_Group_Lock:
+                        case CDK_KEY_ISO_First_Group:
+                        case CDK_KEY_ISO_First_Group_Lock:
+                        case CDK_KEY_ISO_Last_Group:
+                        case CDK_KEY_ISO_Last_Group_Lock:
+			case CDK_KEY_Multi_key:
+			case CDK_KEY_Codeinput:
+			case CDK_KEY_SingleCandidate:
+			case CDK_KEY_MultipleCandidate:
+			case CDK_KEY_PreviousCandidate:
+			case CDK_KEY_Kanji:
+			case CDK_KEY_Muhenkan:
+                        case CDK_KEY_Henkan_Mode:
+                        /* case CDK_KEY_Henkan: is CDK_KEY_Henkan_Mode */
+			case CDK_KEY_Romaji:
+			case CDK_KEY_Hiragana:
+			case CDK_KEY_Katakana:
+			case CDK_KEY_Hiragana_Katakana:
+			case CDK_KEY_Zenkaku:
+			case CDK_KEY_Hankaku:
+			case CDK_KEY_Zenkaku_Hankaku:
+			case CDK_KEY_Touroku:
+			case CDK_KEY_Massyo:
+			case CDK_KEY_Kana_Lock:
+			case CDK_KEY_Kana_Shift:
+			case CDK_KEY_Eisu_Shift:
+			case CDK_KEY_Eisu_toggle:
+                        /* case CDK_KEY_Kanji_Bangou: is CDK_KEY_Codeinput */
+                        /* case CDK_KEY_Zen_Koho: is CDK_KEY_MultipleCandidate */
+                        /* case CDK_KEY_Mae_Koho: is CDK_KEY_PreviousCandidate */
+                        /* case CDK_KEY_kana_switch: is CDK_KEY_ISO_Group_Shift */
+                        case CDK_KEY_Hangul:
+                        case CDK_KEY_Hangul_Start:
+                        case CDK_KEY_Hangul_End:
+                        case CDK_KEY_Hangul_Hanja:
+                        case CDK_KEY_Hangul_Jamo:
+                        case CDK_KEY_Hangul_Romaja:
+                        /* case CDK_KEY_Hangul_Codeinput: is CDK_KEY_Codeinput */
+                        case CDK_KEY_Hangul_Jeonja:
+                        case CDK_KEY_Hangul_Banja:
+                        case CDK_KEY_Hangul_PreHanja:
+                        case CDK_KEY_Hangul_PostHanja:
+                        /* case CDK_KEY_Hangul_SingleCandidate: is CDK_KEY_SingleCandidate */
+                        /* case CDK_KEY_Hangul_MultipleCandidate: is CDK_KEY_MultipleCandidate */
+                        /* case CDK_KEY_Hangul_PreviousCandidate: is CDK_KEY_PreviousCandidate */
+                        case CDK_KEY_Hangul_Special:
+                        /* case CDK_KEY_Hangul_switch: is CDK_KEY_ISO_Group_Shift */
 
 				steal = FALSE;
 				break;
@@ -4639,7 +4639,7 @@ Terminal::widget_key_press(KeyEvent const& event)
 		handled = FALSE;
 		/* Map the key to a sequence name if we can. */
 		switch (event.keyval()) {
-		case GDK_KEY_BackSpace:
+		case CDK_KEY_BackSpace:
 			switch (m_backspace_binding) {
 			case EraseMode::eASCII_BACKSPACE:
 				normal = g_strdup("");
@@ -4688,7 +4688,7 @@ Terminal::widget_key_press(KeyEvent const& event)
 				break;
 			}
                         /* Toggle ^H vs ^? if Ctrl is pressed */
-                        if (normal_length == 1 && m_modifiers & GDK_CONTROL_MASK) {
+                        if (normal_length == 1 && m_modifiers & CDK_CONTROL_MASK) {
                                 if (normal[0] == '\010')
                                         normal[0] = '\177';
                                 else if (normal[0] == '\177')
@@ -4696,8 +4696,8 @@ Terminal::widget_key_press(KeyEvent const& event)
                         }
 			handled = TRUE;
 			break;
-		case GDK_KEY_KP_Delete:
-		case GDK_KEY_Delete:
+		case CDK_KEY_KP_Delete:
+		case CDK_KEY_Delete:
 			switch (m_delete_binding) {
 			case EraseMode::eASCII_BACKSPACE:
 				normal = g_strdup("\010");
@@ -4728,96 +4728,96 @@ Terminal::widget_key_press(KeyEvent const& event)
                         /* FIXMEchpe: why? this overrides the FALSE set above? */
 			suppress_alt_esc = TRUE;
 			break;
-		case GDK_KEY_KP_Insert:
-		case GDK_KEY_Insert:
-			if (m_modifiers & GDK_SHIFT_MASK) {
-				if (m_modifiers & GDK_CONTROL_MASK) {
+		case CDK_KEY_KP_Insert:
+		case CDK_KEY_Insert:
+			if (m_modifiers & CDK_SHIFT_MASK) {
+				if (m_modifiers & CDK_CONTROL_MASK) {
                                         emit_paste_clipboard();
 					handled = TRUE;
 					suppress_alt_esc = TRUE;
 				} else {
-                                        widget_paste(GDK_SELECTION_PRIMARY);
+                                        widget_paste(CDK_SELECTION_PRIMARY);
 					handled = TRUE;
 					suppress_alt_esc = TRUE;
 				}
-			} else if (m_modifiers & GDK_CONTROL_MASK) {
+			} else if (m_modifiers & CDK_CONTROL_MASK) {
                                 emit_copy_clipboard();
 				handled = TRUE;
 				suppress_alt_esc = TRUE;
 			}
 			break;
 		/* Keypad/motion keys. */
-		case GDK_KEY_KP_Up:
-		case GDK_KEY_Up:
+		case CDK_KEY_KP_Up:
+		case CDK_KEY_Up:
 			if (m_screen == &m_normal_screen &&
-			    m_modifiers & GDK_CONTROL_MASK &&
-                            m_modifiers & GDK_SHIFT_MASK) {
+			    m_modifiers & CDK_CONTROL_MASK &&
+                            m_modifiers & CDK_SHIFT_MASK) {
 				scroll_lines(-1);
 				scrolled = TRUE;
 				handled = TRUE;
 				suppress_alt_esc = TRUE;
 			}
 			break;
-		case GDK_KEY_KP_Down:
-		case GDK_KEY_Down:
+		case CDK_KEY_KP_Down:
+		case CDK_KEY_Down:
 			if (m_screen == &m_normal_screen &&
-			    m_modifiers & GDK_CONTROL_MASK &&
-                            m_modifiers & GDK_SHIFT_MASK) {
+			    m_modifiers & CDK_CONTROL_MASK &&
+                            m_modifiers & CDK_SHIFT_MASK) {
 				scroll_lines(1);
 				scrolled = TRUE;
 				handled = TRUE;
 				suppress_alt_esc = TRUE;
 			}
 			break;
-		case GDK_KEY_KP_Page_Up:
-		case GDK_KEY_Page_Up:
+		case CDK_KEY_KP_Page_Up:
+		case CDK_KEY_Page_Up:
 			if (m_screen == &m_normal_screen &&
-			    m_modifiers & GDK_SHIFT_MASK) {
+			    m_modifiers & CDK_SHIFT_MASK) {
 				scroll_pages(-1);
 				scrolled = TRUE;
 				handled = TRUE;
 				suppress_alt_esc = TRUE;
 			}
 			break;
-		case GDK_KEY_KP_Page_Down:
-		case GDK_KEY_Page_Down:
+		case CDK_KEY_KP_Page_Down:
+		case CDK_KEY_Page_Down:
 			if (m_screen == &m_normal_screen &&
-			    m_modifiers & GDK_SHIFT_MASK) {
+			    m_modifiers & CDK_SHIFT_MASK) {
 				scroll_pages(1);
 				scrolled = TRUE;
 				handled = TRUE;
 				suppress_alt_esc = TRUE;
 			}
 			break;
-		case GDK_KEY_KP_Home:
-		case GDK_KEY_Home:
+		case CDK_KEY_KP_Home:
+		case CDK_KEY_Home:
 			if (m_screen == &m_normal_screen &&
-			    m_modifiers & GDK_SHIFT_MASK) {
+			    m_modifiers & CDK_SHIFT_MASK) {
 				maybe_scroll_to_top();
 				scrolled = TRUE;
 				handled = TRUE;
 			}
 			break;
-		case GDK_KEY_KP_End:
-		case GDK_KEY_End:
+		case CDK_KEY_KP_End:
+		case CDK_KEY_End:
 			if (m_screen == &m_normal_screen &&
-			    m_modifiers & GDK_SHIFT_MASK) {
+			    m_modifiers & CDK_SHIFT_MASK) {
 				maybe_scroll_to_bottom();
 				scrolled = TRUE;
 				handled = TRUE;
 			}
 			break;
 		/* Let Shift +/- tweak the font, like XTerm does. */
-		case GDK_KEY_KP_Add:
-		case GDK_KEY_KP_Subtract:
-			if (m_modifiers & (GDK_SHIFT_MASK | GDK_CONTROL_MASK)) {
+		case CDK_KEY_KP_Add:
+		case CDK_KEY_KP_Subtract:
+			if (m_modifiers & (CDK_SHIFT_MASK | CDK_CONTROL_MASK)) {
 				switch (keyval) {
-				case GDK_KEY_KP_Add:
+				case CDK_KEY_KP_Add:
 					emit_increase_font_size();
 					handled = TRUE;
 					suppress_alt_esc = TRUE;
 					break;
-				case GDK_KEY_KP_Subtract:
+				case CDK_KEY_KP_Subtract:
 					emit_decrease_font_size();
 					handled = TRUE;
 					suppress_alt_esc = TRUE;
@@ -4833,10 +4833,10 @@ Terminal::widget_key_press(KeyEvent const& event)
                 if (handled == FALSE) {
                         if (G_UNLIKELY (m_enable_bidi &&
                                         m_modes_private.VTE_BIDI_SWAP_ARROW_KEYS() &&
-                                        (keyval == GDK_KEY_Left ||
-                                         keyval == GDK_KEY_Right ||
-                                         keyval == GDK_KEY_KP_Left ||
-                                         keyval == GDK_KEY_KP_Right))) {
+                                        (keyval == CDK_KEY_Left ||
+                                         keyval == CDK_KEY_Right ||
+                                         keyval == CDK_KEY_KP_Left ||
+                                         keyval == CDK_KEY_KP_Right))) {
                                 /* In keyboard arrow swapping mode, the left and right arrows need swapping
                                  * if the cursor stands inside a (possibly autodetected) RTL paragraph. */
                                 ensure_row();
@@ -4861,17 +4861,17 @@ Terminal::widget_key_press(KeyEvent const& event)
                                 }
                                 if (rtl) {
                                         switch (keyval) {
-                                        case GDK_KEY_Left:
-                                                keyval = GDK_KEY_Right;
+                                        case CDK_KEY_Left:
+                                                keyval = CDK_KEY_Right;
                                                 break;
-                                        case GDK_KEY_Right:
-                                                keyval = GDK_KEY_Left;
+                                        case CDK_KEY_Right:
+                                                keyval = CDK_KEY_Left;
                                                 break;
-                                        case GDK_KEY_KP_Left:
-                                                keyval = GDK_KEY_KP_Right;
+                                        case CDK_KEY_KP_Left:
+                                                keyval = CDK_KEY_KP_Right;
                                                 break;
-                                        case GDK_KEY_KP_Right:
-                                                keyval = GDK_KEY_KP_Left;
+                                        case CDK_KEY_KP_Right:
+                                                keyval = CDK_KEY_KP_Left;
                                                 break;
                                         }
                                 }
@@ -4890,7 +4890,7 @@ Terminal::widget_key_press(KeyEvent const& event)
 		}
 
 		/* Shall we do this here or earlier?  See bug 375112 and bug 589557 */
-		if (m_modifiers & GDK_CONTROL_MASK && widget())
+		if (m_modifiers & CDK_CONTROL_MASK && widget())
                         keyval = widget()->key_event_translate_ctrlkey(event);
 
 		/* If we didn't manage to do anything, try to salvage a
@@ -4913,7 +4913,7 @@ Terminal::widget_key_press(KeyEvent const& event)
 				}
 			}
 			if ((normal != NULL) &&
-			    (m_modifiers & GDK_CONTROL_MASK)) {
+			    (m_modifiers & CDK_CONTROL_MASK)) {
 				/* Replace characters which have "control"
 				 * counterparts with those counterparts. */
 				for (size_t i = 0; i < normal_length; i++) {
@@ -5555,13 +5555,13 @@ Terminal::feed_mouse_event(vte::grid::coords const& rowcol /* confined */,
 
 	/* Encode the modifiers. */
         if (m_mouse_tracking_mode >= MouseTrackingMode::eSEND_XY_ON_BUTTON) {
-                if (m_modifiers & GDK_SHIFT_MASK) {
+                if (m_modifiers & CDK_SHIFT_MASK) {
                         cb |= 4;
                 }
                 if (m_modifiers & VTE_ALT_MASK) {
                         cb |= 8;
                 }
-                if (m_modifiers & GDK_CONTROL_MASK) {
+                if (m_modifiers & CDK_CONTROL_MASK) {
                         cb |= 16;
                 }
         }
@@ -6892,13 +6892,13 @@ Terminal::widget_mouse_press(MouseEvent const& event)
 			/* If we're in event mode, and the user held down the
 			 * shift key, we start selecting. */
 			if (m_mouse_tracking_mode != MouseTrackingMode::eNONE) {
-				if (m_modifiers & GDK_SHIFT_MASK) {
+				if (m_modifiers & CDK_SHIFT_MASK) {
 					start_selecting = TRUE;
 				}
 			} else {
 				/* If the user hit shift, then extend the
 				 * selection instead. */
-				if ((m_modifiers & GDK_SHIFT_MASK) &&
+				if ((m_modifiers & CDK_SHIFT_MASK) &&
                                     !m_selection_resolved.empty()) {
 					extend_selecting = TRUE;
 				} else {
@@ -6908,7 +6908,7 @@ Terminal::widget_mouse_press(MouseEvent const& event)
 			if (start_selecting) {
 				deselect_all();
                                 m_will_select_after_threshold = true;
-                                m_selection_block_mode = !!(m_modifiers & GDK_CONTROL_MASK);
+                                m_selection_block_mode = !!(m_modifiers & CDK_CONTROL_MASK);
 				handled = true;
 			}
 			if (extend_selecting) {
@@ -6924,10 +6924,10 @@ Terminal::widget_mouse_press(MouseEvent const& event)
 		/* Paste if the user pressed shift or we're not sending events
 		 * to the app. */
                 case MouseEvent::Button::eMIDDLE:
-			if ((m_modifiers & GDK_SHIFT_MASK) ||
+			if ((m_modifiers & CDK_SHIFT_MASK) ||
 			    m_mouse_tracking_mode == MouseTrackingMode::eNONE) {
                                 if (widget()->primary_paste_enabled()) {
-                                        widget_paste(GDK_SELECTION_PRIMARY);
+                                        widget_paste(CDK_SELECTION_PRIMARY);
                                         handled = true;
                                 }
 			}
@@ -7745,8 +7745,8 @@ Terminal::Terminal(vte::platform::Widget* w,
 
 	/* Selection info. */
 	display = ctk_widget_get_display(m_widget);
-	m_clipboard[VTE_SELECTION_PRIMARY] = ctk_clipboard_get_for_display(display, GDK_SELECTION_PRIMARY);
-	m_clipboard[VTE_SELECTION_CLIPBOARD] = ctk_clipboard_get_for_display(display, GDK_SELECTION_CLIPBOARD);
+	m_clipboard[VTE_SELECTION_PRIMARY] = ctk_clipboard_get_for_display(display, CDK_SELECTION_PRIMARY);
+	m_clipboard[VTE_SELECTION_CLIPBOARD] = ctk_clipboard_get_for_display(display, CDK_SELECTION_CLIPBOARD);
         m_selection_owned[VTE_SELECTION_PRIMARY] = false;
         m_selection_owned[VTE_SELECTION_CLIPBOARD] = false;
 
@@ -9421,7 +9421,7 @@ Terminal::widget_mouse_scroll(MouseEvent const& event)
 		 * so fake a few cursor keystrokes. */
 
 		_vte_keymap_map (
-				cnt > 0 ? GDK_KEY_Down : GDK_KEY_Up,
+				cnt > 0 ? CDK_KEY_Down : CDK_KEY_Up,
 				m_modifiers,
                                 m_modes_private.DEC_APPLICATION_CURSOR_KEYS(),
                                 m_modes_private.DEC_APPLICATION_KEYPAD(),
@@ -10051,7 +10051,7 @@ add_update_timeout(vte::terminal::Terminal* that)
 		_vte_debug_print (VTE_DEBUG_TIMEOUT,
 				"Starting update timeout\n");
 		update_timeout_tag =
-			g_timeout_add_full (GDK_PRIORITY_REDRAW,
+			g_timeout_add_full (CDK_PRIORITY_REDRAW,
 					VTE_UPDATE_TIMEOUT,
 					update_timeout, NULL,
 					NULL);
