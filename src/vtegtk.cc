@@ -2024,14 +2024,16 @@ vte_terminal_class_init(VteTerminalClass *klass)
         klass->priv->fallback_style_provider = GTK_STYLE_PROVIDER (gtk_css_provider_new ());
         /* Some themes don't define text_view_bg */
         gtk_css_provider_load_from_data (GTK_CSS_PROVIDER (klass->priv->fallback_style_provider),
-                                         "@define-color text_view_bg @theme_base_color;",
+                                         "@define-color text_view_bg @theme_base_color;\n"
+                                         "VteTerminal, " VTE_TERMINAL_CSS_NAME " {\n"
+                                         "background-color: @text_view_bg;\n"
+                                         "color: @theme_text_color;\n"
+                                         "}\n",
                                          -1, NULL);
         klass->priv->style_provider = GTK_STYLE_PROVIDER (gtk_css_provider_new ());
         gtk_css_provider_load_from_data (GTK_CSS_PROVIDER (klass->priv->style_provider),
                                          "VteTerminal, " VTE_TERMINAL_CSS_NAME " {\n"
                                          "padding: 1px 1px 1px 1px;\n"
-                                         "background-color: @text_view_bg;\n"
-                                         "color: @theme_text_color;\n"
                                          "}\n",
                                          -1, NULL);
 
