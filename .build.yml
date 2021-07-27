@@ -7,7 +7,7 @@ requires:
     - cppcheck
     - gettext
     - git
-    - ctk-doc-tools
+    - gtk-doc-tools
     - libgirepository1.0-dev
     - libglib2.0-dev
     - libgnutls28-dev
