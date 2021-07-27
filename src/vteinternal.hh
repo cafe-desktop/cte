@@ -80,11 +80,11 @@ namespace platform {
  * Cursor:
  *
  * Holds a platform cursor. This is either a named cursor (string),
- * a reference to a GdkCursor*, or a cursor type.
+ * a reference to a CdkCursor*, or a cursor type.
  */
 using Cursor = std::variant<std::string,
-                            vte::glib::RefPtr<GdkCursor>,
-                            GdkCursorType>;
+                            vte::glib::RefPtr<CdkCursor>,
+                            CdkCursorType>;
 
 } // namespace platform
 } // namespace vte
@@ -273,7 +273,7 @@ protected:
 
         EventBase() noexcept = default;
 
-        constexpr EventBase(GdkEvent* cdk_event,
+        constexpr EventBase(CdkEvent* cdk_event,
                             Type type,
                             unsigned timestamp) noexcept
                 : m_platform_event{cdk_event},
@@ -296,7 +296,7 @@ public:
         constexpr auto const type()        const noexcept { return m_type;        }
 
 private:
-        GdkEvent* m_platform_event;
+        CdkEvent* m_platform_event;
         Type m_type;
         unsigned m_timestamp;
 }; // class EventBase
@@ -309,7 +309,7 @@ protected:
 
         KeyEvent() noexcept = default;
 
-        constexpr KeyEvent(GdkEvent* cdk_event,
+        constexpr KeyEvent(CdkEvent* cdk_event,
                            Type type,
                            unsigned timestamp,
                            unsigned modifiers,
@@ -347,7 +347,7 @@ public:
 
         auto const string() const noexcept
         {
-                return reinterpret_cast<GdkEventKey*>(platform_event())->string;
+                return reinterpret_cast<CdkEventKey*>(platform_event())->string;
         }
 
 private:
@@ -385,7 +385,7 @@ protected:
 
         MouseEvent() noexcept = default;
 
-        constexpr MouseEvent(GdkEvent* cdk_event,
+        constexpr MouseEvent(CdkEvent* cdk_event,
                              Type type,
                              unsigned timestamp,
                              unsigned modifiers,
@@ -433,7 +433,7 @@ public:
                  */
                 if (!is_mouse_scroll())
                         return ScrollDirection::eNONE;
-                switch (reinterpret_cast<GdkEventScroll*>(platform_event())->direction) {
+                switch (reinterpret_cast<CdkEventScroll*>(platform_event())->direction) {
                 case CDK_SCROLL_UP:     return ScrollDirection::eUP;
                 case CDK_SCROLL_DOWN:   return ScrollDirection::eDOWN;
                 case CDK_SCROLL_LEFT:   return ScrollDirection::eLEFT;
@@ -1101,7 +1101,7 @@ public:
         void set_border_padding(CtkBorder const* padding);
         void set_cursor_aspect(float aspect);
 
-        void widget_paste(GdkAtom board);
+        void widget_paste(CdkAtom board);
         void widget_copy(VteSelection sel,
                          VteFormat format);
         void widget_paste_received(char const* text);
@@ -1351,9 +1351,9 @@ public:
                                 guint rows);
         void emit_copy_clipboard();
         void emit_paste_clipboard();
-        void emit_hyperlink_hover_uri_changed(const GdkRectangle *bbox);
+        void emit_hyperlink_hover_uri_changed(const CdkRectangle *bbox);
 
-        void hyperlink_invalidate_and_get_bbox(vte::base::Ring::hyperlink_idx_t idx, GdkRectangle *bbox);
+        void hyperlink_invalidate_and_get_bbox(vte::base::Ring::hyperlink_idx_t idx, CdkRectangle *bbox);
         void hyperlink_hilite_update();
 
         void match_contents_clear();
@@ -1381,9 +1381,9 @@ public:
         void regex_match_remove(int tag) noexcept;
         void regex_match_remove_all() noexcept;
         void regex_match_set_cursor(int tag,
-                                    GdkCursor *cdk_cursor);
+                                    CdkCursor *cdk_cursor);
         void regex_match_set_cursor(int tag,
-                                    GdkCursorType cursor_type);
+                                    CdkCursorType cursor_type);
         void regex_match_set_cursor(int tag,
                                     char const* cursor_name);
         bool match_rowcol_to_offset(vte::grid::column_t column,

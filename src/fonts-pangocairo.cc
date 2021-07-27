@@ -366,7 +366,7 @@ FontInfo::create_for_context(vte::glib::RefPtr<PangoContext> context,
 }
 
 FontInfo*
-FontInfo::create_for_screen(GdkScreen* screen,
+FontInfo::create_for_screen(CdkScreen* screen,
                             PangoFontDescription const* desc,
                             PangoLanguage* language)
 {

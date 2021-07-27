@@ -94,13 +94,13 @@ public:
         char** dingus{nullptr};
         char** exec_argv{nullptr};
         char** environment{nullptr};
-        GdkPixbuf* background_pixbuf{nullptr};
-        GdkRGBA bg_color{1.0, 1.0, 1.0, 1.0};
-        GdkRGBA fg_color{0.0, 0.0, 0.0, 1.0};
-        GdkRGBA cursor_bg_color{};
-        GdkRGBA cursor_fg_color{};
-        GdkRGBA hl_bg_color{};
-        GdkRGBA hl_fg_color{};
+        CdkPixbuf* background_pixbuf{nullptr};
+        CdkRGBA bg_color{1.0, 1.0, 1.0, 1.0};
+        CdkRGBA fg_color{0.0, 0.0, 0.0, 1.0};
+        CdkRGBA cursor_bg_color{};
+        CdkRGBA cursor_fg_color{};
+        CdkRGBA hl_bg_color{};
+        CdkRGBA hl_fg_color{};
         int cjk_ambiguous_width{1};
         int extra_margin{-1};
         int scrollback_lines{-1 /* infinite */};
@@ -188,11 +188,11 @@ private:
         }
 
         bool parse_color(char const* str,
-                         GdkRGBA* value,
+                         CdkRGBA* value,
                          bool* value_set,
                          GError** error)
         {
-                GdkRGBA color;
+                CdkRGBA color;
                 if (!cdk_rgba_parse(&color, str)) {
                         g_set_error(error, G_OPTION_ERROR, G_OPTION_ERROR_BAD_VALUE,
                                     "Failed to parse \"%s\" as color", str);
@@ -463,14 +463,14 @@ public:
                 return alpha;
         }
 
-        GdkRGBA get_color_bg() const
+        CdkRGBA get_color_bg() const
         {
-                GdkRGBA color{bg_color};
+                CdkRGBA color{bg_color};
                 color.alpha = get_alpha_bg();
                 return color;
         }
 
-        GdkRGBA get_color_fg() const
+        CdkRGBA get_color_fg() const
         {
                 return fg_color;
         }
@@ -1035,7 +1035,7 @@ vteapp_terminal_draw(CtkWidget* widget,
                 cairo_rectangle(cr, 0.0, 0.0,
                                 ctk_widget_get_allocated_width(widget),
                                 ctk_widget_get_allocated_height(widget));
-                GdkRGBA bg;
+                CdkRGBA bg;
                 vte_terminal_get_color_background_for_draw(VTE_TERMINAL(terminal), &bg);
                 cairo_set_source_rgba(cr, bg.red, bg.green, bg.blue, 1.0);
                 cairo_paint(cr);
@@ -1078,10 +1078,10 @@ vteapp_terminal_style_updated(CtkWidget* widget)
         terminal->has_backdrop = (flags & CTK_STATE_FLAG_BACKDROP) != 0;
 
         if (options.use_theme_colors) {
-                auto theme_fg = GdkRGBA{};
+                auto theme_fg = CdkRGBA{};
                 ctk_style_context_get_color(context, flags, &theme_fg);
                 G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
-                auto theme_bg = GdkRGBA{};
+                auto theme_bg = CdkRGBA{};
                 ctk_style_context_get_background_color(context, flags, &theme_bg);
                 G_GNUC_END_IGNORE_DEPRECATIONS;
 
@@ -1253,7 +1253,7 @@ vteapp_window_update_geometry(VteappWindow* window)
                      chrome_height != window->cached_chrome_height ||
                      csd_width != window->cached_csd_width ||
                      csd_width != window->cached_csd_height)) {
-                        GdkGeometry geometry;
+                        CdkGeometry geometry;
 
                         geometry.base_width = csd_width + chrome_width;
                         geometry.base_height = csd_height + chrome_height;
@@ -1265,7 +1265,7 @@ vteapp_window_update_geometry(VteappWindow* window)
                         ctk_window_set_geometry_hints(CTK_WINDOW(window),
                                                       nullptr,
                                                       &geometry,
-                                                      GdkWindowHints(CDK_HINT_RESIZE_INC |
+                                                      CdkWindowHints(CDK_HINT_RESIZE_INC |
                                                                      CDK_HINT_MIN_SIZE |
                                                                      CDK_HINT_BASE_SIZE));
 
@@ -1558,7 +1558,7 @@ window_update_copy_sensitivity(VteappWindow* window)
 static void
 window_update_paste_sensitivity(VteappWindow* window)
 {
-        GdkAtom* targets;
+        CdkAtom* targets;
         int n_targets;
 
         bool can_paste = false;
@@ -1613,7 +1613,7 @@ window_action_reset_cb(GSimpleAction* action,
 {
         VteappWindow* window = VTEAPP_WINDOW(data);
         bool clear;
-        GdkModifierType modifiers;
+        CdkModifierType modifiers;
 
         if (parameter != nullptr)
                 clear = g_variant_get_boolean(parameter);
@@ -1657,7 +1657,7 @@ static bool
 vteapp_window_show_context_menu(VteappWindow* window,
                                 guint button,
                                 guint32 timestamp,
-                                GdkEvent* event)
+                                CdkEvent* event)
 {
         if (options.no_context_menu)
                 return false;
@@ -1743,14 +1743,14 @@ window_popup_menu_cb(CtkWidget* widget,
 
 static gboolean
 window_button_press_cb(CtkWidget* widget,
-                       GdkEventButton* event,
+                       CdkEventButton* event,
                        VteappWindow* window)
 {
         if (event->button != CDK_BUTTON_SECONDARY)
                 return false;
 
         return vteapp_window_show_context_menu(window, event->button, event->time,
-                                               reinterpret_cast<GdkEvent*>(event));
+                                               reinterpret_cast<CdkEvent*>(event));
 }
 
 static void
@@ -1803,7 +1803,7 @@ window_child_exited_cb(VteTerminal* term,
 
 static void
 window_clipboard_owner_change_cb(CtkClipboard* clipboard,
-                                 GdkEvent* event,
+                                 CdkEvent* event,
                                  VteappWindow* window)
 {
         window_update_paste_sensitivity(window);
@@ -2228,7 +2228,7 @@ vteapp_window_style_updated(CtkWidget* widget)
 
 static gboolean
 vteapp_window_state_event (CtkWidget* widget,
-                           GdkEventWindowState* event)
+                           CdkEventWindowState* event)
 {
         VteappWindow* window = VTEAPP_WINDOW(widget);
 

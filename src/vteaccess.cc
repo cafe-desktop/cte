@@ -665,7 +665,7 @@ vte_terminal_accessible_title_changed(VteTerminal *terminal, gpointer data)
 /* Reflect visibility-notify events. */
 static gboolean
 vte_terminal_accessible_visibility_notify(VteTerminal *terminal,
-					  GdkEventVisibility *event,
+					  CdkEventVisibility *event,
 					  gpointer data)
 {
         VteTerminalAccessible *accessible = (VteTerminalAccessible *)data;

@@ -966,7 +966,7 @@ Terminal::emit_paste_clipboard()
 
 /* Emit a "hyperlink_hover_uri_changed" signal. */
 void
-Terminal::emit_hyperlink_hover_uri_changed(const GdkRectangle *bbox)
+Terminal::emit_hyperlink_hover_uri_changed(const CdkRectangle *bbox)
 {
         GObject *object = G_OBJECT(m_terminal);
 
@@ -5717,7 +5717,7 @@ Terminal::maybe_send_mouse_drag(vte::grid::coords const& unconfined_rowcol,
  */
 void
 Terminal::hyperlink_invalidate_and_get_bbox(vte::base::Ring::hyperlink_idx_t idx,
-                                                      GdkRectangle *bbox)
+                                                      CdkRectangle *bbox)
 {
         auto first_row = first_displayed_row();
         auto end_row = last_displayed_row() + 1;
@@ -5775,7 +5775,7 @@ Terminal::hyperlink_hilite_update()
         bool do_check_hilite;
         vte::grid::coords rowcol;
         vte::base::Ring::hyperlink_idx_t new_hyperlink_hover_idx = 0;
-        GdkRectangle bbox;
+        CdkRectangle bbox;
         const char *separator;
 
         if (!m_allow_hyperlink)
@@ -6612,7 +6612,7 @@ Terminal::widget_copy(VteSelection sel,
 
 /* Paste from the given clipboard. */
 void
-Terminal::widget_paste(GdkAtom board)
+Terminal::widget_paste(CdkAtom board)
 {
         if (!m_input_enabled)
                 return;
@@ -7700,7 +7700,7 @@ Terminal::Terminal(vte::platform::Widget* w,
         set_allocated_rect(allocation);
 
 	int i;
-	GdkDisplay *display;
+	CdkDisplay *display;
 
 	/* NOTE! We allocated zeroed memory, just fill in non-zero stuff. */
 

@@ -45,13 +45,13 @@ _VTE_DEPRECATED
 _VTE_PUBLIC
 void vte_terminal_match_set_cursor(VteTerminal *terminal,
                                    int tag,
-                                   GdkCursor *cursor) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+                                   CdkCursor *cursor) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 _VTE_DEPRECATED
 _VTE_PUBLIC
 void vte_terminal_match_set_cursor_type(VteTerminal *terminal,
 					int tag,
-                                        GdkCursorType cursor_type) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+                                        CdkCursorType cursor_type) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 _VTE_DEPRECATED
 _VTE_PUBLIC
@@ -62,7 +62,7 @@ char *vte_terminal_match_check(VteTerminal *terminal,
 _VTE_DEPRECATED
 _VTE_PUBLIC
 gboolean vte_terminal_event_check_gregex_simple(VteTerminal *terminal,
-                                                GdkEvent *event,
+                                                CdkEvent *event,
                                                 GRegex **regexes,
                                                 gsize n_regexes,
                                                 GRegexMatchFlags match_flags,
@@ -103,7 +103,7 @@ void vte_terminal_copy_clipboard(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_G
 _VTE_DEPRECATED
 _VTE_PUBLIC
 void vte_terminal_get_geometry_hints(VteTerminal *terminal,
-                                     GdkGeometry *hints,
+                                     CdkGeometry *hints,
                                      int min_rows,
                                      int min_columns) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) _VTE_GNUC_NONNULL(2);
 

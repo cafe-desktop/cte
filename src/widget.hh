@@ -72,21 +72,21 @@ public:
                                   int *natural_height) const noexcept { m_terminal->widget_get_preferred_height(minimum_height, natural_height); }
         void size_allocate(CtkAllocation *allocation) noexcept;
 
-        void focus_in(GdkEventFocus *event) noexcept { m_terminal->widget_focus_in(); }
-        void focus_out(GdkEventFocus *event) noexcept { m_terminal->widget_focus_out(); }
-        bool key_press(GdkEventKey *event) noexcept { return m_terminal->widget_key_press(key_event_from_cdk(event)); }
-        bool key_release(GdkEventKey *event) noexcept { return m_terminal->widget_key_release(key_event_from_cdk(event)); }
-        bool button_press(GdkEventButton *event) noexcept { return m_terminal->widget_mouse_press(*mouse_event_from_cdk(reinterpret_cast<GdkEvent*>(event))); }
-        bool button_release(GdkEventButton *event) noexcept { return m_terminal->widget_mouse_release(*mouse_event_from_cdk(reinterpret_cast<GdkEvent*>(event))); }
-        void enter(GdkEventCrossing *event) noexcept { m_terminal->widget_mouse_enter(*mouse_event_from_cdk(reinterpret_cast<GdkEvent*>(event))); }
-        void leave(GdkEventCrossing *event) noexcept { m_terminal->widget_mouse_leave(*mouse_event_from_cdk(reinterpret_cast<GdkEvent*>(event))); }
-        bool scroll(GdkEventScroll *event) noexcept { return m_terminal->widget_mouse_scroll(*mouse_event_from_cdk(reinterpret_cast<GdkEvent*>(event))); }
-        bool motion_notify(GdkEventMotion *event) noexcept { return m_terminal->widget_mouse_motion(*mouse_event_from_cdk(reinterpret_cast<GdkEvent*>(event))); }
+        void focus_in(CdkEventFocus *event) noexcept { m_terminal->widget_focus_in(); }
+        void focus_out(CdkEventFocus *event) noexcept { m_terminal->widget_focus_out(); }
+        bool key_press(CdkEventKey *event) noexcept { return m_terminal->widget_key_press(key_event_from_cdk(event)); }
+        bool key_release(CdkEventKey *event) noexcept { return m_terminal->widget_key_release(key_event_from_cdk(event)); }
+        bool button_press(CdkEventButton *event) noexcept { return m_terminal->widget_mouse_press(*mouse_event_from_cdk(reinterpret_cast<CdkEvent*>(event))); }
+        bool button_release(CdkEventButton *event) noexcept { return m_terminal->widget_mouse_release(*mouse_event_from_cdk(reinterpret_cast<CdkEvent*>(event))); }
+        void enter(CdkEventCrossing *event) noexcept { m_terminal->widget_mouse_enter(*mouse_event_from_cdk(reinterpret_cast<CdkEvent*>(event))); }
+        void leave(CdkEventCrossing *event) noexcept { m_terminal->widget_mouse_leave(*mouse_event_from_cdk(reinterpret_cast<CdkEvent*>(event))); }
+        bool scroll(CdkEventScroll *event) noexcept { return m_terminal->widget_mouse_scroll(*mouse_event_from_cdk(reinterpret_cast<CdkEvent*>(event))); }
+        bool motion_notify(CdkEventMotion *event) noexcept { return m_terminal->widget_mouse_motion(*mouse_event_from_cdk(reinterpret_cast<CdkEvent*>(event))); }
 
         void grab_focus() noexcept { ctk_widget_grab_focus(ctk()); }
 
         bool primary_paste_enabled() const noexcept;
-        void paste(GdkAtom board) noexcept { m_terminal->widget_paste(board); }
+        void paste(CdkAtom board) noexcept { m_terminal->widget_paste(board); }
         void copy(VteSelection sel,
                   VteFormat format) noexcept { m_terminal->widget_copy(sel, format); }
         void paste_received(char const* text) noexcept { m_terminal->widget_paste_received(text); }
@@ -95,7 +95,7 @@ public:
                                  CtkSelectionData *data,
                                  guint info) noexcept { m_terminal->widget_clipboard_requested(target_clipboard, data, info); }
 
-        void screen_changed (GdkScreen *previous_screen) noexcept;
+        void screen_changed (CdkScreen *previous_screen) noexcept;
         void settings_changed() noexcept;
 
         void beep() noexcept;
@@ -147,7 +147,7 @@ public:
                 return terminal()->regex_match_check(column, row, tag);
         }
 
-        char* regex_match_check(GdkEvent* event,
+        char* regex_match_check(CdkEvent* event,
                                 int* tag)
         {
                 if (auto mouse_event = mouse_event_from_cdk(event))
@@ -156,7 +156,7 @@ public:
                         return nullptr;
         }
 
-        bool regex_match_check_extra(GdkEvent* event,
+        bool regex_match_check_extra(CdkEvent* event,
                                      vte::base::Regex const** regexes,
                                      size_t n_regexes,
                                      uint32_t match_flags,
@@ -168,7 +168,7 @@ public:
                         return false;
         }
 
-        char* hyperlink_check(GdkEvent* event)
+        char* hyperlink_check(CdkEvent* event)
         {
                 if (auto mouse_event = mouse_event_from_cdk(event))
                         return terminal()->hyperlink_check(*mouse_event);
@@ -187,17 +187,17 @@ protected:
                 eHyperlink
         };
 
-        GdkWindow* event_window() const noexcept { return m_event_window; }
+        CdkWindow* event_window() const noexcept { return m_event_window; }
 
         bool realized() const noexcept
         {
                 return ctk_widget_get_realized(m_widget);
         }
 
-        vte::glib::RefPtr<GdkCursor> create_cursor(GdkCursorType cursor_type) const noexcept;
+        vte::glib::RefPtr<CdkCursor> create_cursor(CdkCursorType cursor_type) const noexcept;
 
         void set_cursor(CursorType type) noexcept;
-        void set_cursor(GdkCursor* cursor) noexcept;
+        void set_cursor(CdkCursor* cursor) noexcept;
         void set_cursor(Cursor const& cursor) noexcept;
 
         bool im_filter_keypress(vte::terminal::KeyEvent const& event) noexcept;
@@ -221,22 +221,22 @@ public: // FIXMEchpe
         void im_preedit_changed() noexcept;
 
 private:
-        unsigned read_modifiers_from_cdk(GdkEvent* event) const noexcept;
-        vte::terminal::KeyEvent key_event_from_cdk(GdkEventKey* event) const;
-        std::optional<vte::terminal::MouseEvent> mouse_event_from_cdk(GdkEvent* event) const;
+        unsigned read_modifiers_from_cdk(CdkEvent* event) const noexcept;
+        vte::terminal::KeyEvent key_event_from_cdk(CdkEventKey* event) const;
+        std::optional<vte::terminal::MouseEvent> mouse_event_from_cdk(CdkEvent* event) const;
 
         CtkWidget* m_widget;
 
         vte::terminal::Terminal* m_terminal;
 
         /* Event window */
-        GdkWindow *m_event_window;
+        CdkWindow *m_event_window;
 
         /* Cursors */
-        vte::glib::RefPtr<GdkCursor> m_default_cursor;
-        vte::glib::RefPtr<GdkCursor> m_invisible_cursor;
-        vte::glib::RefPtr<GdkCursor> m_mousing_cursor;
-        vte::glib::RefPtr<GdkCursor> m_hyperlink_cursor;
+        vte::glib::RefPtr<CdkCursor> m_default_cursor;
+        vte::glib::RefPtr<CdkCursor> m_invisible_cursor;
+        vte::glib::RefPtr<CdkCursor> m_mousing_cursor;
+        vte::glib::RefPtr<CdkCursor> m_hyperlink_cursor;
 
         /* Input method */
         vte::glib::RefPtr<CtkIMContext> m_im_context;

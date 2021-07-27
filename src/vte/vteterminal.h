@@ -261,30 +261,30 @@ gboolean vte_terminal_get_scroll_on_keystroke(VteTerminal *terminal) _VTE_CXX_NO
 /* Set the color scheme. */
 _VTE_PUBLIC
 void vte_terminal_set_color_bold(VteTerminal *terminal,
-                                 const GdkRGBA *bold) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+                                 const CdkRGBA *bold) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
 void vte_terminal_set_color_foreground(VteTerminal *terminal,
-                                       const GdkRGBA *foreground) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) _VTE_GNUC_NONNULL(2);
+                                       const CdkRGBA *foreground) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) _VTE_GNUC_NONNULL(2);
 _VTE_PUBLIC
 void vte_terminal_set_color_background(VteTerminal *terminal,
-                                       const GdkRGBA *background) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) _VTE_GNUC_NONNULL(2);
+                                       const CdkRGBA *background) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) _VTE_GNUC_NONNULL(2);
 _VTE_PUBLIC
 void vte_terminal_set_color_cursor(VteTerminal *terminal,
-                                   const GdkRGBA *cursor_background) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+                                   const CdkRGBA *cursor_background) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
 void vte_terminal_set_color_cursor_foreground(VteTerminal *terminal,
-                                              const GdkRGBA *cursor_foreground) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+                                              const CdkRGBA *cursor_foreground) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
 void vte_terminal_set_color_highlight(VteTerminal *terminal,
-                                      const GdkRGBA *highlight_background) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+                                      const CdkRGBA *highlight_background) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
 void vte_terminal_set_color_highlight_foreground(VteTerminal *terminal,
-                                                 const GdkRGBA *highlight_foreground) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+                                                 const CdkRGBA *highlight_foreground) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
 void vte_terminal_set_colors(VteTerminal *terminal,
-                             const GdkRGBA *foreground,
-                             const GdkRGBA *background,
-                             const GdkRGBA *palette,
+                             const CdkRGBA *foreground,
+                             const CdkRGBA *background,
+                             const CdkRGBA *palette,
                              gsize palette_size) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 _VTE_PUBLIC
@@ -393,7 +393,7 @@ void vte_terminal_get_cursor_position(VteTerminal *terminal,
 
 _VTE_PUBLIC
 char *vte_terminal_hyperlink_check_event(VteTerminal *terminal,
-                                         GdkEvent *event) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) _VTE_GNUC_NONNULL(2) G_GNUC_MALLOC;
+                                         CdkEvent *event) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) _VTE_GNUC_NONNULL(2) G_GNUC_MALLOC;
 
 /* Add a matching expression, returning the tag the widget assigns to that
  * expression. */
@@ -417,18 +417,18 @@ void vte_terminal_match_remove_all(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE
  * argument. */
 _VTE_PUBLIC
 char *vte_terminal_match_check_event(VteTerminal *terminal,
-                                     GdkEvent *event,
+                                     CdkEvent *event,
                                      int *tag) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) _VTE_GNUC_NONNULL(2) G_GNUC_MALLOC;
 _VTE_PUBLIC
 char **vte_terminal_event_check_regex_array(VteTerminal *terminal,
-                                            GdkEvent *event,
+                                            CdkEvent *event,
                                             VteRegex **regexes,
                                             gsize n_regexes,
                                             guint32 match_flags,
                                             gsize *n_matches) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) _VTE_GNUC_NONNULL(2) G_GNUC_MALLOC;
 _VTE_PUBLIC
 gboolean vte_terminal_event_check_regex_simple(VteTerminal *terminal,
-                                               GdkEvent *event,
+                                               CdkEvent *event,
                                                VteRegex **regexes,
                                                gsize n_regexes,
                                                guint32 match_flags,
@@ -493,7 +493,7 @@ void vte_terminal_set_clear_background(VteTerminal* terminal,
                                        gboolean setting) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
 void vte_terminal_get_color_background_for_draw(VteTerminal* terminal,
-                                                GdkRGBA* color) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) _VTE_GNUC_NONNULL(2);
+                                                CdkRGBA* color) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) _VTE_GNUC_NONNULL(2);
 
 /* Writing contents out */
 _VTE_PUBLIC

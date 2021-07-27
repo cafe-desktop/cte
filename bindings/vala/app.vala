@@ -268,7 +268,7 @@ class Window : Ctk.ApplicationWindow
 
     /* set_resize_mode(Ctk.ResizeMode.IMMEDIATE); */
 
-    clipboard = get_clipboard(Gdk.SELECTION_CLIPBOARD);
+    clipboard = get_clipboard(Cdk.SELECTION_CLIPBOARD);
     clipboard.owner_change.connect(clipboard_owner_change_cb);
 
     title = "Terminal";
@@ -277,7 +277,7 @@ class Window : Ctk.ApplicationWindow
     if (Options.transparency_percent != 0) {
       if (!Options.no_argb_visual) {
         var screen = get_screen();
-        Gdk.Visual? visual = screen.get_rgba_visual();
+        Cdk.Visual? visual = screen.get_rgba_visual();
         if (visual != null)
           set_visual(visual);
       }
@@ -369,7 +369,7 @@ class Window : Ctk.ApplicationWindow
 
   private void add_dingus(string[] dingus)
   {
-    const Gdk.CursorType cursors[] = { Gdk.CursorType.GUMBY, Gdk.CursorType.HAND1 };
+    const Cdk.CursorType cursors[] = { Cdk.CursorType.GUMBY, Cdk.CursorType.HAND1 };
 
     for (int i = 0; i < dingus.length; ++i) {
       try {
@@ -540,7 +540,7 @@ class Window : Ctk.ApplicationWindow
 
   private void update_paste_sensitivity()
   {
-    Gdk.Atom[] targets;
+    Cdk.Atom[] targets;
     bool can_paste;
 
     if (clipboard.wait_for_targets(out targets))
@@ -587,12 +587,12 @@ class Window : Ctk.ApplicationWindow
   private void action_reset_cb(GLib.SimpleAction action, GLib.Variant? parameter)
   {
     bool clear;
-    Gdk.ModifierType modifiers;
+    Cdk.ModifierType modifiers;
 
     if (parameter != null) {
       clear = parameter.get_boolean();
     } else if (Ctk.get_current_event_state(out modifiers))
-      clear = (modifiers & Gdk.ModifierType.CONTROL_MASK) != 0;
+      clear = (modifiers & Cdk.ModifierType.CONTROL_MASK) != 0;
     else
       clear = false;
 
@@ -614,7 +614,7 @@ class Window : Ctk.ApplicationWindow
     return show_context_menu(0, Ctk.get_current_event_time(), null);
   }
 
-  private bool button_press_event_cb(Ctk.Widget widget, Gdk.EventButton event)
+  private bool button_press_event_cb(Ctk.Widget widget, Cdk.EventButton event)
   {
     if (event.button != 3)
       return false;
@@ -622,7 +622,7 @@ class Window : Ctk.ApplicationWindow
     return show_context_menu(event.button, event.time, event);
   }
 
-  private bool show_context_menu(uint button, uint32 timestamp, Gdk.Event? event)
+  private bool show_context_menu(uint button, uint32 timestamp, Cdk.Event? event)
   {
     if (Options.no_context_menu)
       return false;
@@ -679,7 +679,7 @@ class Window : Ctk.ApplicationWindow
     destroy();
   }
 
-  private void clipboard_owner_change_cb(Ctk.Clipboard clipboard, Gdk.Event event)
+  private void clipboard_owner_change_cb(Ctk.Clipboard clipboard, Cdk.Event event)
   {
     update_paste_sensitivity();
   }
@@ -904,9 +904,9 @@ class App : Ctk.Application
       return 1;
     }
 
-    public static Gdk.RGBA get_color_bg()
+    public static Cdk.RGBA get_color_bg()
     {
-      var color = Gdk.RGBA();
+      var color = Cdk.RGBA();
       color.alpha = (double)(100 - transparency_percent.clamp(0, 100)) / 100.0;
       if (Options.reverse) {
         color.red = color.green = color.blue = 1.0;
@@ -916,9 +916,9 @@ class App : Ctk.Application
       return color;
     }
 
-    public static Gdk.RGBA get_color_fg()
+    public static Cdk.RGBA get_color_fg()
     {
-      var color = Gdk.RGBA();
+      var color = Cdk.RGBA();
       color.alpha = 1.0;
       if (Options.reverse) {
         color.red = color.green = color.blue = 0.0;
@@ -928,11 +928,11 @@ class App : Ctk.Application
       return color;
     }
 
-    private static Gdk.RGBA? get_color(string? str)
+    private static Cdk.RGBA? get_color(string? str)
     {
       if (str == null)
         return null;
-      var color = Gdk.RGBA();
+      var color = Cdk.RGBA();
       if (!color.parse(str)) {
         printerr("Failed to parse \"%s\" as color.\n", str);
         return null;
@@ -940,22 +940,22 @@ class App : Ctk.Application
       return color;
     }
 
-    public static Gdk.RGBA? get_color_cursor_background()
+    public static Cdk.RGBA? get_color_cursor_background()
     {
       return get_color(cursor_background_color_string);
     }
 
-    public static Gdk.RGBA? get_color_cursor_foreground()
+    public static Cdk.RGBA? get_color_cursor_foreground()
     {
       return get_color(cursor_foreground_color_string);
     }
 
-    public static Gdk.RGBA? get_color_hl_bg()
+    public static Cdk.RGBA? get_color_hl_bg()
     {
       return get_color(hl_bg_color_string);
     }
 
-    public static Gdk.RGBA? get_color_hl_fg()
+    public static Cdk.RGBA? get_color_hl_fg()
     {
       return get_color(hl_fg_color_string);
     }
@@ -1090,7 +1090,7 @@ class App : Ctk.Application
     }
 
     if (Options.debug)
-      Gdk.Window.set_debug_updates(Options.debug);
+      Cdk.Window.set_debug_updates(Options.debug);
 
     var app = new App();
     return app.run(null);
