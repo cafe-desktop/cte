@@ -65,14 +65,14 @@ option(
 )
 
 option(
-  'gtk3',
+  'ctk3',
   type: 'boolean',
   value: true,
   description: 'Enable GTK+ 3.0 widget',
 )
 
 option(
-  'gtk4',
+  'ctk4',
   type: 'boolean',
   value: false,
   description: 'Enable GTK+ 4.0 widget',

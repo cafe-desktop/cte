@@ -25,7 +25,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <glib.h>
-#include <gtk/gtk.h>
+#include <ctk/ctk.h>
 #include "caps.hh"
 #include "debug.h"
 #include "keymap.h"

@@ -26,7 +26,7 @@
  * you should not place a #VteTerminal inside a #GtkScrolledWindow
  * container, since they are incompatible. Instead, pack the terminal in
  * a horizontal #GtkBox together with a #GtkScrollbar which uses the
- * #GtkAdjustment returned from gtk_scrollable_get_vadjustment().
+ * #GtkAdjustment returned from ctk_scrollable_get_vadjustment().
  */
 
 #include "config.h"
@@ -42,7 +42,7 @@
 
 #include <glib.h>
 #include <glib/gi18n-lib.h>
-#include <gtk/gtk.h>
+#include <ctk/ctk.h>
 #include "vte/vteenums.h"
 #include "vte/vtepty.h"
 #include "vte/vteterminal.h"
@@ -57,7 +57,7 @@
 #include "vteinternal.hh"
 #include "widget.hh"
 
-#include "vtegtk.hh"
+#include "vtectk.hh"
 #include "vteptyinternal.hh"
 #include "vteregexinternal.hh"
 
@@ -164,7 +164,7 @@ vte_terminal_set_hscroll_policy(VteTerminal *terminal,
 try
 {
         WIDGET(terminal)->set_hscroll_policy(policy);
-        gtk_widget_queue_resize_no_redraw (GTK_WIDGET (terminal));
+        ctk_widget_queue_resize_no_redraw (GTK_WIDGET (terminal));
 }
 catch (...)
 {
@@ -177,7 +177,7 @@ vte_terminal_set_vscroll_policy(VteTerminal *terminal,
 try
 {
         WIDGET(terminal)->set_vscroll_policy(policy);
-        gtk_widget_queue_resize_no_redraw (GTK_WIDGET (terminal));
+        ctk_widget_queue_resize_no_redraw (GTK_WIDGET (terminal));
 }
 catch (...)
 {
@@ -557,15 +557,15 @@ try
 
 	_vte_debug_print(VTE_DEBUG_LIFECYCLE, "vte_terminal_init()\n");
 
-        context = gtk_widget_get_style_context(&terminal->widget);
-        gtk_style_context_add_provider (context,
+        context = ctk_widget_get_style_context(&terminal->widget);
+        ctk_style_context_add_provider (context,
                                         VTE_TERMINAL_GET_CLASS (terminal)->priv->fallback_style_provider,
                                         GTK_STYLE_PROVIDER_PRIORITY_FALLBACK);
-        gtk_style_context_add_provider (context,
+        ctk_style_context_add_provider (context,
                                         VTE_TERMINAL_GET_CLASS (terminal)->priv->style_provider,
                                         GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
-        gtk_widget_set_has_window(&terminal->widget, FALSE);
+        ctk_widget_set_has_window(&terminal->widget, FALSE);
 
 	/* Initialize private data. NOTE: place is zeroed */
 	place = vte_terminal_get_instance_private(terminal);
@@ -927,7 +927,7 @@ vte_terminal_class_init(VteTerminalClass *klass)
 	widget_class->size_allocate = vte_terminal_size_allocate;
         widget_class->screen_changed = vte_terminal_screen_changed;
 
-        gtk_widget_class_set_css_name(widget_class, VTE_TERMINAL_CSS_NAME);
+        ctk_widget_class_set_css_name(widget_class, VTE_TERMINAL_CSS_NAME);
 
 	/* Initialize default handlers. */
 	klass->eof = NULL;
@@ -1729,7 +1729,7 @@ vte_terminal_class_init(VteTerminalClass *klass)
          * VteTerminal:cursor-blink-mode:
          *
          * Sets whether or not the cursor will blink. Using %VTE_CURSOR_BLINK_SYSTEM
-         * will use the #GtkSettings::gtk-cursor-blink setting.
+         * will use the #GtkSettings::ctk-cursor-blink setting.
          */
         pspecs[PROP_CURSOR_BLINK_MODE] =
                 g_param_spec_enum ("cursor-blink-mode", NULL, NULL,
@@ -1829,7 +1829,7 @@ vte_terminal_class_init(VteTerminalClass *klass)
          * VteTerminal:font-desc:
          *
          * Specifies the font used for rendering all text displayed by the terminal,
-         * overriding any fonts set using gtk_widget_modify_font().  The terminal
+         * overriding any fonts set using ctk_widget_modify_font().  The terminal
          * will immediately attempt to load the desired font, retrieve its
          * metrics, and attempt to resize itself to keep the same number of rows
          * and columns.
@@ -2011,27 +2011,27 @@ vte_terminal_class_init(VteTerminalClass *klass)
 	/* Disable GtkWidget's keybindings except for Shift-F10 and MenuKey
          * which pop up the context menu.
          */
-	binding_set = gtk_binding_set_by_class(vte_terminal_parent_class);
-	gtk_binding_entry_skip(binding_set, GDK_KEY_F1, GDK_CONTROL_MASK);
-	gtk_binding_entry_skip(binding_set, GDK_KEY_F1, GDK_SHIFT_MASK);
-	gtk_binding_entry_skip(binding_set, GDK_KEY_KP_F1, GDK_CONTROL_MASK);
-	gtk_binding_entry_skip(binding_set, GDK_KEY_KP_F1, GDK_SHIFT_MASK);
+	binding_set = ctk_binding_set_by_class(vte_terminal_parent_class);
+	ctk_binding_entry_skip(binding_set, GDK_KEY_F1, GDK_CONTROL_MASK);
+	ctk_binding_entry_skip(binding_set, GDK_KEY_F1, GDK_SHIFT_MASK);
+	ctk_binding_entry_skip(binding_set, GDK_KEY_KP_F1, GDK_CONTROL_MASK);
+	ctk_binding_entry_skip(binding_set, GDK_KEY_KP_F1, GDK_SHIFT_MASK);
 
         process_timer = g_timer_new();
 
         klass->priv = G_TYPE_CLASS_GET_PRIVATE (klass, VTE_TYPE_TERMINAL, VteTerminalClassPrivate);
 
-        klass->priv->fallback_style_provider = GTK_STYLE_PROVIDER (gtk_css_provider_new ());
+        klass->priv->fallback_style_provider = GTK_STYLE_PROVIDER (ctk_css_provider_new ());
         /* Some themes don't define text_view_bg */
-        gtk_css_provider_load_from_data (GTK_CSS_PROVIDER (klass->priv->fallback_style_provider),
+        ctk_css_provider_load_from_data (GTK_CSS_PROVIDER (klass->priv->fallback_style_provider),
                                          "@define-color text_view_bg @theme_base_color;\n"
                                          "VteTerminal, " VTE_TERMINAL_CSS_NAME " {\n"
                                          "background-color: @text_view_bg;\n"
                                          "color: @theme_text_color;\n"
                                          "}\n",
                                          -1, NULL);
-        klass->priv->style_provider = GTK_STYLE_PROVIDER (gtk_css_provider_new ());
-        gtk_css_provider_load_from_data (GTK_CSS_PROVIDER (klass->priv->style_provider),
+        klass->priv->style_provider = GTK_STYLE_PROVIDER (ctk_css_provider_new ());
+        ctk_css_provider_load_from_data (GTK_CSS_PROVIDER (klass->priv->style_provider),
                                          "VteTerminal, " VTE_TERMINAL_CSS_NAME " {\n"
                                          "padding: 1px 1px 1px 1px;\n"
                                          "}\n",
@@ -2039,7 +2039,7 @@ vte_terminal_class_init(VteTerminalClass *klass)
 
 #ifdef WITH_A11Y
         /* a11y */
-        gtk_widget_class_set_accessible_type(widget_class, VTE_TYPE_TERMINAL_ACCESSIBLE);
+        ctk_widget_class_set_accessible_type(widget_class, VTE_TYPE_TERMINAL_ACCESSIBLE);
 #endif
 }
 
@@ -2341,8 +2341,8 @@ catch (...)
  * selection in the form specified by @format.
  *
  * For all formats, the selection data (see #GtkSelectionData) will include the
- * text targets (see gtk_target_list_add_text_targets() and
- * gtk_selection_data_targets_includes_text()). For %VTE_FORMAT_HTML,
+ * text targets (see ctk_target_list_add_text_targets() and
+ * ctk_selection_data_targets_includes_text()). For %VTE_FORMAT_HTML,
  * the selection will also include the "text/html" target, which when requested,
  * returns the HTML data in UTF-16 with a U+FEFF BYTE ORDER MARK character at
  * the start.
@@ -4525,7 +4525,7 @@ catch (...)
  * @mode: the #VteCursorBlinkMode to use
  *
  * Sets whether or not the cursor will blink. Using %VTE_CURSOR_BLINK_SYSTEM
- * will use the #GtkSettings::gtk-cursor-blink setting.
+ * will use the #GtkSettings::ctk-cursor-blink setting.
  */
 void
 vte_terminal_set_cursor_blink_mode(VteTerminal *terminal,
@@ -4806,7 +4806,7 @@ catch (...)
  * @font_desc: (allow-none): a #PangoFontDescription for the desired font, or %NULL
  *
  * Sets the font used for rendering all text displayed by the terminal,
- * overriding any fonts set using gtk_widget_modify_font().  The terminal
+ * overriding any fonts set using ctk_widget_modify_font().  The terminal
  * will immediately attempt to load the desired font, retrieve its
  * metrics, and attempt to resize itself to keep the same number of rows
  * and columns.  The font scale is applied to the specified font.
@@ -4984,9 +4984,9 @@ catch (...)
  * filled are those covered by the %GDK_HINT_RESIZE_INC,
  * %GDK_HINT_MIN_SIZE and %GDK_HINT_BASE_SIZE flags.
  *
- * See gtk_window_set_geometry_hints() for more information.
+ * See ctk_window_set_geometry_hints() for more information.
  *
- * @terminal must be realized (see gtk_widget_get_realized()).
+ * @terminal must be realized (see ctk_widget_get_realized()).
  *
  * Deprecated: 0.52
  */
@@ -5002,12 +5002,12 @@ vte_terminal_get_geometry_hints(VteTerminal *terminal,
         g_return_if_fail(VTE_IS_TERMINAL(terminal));
         g_return_if_fail(hints != NULL);
         widget = &terminal->widget;
-        g_return_if_fail(gtk_widget_get_realized(widget));
+        g_return_if_fail(ctk_widget_get_realized(widget));
 
         auto impl = IMPL(terminal);
 
-        auto context = gtk_widget_get_style_context(widget);
-        gtk_style_context_get_padding(context, gtk_style_context_get_state(context),
+        auto context = ctk_widget_get_style_context(widget);
+        ctk_style_context_get_padding(context, ctk_style_context_get_state(context),
                                       &padding);
 
         hints->base_width  = padding.left + padding.right;
@@ -5035,9 +5035,9 @@ vte_terminal_get_geometry_hints(VteTerminal *terminal,
  * @window: a #GtkWindow
  *
  * Sets @terminal as @window's geometry widget. See
- * gtk_window_set_geometry_hints() for more information.
+ * ctk_window_set_geometry_hints() for more information.
  *
- * @terminal must be realized (see gtk_widget_get_realized()).
+ * @terminal must be realized (see ctk_widget_get_realized()).
  *
  * Deprecated: 0.52
  */
@@ -5048,10 +5048,10 @@ vte_terminal_set_geometry_hints_for_window(VteTerminal *terminal,
         GdkGeometry hints;
 
         g_return_if_fail(VTE_IS_TERMINAL(terminal));
-        g_return_if_fail(gtk_widget_get_realized(&terminal->widget));
+        g_return_if_fail(ctk_widget_get_realized(&terminal->widget));
 
         vte_terminal_get_geometry_hints(terminal, &hints, MIN_ROWS, MIN_COLUMNS);
-        gtk_window_set_geometry_hints(window,
+        ctk_window_set_geometry_hints(window,
                                       NULL,
                                       &hints,
                                       (GdkWindowHints)(GDK_HINT_RESIZE_INC |

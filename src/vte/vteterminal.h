@@ -26,7 +26,7 @@
 #include <glib.h>
 #include <gio/gio.h>
 #include <pango/pango.h>
-#include <gtk/gtk.h>
+#include <ctk/ctk.h>
 
 #include "vteenums.h"
 #include "vtemacros.h"

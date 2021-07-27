@@ -27,7 +27,7 @@
 #include <string>
 
 #include "cxx-utils.hh"
-#include "vtegtk.hh"
+#include "vtectk.hh"
 #include "vteptyinternal.hh"
 #include "debug.h"
 
@@ -141,11 +141,11 @@ Widget::Widget(VteTerminal* t)
           m_hscroll_policy{GTK_SCROLL_NATURAL},
           m_vscroll_policy{GTK_SCROLL_NATURAL}
 {
-        gtk_widget_set_can_focus(gtk(), true);
+        ctk_widget_set_can_focus(ctk(), true);
 
         /* We do our own redrawing. */
         // FIXMEchpe is this still necessary?
-        gtk_widget_set_redraw_on_allocate(gtk(), false);
+        ctk_widget_set_redraw_on_allocate(ctk(), false);
 
         /* Until Terminal init is completely fixed, use zero'd memory */
         auto place = g_malloc0(sizeof(vte::terminal::Terminal));
@@ -155,7 +155,7 @@ Widget::Widget(VteTerminal* t)
 Widget::~Widget() noexcept
 try
 {
-        g_signal_handlers_disconnect_matched(gtk_widget_get_settings(m_widget),
+        g_signal_handlers_disconnect_matched(ctk_widget_get_settings(m_widget),
                                              G_SIGNAL_MATCH_DATA,
                                              0, 0, NULL, NULL,
                                              this);
@@ -174,13 +174,13 @@ void
 Widget::beep() noexcept
 {
         if (realized())
-                gdk_window_beep(gtk_widget_get_window(m_widget));
+                gdk_window_beep(ctk_widget_get_window(m_widget));
 }
 
 vte::glib::RefPtr<GdkCursor>
 Widget::create_cursor(GdkCursorType cursor_type) const noexcept
 {
-	return vte::glib::take_ref(gdk_cursor_new_for_display(gtk_widget_get_display(m_widget), cursor_type));
+	return vte::glib::take_ref(gdk_cursor_new_for_display(ctk_widget_get_display(m_widget), cursor_type));
 }
 
 void
@@ -195,7 +195,7 @@ Widget::set_cursor(Cursor const& cursor) noexcept
         if (!realized())
                 return;
 
-        auto display = gtk_widget_get_display(m_widget);
+        auto display = ctk_widget_get_display(m_widget);
         GdkCursor* gdk_cursor{nullptr};
         switch (cursor.index()) {
         case 0:
@@ -259,20 +259,20 @@ Widget::im_filter_keypress(vte::terminal::KeyEvent const& event) noexcept
 {
         // FIXMEchpe this can only be called when realized, so the m_im_context check is redundant
         return m_im_context &&
-                gtk_im_context_filter_keypress(m_im_context.get(),
+                ctk_im_context_filter_keypress(m_im_context.get(),
                                                reinterpret_cast<GdkEventKey*>(event.platform_event()));
 }
 
 void
 Widget::im_focus_in() noexcept
 {
-        gtk_im_context_focus_in(m_im_context.get());
+        ctk_im_context_focus_in(m_im_context.get());
 }
 
 void
 Widget::im_focus_out() noexcept
 {
-        gtk_im_context_focus_out(m_im_context.get());
+        ctk_im_context_focus_out(m_im_context.get());
 }
 
 void
@@ -282,7 +282,7 @@ Widget::im_preedit_changed() noexcept
 	PangoAttrList* attrs = nullptr;
 	int cursorpos = 0;
 
-        gtk_im_context_get_preedit_string(m_im_context.get(), &str, &attrs, &cursorpos);
+        ctk_im_context_get_preedit_string(m_im_context.get(), &str, &attrs, &cursorpos);
         _vte_debug_print(VTE_DEBUG_EVENTS, "Input method pre-edit changed (%s,%d).\n",
                          str, cursorpos);
 
@@ -297,7 +297,7 @@ Widget::im_preedit_changed() noexcept
 void
 Widget::im_set_cursor_location(cairo_rectangle_int_t const* rect) noexcept
 {
-        gtk_im_context_set_cursor_location(m_im_context.get(), rect);
+        ctk_im_context_set_cursor_location(m_im_context.get(), rect);
 }
 
 unsigned
@@ -419,8 +419,8 @@ bool
 Widget::primary_paste_enabled() const noexcept
 {
         auto primary_paste = gboolean{};
-        g_object_get(gtk_widget_get_settings(gtk()),
-                     "gtk-enable-primary-paste", &primary_paste,
+        g_object_get(ctk_widget_get_settings(ctk()),
+                     "ctk-enable-primary-paste", &primary_paste,
                      nullptr);
 
         return primary_paste != false;
@@ -450,9 +450,9 @@ Widget::realize() noexcept
 	attributes.width = allocation.width;
 	attributes.height = allocation.height;
 	attributes.wclass = GDK_INPUT_ONLY;
-	attributes.visual = gtk_widget_get_visual(m_widget);
+	attributes.visual = ctk_widget_get_visual(m_widget);
 	attributes.event_mask =
-                gtk_widget_get_events(m_widget) |
+                ctk_widget_get_events(m_widget) |
                 GDK_EXPOSURE_MASK |
                 GDK_FOCUS_CHANGE_MASK |
                 GDK_SMOOTH_SCROLL_MASK |
@@ -472,18 +472,18 @@ Widget::realize() noexcept
                 (attributes.visual ? GDK_WA_VISUAL : 0) |
                 GDK_WA_CURSOR;
 
-	m_event_window = gdk_window_new(gtk_widget_get_parent_window (m_widget),
+	m_event_window = gdk_window_new(ctk_widget_get_parent_window (m_widget),
                                         &attributes, attributes_mask);
-        gtk_widget_register_window(m_widget, m_event_window);
+        ctk_widget_register_window(m_widget, m_event_window);
 
         assert(!m_im_context);
-	m_im_context.reset(gtk_im_multicontext_new());
+	m_im_context.reset(ctk_im_multicontext_new());
 #if GTK_CHECK_VERSION (3, 24, 14)
         g_object_set(m_im_context.get(),
                      "input-purpose", GTK_INPUT_PURPOSE_TERMINAL,
                      nullptr);
 #endif
-	gtk_im_context_set_client_window(m_im_context.get(), m_event_window);
+	ctk_im_context_set_client_window(m_im_context.get(), m_event_window);
 	g_signal_connect(m_im_context.get(), "commit",
 			 G_CALLBACK(im_commit_cb), this);
 	g_signal_connect(m_im_context.get(), "preedit-start",
@@ -496,7 +496,7 @@ Widget::realize() noexcept
 			 G_CALLBACK(im_retrieve_surrounding_cb), this);
 	g_signal_connect(m_im_context.get(), "delete-surrounding",
 			 G_CALLBACK(im_delete_surrounding_cb), this);
-	gtk_im_context_set_use_preedit(m_im_context.get(), true);
+	ctk_im_context_set_use_preedit(m_im_context.get(), true);
 
         m_terminal->widget_realize();
 }
@@ -504,10 +504,10 @@ Widget::realize() noexcept
 void
 Widget::screen_changed(GdkScreen *previous_screen) noexcept
 {
-        auto gdk_screen = gtk_widget_get_screen(m_widget);
+        auto gdk_screen = ctk_widget_get_screen(m_widget);
         if (previous_screen != nullptr &&
             (gdk_screen != previous_screen || gdk_screen == nullptr)) {
-                auto settings = gtk_settings_get_for_screen(previous_screen);
+                auto settings = ctk_settings_get_for_screen(previous_screen);
                 g_signal_handlers_disconnect_matched(settings, G_SIGNAL_MATCH_DATA,
                                                      0, 0, nullptr, nullptr,
                                                      this);
@@ -518,12 +518,12 @@ Widget::screen_changed(GdkScreen *previous_screen) noexcept
 
         settings_changed();
 
-        auto settings = gtk_widget_get_settings(m_widget);
-        g_signal_connect (settings, "notify::gtk-cursor-blink",
+        auto settings = ctk_widget_get_settings(m_widget);
+        g_signal_connect (settings, "notify::ctk-cursor-blink",
                           G_CALLBACK(settings_notify_cb), this);
-        g_signal_connect (settings, "notify::gtk-cursor-blink-time",
+        g_signal_connect (settings, "notify::ctk-cursor-blink-time",
                           G_CALLBACK(settings_notify_cb), this);
-        g_signal_connect (settings, "notify::gtk-cursor-blink-timeout",
+        g_signal_connect (settings, "notify::ctk-cursor-blink-timeout",
                           G_CALLBACK(settings_notify_cb), this);
 }
 
@@ -533,10 +533,10 @@ Widget::settings_changed() noexcept
         auto blink = gboolean{};
         auto blink_time = int{};
         auto blink_timeout = int{};
-        g_object_get(gtk_widget_get_settings(m_widget),
-                     "gtk-cursor-blink", &blink,
-                     "gtk-cursor-blink-time", &blink_time,
-                     "gtk-cursor-blink-timeout", &blink_timeout,
+        g_object_get(ctk_widget_get_settings(m_widget),
+                     "ctk-cursor-blink", &blink,
+                     "ctk-cursor-blink-time", &blink_time,
+                     "ctk-cursor-blink-timeout", &blink_timeout,
                      nullptr);
 
         _vte_debug_print(VTE_DEBUG_MISC,
@@ -623,13 +623,13 @@ void
 Widget::style_updated() noexcept
 {
         auto padding = GtkBorder{};
-        auto context = gtk_widget_get_style_context(gtk());
-        gtk_style_context_get_padding(context, gtk_style_context_get_state(context),
+        auto context = ctk_widget_get_style_context(ctk());
+        ctk_style_context_get_padding(context, ctk_style_context_get_state(context),
                                       &padding);
         m_terminal->set_border_padding(&padding);
 
         auto aspect = float{};
-        gtk_widget_style_get(gtk(), "cursor-aspect-ratio", &aspect, nullptr);
+        ctk_widget_style_get(ctk(), "cursor-aspect-ratio", &aspect, nullptr);
         m_terminal->set_cursor_aspect(aspect);
 
         m_terminal->widget_style_updated();
@@ -661,11 +661,11 @@ Widget::unrealize() noexcept
                                              0, 0, NULL, NULL,
                                              this);
         m_terminal->im_preedit_reset();
-        gtk_im_context_set_client_window(m_im_context.get(), nullptr);
+        ctk_im_context_set_client_window(m_im_context.get(), nullptr);
         m_im_context.reset();
 
         /* Destroy input window */
-        gtk_widget_unregister_window(m_widget, m_event_window);
+        ctk_widget_unregister_window(m_widget, m_event_window);
         gdk_window_destroy(m_event_window);
         m_event_window = nullptr;
 }

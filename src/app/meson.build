@@ -34,24 +34,24 @@ app_common_deps = [
   pcre2_dep,
 ]
 
-if get_option('gtk3')
+if get_option('ctk3')
 
-  app_gtk3_resource_sources = gnome.compile_resources(
+  app_ctk3_resource_sources = gnome.compile_resources(
     'resources.cc',
     'app.gresource.xml',
     c_name: 'app',
     dependencies: app_resource_data,
   )
 
-  app_gtk3_sources = app_sources + app_gtk3_resource_sources
-  app_gtk3_cppflags = app_common_cppflags + gtk3_version_cppflags
-  app_gtk3_deps = app_common_deps + [libvte_gtk3_dep]
+  app_ctk3_sources = app_sources + app_ctk3_resource_sources
+  app_ctk3_cppflags = app_common_cppflags + ctk3_version_cppflags
+  app_ctk3_deps = app_common_deps + [libvte_ctk3_dep]
 
-  app_gtk3 = executable(
-    'vte-' + vte_gtk3_api_version,
-    app_gtk3_sources,
-    dependencies: app_gtk3_deps,
-    cpp_args: app_gtk3_cppflags,
+  app_ctk3 = executable(
+    'vte-' + vte_ctk3_api_version,
+    app_ctk3_sources,
+    dependencies: app_ctk3_deps,
+    cpp_args: app_ctk3_cppflags,
     include_directories: top_inc,
     install: true,
   )

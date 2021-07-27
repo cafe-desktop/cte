@@ -20,7 +20,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../src/iso2022.cc:73 ../src/iso2022.cc:81 ../src/iso2022.cc:111
-#: ../src/vtegtk.cc:3423
+#: ../src/vtectk.cc:3423
 #, c-format
 msgid "Unable to convert characters from %s to %s."
 msgstr "Неуспешно преобразуването на знаците от %s към %s."

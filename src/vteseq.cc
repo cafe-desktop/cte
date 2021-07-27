@@ -32,7 +32,7 @@
 
 #include <vte/vte.h>
 #include "vteinternal.hh"
-#include "vtegtk.hh"
+#include "vtectk.hh"
 #include "caps.hh"
 #include "debug.h"
 
@@ -546,7 +546,7 @@ Terminal::set_mode_private(int mode,
                 }
 
                 /* Reset scrollbars and repaint everything. */
-                gtk_adjustment_set_value(m_vadjustment.get(),
+                ctk_adjustment_set_value(m_vadjustment.get(),
                                          m_screen->scroll_delta);
                 set_scrollback_lines(m_scrollback_lines);
                 queue_contents_changed();
@@ -8677,7 +8677,7 @@ Terminal::XTERM_WM(vte::parser::Sequence const& seq)
                 /* FIMXE: this should really report the monitor's workarea,
                  * or even just a fixed value.
                  */
-                auto gdkscreen = gtk_widget_get_screen(m_widget);
+                auto gdkscreen = ctk_widget_get_screen(m_widget);
                 int height = gdk_screen_get_height(gdkscreen);
                 int width = gdk_screen_get_width(gdkscreen);
                 _vte_debug_print(VTE_DEBUG_EMULATION,

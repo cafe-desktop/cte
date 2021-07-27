@@ -57,12 +57,12 @@
 #include <glib.h>
 #include <glib-object.h>
 #include <gdk/gdk.h>
-#include <gtk/gtk.h>
+#include <ctk/ctk.h>
 #include <pango/pango.h>
 #include "keymap.h"
 #include "marshal.h"
 #include "vtepty.h"
-#include "vtegtk.hh"
+#include "vtectk.hh"
 #include "cxx-utils.hh"
 #include "gobject-glue.hh"
 
@@ -325,7 +325,7 @@ Terminal::invalidate_rows(vte::grid::row_t row_start,
                 rect.x += allocation.x + m_padding.left;
                 rect.y += allocation.y + m_padding.top;
                 cairo_region_t *region = cairo_region_create_rectangle(&rect);
-		gtk_widget_queue_draw_region(m_widget, region);
+		ctk_widget_queue_draw_region(m_widget, region);
                 cairo_region_destroy(region);
 	}
 
@@ -472,7 +472,7 @@ Terminal::invalidate_all()
 		 * case updates are coming in really soon. */
 		add_update_timeout(this);
 	} else {
-                gtk_widget_queue_draw(m_widget);
+                ctk_widget_queue_draw(m_widget);
 	}
 }
 
@@ -1829,55 +1829,55 @@ Terminal::emit_adjustment_changed()
                 auto const freezer = vte::glib::FreezeObjectNotify{vadjustment};
 
 		v = _vte_ring_delta (m_screen->row_data);
-                current = gtk_adjustment_get_lower(vadjustment);
+                current = ctk_adjustment_get_lower(vadjustment);
 		if (!_vte_double_equal(current, v)) {
 			_vte_debug_print(VTE_DEBUG_ADJ,
 					"Changing lower bound from %.0f to %f\n",
 					 current, v);
-                        gtk_adjustment_set_lower(vadjustment, v);
+                        ctk_adjustment_set_lower(vadjustment, v);
 			changed = true;
 		}
 
 		v = m_screen->insert_delta + m_row_count;
-                current = gtk_adjustment_get_upper(vadjustment);
+                current = ctk_adjustment_get_upper(vadjustment);
 		if (!_vte_double_equal(current, v)) {
 			_vte_debug_print(VTE_DEBUG_ADJ,
 					"Changing upper bound from %.0f to %f\n",
 					 current, v);
-                        gtk_adjustment_set_upper(vadjustment, v);
+                        ctk_adjustment_set_upper(vadjustment, v);
 			changed = true;
 		}
 
 		/* The step increment should always be one. */
-                v = gtk_adjustment_get_step_increment(vadjustment);
+                v = ctk_adjustment_get_step_increment(vadjustment);
 		if (!_vte_double_equal(v, 1)) {
 			_vte_debug_print(VTE_DEBUG_ADJ,
 					"Changing step increment from %.0lf to 1\n", v);
-                        gtk_adjustment_set_step_increment(vadjustment, 1);
+                        ctk_adjustment_set_step_increment(vadjustment, 1);
 			changed = true;
 		}
 
 		/* Set the number of rows the user sees to the number of rows the
 		 * user sees. */
-                v = gtk_adjustment_get_page_size(vadjustment);
+                v = ctk_adjustment_get_page_size(vadjustment);
 		if (!_vte_double_equal(v, m_row_count)) {
 			_vte_debug_print(VTE_DEBUG_ADJ,
 					"Changing page size from %.0f to %ld\n",
 					 v, m_row_count);
-                        gtk_adjustment_set_page_size(vadjustment,
+                        ctk_adjustment_set_page_size(vadjustment,
 						     m_row_count);
 			changed = true;
 		}
 
 		/* Clicking in the empty area should scroll one screen, so set the
 		 * page size to the number of visible rows. */
-                v = gtk_adjustment_get_page_increment(vadjustment);
+                v = ctk_adjustment_get_page_increment(vadjustment);
 		if (!_vte_double_equal(v, m_row_count)) {
 			_vte_debug_print(VTE_DEBUG_ADJ,
 					"Changing page increment from "
 					"%.0f to %ld\n",
 					v, m_row_count);
-                        gtk_adjustment_set_page_increment(vadjustment,
+                        ctk_adjustment_set_page_increment(vadjustment,
 							  m_row_count);
 			changed = true;
 		}
@@ -1894,7 +1894,7 @@ Terminal::emit_adjustment_changed()
 		m_adjustment_value_changed_pending = FALSE;
 
                 auto vadjustment = m_vadjustment.get();
-                v = gtk_adjustment_get_value(vadjustment);
+                v = ctk_adjustment_get_value(vadjustment);
 		if (!_vte_double_equal(v, m_screen->scroll_delta)) {
 			/* this little dance is so that the scroll_delta is
 			 * updated immediately, but we still handled scrolling
@@ -1903,7 +1903,7 @@ Terminal::emit_adjustment_changed()
 			 */
 			delta = m_screen->scroll_delta;
 			m_screen->scroll_delta = v;
-                        gtk_adjustment_set_value(vadjustment, delta);
+                        ctk_adjustment_set_value(vadjustment, delta);
 		}
 	}
 }
@@ -1934,8 +1934,8 @@ void
 Terminal::queue_adjustment_value_changed_clamped(double v)
 {
         auto vadjustment = m_vadjustment.get();
-        auto const lower = gtk_adjustment_get_lower(vadjustment);
-        auto const upper = gtk_adjustment_get_upper(vadjustment);
+        auto const lower = ctk_adjustment_get_lower(vadjustment);
+        auto const upper = ctk_adjustment_get_upper(vadjustment);
 
 	v = CLAMP(v, lower, MAX (lower, upper - m_row_count));
 
@@ -4429,7 +4429,7 @@ Terminal::set_border_padding(GtkBorder const* padding)
 
                 m_padding = *padding;
                 update_view_extents();
-                gtk_widget_queue_resize(m_widget);
+                ctk_widget_queue_resize(m_widget);
         } else {
                 _vte_debug_print(VTE_DEBUG_MISC | VTE_DEBUG_WIDGET_SIZE,
                                  "Keeping padding the same at (%d,%d,%d,%d)\n",
@@ -6026,7 +6026,7 @@ Terminal::widget_clipboard_requested(GtkClipboard *target_clipboard,
 				g_printerr("Setting selection %d (%" G_GSIZE_FORMAT " UTF-8 bytes.) for target %s\n",
                                            sel,
                                            m_selection[sel]->len,
-                                           gdk_atom_name(gtk_selection_data_get_target(data)));
+                                           gdk_atom_name(ctk_selection_data_get_target(data)));
                                 char const* selection_text = m_selection[sel]->str;
                                 for (i = 0; selection_text[i] != '\0'; i++) {
                                         g_printerr("0x%04x ", selection_text[i]);
@@ -6036,7 +6036,7 @@ Terminal::widget_clipboard_requested(GtkClipboard *target_clipboard,
                                 g_printerr("\n");
 			}
 			if (info == VTE_TARGET_TEXT) {
-				gtk_selection_data_set_text(data,
+				ctk_selection_data_set_text(data,
                                                             m_selection[sel]->str,
                                                             m_selection[sel]->len);
 			} else if (info == VTE_TARGET_HTML) {
@@ -6044,7 +6044,7 @@ Terminal::widget_clipboard_requested(GtkClipboard *target_clipboard,
                                 auto selection = text_to_utf16_mozilla(m_selection[sel], &len);
                                 // FIXMEchpe this makes yet another copy of the data... :(
                                 if (selection)
-                                        gtk_selection_data_set(data,
+                                        ctk_selection_data_set(data,
                                                                gdk_atom_intern_static_string("text/html"),
                                                                16,
                                                                (const guchar *)selection,
@@ -6521,11 +6521,11 @@ targets_for_format(VteFormat format,
                 static int n_text_targets;
 
                 if (text_targets == nullptr) {
-			auto list = gtk_target_list_new (nullptr, 0);
-			gtk_target_list_add_text_targets (list, VTE_TARGET_TEXT);
+			auto list = ctk_target_list_new (nullptr, 0);
+			ctk_target_list_add_text_targets (list, VTE_TARGET_TEXT);
 
-                        text_targets = gtk_target_table_new_from_list (list, &n_text_targets);
-			gtk_target_list_unref (list);
+                        text_targets = ctk_target_table_new_from_list (list, &n_text_targets);
+			ctk_target_list_unref (list);
                 }
 
                 *n_targets = n_text_targets;
@@ -6537,15 +6537,15 @@ targets_for_format(VteFormat format,
                 static int n_html_targets;
 
                 if (html_targets == nullptr) {
-			auto list = gtk_target_list_new (nullptr, 0);
-			gtk_target_list_add_text_targets (list, VTE_TARGET_TEXT);
-                        gtk_target_list_add (list,
+			auto list = ctk_target_list_new (nullptr, 0);
+			ctk_target_list_add_text_targets (list, VTE_TARGET_TEXT);
+                        ctk_target_list_add (list,
                                              gdk_atom_intern_static_string("text/html"),
                                              0,
                                              VTE_TARGET_HTML);
 
-                        html_targets = gtk_target_table_new_from_list (list, &n_html_targets);
-			gtk_target_list_unref (list);
+                        html_targets = ctk_target_table_new_from_list (list, &n_html_targets);
+			ctk_target_list_unref (list);
                 }
 
                 *n_targets = n_html_targets;
@@ -6597,7 +6597,7 @@ Terminal::widget_copy(VteSelection sel,
         auto targets = targets_for_format(format, &n_targets);
 
         m_changing_selection = true;
-        gtk_clipboard_set_with_data(m_clipboard[sel],
+        ctk_clipboard_set_with_data(m_clipboard[sel],
                                     targets,
                                     n_targets,
                                     clipboard_copy_cb,
@@ -6605,7 +6605,7 @@ Terminal::widget_copy(VteSelection sel,
                                     this);
         m_changing_selection = false;
 
-        gtk_clipboard_set_can_store(m_clipboard[sel], nullptr, 0);
+        ctk_clipboard_set_can_store(m_clipboard[sel], nullptr, 0);
         m_selection_owned[sel] = true;
         m_selection_format[sel] = format;
 }
@@ -6617,7 +6617,7 @@ Terminal::widget_paste(GdkAtom board)
         if (!m_input_enabled)
                 return;
 
-	auto clip = gtk_clipboard_get_for_display(gtk_widget_get_display(m_widget), board);
+	auto clip = ctk_clipboard_get_for_display(ctk_widget_get_display(m_widget), board);
 	if (!clip)
                 return;
 
@@ -6660,7 +6660,7 @@ Terminal::confine_coordinates(long *xp,
 
 /* Start selection at the location of the event.
  * In case of regular selection, this is called with the original click's location
- * once the mouse has moved by the gtk drag threshold.
+ * once the mouse has moved by the ctk drag threshold.
  */
 void
 Terminal::start_selection (vte::view::coords const& pos,
@@ -6819,7 +6819,7 @@ Terminal::widget_mouse_motion(MouseEvent const& event)
         m_modifiers = event.modifiers();
 
         if (m_will_select_after_threshold) {
-                if (!gtk_drag_check_threshold(m_widget,
+                if (!ctk_drag_check_threshold(m_widget,
                                               m_mouse_last_position.x,
                                               m_mouse_last_position.y,
                                               pos.x, pos.y))
@@ -7226,7 +7226,7 @@ Terminal::apply_font_metrics(int cell_width,
 	/* Queue a resize if anything's changed. */
 	if (resize) {
 		if (widget_realized()) {
-			gtk_widget_queue_resize_no_redraw(m_widget);
+			ctk_widget_queue_resize_no_redraw(m_widget);
 		}
 	}
 	/* Emit a signal that the font changed. */
@@ -7304,7 +7304,7 @@ Terminal::update_font()
  * @font_desc: (allow-none): a #PangoFontDescription for the desired font, or %nullptr
  *
  * Sets the font used for rendering all text displayed by the terminal,
- * overriding any fonts set using gtk_widget_modify_font().  The terminal
+ * overriding any fonts set using ctk_widget_modify_font().  The terminal
  * will immediately attempt to load the desired font, retrieve its
  * metrics, and attempt to resize itself to keep the same number of rows
  * and columns.  The font scale is applied to the specified font.
@@ -7315,11 +7315,11 @@ Terminal::set_font_desc(PangoFontDescription const* font_desc)
 	/* Create an owned font description. */
         PangoFontDescription *desc;
 
-        auto context = gtk_widget_get_style_context(m_widget);
-        gtk_style_context_save(context);
-        gtk_style_context_set_state (context, GTK_STATE_FLAG_NORMAL);
-        gtk_style_context_get(context, GTK_STATE_FLAG_NORMAL, "font", &desc, nullptr);
-        gtk_style_context_restore(context);
+        auto context = ctk_widget_get_style_context(m_widget);
+        ctk_style_context_save(context);
+        ctk_style_context_set_state (context, GTK_STATE_FLAG_NORMAL);
+        ctk_style_context_get(context, GTK_STATE_FLAG_NORMAL, "font", &desc, nullptr);
+        ctk_style_context_restore(context);
 
 	pango_font_description_set_family_static (desc, "monospace");
 	if (font_desc != nullptr) {
@@ -7613,7 +7613,7 @@ Terminal::set_size(long columns,
                                                    _vte_ring_next (m_screen->row_data) - 1));
 
 		adjust_adjustments_full();
-		gtk_widget_queue_resize_no_redraw(m_widget);
+		ctk_widget_queue_resize_no_redraw(m_widget);
 		/* Our visible text changed. */
 		emit_text_modified();
 	}
@@ -7635,7 +7635,7 @@ void
 Terminal::vadjustment_value_changed()
 {
 	/* Read the new adjustment value and save the difference. */
-        auto const adj = gtk_adjustment_get_value(m_vadjustment.get());
+        auto const adj = ctk_adjustment_get_value(m_vadjustment.get());
 	double dy = adj - m_screen->scroll_delta;
 	m_screen->scroll_delta = adj;
 
@@ -7674,7 +7674,7 @@ Terminal::widget_set_vadjustment(vte::glib::RefPtr<GtkAdjustment>&& adjustment)
         if (adjustment)
                 m_vadjustment = std::move(adjustment);
         else
-                m_vadjustment = vte::glib::make_ref_sink(GTK_ADJUSTMENT(gtk_adjustment_new(0, 0, 0, 0, 0, 0)));
+                m_vadjustment = vte::glib::make_ref_sink(GTK_ADJUSTMENT(ctk_adjustment_new(0, 0, 0, 0, 0, 0)));
 
 	/* We care about the offset, not the top or bottom. */
         g_signal_connect_swapped(m_vadjustment.get(),
@@ -7696,7 +7696,7 @@ Terminal::Terminal(vte::platform::Widget* w,
 
         /* Inits allocation to 1x1 @ -1,-1 */
         cairo_rectangle_int_t allocation;
-        gtk_widget_get_allocation(m_widget, &allocation);
+        ctk_widget_get_allocation(m_widget, &allocation);
         set_allocated_rect(allocation);
 
 	int i;
@@ -7744,9 +7744,9 @@ Terminal::Terminal(vte::platform::Widget* w,
 	set_scrollback_lines(VTE_SCROLLBACK_INIT);
 
 	/* Selection info. */
-	display = gtk_widget_get_display(m_widget);
-	m_clipboard[VTE_SELECTION_PRIMARY] = gtk_clipboard_get_for_display(display, GDK_SELECTION_PRIMARY);
-	m_clipboard[VTE_SELECTION_CLIPBOARD] = gtk_clipboard_get_for_display(display, GDK_SELECTION_CLIPBOARD);
+	display = ctk_widget_get_display(m_widget);
+	m_clipboard[VTE_SELECTION_PRIMARY] = ctk_clipboard_get_for_display(display, GDK_SELECTION_PRIMARY);
+	m_clipboard[VTE_SELECTION_CLIPBOARD] = ctk_clipboard_get_for_display(display, GDK_SELECTION_CLIPBOARD);
         m_selection_owned[VTE_SELECTION_PRIMARY] = false;
         m_selection_owned[VTE_SELECTION_CLIPBOARD] = false;
 
@@ -7864,7 +7864,7 @@ Terminal::widget_size_allocate(GtkAllocation *allocation)
 	update_scrollback = current_allocation.height != allocation->height;
 
 	/* Set our allocation to match the structure. */
-	gtk_widget_set_allocation(m_widget, allocation);
+	ctk_widget_set_allocation(m_widget, allocation);
         set_allocated_rect(*allocation);
 
 	if (width != m_column_count
@@ -7937,7 +7937,7 @@ Terminal::set_blink_settings(bool blink,
 
         update_cursor_blinks();
 
-        /* Misuse gtk-cursor-blink-time for text blinking as well. This might change in the future. */
+        /* Misuse ctk-cursor-blink-time for text blinking as well. This might change in the future. */
         m_text_blink_cycle = m_cursor_blink_cycle;
         if (m_text_blink_timer) {
                 /* The current phase might have changed, and an already installed
@@ -7985,7 +7985,7 @@ Terminal::~Terminal()
 			if (m_selection_owned[sel]) {
                                 // FIXMEchpe we should check m_selection_format[sel]
                                 // and also put text/html on if it's VTE_FORMAT_HTML
-				gtk_clipboard_set_text(m_clipboard[sel],
+				ctk_clipboard_set_text(m_clipboard[sel],
 						       m_selection[sel]->str,
 						       m_selection[sel]->len);
 			}
@@ -9400,7 +9400,7 @@ Terminal::widget_mouse_scroll(MouseEvent const& event)
 		return true;
 	}
 
-        v = MAX (1., ceil (gtk_adjustment_get_page_increment (m_vadjustment.get()) / 10.));
+        v = MAX (1., ceil (ctk_adjustment_get_page_increment (m_vadjustment.get()) / 10.));
 	_vte_debug_print(VTE_DEBUG_EVENTS,
 			"Scroll speed is %d lines per non-smooth scroll unit\n",
 			(int) v);
@@ -9588,8 +9588,8 @@ Terminal::update_cursor_blinks()
         switch (decscusr_cursor_blink()) {
         case CursorBlinkMode::eSYSTEM:
                 gboolean v;
-                g_object_get(gtk_widget_get_settings(m_widget),
-                                                     "gtk-cursor-blink",
+                g_object_get(ctk_widget_get_settings(m_widget),
+                                                     "ctk-cursor-blink",
                                                      &v, nullptr);
                 blink = v != FALSE;
                 break;
@@ -10411,7 +10411,7 @@ Terminal::invalidate_dirty_rects_and_process_updates()
                                allocation.y + m_padding.top);
 
 	/* and perform the merge with the window visible area */
-        gtk_widget_queue_draw_region(m_widget, region);
+        ctk_widget_queue_draw_region(m_widget, region);
 	cairo_region_destroy (region);
 
 	return true;
@@ -10664,8 +10664,8 @@ Terminal::search_rows(pcre2_match_context_8 *match_context,
 
 	select_text(start_col, start_row, end_col, end_row);
 	/* Quite possibly the math here should not access adjustment directly... */
-        value = gtk_adjustment_get_value(m_vadjustment.get());
-        page_size = gtk_adjustment_get_page_size(m_vadjustment.get());
+        value = ctk_adjustment_get_value(m_vadjustment.get());
+        page_size = ctk_adjustment_get_page_size(m_vadjustment.get());
 	if (backward) {
 		if (end_row < value || end_row > value + page_size - 1)
 			queue_adjustment_value_changed_clamped(end_row - page_size + 1);
@@ -10811,7 +10811,7 @@ Terminal::set_input_enabled (bool enabled)
 
         m_input_enabled = enabled;
 
-        auto context = gtk_widget_get_style_context(m_widget);
+        auto context = ctk_widget_get_style_context(m_widget);
 
         /* FIXME: maybe hide cursor when input disabled, too? */
 
@@ -10819,7 +10819,7 @@ Terminal::set_input_enabled (bool enabled)
                 if (m_has_focus)
                         widget()->im_focus_in();
 
-                gtk_style_context_remove_class (context, GTK_STYLE_CLASS_READ_ONLY);
+                ctk_style_context_remove_class (context, GTK_STYLE_CLASS_READ_ONLY);
         } else {
                 im_reset();
                 if (m_has_focus)
@@ -10828,7 +10828,7 @@ Terminal::set_input_enabled (bool enabled)
                 disconnect_pty_write();
                 _vte_byte_array_clear(m_outgoing);
 
-                gtk_style_context_add_class (context, GTK_STYLE_CLASS_READ_ONLY);
+                ctk_style_context_add_class (context, GTK_STYLE_CLASS_READ_ONLY);
         }
 
         return true;

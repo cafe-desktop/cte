@@ -41,7 +41,7 @@ msgstr "മുന്നറിയിപ്പ്"
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr "GnuTLS സജ്ജമല്ല; ഡിസ്കിലോട്ട് ഡാറ്റ എന്‍ക്രിപ്റ്റ് ചെയ്യാതെ എഴുതും!"
 
-#: ../src/vtegtk.cc:3618
+#: ../src/vtectk.cc:3618
 #, c-format
 msgid "Unable to convert characters from %s to %s."
 msgstr "%s-ല്‍ നിന്നും %s-ലേക്ക് അക്ഷരങ്ങളെ മാറ്റാന്‍ സാധിക്കുന്നില്ല."

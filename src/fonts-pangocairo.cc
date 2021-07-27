@@ -370,9 +370,9 @@ FontInfo::create_for_screen(GdkScreen* screen,
                             PangoFontDescription const* desc,
                             PangoLanguage* language)
 {
-	auto settings = gtk_settings_get_for_screen(screen);
+	auto settings = ctk_settings_get_for_screen(screen);
 	auto fontconfig_timestamp = guint{};
-	g_object_get (settings, "gtk-fontconfig-timestamp", &fontconfig_timestamp, nullptr);
+	g_object_get (settings, "ctk-fontconfig-timestamp", &fontconfig_timestamp, nullptr);
 	return create_for_context(vte::glib::take_ref(gdk_pango_context_get_for_screen(screen)),
                                   desc, language, fontconfig_timestamp);
 }
@@ -381,8 +381,8 @@ FontInfo*
 FontInfo::create_for_widget(GtkWidget* widget,
                             PangoFontDescription const* desc)
 {
-	auto screen = gtk_widget_get_screen(widget);
-	auto language = pango_context_get_language(gtk_widget_get_pango_context(widget));
+	auto screen = ctk_widget_get_screen(widget);
+	auto language = pango_context_get_language(ctk_widget_get_pango_context(widget));
 
 	return create_for_screen(screen, desc, language);
 }

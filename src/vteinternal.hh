@@ -186,11 +186,11 @@ private:
                         m_location(location)
                 {
                         /* We need to store this here instead of doing it after the |new| above,
-                         * since gtk_clipboard_request_text may dispatch the callback
+                         * since ctk_clipboard_request_text may dispatch the callback
                          * immediately or only later, with no way to know this beforehand.
                          */
                         *m_location = this;
-                        gtk_clipboard_request_text(clipboard, text_received, this);
+                        ctk_clipboard_request_text(clipboard, text_received, this);
                 }
 
                 ~Request()
@@ -554,7 +554,7 @@ public:
         inline constexpr auto vte_terminal() const noexcept { return m_terminal; }
 
         GtkWidget *m_widget{nullptr};
-        inline constexpr auto gtk_widget() const noexcept { return m_widget; }
+        inline constexpr auto ctk_widget() const noexcept { return m_widget; }
 
         void unset_widget() noexcept;
 
@@ -611,7 +611,7 @@ public:
         int m_utf8_ambiguous_width{VTE_DEFAULT_UTF8_AMBIGUOUS_WIDTH};
         gunichar m_last_graphic_character{0}; /* for REP */
         /* Array of dirty rectangles in view coordinates; need to
-         * add allocation origin and padding when passing to gtk.
+         * add allocation origin and padding when passing to ctk.
          */
         GArray *m_update_rects;
         bool m_invalidated_all{false};       /* pending refresh of entire terminal */
@@ -714,8 +714,8 @@ public:
         CursorBlinkMode m_cursor_blink_mode{CursorBlinkMode::eSYSTEM};
         bool m_cursor_blink_state{false};
         bool m_cursor_blinks{false};           /* whether the cursor is actually blinking */
-        gint m_cursor_blink_cycle;          /* gtk-cursor-blink-time / 2 */
-        int m_cursor_blink_timeout{500};        /* gtk-cursor-blink-timeout */
+        gint m_cursor_blink_cycle;          /* ctk-cursor-blink-time / 2 */
+        int m_cursor_blink_timeout{500};        /* ctk-cursor-blink-timeout */
         gint64 m_cursor_blink_time;         /* how long the cursor has been blinking yet */
         bool m_has_focus{false};            /* is the widget focused */
 
@@ -727,7 +727,7 @@ public:
         bool m_text_blink_state{false};  /* whether blinking text should be visible at this very moment */
         bool m_text_to_blink{false};     /* drawing signals here if it encounters any cell with blink attribute */
         TextBlinkMode m_text_blink_mode{TextBlinkMode::eALWAYS};
-        gint m_text_blink_cycle;  /* gtk-cursor-blink-time / 2 */
+        gint m_text_blink_cycle;  /* ctk-cursor-blink-time / 2 */
 
         /* DECSCUSR cursor style (shape and blinking possibly overridden
          * via escape sequence) */
