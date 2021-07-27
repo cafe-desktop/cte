@@ -63,6 +63,7 @@ before_scripts:
   - wget https://github.com/cafe-desktop/ctk/releases/download/v`echo $CTK_MASTERV`/gir1.2-ctk-3.0_`echo $CTK_MASTERV`-1_amd64.deb
   - wget https://github.com/cafe-desktop/ctk/releases/download/v`echo $CTK_MASTERV`/libctk-3-common_`echo $CTK_MASTERV`-1_all.deb
   - wget https://github.com/cafe-desktop/ctk/releases/download/v`echo $CTK_MASTERV`/libctk-3-0_`echo $CTK_MASTERV`-1_amd64.deb
+  - wget https://github.com/cafe-desktop/ctk/releases/download/v`echo $CTK_MASTERV`/ctk-update-icon-cache_`echo $CTK_MASTERV`-1_amd64.deb
   - wget https://github.com/cafe-desktop/ctk/releases/download/v`echo $CTK_MASTERV`/libctk-3-bin_`echo $CTK_MASTERV`-1_amd64.deb
   - dpkg -i *.deb
 
