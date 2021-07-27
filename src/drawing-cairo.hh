@@ -25,7 +25,7 @@
 #include <cairo.h>
 
 #include <glib.h>
-#include <gtk/gtk.h>
+#include <ctk/ctk.h>
 
 #include "cairo-glue.hh"
 #include "fwd.hh"

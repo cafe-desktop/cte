@@ -31,10 +31,10 @@ project(
 
 # Requirements
 
-gtk3_req_version          = '3.20.0'
-gtk3_min_req_version      = '3.18'
-gtk3_max_allowed_version  = '3.20'
-gtk4_req_version          = '4.0.0'
+ctk3_req_version          = '3.20.0'
+ctk3_min_req_version      = '3.18'
+ctk3_max_allowed_version  = '3.20'
+ctk4_req_version          = '4.0.0'
 
 fribidi_req_version       = '1.0.0'
 gio_req_version           = '2.52.0'
@@ -54,14 +54,14 @@ vte_api_minor_version = 91
 vte_api_version = '@0@.@1@'.format(vte_api_major_version, vte_api_minor_version)
 vte_api_name = 'vte-@0@.@1@'.format(vte_api_major_version, vte_api_minor_version)
 
-vte_gtk3_api_version = '@0@.@1@'.format(vte_api_major_version, vte_api_minor_version)
-vte_gtk4_api_version = '@0@.@1@'.format(vte_api_major_version + 1, vte_api_minor_version)
+vte_ctk3_api_version = '@0@.@1@'.format(vte_api_major_version, vte_api_minor_version)
+vte_ctk4_api_version = '@0@.@1@'.format(vte_api_major_version + 1, vte_api_minor_version)
 
-vte_gtk3_api_name = 'vte-' + vte_gtk3_api_version
-vte_gtk4_api_name = 'vte-' + vte_gtk4_api_version
+vte_ctk3_api_name = 'vte-' + vte_ctk3_api_version
+vte_ctk4_api_name = 'vte-' + vte_ctk4_api_version
 
-vte_gtk3_api_path = vte_gtk3_api_name / 'vte'
-vte_gtk4_api_path = vte_gtk4_api_name / 'vte'
+vte_ctk3_api_path = vte_ctk3_api_name / 'vte'
+vte_ctk4_api_path = vte_ctk4_api_name / 'vte'
 
 # Library versioning
 
@@ -77,8 +77,8 @@ lt_revision = (vte_minor_version.is_odd() ? 0 : vte_micro_version)
 lt_age = vte_minor_version * 100 + vte_micro_version - lt_revision
 lt_current = vte_major_version + lt_age
 
-libvte_gtk3_soversion = '@0@.@1@.@2@'.format(libvte_soversion, lt_current, lt_revision)
-libvte_gtk4_soversion = libvte_soversion.to_string()
+libvte_ctk3_soversion = '@0@.@1@.@2@'.format(libvte_soversion, lt_current, lt_revision)
+libvte_ctk4_soversion = libvte_soversion.to_string()
 
 # i18n
 
@@ -130,14 +130,14 @@ config_h.set('GLIB_VERSION_MIN_REQUIRED', '(G_ENCODE_VERSION(' + ver[0] + ',' + 
 ver = glib_max_allowed_version.split('.')
 config_h.set('GLIB_VERSION_MAX_ALLOWED', '(G_ENCODE_VERSION(' + ver[0] + ',' + ver[1] + '))')
 
-if get_option('gtk3')
-  gtk3_version_cppflags = []
+if get_option('ctk3')
+  ctk3_version_cppflags = []
 
-  ver = gtk3_min_req_version.split('.')
-  gtk3_version_cppflags += '-DGDK_VERSION_MIN_REQUIRED=(G_ENCODE_VERSION(' + ver[0] + ',' + ver[1] + '))'
+  ver = ctk3_min_req_version.split('.')
+  ctk3_version_cppflags += '-DGDK_VERSION_MIN_REQUIRED=(G_ENCODE_VERSION(' + ver[0] + ',' + ver[1] + '))'
 
-  ver = gtk3_max_allowed_version.split('.')
-  gtk3_version_cppflags += '-DGDK_VERSION_MAX_ALLOWED=(G_ENCODE_VERSION(' + ver[0] + ',' + ver[1] + '))'
+  ver = ctk3_max_allowed_version.split('.')
+  ctk3_version_cppflags += '-DGDK_VERSION_MAX_ALLOWED=(G_ENCODE_VERSION(' + ver[0] + ',' + ver[1] + '))'
 endif
 
 # FIXME AC_USE_SYSTEM_EXTENSIONS also supported non-gnu systems
@@ -418,16 +418,16 @@ else
   gnutls_dep = dependency('', required: false)
 endif
 
-if get_option('gtk3')
-  gtk3_dep = dependency('gtk+-3.0', version: '>=' + gtk3_req_version)
+if get_option('ctk3')
+  ctk3_dep = dependency('ctk+-3.0', version: '>=' + ctk3_req_version)
 else
-  gtk3_dep = dependency('', required: false)
+  ctk3_dep = dependency('', required: false)
 endif
 
-if get_option('gtk4')
-  gtk4_dep = dependency('gtk+-4.0', version: '>=' + gtk4_req_version)
+if get_option('ctk4')
+  ctk4_dep = dependency('ctk+-4.0', version: '>=' + ctk4_req_version)
 else
-  gtk4_dep = dependency('', required: false)
+  ctk4_dep = dependency('', required: false)
 endif
 
 if get_option('icu')
@@ -466,8 +466,8 @@ endif
 makefile_conf = configuration_data()
 makefile_conf.set('srcdir', meson.current_source_dir())
 makefile_conf.set('builddir', meson.current_build_dir())
-makefile_conf.set('vte_gtk3_api_version', vte_gtk3_api_version)
-makefile_conf.set('vte_gtk4_api_version', vte_gtk4_api_version)
+makefile_conf.set('vte_ctk3_api_version', vte_ctk3_api_version)
+makefile_conf.set('vte_ctk4_api_version', vte_ctk4_api_version)
 
 configure_file(
   input: 'Makefile.meson',
@@ -500,8 +500,8 @@ output += '  A11y:         ' + get_option('a11y').to_string() + '\n'
 output += '  Docs:         ' + get_option('docs').to_string() + '\n'
 output += '  FRIBIDI:      ' + get_option('fribidi').to_string() + '\n'
 output += '  GNUTLS:       ' + get_option('gnutls').to_string() + '\n'
-output += '  GTK+ 3.0:     ' + get_option('gtk3').to_string() + '\n'
-output += '  GTK+ 4.0:     ' + get_option('gtk4').to_string() + '\n'
+output += '  GTK+ 3.0:     ' + get_option('ctk3').to_string() + '\n'
+output += '  GTK+ 4.0:     ' + get_option('ctk4').to_string() + '\n'
 output += '  ICU:          ' + get_option('icu').to_string() + '\n'
 output += '  GIR:          ' + get_option('gir').to_string() + '\n'
 output += '  systemd:      ' + systemd_dep.found().to_string() + '\n'

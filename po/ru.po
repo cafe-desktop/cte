@@ -44,7 +44,7 @@ msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr ""
 "GnuTLS не включён; данные будут записаны на диск в незашифрованном виде!"
 
-#: ../src/vtegtk.cc:3664
+#: ../src/vtectk.cc:3664
 #, c-format
 msgid "Unable to convert characters from %s to %s."
 msgstr "Не удалось преобразовать символы из набора %s в набор %s."

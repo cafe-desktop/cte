@@ -40,7 +40,7 @@ msgstr "VAROITUS"
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr "GnuTLS ei ole käytössä; tiedot kirjoitetaan levylle ilman salausta!"
 
-#: ../src/vtegtk.cc:3618
+#: ../src/vtectk.cc:3618
 #, c-format
 msgid "Unable to convert characters from %s to %s."
 msgstr "Merkkien muuntaminen merkistöstä %s merkistöön %s ei onnistu."

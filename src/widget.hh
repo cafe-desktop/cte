@@ -53,7 +53,7 @@ public:
         Widget& operator= (Widget&&) = delete;
 
         GObject* object() const noexcept { return reinterpret_cast<GObject*>(m_widget); }
-        GtkWidget* gtk() const noexcept { return m_widget; }
+        GtkWidget* ctk() const noexcept { return m_widget; }
         VteTerminal* vte() const noexcept { return reinterpret_cast<VteTerminal*>(m_widget); }
 
         inline constexpr vte::terminal::Terminal* terminal() const noexcept { return m_terminal; }
@@ -83,7 +83,7 @@ public:
         bool scroll(GdkEventScroll *event) noexcept { return m_terminal->widget_mouse_scroll(*mouse_event_from_gdk(reinterpret_cast<GdkEvent*>(event))); }
         bool motion_notify(GdkEventMotion *event) noexcept { return m_terminal->widget_mouse_motion(*mouse_event_from_gdk(reinterpret_cast<GdkEvent*>(event))); }
 
-        void grab_focus() noexcept { gtk_widget_grab_focus(gtk()); }
+        void grab_focus() noexcept { ctk_widget_grab_focus(ctk()); }
 
         bool primary_paste_enabled() const noexcept;
         void paste(GdkAtom board) noexcept { m_terminal->widget_paste(board); }
@@ -191,7 +191,7 @@ protected:
 
         bool realized() const noexcept
         {
-                return gtk_widget_get_realized(m_widget);
+                return ctk_widget_get_realized(m_widget);
         }
 
         vte::glib::RefPtr<GdkCursor> create_cursor(GdkCursorType cursor_type) const noexcept;
@@ -208,7 +208,7 @@ protected:
         void im_reset() noexcept
         {
                 if (m_im_context)
-                        gtk_im_context_reset(m_im_context.get());
+                        ctk_im_context_reset(m_im_context.get());
         }
 
         void im_set_cursor_location(cairo_rectangle_int_t const* rect) noexcept;

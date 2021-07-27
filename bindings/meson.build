@@ -14,10 +14,10 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this library.  If not, see <https://www.gnu.org/licenses/>.
 
-if get_option('gir') and (get_option('gtk3') or get_option('gtk4'))
+if get_option('gir') and (get_option('ctk3') or get_option('ctk4'))
   subdir('gir')
 endif
 
-if get_option('vapi') and get_option('gtk3')
+if get_option('vapi') and get_option('ctk3')
   subdir('vala')
 endif

@@ -19,7 +19,7 @@ msgstr ""
 "X-Generator: Lokalize 1.5\n"
 
 #: ../src/iso2022.cc:73 ../src/iso2022.cc:81 ../src/iso2022.cc:111
-#: ../src/vtegtk.cc:3072
+#: ../src/vtectk.cc:3072
 #, c-format
 msgid "Unable to convert characters from %s to %s."
 msgstr "Ekki tókst að umbreyta stöfum frá %s yfir í %s."

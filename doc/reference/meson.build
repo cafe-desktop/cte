@@ -14,7 +14,7 @@
 # along with this library.  If not, see <https://www.gnu.org/licenses/>.
 
 # Meson insufficiency! Would be so much easier to just make this
-# (vte_gtk3_sources - vte_gtk3_public_headers).filter('.h'), but
+# (vte_ctk3_sources - vte_ctk3_public_headers).filter('.h'), but
 # but there is no array subtraction or filtering. Or just allow listing the
 # headers that we DO want to get scanned.
 # So instead just list all the headers here again... :-(
@@ -72,26 +72,26 @@ content_files = configure_file(
   configuration: version_conf
 )
 
-if get_option('gtk3')
-  gtk3_prefix = gtk3_dep.get_pkgconfig_variable('prefix')
+if get_option('ctk3')
+  ctk3_prefix = ctk3_dep.get_pkgconfig_variable('prefix')
 
   fixxref_args = [
-    '--html-dir=' + (vte_prefix / gnome.gtkdoc_html_dir(vte_gtk3_api_name)),
-    '--extra-dir=' + (glib_prefix / gnome.gtkdoc_html_dir('glib')),
-    '--extra-dir=' + (glib_prefix / gnome.gtkdoc_html_dir('gio')),
-    '--extra-dir=' + (gtk3_prefix / gnome.gtkdoc_html_dir('gdk')),
-    '--extra-dir=' + (gtk3_prefix / gnome.gtkdoc_html_dir('gdk-pixbuf')),
-    '--extra-dir=' + (gtk3_prefix / gnome.gtkdoc_html_dir('gtk')),
+    '--html-dir=' + (vte_prefix / gnome.ctkdoc_html_dir(vte_ctk3_api_name)),
+    '--extra-dir=' + (glib_prefix / gnome.ctkdoc_html_dir('glib')),
+    '--extra-dir=' + (glib_prefix / gnome.ctkdoc_html_dir('gio')),
+    '--extra-dir=' + (ctk3_prefix / gnome.ctkdoc_html_dir('gdk')),
+    '--extra-dir=' + (ctk3_prefix / gnome.ctkdoc_html_dir('gdk-pixbuf')),
+    '--extra-dir=' + (ctk3_prefix / gnome.ctkdoc_html_dir('ctk')),
   ]
 
-  gnome.gtkdoc(
+  gnome.ctkdoc(
     'vte',
     main_xml: 'vte-docs.xml',
     module_version: vte_api_version,
     src_dir: [src_inc, vte_inc],
     ignore_headers: private_headers,
     include_directories: top_inc,
-    dependencies: libvte_gtk3_dep,
+    dependencies: libvte_ctk3_dep,
     c_args: '-DVTE_COMPILATION',
     namespace: 'vte',
     scan_args: scan_args,
@@ -103,6 +103,6 @@ if get_option('gtk3')
   )
 endif
 
-if get_option('gtk4')
+if get_option('ctk4')
   assert(false, 'not yet supported')
 endif

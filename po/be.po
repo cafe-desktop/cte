@@ -35,7 +35,7 @@ msgstr "АСЦЯРОЖНА"
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr "GnuTLS не ўключаны; даныя будуць запісаны на дыск незашыфраванымі!"
 
-#: ../src/vtegtk.cc:3664
+#: ../src/vtectk.cc:3664
 #, c-format
 msgid "Unable to convert characters from %s to %s."
 msgstr "Не ўдалося пераўтварыць знакі з %s у %s."

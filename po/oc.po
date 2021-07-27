@@ -42,7 +42,7 @@ msgstr ""
 "GnuTLS es pas activat ; las donadas seràn escritas sul disc sens èsser "
 "chifradas !"
 
-#: ../src/vtegtk.cc:3618
+#: ../src/vtectk.cc:3618
 #, c-format
 msgid "Unable to convert characters from %s to %s."
 msgstr "Impossible de convertir los caractèrs %s en %s."

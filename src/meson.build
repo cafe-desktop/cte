@@ -132,8 +132,8 @@ libvte_common_sources = debug_sources + glib_glue_sources + libc_glue_sources + 
   'utf8.hh',
   'vte.cc',
   'vtedefines.hh',
-  'vtegtk.cc',
-  'vtegtk.hh',
+  'vtectk.cc',
+  'vtectk.hh',
   'vteinternal.hh',
   'vtepcre2.h',
   'vteregex.cc',
@@ -170,8 +170,8 @@ if systemd_dep.found()
 endif
 
 libvte_common_doc_sources = files(
-  # These file contain gtk-doc comments to be extracted for docs and gir
-  'vtegtk.cc',
+  # These file contain ctk-doc comments to be extracted for docs and gir
+  'vtectk.cc',
   'vtepty.cc',
   'vteregex.cc',
 )
@@ -233,37 +233,37 @@ libvte_common_cppflags = [
   '-UPARSER_INCLUDE_NOP',
 ]
 
-if get_option('gtk3')
-  libvte_gtk3_sources = libvte_common_sources + libvte_gtk3_public_headers + libvte_gtk3_enum_sources
-  libvte_gtk3_cppflags = libvte_common_cppflags + gtk3_version_cppflags
-  libvte_gtk3_deps = libvte_common_deps + [gtk3_dep]
-  libvte_gtk3_public_deps = libvte_common_public_deps + [gtk3_dep]
+if get_option('ctk3')
+  libvte_ctk3_sources = libvte_common_sources + libvte_ctk3_public_headers + libvte_ctk3_enum_sources
+  libvte_ctk3_cppflags = libvte_common_cppflags + ctk3_version_cppflags
+  libvte_ctk3_deps = libvte_common_deps + [ctk3_dep]
+  libvte_ctk3_public_deps = libvte_common_public_deps + [ctk3_dep]
 
-  libvte_gtk3 = shared_library(
-    vte_gtk3_api_name,
-    sources: libvte_gtk3_sources,
-    version: libvte_gtk3_soversion,
+  libvte_ctk3 = shared_library(
+    vte_ctk3_api_name,
+    sources: libvte_ctk3_sources,
+    version: libvte_ctk3_soversion,
     include_directories: incs,
-    dependencies: libvte_gtk3_deps,
-    cpp_args: libvte_gtk3_cppflags,
+    dependencies: libvte_ctk3_deps,
+    cpp_args: libvte_ctk3_cppflags,
     install: true,
   )
 
-  libvte_gtk3_dep = declare_dependency(
-    sources: libvte_gtk3_public_headers,
+  libvte_ctk3_dep = declare_dependency(
+    sources: libvte_ctk3_public_headers,
     include_directories: [src_inc, vte_inc],
-    dependencies: libvte_gtk3_deps,
-    link_with: libvte_gtk3
+    dependencies: libvte_ctk3_deps,
+    link_with: libvte_ctk3
   )
 
   pkg.generate(
-    libvte_gtk3,
+    libvte_ctk3,
     version: vte_version,
     name: 'vte',
     description: 'VTE widget for GTK+ 3.0',
-    filebase: vte_gtk3_api_name,
-    subdirs: vte_gtk3_api_name,
-    requires: libvte_gtk3_public_deps,
+    filebase: vte_ctk3_api_name,
+    subdirs: vte_ctk3_api_name,
+    requires: libvte_ctk3_public_deps,
     variables: 'exec_prefix=${prefix}',
   )
 endif
@@ -355,7 +355,7 @@ reflect_sources = files(
 reflect_textview = executable(
   'reflect-textview',
   sources: reflect_sources,
-  dependencies: [gtk3_dep],
+  dependencies: [ctk3_dep],
   c_args: ['-DUSE_TEXT_VIEW'],
   include_directories: top_inc,
   install: false,
@@ -364,7 +364,7 @@ reflect_textview = executable(
 reflect_vte = executable(
   'reflect-vte',
   sources: reflect_sources,
-  dependencies: [gtk3_dep, libvte_gtk3_dep],
+  dependencies: [ctk3_dep, libvte_ctk3_dep],
   c_args: [
     '-DUSE_VTE',
     '-DVTE_DISABLE_DEPRECATION_WARNINGS',
@@ -510,7 +510,7 @@ test_vtetypes_sources = libc_glue_sources + files(
 test_vtetypes = executable(
   'test-vtetypes',
   sources: test_vtetypes_sources,
-  dependencies: [glib_dep, pango_dep, gtk3_dep],
+  dependencies: [glib_dep, pango_dep, ctk3_dep],
   cpp_args: ['-DMAIN'],
   include_directories: top_inc,
   install: false,

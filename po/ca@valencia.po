@@ -21,7 +21,7 @@ msgstr ""
 "X-Generator: Poedit 1.8.11\n"
 
 #: ../src/iso2022.cc:73 ../src/iso2022.cc:81 ../src/iso2022.cc:111
-#: ../src/vtegtk.cc:3434
+#: ../src/vtectk.cc:3434
 #, c-format
 msgid "Unable to convert characters from %s to %s."
 msgstr "No es pot convertir el caràcter %s a %s."

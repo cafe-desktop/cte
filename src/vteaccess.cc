@@ -27,8 +27,8 @@
 #include "config.h"
 
 #include <atk/atk.h>
-#include <gtk/gtk.h>
-#include <gtk/gtk-a11y.h>
+#include <ctk/ctk.h>
+#include <ctk/ctk-a11y.h>
 #include <string.h>
 #include "debug.h"
 #include <vte/vte.h>
@@ -40,11 +40,11 @@
 #endif
 #include <glib/gi18n-lib.h>
 
-#define TERMINAL_FROM_ACCESSIBLE(a) (VTE_TERMINAL(gtk_accessible_get_widget(GTK_ACCESSIBLE(a))))
+#define TERMINAL_FROM_ACCESSIBLE(a) (VTE_TERMINAL(ctk_accessible_get_widget(GTK_ACCESSIBLE(a))))
 
 #define IMPL(t) (_vte_terminal_get_impl(t))
 #define IMPL_FROM_WIDGET(w) (IMPL(VTE_TERMINAL(w)))
-#define IMPL_FROM_ACCESSIBLE(a) (IMPL_FROM_WIDGET(gtk_accessible_get_widget(GTK_ACCESSIBLE(a))))
+#define IMPL_FROM_ACCESSIBLE(a) (IMPL_FROM_WIDGET(ctk_accessible_get_widget(GTK_ACCESSIBLE(a))))
 
 enum {
         ACTION_MENU,
@@ -679,14 +679,14 @@ vte_terminal_accessible_visibility_notify(VteTerminal *terminal,
 				       visible);
 	widget = &terminal->widget;
 	while (visible) {
-		if (gtk_widget_get_toplevel(widget) == widget) {
+		if (ctk_widget_get_toplevel(widget) == widget) {
 			break;
 		}
 		if (widget == NULL) {
 			break;
 		}
-		visible = visible && (gtk_widget_get_visible(widget));
-		widget = gtk_widget_get_parent(widget);
+		visible = visible && (ctk_widget_get_visible(widget));
+		widget = ctk_widget_get_parent(widget);
 	}
 	/* The SHOWING state indicates that this widget, and all of its
 	 * parents up to the toplevel, are "visible". */
@@ -784,7 +784,7 @@ vte_terminal_accessible_finalize(GObject *object)
 
 	_vte_debug_print(VTE_DEBUG_ALLY, "Finalizing accessible peer.\n");
 
-        widget = gtk_accessible_get_widget (GTK_ACCESSIBLE(accessible));
+        widget = ctk_accessible_get_widget (GTK_ACCESSIBLE(accessible));
 
 	if (widget != NULL) {
 		g_signal_handlers_disconnect_matched(widget,
@@ -1336,7 +1336,7 @@ vte_terminal_accessible_get_character_extents(AtkText *text, gint offset,
 
 	vte_terminal_accessible_update_private_data_if_needed(accessible,
 							      NULL, NULL);
-	terminal = VTE_TERMINAL (gtk_accessible_get_widget (GTK_ACCESSIBLE (text)));
+	terminal = VTE_TERMINAL (ctk_accessible_get_widget (GTK_ACCESSIBLE (text)));
 
 	atk_component_get_extents (ATK_COMPONENT (text), &base_x, &base_y, &w, &h, coords);
 	xy_from_offset (priv, offset, x, y);
@@ -1375,7 +1375,7 @@ vte_terminal_accessible_get_offset_at_point(AtkText *text,
 
 	vte_terminal_accessible_update_private_data_if_needed(accessible,
 							      NULL, NULL);
-	terminal = VTE_TERMINAL (gtk_accessible_get_widget (GTK_ACCESSIBLE (text)));
+	terminal = VTE_TERMINAL (ctk_accessible_get_widget (GTK_ACCESSIBLE (text)));
 
 	atk_component_get_extents (ATK_COMPONENT (text), &base_x, &base_y, &w, &h, coords);
 	cell_width = vte_terminal_get_char_width (terminal);
@@ -1396,7 +1396,7 @@ vte_terminal_accessible_get_n_selections(AtkText *text)
 
 	vte_terminal_accessible_update_private_data_if_needed(accessible,
 							      NULL, NULL);
-	widget = gtk_accessible_get_widget (GTK_ACCESSIBLE(text));
+	widget = ctk_accessible_get_widget (GTK_ACCESSIBLE(text));
 	if (widget == NULL) {
 		/* State is defunct */
 		return -1;
@@ -1419,7 +1419,7 @@ vte_terminal_accessible_get_selection(AtkText *text, gint selection_number,
 
 	vte_terminal_accessible_update_private_data_if_needed(accessible,
 							      NULL, NULL);
-	widget = gtk_accessible_get_widget (GTK_ACCESSIBLE(text));
+	widget = ctk_accessible_get_widget (GTK_ACCESSIBLE(text));
 	if (widget == NULL) {
 		/* State is defunct */
 		return NULL;
@@ -1449,7 +1449,7 @@ vte_terminal_accessible_add_selection(AtkText *text,
 
 	vte_terminal_accessible_update_private_data_if_needed(accessible,
 							      NULL, NULL);
-	widget = gtk_accessible_get_widget (GTK_ACCESSIBLE(text));
+	widget = ctk_accessible_get_widget (GTK_ACCESSIBLE(text));
 	if (widget == NULL) {
 		/* State is defunct */
 		return FALSE;
@@ -1472,7 +1472,7 @@ vte_terminal_accessible_remove_selection(AtkText *text,
 
 	vte_terminal_accessible_update_private_data_if_needed(accessible,
 							      NULL, NULL);
-	widget = gtk_accessible_get_widget (GTK_ACCESSIBLE(text));
+	widget = ctk_accessible_get_widget (GTK_ACCESSIBLE(text));
 	if (widget == NULL) {
 		/* State is defunct */
 		return FALSE;
@@ -1501,7 +1501,7 @@ vte_terminal_accessible_set_selection(AtkText *text, gint selection_number,
 
 	vte_terminal_accessible_update_private_data_if_needed(accessible,
 							      NULL, NULL);
-	widget = gtk_accessible_get_widget (GTK_ACCESSIBLE(text));
+	widget = ctk_accessible_get_widget (GTK_ACCESSIBLE(text));
 	if (widget == NULL) {
 		/* State is defunct */
 		return FALSE;
@@ -1582,7 +1582,7 @@ vte_terminal_accessible_set_size(AtkComponent *component,
         VteTerminalAccessible *accessible = VTE_TERMINAL_ACCESSIBLE(component);
 	GtkWidget *widget;
 
-	widget = gtk_accessible_get_widget (GTK_ACCESSIBLE(accessible));
+	widget = ctk_accessible_get_widget (GTK_ACCESSIBLE(accessible));
 	if (widget == NULL)
 		return FALSE;
 
@@ -1636,7 +1636,7 @@ vte_terminal_accessible_do_action (AtkAction *accessible, int i)
 
 	g_return_val_if_fail (i < LAST_ACTION, FALSE);
 
-	widget = gtk_accessible_get_widget (GTK_ACCESSIBLE (accessible));
+	widget = ctk_accessible_get_widget (GTK_ACCESSIBLE (accessible));
 	if (!widget) {
 		return FALSE;
 	}

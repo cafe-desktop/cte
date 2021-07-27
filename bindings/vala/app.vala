@@ -790,10 +790,10 @@ class App : Gtk.Application
            flags: ApplicationFlags.NON_UNIQUE);
 
     var settings = Gtk.Settings.get_default();
-    settings.gtk_enable_mnemonics = false;
-    settings.gtk_enable_accels = false;
-    /* Make gtk+ CSD not steal F10 from the terminal */
-    settings.gtk_menu_bar_accel = null;
+    settings.ctk_enable_mnemonics = false;
+    settings.ctk_enable_accels = false;
+    /* Make ctk+ CSD not steal F10 from the terminal */
+    settings.ctk_menu_bar_accel = null;
   }
 
   protected override void startup()

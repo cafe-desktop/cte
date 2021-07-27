@@ -15,8 +15,8 @@
 
 srcdir=@srcdir@
 builddir=@builddir@
-vte_gtk3_api_version = @vte_gtk3_api_version@
-vte_gtk4_api_version = @vte_gtk4_api_version@
+vte_ctk3_api_version = @vte_ctk3_api_version@
+vte_ctk4_api_version = @vte_ctk4_api_version@
 
 #
 
@@ -39,7 +39,7 @@ coverage:
 	$(NINJA) coverage
 
 doc:
-	$(NINJA) vte-$(vte_gtk3_api_version)-doc
+	$(NINJA) vte-$(vte_ctk3_api_version)-doc
 
 install:
 	$(NINJA) install

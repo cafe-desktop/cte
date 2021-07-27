@@ -21,8 +21,8 @@
 
 
 #include <glib.h>
-#include <gtk/gtk.h>
-#include <gtk/gtk-a11y.h>
+#include <ctk/ctk.h>
+#include <ctk/ctk-a11y.h>
 
 G_BEGIN_DECLS
 

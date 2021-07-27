@@ -37,7 +37,7 @@ msgstr "ئاگاداربە"
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr "GnuTLS چالاک نیە؛ زانیارییەکان دەکرێنە سەر پەپکە بێ ئەوەی پارێزراوبکرێن!"
 
-#: ../src/vtegtk.cc:3666
+#: ../src/vtectk.cc:3666
 #, c-format
 msgid "Unable to convert characters from %s to %s."
 msgstr "نەتوانرا نووسەکان بگۆڕدرێت لە %s بۆ %s."
