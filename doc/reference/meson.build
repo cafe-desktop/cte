@@ -79,8 +79,8 @@ if get_option('ctk3')
     '--html-dir=' + (vte_prefix / gnome.ctkdoc_html_dir(vte_ctk3_api_name)),
     '--extra-dir=' + (glib_prefix / gnome.ctkdoc_html_dir('glib')),
     '--extra-dir=' + (glib_prefix / gnome.ctkdoc_html_dir('gio')),
-    '--extra-dir=' + (ctk3_prefix / gnome.ctkdoc_html_dir('gdk')),
-    '--extra-dir=' + (ctk3_prefix / gnome.ctkdoc_html_dir('gdk-pixbuf')),
+    '--extra-dir=' + (ctk3_prefix / gnome.ctkdoc_html_dir('cdk')),
+    '--extra-dir=' + (ctk3_prefix / gnome.ctkdoc_html_dir('cdk-pixbuf')),
     '--extra-dir=' + (ctk3_prefix / gnome.ctkdoc_html_dir('ctk')),
   ]
 

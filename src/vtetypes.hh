@@ -18,7 +18,7 @@
 #pragma once
 
 #include <pango/pango.h>
-#include <gdk/gdk.h>
+#include <cdk/cdk.h>
 #include <errno.h>
 
 #include <cassert>

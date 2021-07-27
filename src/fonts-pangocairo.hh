@@ -144,7 +144,7 @@ public:
                         return;
 
                 /* Delay destruction by a few seconds, in case we need it again */
-                m_destroy_timeout = gdk_threads_add_timeout_seconds(font_cache_timeout,
+                m_destroy_timeout = cdk_threads_add_timeout_seconds(font_cache_timeout,
                                                                     (GSourceFunc)destroy_delayed_cb,
                                                                     this);
         }

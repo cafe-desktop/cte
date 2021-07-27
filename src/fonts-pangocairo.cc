@@ -373,7 +373,7 @@ FontInfo::create_for_screen(GdkScreen* screen,
 	auto settings = ctk_settings_get_for_screen(screen);
 	auto fontconfig_timestamp = guint{};
 	g_object_get (settings, "ctk-fontconfig-timestamp", &fontconfig_timestamp, nullptr);
-	return create_for_context(vte::glib::take_ref(gdk_pango_context_get_for_screen(screen)),
+	return create_for_context(vte::glib::take_ref(cdk_pango_context_get_for_screen(screen)),
                                   desc, language, fontconfig_timestamp);
 }
 

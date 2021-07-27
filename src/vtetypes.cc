@@ -50,7 +50,7 @@ vte::color::rgb::parse(char const* spec)
 	char *spec_copy = (char *)spec;
 	bool retval = false;
 
-	/* gdk_color_parse doesnt handle all XParseColor formats.  It only
+	/* cdk_color_parse doesnt handle all XParseColor formats.  It only
 	 * supports the #RRRGGGBBB format, not the rgb:RRR/GGG/BBB format.
 	 * See: man XParseColor */
 

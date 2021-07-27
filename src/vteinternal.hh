@@ -273,10 +273,10 @@ protected:
 
         EventBase() noexcept = default;
 
-        constexpr EventBase(GdkEvent* gdk_event,
+        constexpr EventBase(GdkEvent* cdk_event,
                             Type type,
                             unsigned timestamp) noexcept
-                : m_platform_event{gdk_event},
+                : m_platform_event{cdk_event},
                   m_type{type},
                   m_timestamp{timestamp}
         {
@@ -309,7 +309,7 @@ protected:
 
         KeyEvent() noexcept = default;
 
-        constexpr KeyEvent(GdkEvent* gdk_event,
+        constexpr KeyEvent(GdkEvent* cdk_event,
                            Type type,
                            unsigned timestamp,
                            unsigned modifiers,
@@ -317,7 +317,7 @@ protected:
                            unsigned keycode,
                            uint8_t group,
                            bool is_modifier) noexcept
-                : EventBase{gdk_event,
+                : EventBase{cdk_event,
                             type,
                             timestamp},
                   m_modifiers{modifiers},
@@ -385,14 +385,14 @@ protected:
 
         MouseEvent() noexcept = default;
 
-        constexpr MouseEvent(GdkEvent* gdk_event,
+        constexpr MouseEvent(GdkEvent* cdk_event,
                              Type type,
                              unsigned timestamp,
                              unsigned modifiers,
                              Button button,
                              double x,
                              double y) noexcept
-                : EventBase{gdk_event,
+                : EventBase{cdk_event,
                             type,
                             timestamp},
                   m_modifiers{modifiers},
@@ -428,7 +428,7 @@ public:
 
         ScrollDirection scroll_direction() const noexcept
         {
-                /* Note that we cannot use gdk_event_get_scroll_direction() here since it
+                /* Note that we cannot use cdk_event_get_scroll_direction() here since it
                  * returns false for smooth scroll events.
                  */
                 if (!is_mouse_scroll())
@@ -446,14 +446,14 @@ public:
         auto scroll_delta_x() const noexcept
         {
                 auto delta = double{0.};
-                gdk_event_get_scroll_deltas(platform_event(), &delta, nullptr);
+                cdk_event_get_scroll_deltas(platform_event(), &delta, nullptr);
                 return delta;
         }
 
         auto scroll_delta_y() const noexcept
         {
                 auto delta = double{0.};
-                gdk_event_get_scroll_deltas(platform_event(), nullptr, &delta);
+                cdk_event_get_scroll_deltas(platform_event(), nullptr, &delta);
                 return delta;
         }
 
@@ -1381,7 +1381,7 @@ public:
         void regex_match_remove(int tag) noexcept;
         void regex_match_remove_all() noexcept;
         void regex_match_set_cursor(int tag,
-                                    GdkCursor *gdk_cursor);
+                                    GdkCursor *cdk_cursor);
         void regex_match_set_cursor(int tag,
                                     GdkCursorType cursor_type);
         void regex_match_set_cursor(int tag,

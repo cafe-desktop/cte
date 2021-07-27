@@ -29,7 +29,7 @@
 #include <glib/gprintf.h>
 #include <glib/gi18n.h>
 #include <glib-unix.h>
-#include <gdk-pixbuf/gdk-pixbuf.h>
+#include <cdk-pixbuf/cdk-pixbuf.h>
 #include <ctk/ctk.h>
 #include <cairo/cairo-gobject.h>
 #include <vte/vte.h>
@@ -193,7 +193,7 @@ private:
                          GError** error)
         {
                 GdkRGBA color;
-                if (!gdk_rgba_parse(&color, str)) {
+                if (!cdk_rgba_parse(&color, str)) {
                         g_set_error(error, G_OPTION_ERROR, G_OPTION_ERROR_BAD_VALUE,
                                     "Failed to parse \"%s\" as color", str);
                         *value_set = false;
@@ -305,7 +305,7 @@ private:
         {
                 Options* that = static_cast<Options*>(data);
                 g_clear_object(&that->background_pixbuf);
-                that->background_pixbuf = gdk_pixbuf_new_from_file(value, error);
+                that->background_pixbuf = cdk_pixbuf_new_from_file(value, error);
                 return that->background_pixbuf != nullptr;
         }
 
@@ -1000,7 +1000,7 @@ vteapp_terminal_realize(CtkWidget* widget)
 
         VteappTerminal* terminal = VTEAPP_TERMINAL(widget);
         if (options.background_pixbuf != nullptr) {
-                auto surface = gdk_cairo_surface_create_from_pixbuf(options.background_pixbuf,
+                auto surface = cdk_cairo_surface_create_from_pixbuf(options.background_pixbuf,
                                                                     0 /* take scale from window */,
                                                                     ctk_widget_get_window(widget));
                 terminal->background_pattern = cairo_pattern_create_for_surface(surface);
@@ -1296,7 +1296,7 @@ vteapp_window_resize(VteappWindow* window)
         /* Don't do this for maximised or tiled windows. */
         auto win = ctk_widget_get_window(CTK_WIDGET(window));
         if (win != nullptr &&
-            (gdk_window_get_state(win) & (GDK_WINDOW_STATE_MAXIMIZED |
+            (cdk_window_get_state(win) & (GDK_WINDOW_STATE_MAXIMIZED |
                                           GDK_WINDOW_STATE_FULLSCREEN |
                                           GDK_WINDOW_STATE_TILED)) != 0)
                 return;
@@ -1850,7 +1850,7 @@ window_icon_title_changed_cb(VteTerminal* terminal,
         if (!options.icon_title)
                 return;
 
-        gdk_window_set_icon_name(ctk_widget_get_window(CTK_WIDGET(window)),
+        cdk_window_set_icon_name(ctk_widget_get_window(CTK_WIDGET(window)),
                                  vte_terminal_get_icon_title(window->terminal));
 }
 
@@ -1871,7 +1871,7 @@ window_lower_window_cb(VteTerminal* terminal,
         if (!ctk_widget_get_realized(CTK_WIDGET(window)))
                 return;
 
-        gdk_window_lower(ctk_widget_get_window(CTK_WIDGET(window)));
+        cdk_window_lower(ctk_widget_get_window(CTK_WIDGET(window)));
 }
 
 static void
@@ -1883,7 +1883,7 @@ window_raise_window_cb(VteTerminal* terminal,
         if (!ctk_widget_get_realized(CTK_WIDGET(window)))
                 return;
 
-        gdk_window_raise(ctk_widget_get_window(CTK_WIDGET(window)));
+        cdk_window_raise(ctk_widget_get_window(CTK_WIDGET(window)));
 }
 
 static void
@@ -2066,7 +2066,7 @@ vteapp_window_constructed(GObject *object)
         if (options.transparency_percent >= 0) {
                 if (!options.no_argb_visual) {
                         auto screen = ctk_widget_get_screen(CTK_WIDGET(window));
-                        auto visual = gdk_screen_get_rgba_visual(screen);
+                        auto visual = cdk_screen_get_rgba_visual(screen);
                         if (visual != nullptr)
                                 ctk_widget_set_visual(CTK_WIDGET(window), visual);
        }
@@ -2367,7 +2367,7 @@ vteapp_application_init(VteappApplication* application)
                      nullptr);
 
         if (options.css) {
-                ctk_style_context_add_provider_for_screen(gdk_screen_get_default (),
+                ctk_style_context_add_provider_for_screen(cdk_screen_get_default (),
                                                           CTK_STYLE_PROVIDER(options.css.get()),
                                                           CTK_STYLE_PROVIDER_PRIORITY_USER);
         }
@@ -2471,7 +2471,7 @@ main(int argc,
        }
 
        if (options.debug)
-               gdk_window_set_debug_updates(true);
+               cdk_window_set_debug_updates(true);
 #ifdef VTE_DEBUG
        if (options.test_mode) {
                vte_set_test_flags(VTE_TEST_FLAGS_ALL);

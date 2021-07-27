@@ -174,19 +174,19 @@ void
 Widget::beep() noexcept
 {
         if (realized())
-                gdk_window_beep(ctk_widget_get_window(m_widget));
+                cdk_window_beep(ctk_widget_get_window(m_widget));
 }
 
 vte::glib::RefPtr<GdkCursor>
 Widget::create_cursor(GdkCursorType cursor_type) const noexcept
 {
-	return vte::glib::take_ref(gdk_cursor_new_for_display(ctk_widget_get_display(m_widget), cursor_type));
+	return vte::glib::take_ref(cdk_cursor_new_for_display(ctk_widget_get_display(m_widget), cursor_type));
 }
 
 void
 Widget::set_cursor(GdkCursor* cursor) noexcept
 {
-        gdk_window_set_cursor(m_event_window, cursor);
+        cdk_window_set_cursor(m_event_window, cursor);
 }
 
 void
@@ -196,28 +196,28 @@ Widget::set_cursor(Cursor const& cursor) noexcept
                 return;
 
         auto display = ctk_widget_get_display(m_widget);
-        GdkCursor* gdk_cursor{nullptr};
+        GdkCursor* cdk_cursor{nullptr};
         switch (cursor.index()) {
         case 0:
-                gdk_cursor = gdk_cursor_new_from_name(display, std::get<0>(cursor).c_str());
+                cdk_cursor = cdk_cursor_new_from_name(display, std::get<0>(cursor).c_str());
                 break;
         case 1:
-                gdk_cursor = std::get<1>(cursor).get();
-                if (gdk_cursor != nullptr &&
-                    gdk_cursor_get_display(gdk_cursor) == display) {
-                        g_object_ref(gdk_cursor);
+                cdk_cursor = std::get<1>(cursor).get();
+                if (cdk_cursor != nullptr &&
+                    cdk_cursor_get_display(cdk_cursor) == display) {
+                        g_object_ref(cdk_cursor);
                 } else {
-                        gdk_cursor = nullptr;
+                        cdk_cursor = nullptr;
                 }
                 break;
         case 2:
-                gdk_cursor = gdk_cursor_new_for_display(display, std::get<2>(cursor));
+                cdk_cursor = cdk_cursor_new_for_display(display, std::get<2>(cursor));
                 break;
         }
 
-        set_cursor(gdk_cursor);
-        if (gdk_cursor)
-                g_object_unref(gdk_cursor);
+        set_cursor(cdk_cursor);
+        if (cdk_cursor)
+                g_object_unref(cdk_cursor);
 }
 
 void
@@ -301,11 +301,11 @@ Widget::im_set_cursor_location(cairo_rectangle_int_t const* rect) noexcept
 }
 
 unsigned
-Widget::read_modifiers_from_gdk(GdkEvent* event) const noexcept
+Widget::read_modifiers_from_cdk(GdkEvent* event) const noexcept
 {
         /* Read the modifiers. See bug #663779 for more information on why we do this. */
         auto mods = GdkModifierType{};
-        if (!gdk_event_get_state(event, &mods))
+        if (!cdk_event_get_state(event, &mods))
                 return 0;
 
         #if 1
@@ -315,9 +315,9 @@ Widget::read_modifiers_from_gdk(GdkEvent* event) const noexcept
         #endif
 
         /* Map non-virtual modifiers to virtual modifiers (Super, Hyper, Meta) */
-        auto display = gdk_window_get_display(gdk_event_get_window(event));
-        auto keymap = gdk_keymap_get_for_display(display);
-        gdk_keymap_add_virtual_modifiers(keymap, &mods);
+        auto display = cdk_window_get_display(cdk_event_get_window(event));
+        auto keymap = cdk_keymap_get_for_display(display);
+        cdk_keymap_add_virtual_modifiers(keymap, &mods);
 
         return unsigned(mods);
 }
@@ -328,14 +328,14 @@ Widget::key_event_translate_ctrlkey(vte::terminal::KeyEvent const& event) const 
 	if (event.keyval() < 128)
 		return event.keyval();
 
-        auto display = gdk_window_get_display(gdk_event_get_window(event.platform_event()));
-        auto keymap = gdk_keymap_get_for_display(display);
+        auto display = cdk_window_get_display(cdk_event_get_window(event.platform_event()));
+        auto keymap = cdk_keymap_get_for_display(display);
         auto keyval = unsigned{event.keyval()};
 
 	/* Try groups in order to find one mapping the key to ASCII */
 	for (auto i = unsigned{0}; i < 4; i++) {
 		auto consumed_modifiers = GdkModifierType{};
-		gdk_keymap_translate_keyboard_state (keymap,
+		cdk_keymap_translate_keyboard_state (keymap,
                                                      event.keycode(),
                                                      GdkModifierType(event.modifiers()),
                                                      i,
@@ -352,10 +352,10 @@ Widget::key_event_translate_ctrlkey(vte::terminal::KeyEvent const& event) const 
 }
 
 vte::terminal::KeyEvent
-Widget::key_event_from_gdk(GdkEventKey* event) const
+Widget::key_event_from_cdk(GdkEventKey* event) const
 {
         auto type = vte::terminal::EventBase::Type{};
-        switch (gdk_event_get_event_type(reinterpret_cast<GdkEvent*>(event))) {
+        switch (cdk_event_get_event_type(reinterpret_cast<GdkEvent*>(event))) {
         case GDK_KEY_PRESS: type = vte::terminal::KeyEvent::Type::eKEY_PRESS;     break;
         case GDK_KEY_RELEASE: type = vte::terminal::KeyEvent::Type::eKEY_RELEASE; break;
         default: g_assert_not_reached(); return {};
@@ -365,18 +365,18 @@ Widget::key_event_from_gdk(GdkEventKey* event) const
         return {base_event,
                 type,
                 event->time,
-                read_modifiers_from_gdk(base_event),
+                read_modifiers_from_cdk(base_event),
                 event->keyval,
-                event->hardware_keycode, // gdk_event_get_scancode(event),
+                event->hardware_keycode, // cdk_event_get_scancode(event),
                 event->group,
                 event->is_modifier != 0};
 }
 
 std::optional<vte::terminal::MouseEvent>
-Widget::mouse_event_from_gdk(GdkEvent* event) const
+Widget::mouse_event_from_cdk(GdkEvent* event) const
 {
         auto type = vte::terminal::EventBase::Type{};
-        switch (gdk_event_get_event_type(event)) {
+        switch (cdk_event_get_event_type(event)) {
         case GDK_2BUTTON_PRESS:  type = vte::terminal::MouseEvent::Type::eMOUSE_DOUBLE_PRESS; break;
         case GDK_3BUTTON_PRESS:  type = vte::terminal::MouseEvent::Type::eMOUSE_TRIPLE_PRESS; break;
         case GDK_BUTTON_PRESS:   type = vte::terminal::MouseEvent::Type::eMOUSE_PRESS;        break;
@@ -391,17 +391,17 @@ Widget::mouse_event_from_gdk(GdkEvent* event) const
 
         auto x = double{};
         auto y = double{};
-        if (gdk_event_get_window(event) != m_event_window ||
-            !gdk_event_get_coords(event, &x, &y))
+        if (cdk_event_get_window(event) != m_event_window ||
+            !cdk_event_get_coords(event, &x, &y))
                 x = y = -1.; // FIXMEchpe or return std::nullopt?
 
         auto button = unsigned{0};
-        (void)gdk_event_get_button(event, &button);
+        (void)cdk_event_get_button(event, &button);
 
         auto mouse_event = vte::terminal::MouseEvent{event,
                                                      type,
-                                                     gdk_event_get_time(event),
-                                                     read_modifiers_from_gdk(event),
+                                                     cdk_event_get_time(event),
+                                                     read_modifiers_from_cdk(event),
                                                      vte::terminal::MouseEvent::Button(button),
                                                      x,
                                                      y};
@@ -412,7 +412,7 @@ void
 Widget::map() noexcept
 {
         if (m_event_window)
-                gdk_window_show_unraised(m_event_window);
+                cdk_window_show_unraised(m_event_window);
 }
 
 bool
@@ -472,7 +472,7 @@ Widget::realize() noexcept
                 (attributes.visual ? GDK_WA_VISUAL : 0) |
                 GDK_WA_CURSOR;
 
-	m_event_window = gdk_window_new(ctk_widget_get_parent_window (m_widget),
+	m_event_window = cdk_window_new(ctk_widget_get_parent_window (m_widget),
                                         &attributes, attributes_mask);
         ctk_widget_register_window(m_widget, m_event_window);
 
@@ -504,16 +504,16 @@ Widget::realize() noexcept
 void
 Widget::screen_changed(GdkScreen *previous_screen) noexcept
 {
-        auto gdk_screen = ctk_widget_get_screen(m_widget);
+        auto cdk_screen = ctk_widget_get_screen(m_widget);
         if (previous_screen != nullptr &&
-            (gdk_screen != previous_screen || gdk_screen == nullptr)) {
+            (cdk_screen != previous_screen || cdk_screen == nullptr)) {
                 auto settings = ctk_settings_get_for_screen(previous_screen);
                 g_signal_handlers_disconnect_matched(settings, G_SIGNAL_MATCH_DATA,
                                                      0, 0, nullptr, nullptr,
                                                      this);
         }
 
-        if (gdk_screen == previous_screen || gdk_screen == nullptr)
+        if (cdk_screen == previous_screen || cdk_screen == nullptr)
                 return;
 
         settings_changed();
@@ -603,7 +603,7 @@ Widget::size_allocate(CtkAllocation* allocation) noexcept
         m_terminal->widget_size_allocate(allocation);
 
         if (realized())
-		gdk_window_move_resize(m_event_window,
+		cdk_window_move_resize(m_event_window,
                                        allocation->x,
                                        allocation->y,
                                        allocation->width,
@@ -641,7 +641,7 @@ Widget::unmap() noexcept
         m_terminal->widget_unmap();
 
         if (m_event_window)
-                gdk_window_hide(m_event_window);
+                cdk_window_hide(m_event_window);
 }
 
 void
@@ -666,7 +666,7 @@ Widget::unrealize() noexcept
 
         /* Destroy input window */
         ctk_widget_unregister_window(m_widget, m_event_window);
-        gdk_window_destroy(m_event_window);
+        cdk_window_destroy(m_event_window);
         m_event_window = nullptr;
 }
 

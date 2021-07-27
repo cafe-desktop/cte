@@ -74,14 +74,14 @@ public:
 
         void focus_in(GdkEventFocus *event) noexcept { m_terminal->widget_focus_in(); }
         void focus_out(GdkEventFocus *event) noexcept { m_terminal->widget_focus_out(); }
-        bool key_press(GdkEventKey *event) noexcept { return m_terminal->widget_key_press(key_event_from_gdk(event)); }
-        bool key_release(GdkEventKey *event) noexcept { return m_terminal->widget_key_release(key_event_from_gdk(event)); }
-        bool button_press(GdkEventButton *event) noexcept { return m_terminal->widget_mouse_press(*mouse_event_from_gdk(reinterpret_cast<GdkEvent*>(event))); }
-        bool button_release(GdkEventButton *event) noexcept { return m_terminal->widget_mouse_release(*mouse_event_from_gdk(reinterpret_cast<GdkEvent*>(event))); }
-        void enter(GdkEventCrossing *event) noexcept { m_terminal->widget_mouse_enter(*mouse_event_from_gdk(reinterpret_cast<GdkEvent*>(event))); }
-        void leave(GdkEventCrossing *event) noexcept { m_terminal->widget_mouse_leave(*mouse_event_from_gdk(reinterpret_cast<GdkEvent*>(event))); }
-        bool scroll(GdkEventScroll *event) noexcept { return m_terminal->widget_mouse_scroll(*mouse_event_from_gdk(reinterpret_cast<GdkEvent*>(event))); }
-        bool motion_notify(GdkEventMotion *event) noexcept { return m_terminal->widget_mouse_motion(*mouse_event_from_gdk(reinterpret_cast<GdkEvent*>(event))); }
+        bool key_press(GdkEventKey *event) noexcept { return m_terminal->widget_key_press(key_event_from_cdk(event)); }
+        bool key_release(GdkEventKey *event) noexcept { return m_terminal->widget_key_release(key_event_from_cdk(event)); }
+        bool button_press(GdkEventButton *event) noexcept { return m_terminal->widget_mouse_press(*mouse_event_from_cdk(reinterpret_cast<GdkEvent*>(event))); }
+        bool button_release(GdkEventButton *event) noexcept { return m_terminal->widget_mouse_release(*mouse_event_from_cdk(reinterpret_cast<GdkEvent*>(event))); }
+        void enter(GdkEventCrossing *event) noexcept { m_terminal->widget_mouse_enter(*mouse_event_from_cdk(reinterpret_cast<GdkEvent*>(event))); }
+        void leave(GdkEventCrossing *event) noexcept { m_terminal->widget_mouse_leave(*mouse_event_from_cdk(reinterpret_cast<GdkEvent*>(event))); }
+        bool scroll(GdkEventScroll *event) noexcept { return m_terminal->widget_mouse_scroll(*mouse_event_from_cdk(reinterpret_cast<GdkEvent*>(event))); }
+        bool motion_notify(GdkEventMotion *event) noexcept { return m_terminal->widget_mouse_motion(*mouse_event_from_cdk(reinterpret_cast<GdkEvent*>(event))); }
 
         void grab_focus() noexcept { ctk_widget_grab_focus(ctk()); }
 
@@ -150,7 +150,7 @@ public:
         char* regex_match_check(GdkEvent* event,
                                 int* tag)
         {
-                if (auto mouse_event = mouse_event_from_gdk(event))
+                if (auto mouse_event = mouse_event_from_cdk(event))
                         return terminal()->regex_match_check(*mouse_event, tag);
                 else
                         return nullptr;
@@ -162,7 +162,7 @@ public:
                                      uint32_t match_flags,
                                      char** matches)
         {
-                if (auto mouse_event = mouse_event_from_gdk(event))
+                if (auto mouse_event = mouse_event_from_cdk(event))
                         return terminal()->regex_match_check_extra(*mouse_event, regexes, n_regexes, match_flags, matches);
                 else
                         return false;
@@ -170,7 +170,7 @@ public:
 
         char* hyperlink_check(GdkEvent* event)
         {
-                if (auto mouse_event = mouse_event_from_gdk(event))
+                if (auto mouse_event = mouse_event_from_cdk(event))
                         return terminal()->hyperlink_check(*mouse_event);
                 else
                         return nullptr;
@@ -221,9 +221,9 @@ public: // FIXMEchpe
         void im_preedit_changed() noexcept;
 
 private:
-        unsigned read_modifiers_from_gdk(GdkEvent* event) const noexcept;
-        vte::terminal::KeyEvent key_event_from_gdk(GdkEventKey* event) const;
-        std::optional<vte::terminal::MouseEvent> mouse_event_from_gdk(GdkEvent* event) const;
+        unsigned read_modifiers_from_cdk(GdkEvent* event) const noexcept;
+        vte::terminal::KeyEvent key_event_from_cdk(GdkEventKey* event) const;
+        std::optional<vte::terminal::MouseEvent> mouse_event_from_cdk(GdkEvent* event) const;
 
         CtkWidget* m_widget;
 
