@@ -48,7 +48,7 @@ _vte_keysym_print(guint keyval,
 	if (modifiers & GDK_SHIFT_MASK) {
 		g_printerr("Shift+");
 	}
-	g_printerr("%s" , gdk_keyval_name(keyval));
+	g_printerr("%s" , cdk_keyval_name(keyval));
 }
 #else
 static void

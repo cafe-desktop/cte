@@ -892,7 +892,7 @@ vte_terminal_class_init(VteTerminalClass *klass)
 	}
 #endif
 
-	_VTE_DEBUG_IF (VTE_DEBUG_UPDATES) gdk_window_set_debug_updates(TRUE);
+	_VTE_DEBUG_IF (VTE_DEBUG_UPDATES) cdk_window_set_debug_updates(TRUE);
 
 	bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR);
 	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");

@@ -56,7 +56,7 @@
 #endif
 #include <glib.h>
 #include <glib-object.h>
-#include <gdk/gdk.h>
+#include <cdk/cdk.h>
 #include <ctk/ctk.h>
 #include <pango/pango.h>
 #include "keymap.h"
@@ -4898,7 +4898,7 @@ Terminal::widget_key_press(KeyEvent const& event)
 		if (handled == FALSE && normal == NULL) {
 
 			/* Convert the keyval to a gunichar. */
-			keychar = gdk_keyval_to_unicode(keyval);
+			keychar = cdk_keyval_to_unicode(keyval);
 			normal_length = 0;
 			if (keychar != 0) {
 				/* Convert the gunichar to a string. */
@@ -6026,7 +6026,7 @@ Terminal::widget_clipboard_requested(CtkClipboard *target_clipboard,
 				g_printerr("Setting selection %d (%" G_GSIZE_FORMAT " UTF-8 bytes.) for target %s\n",
                                            sel,
                                            m_selection[sel]->len,
-                                           gdk_atom_name(ctk_selection_data_get_target(data)));
+                                           cdk_atom_name(ctk_selection_data_get_target(data)));
                                 char const* selection_text = m_selection[sel]->str;
                                 for (i = 0; selection_text[i] != '\0'; i++) {
                                         g_printerr("0x%04x ", selection_text[i]);
@@ -6045,7 +6045,7 @@ Terminal::widget_clipboard_requested(CtkClipboard *target_clipboard,
                                 // FIXMEchpe this makes yet another copy of the data... :(
                                 if (selection)
                                         ctk_selection_data_set(data,
-                                                               gdk_atom_intern_static_string("text/html"),
+                                                               cdk_atom_intern_static_string("text/html"),
                                                                16,
                                                                (const guchar *)selection,
                                                                len);
@@ -6540,7 +6540,7 @@ targets_for_format(VteFormat format,
 			auto list = ctk_target_list_new (nullptr, 0);
 			ctk_target_list_add_text_targets (list, VTE_TARGET_TEXT);
                         ctk_target_list_add (list,
-                                             gdk_atom_intern_static_string("text/html"),
+                                             cdk_atom_intern_static_string("text/html"),
                                              0,
                                              VTE_TARGET_HTML);
 
@@ -9208,7 +9208,7 @@ Terminal::widget_draw(cairo_t *cr)
         bool text_blink_enabled_now;
         gint64 now = 0;
 
-        if (!gdk_cairo_get_clip_rectangle (cr, &clip_rect))
+        if (!cdk_cairo_get_clip_rectangle (cr, &clip_rect))
                 return;
 
         _vte_debug_print(VTE_DEBUG_LIFECYCLE, "vte_terminal_draw()\n");
@@ -9314,7 +9314,7 @@ vte_cairo_get_clip_region (cairo_t *cr)
 
                 cairo_rectangle_list_destroy (list);
 
-                if (!gdk_cairo_get_clip_rectangle (cr, &clip_rect))
+                if (!cdk_cairo_get_clip_rectangle (cr, &clip_rect))
                         return NULL;
                 return cairo_region_create_rectangle (&clip_rect);
         }
