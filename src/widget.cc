@@ -38,7 +38,7 @@ namespace vte {
 namespace platform {
 
 static void
-im_commit_cb(GtkIMContext* im_context,
+im_commit_cb(CtkIMContext* im_context,
              char const* text,
              Widget* that) noexcept
 try
@@ -54,7 +54,7 @@ catch (...)
 }
 
 static void
-im_preedit_start_cb(GtkIMContext* im_context,
+im_preedit_start_cb(CtkIMContext* im_context,
                     Widget* that) noexcept
 try
 {
@@ -67,7 +67,7 @@ catch (...)
 }
 
 static void
-im_preedit_end_cb(GtkIMContext* im_context,
+im_preedit_end_cb(CtkIMContext* im_context,
                   Widget* that) noexcept
 try
 {
@@ -80,7 +80,7 @@ catch (...)
 }
 
 static void
-im_preedit_changed_cb(GtkIMContext* im_context,
+im_preedit_changed_cb(CtkIMContext* im_context,
                       Widget* that) noexcept
 try
 {
@@ -92,7 +92,7 @@ catch (...)
 }
 
 static gboolean
-im_retrieve_surrounding_cb(GtkIMContext* im_context,
+im_retrieve_surrounding_cb(CtkIMContext* im_context,
                            Widget* that) noexcept
 try
 {
@@ -106,7 +106,7 @@ catch (...)
 }
 
 static gboolean
-im_delete_surrounding_cb(GtkIMContext* im_context,
+im_delete_surrounding_cb(CtkIMContext* im_context,
                          int offset,
                          int n_chars,
                          Widget* that) noexcept
@@ -124,7 +124,7 @@ catch (...)
 }
 
 static void
-settings_notify_cb(GtkSettings* settings,
+settings_notify_cb(CtkSettings* settings,
                    GParamSpec* pspec,
                    vte::platform::Widget* that) noexcept
 try
@@ -598,7 +598,7 @@ Widget::unset_pty() noexcept
 }
 
 void
-Widget::size_allocate(GtkAllocation* allocation) noexcept
+Widget::size_allocate(CtkAllocation* allocation) noexcept
 {
         m_terminal->widget_size_allocate(allocation);
 
@@ -622,7 +622,7 @@ Widget::should_emit_signal(int id) noexcept
 void
 Widget::style_updated() noexcept
 {
-        auto padding = GtkBorder{};
+        auto padding = CtkBorder{};
         auto context = ctk_widget_get_style_context(ctk());
         ctk_style_context_get_padding(context, ctk_style_context_get_state(context),
                                       &padding);

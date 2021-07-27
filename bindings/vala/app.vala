@@ -19,28 +19,28 @@
 namespace Test
 {
 
-[GtkTemplate (ui = "/org/gnome/vte/test/app/ui/search-popover.ui")]
-class SearchPopover : Gtk.Popover
+[CtkTemplate (ui = "/org/gnome/vte/test/app/ui/search-popover.ui")]
+class SearchPopover : Ctk.Popover
 {
   public Vte.Terminal terminal { get; construct set; }
 
-  [GtkChild] private Gtk.SearchEntry search_entry;
-  [GtkChild] private Gtk.Button search_prev_button;
-  [GtkChild] private Gtk.Button search_next_button;
-  [GtkChild] private Gtk.Button close_button;
-  [GtkChild] private Gtk.ToggleButton  match_case_checkbutton;
-  [GtkChild] private Gtk.ToggleButton entire_word_checkbutton;
-  [GtkChild] private Gtk.ToggleButton regex_checkbutton;
-  [GtkChild] private Gtk.ToggleButton wrap_around_checkbutton;
-  [GtkChild] private Gtk.Button reveal_button;
-  [GtkChild] private Gtk.Revealer revealer;
+  [CtkChild] private Ctk.SearchEntry search_entry;
+  [CtkChild] private Ctk.Button search_prev_button;
+  [CtkChild] private Ctk.Button search_next_button;
+  [CtkChild] private Ctk.Button close_button;
+  [CtkChild] private Ctk.ToggleButton  match_case_checkbutton;
+  [CtkChild] private Ctk.ToggleButton entire_word_checkbutton;
+  [CtkChild] private Ctk.ToggleButton regex_checkbutton;
+  [CtkChild] private Ctk.ToggleButton wrap_around_checkbutton;
+  [CtkChild] private Ctk.Button reveal_button;
+  [CtkChild] private Ctk.Revealer revealer;
 
   private bool regex_caseless = false;
   private string? regex_pattern = null;
   private bool has_regex = false;
 
   public SearchPopover(Vte.Terminal term,
-                       Gtk.Widget relative_to)
+                       Ctk.Widget relative_to)
   {
     Object(relative_to: relative_to, terminal: term);
 
@@ -172,20 +172,20 @@ class SearchPopover : Gtk.Popover
 
 } /* class SearchPopover */
 
-[GtkTemplate (ui = "/org/gnome/vte/test/app/ui/window.ui")]
-class Window : Gtk.ApplicationWindow
+[CtkTemplate (ui = "/org/gnome/vte/test/app/ui/window.ui")]
+class Window : Ctk.ApplicationWindow
 {
-  [GtkChild] private Gtk.Scrollbar scrollbar;
-  [GtkChild] private Gtk.Box terminal_box;
-  /* [GtkChild] private Gtk.Box notifications_box; */
-  [GtkChild] private Gtk.Widget readonly_emblem;
-  /* [GtkChild] private Gtk.Button copy_button; */
-  /* [GtkChild] private Gtk.Button paste_button; */
-  [GtkChild] private Gtk.ToggleButton find_button;
-  [GtkChild] private Gtk.MenuButton gear_button;
+  [CtkChild] private Ctk.Scrollbar scrollbar;
+  [CtkChild] private Ctk.Box terminal_box;
+  /* [CtkChild] private Ctk.Box notifications_box; */
+  [CtkChild] private Ctk.Widget readonly_emblem;
+  /* [CtkChild] private Ctk.Button copy_button; */
+  /* [CtkChild] private Ctk.Button paste_button; */
+  [CtkChild] private Ctk.ToggleButton find_button;
+  [CtkChild] private Ctk.MenuButton gear_button;
 
   private Vte.Terminal terminal;
-  private Gtk.Clipboard clipboard;
+  private Ctk.Clipboard clipboard;
   private GLib.Pid child_pid;
   private SearchPopover search_popover;
   private uint launch_idle_id;
@@ -266,7 +266,7 @@ class Window : Gtk.ApplicationWindow
 
     gear_button.set_menu_model(menu);
 
-    /* set_resize_mode(Gtk.ResizeMode.IMMEDIATE); */
+    /* set_resize_mode(Ctk.ResizeMode.IMMEDIATE); */
 
     clipboard = get_clipboard(Gdk.SELECTION_CLIPBOARD);
     clipboard.owner_change.connect(clipboard_owner_change_cb);
@@ -544,7 +544,7 @@ class Window : Gtk.ApplicationWindow
     bool can_paste;
 
     if (clipboard.wait_for_targets(out targets))
-      can_paste = Gtk.targets_include_text(targets);
+      can_paste = Ctk.targets_include_text(targets);
     else
       can_paste = false;
 
@@ -591,7 +591,7 @@ class Window : Gtk.ApplicationWindow
 
     if (parameter != null) {
       clear = parameter.get_boolean();
-    } else if (Gtk.get_current_event_state(out modifiers))
+    } else if (Ctk.get_current_event_state(out modifiers))
       clear = (modifiers & Gdk.ModifierType.CONTROL_MASK) != 0;
     else
       clear = false;
@@ -611,10 +611,10 @@ class Window : Gtk.ApplicationWindow
 
   private bool popup_menu_cb()
   {
-    return show_context_menu(0, Gtk.get_current_event_time(), null);
+    return show_context_menu(0, Ctk.get_current_event_time(), null);
   }
 
-  private bool button_press_event_cb(Gtk.Widget widget, Gdk.EventButton event)
+  private bool button_press_event_cb(Ctk.Widget widget, Gdk.EventButton event)
   {
     if (event.button != 3)
       return false;
@@ -644,7 +644,7 @@ class Window : Gtk.ApplicationWindow
 
     menu.append("_Paste", "win.paste");
 
-    var popup = new Gtk.Menu.from_model(menu);
+    var popup = new Ctk.Menu.from_model(menu);
     popup.attach_to_widget(this, null);
     popup.popup(null, null, null, button, timestamp);
     if (button == 0)
@@ -679,7 +679,7 @@ class Window : Gtk.ApplicationWindow
     destroy();
   }
 
-  private void clipboard_owner_change_cb(Gtk.Clipboard clipboard, Gdk.Event event)
+  private void clipboard_owner_change_cb(Ctk.Clipboard clipboard, Gdk.Event event)
   {
     update_paste_sensitivity();
   }
@@ -746,7 +746,7 @@ class Window : Gtk.ApplicationWindow
     get_window().raise();
   }
 
-  private void realize_cb(Gtk.Widget widget)
+  private void realize_cb(Ctk.Widget widget)
   {
     update_geometry();
   }
@@ -782,14 +782,14 @@ class Window : Gtk.ApplicationWindow
 
 } /* class Window */
 
-class App : Gtk.Application
+class App : Ctk.Application
 {
   public App()
   {
     Object(application_id: "org.gnome.Vte.Test.App",
            flags: ApplicationFlags.NON_UNIQUE);
 
-    var settings = Gtk.Settings.get_default();
+    var settings = Ctk.Settings.get_default();
     settings.ctk_enable_mnemonics = false;
     settings.ctk_enable_accels = false;
     /* Make ctk+ CSD not steal F10 from the terminal */
@@ -806,7 +806,7 @@ class App : Gtk.Application
 
   protected override void activate()
   {
-    foreach (Gtk.Window win in this.get_windows()) {
+    foreach (Ctk.Window win in this.get_windows()) {
       if (!(win is Window))
         continue;
 
@@ -1077,7 +1077,7 @@ class App : Gtk.Application
       var context = new OptionContext("— simple VTE test application");
       context.set_help_enabled(true);
       context.add_main_entries(Options.entries, null);
-      context.add_group(Gtk.get_option_group(true));
+      context.add_group(Ctk.get_option_group(true));
       context.parse(ref argv);
     } catch (OptionError e) {
       printerr("Error parsing arguments: %s\n", e.message);

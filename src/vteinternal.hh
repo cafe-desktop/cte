@@ -145,7 +145,7 @@ typedef enum {
 	LAST_VTE_SELECTION
 } VteSelection;
 
-/* Used in the GtkClipboard API, to distinguish requests for HTML and TEXT
+/* Used in the CtkClipboard API, to distinguish requests for HTML and TEXT
  * contents of a clipboard */
 typedef enum {
         VTE_TARGET_TEXT,
@@ -158,14 +158,14 @@ struct vte_scrolling_region {
 };
 
 template <class T>
-class ClipboardTextRequestGtk {
+class ClipboardTextRequestCtk {
 public:
         typedef void (T::* Callback)(char const*);
 
-        ClipboardTextRequestGtk() : m_request(nullptr) { }
-        ~ClipboardTextRequestGtk() { cancel(); }
+        ClipboardTextRequestCtk() : m_request(nullptr) { }
+        ~ClipboardTextRequestCtk() { cancel(); }
 
-        void request_text(GtkClipboard *clipboard,
+        void request_text(CtkClipboard *clipboard,
                           Callback callback,
                           T* that)
         {
@@ -177,7 +177,7 @@ private:
 
         class Request {
         public:
-                Request(GtkClipboard *clipboard,
+                Request(CtkClipboard *clipboard,
                         Callback callback,
                         T* that,
                         Request** location) :
@@ -225,7 +225,7 @@ private:
                         }
                 }
 
-                static void text_received(GtkClipboard *clipboard, char const* text, gpointer data) {
+                static void text_received(CtkClipboard *clipboard, char const* text, gpointer data) {
                         Request* request = reinterpret_cast<Request*>(data);
                         request->dispatch(text);
                         delete request;
@@ -553,7 +553,7 @@ public:
         VteTerminal *m_terminal{nullptr};
         inline constexpr auto vte_terminal() const noexcept { return m_terminal; }
 
-        GtkWidget *m_widget{nullptr};
+        CtkWidget *m_widget{nullptr};
         inline constexpr auto ctk_widget() const noexcept { return m_widget; }
 
         void unset_widget() noexcept;
@@ -678,9 +678,9 @@ public:
         VteFormat m_selection_format[LAST_VTE_SELECTION];
         bool m_changing_selection;
         GString *m_selection[LAST_VTE_SELECTION];  // FIXMEegmont rename this so that m_selection_resolved can become m_selection?
-        GtkClipboard *m_clipboard[LAST_VTE_SELECTION];
+        CtkClipboard *m_clipboard[LAST_VTE_SELECTION];
 
-        ClipboardTextRequestGtk<Terminal> m_paste_request;
+        ClipboardTextRequestCtk<Terminal> m_paste_request;
 
 	/* Miscellaneous options. */
         EraseMode m_backspace_binding{EraseMode::eAUTO};
@@ -869,7 +869,7 @@ public:
         long m_char_descent{0};
         double m_cell_width_scale{1.};
         double m_cell_height_scale{1.};
-        GtkBorder m_char_padding{0, 0, 0, 0};
+        CtkBorder m_char_padding{0, 0, 0, 0};
         long m_cell_width{0};
         long m_cell_height{0};
 
@@ -957,10 +957,10 @@ public:
         double m_undercurl_thickness{VTE_LINE_WIDTH};
 
         /* Style stuff */
-        GtkBorder m_padding{1, 1, 1, 1};
+        CtkBorder m_padding{1, 1, 1, 1};
         auto padding() const noexcept { return &m_padding; }
 
-        vte::glib::RefPtr<GtkAdjustment> m_vadjustment{};
+        vte::glib::RefPtr<CtkAdjustment> m_vadjustment{};
         auto vadjustment() noexcept { return m_vadjustment.get(); }
 
         /* Hyperlinks */
@@ -1098,19 +1098,19 @@ public:
         void confine_coordinates(long *xp,
                                  long *yp);
 
-        void set_border_padding(GtkBorder const* padding);
+        void set_border_padding(CtkBorder const* padding);
         void set_cursor_aspect(float aspect);
 
         void widget_paste(GdkAtom board);
         void widget_copy(VteSelection sel,
                          VteFormat format);
         void widget_paste_received(char const* text);
-        void widget_clipboard_cleared(GtkClipboard *clipboard);
-        void widget_clipboard_requested(GtkClipboard *target_clipboard,
-                                        GtkSelectionData *data,
+        void widget_clipboard_cleared(CtkClipboard *clipboard);
+        void widget_clipboard_requested(CtkClipboard *target_clipboard,
+                                        CtkSelectionData *data,
                                         guint info);
 
-        void widget_set_vadjustment(vte::glib::RefPtr<GtkAdjustment>&& adjustment);
+        void widget_set_vadjustment(vte::glib::RefPtr<CtkAdjustment>&& adjustment);
 
         void widget_realize();
         void widget_unrealize();
@@ -1131,7 +1131,7 @@ public:
                                         int *natural_width);
         void widget_get_preferred_height(int *minimum_height,
                                          int *natural_height);
-        void widget_size_allocate(GtkAllocation *allocation);
+        void widget_size_allocate(CtkAllocation *allocation);
 
         void set_blink_settings(bool blink,
                                 int blink_time,
@@ -1297,7 +1297,7 @@ public:
                                 int cell_height,
                                 int char_ascent,
                                 int char_descent,
-                                GtkBorder char_spacing);
+                                CtkBorder char_spacing);
 
         void refresh_size();
         void screen_set_size(VteScreen *screen_,

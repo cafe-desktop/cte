@@ -336,7 +336,7 @@ FontInfo::create_for_context(vte::glib::RefPtr<PangoContext> context,
                              guint fontconfig_timestamp)
 {
 	if (!PANGO_IS_CAIRO_FONT_MAP(pango_context_get_font_map(context.get()))) {
-		/* Ouch, Gtk+ switched over to some drawing system?
+		/* Ouch, Ctk+ switched over to some drawing system?
 		 * Lets just create one from the default font map.
 		 */
 		context = vte::glib::take_ref(pango_font_map_create_context(pango_cairo_font_map_get_default()));
@@ -378,7 +378,7 @@ FontInfo::create_for_screen(GdkScreen* screen,
 }
 
 FontInfo*
-FontInfo::create_for_widget(GtkWidget* widget,
+FontInfo::create_for_widget(CtkWidget* widget,
                             PangoFontDescription const* desc)
 {
 	auto screen = ctk_widget_get_screen(widget);

@@ -4419,7 +4419,7 @@ Terminal::im_update_cursor()
 }
 
 void
-Terminal::set_border_padding(GtkBorder const* padding)
+Terminal::set_border_padding(CtkBorder const* padding)
 {
         if (memcmp(padding, &m_padding, sizeof(*padding)) != 0) {
                 _vte_debug_print(VTE_DEBUG_MISC | VTE_DEBUG_WIDGET_SIZE,
@@ -5962,7 +5962,7 @@ Terminal::match_hilite_update()
 
 /* Note that the clipboard has cleared. */
 static void
-clipboard_clear_cb(GtkClipboard *clipboard,
+clipboard_clear_cb(CtkClipboard *clipboard,
                    gpointer user_data)
 {
 	auto that = reinterpret_cast<vte::terminal::Terminal*>(user_data);
@@ -5970,7 +5970,7 @@ clipboard_clear_cb(GtkClipboard *clipboard,
 }
 
 void
-Terminal::widget_clipboard_cleared(GtkClipboard *clipboard_)
+Terminal::widget_clipboard_cleared(CtkClipboard *clipboard_)
 {
         if (m_changing_selection)
                 return;
@@ -5989,8 +5989,8 @@ Terminal::widget_clipboard_cleared(GtkClipboard *clipboard_)
 
 /* Supply the selected text to the clipboard. */
 static void
-clipboard_copy_cb(GtkClipboard *clipboard,
-                  GtkSelectionData *data,
+clipboard_copy_cb(CtkClipboard *clipboard,
+                  CtkSelectionData *data,
                   guint info,
                   gpointer user_data)
 {
@@ -6014,8 +6014,8 @@ text_to_utf16_mozilla(GString* text,
 }
 
 void
-Terminal::widget_clipboard_requested(GtkClipboard *target_clipboard,
-                                               GtkSelectionData *data,
+Terminal::widget_clipboard_requested(CtkClipboard *target_clipboard,
+                                               CtkSelectionData *data,
                                                guint info)
 {
 	for (auto sel = 0; sel < LAST_VTE_SELECTION; sel++) {
@@ -6511,13 +6511,13 @@ Terminal::attributes_to_html(GString* text_string,
 	return string;
 }
 
-static GtkTargetEntry*
+static CtkTargetEntry*
 targets_for_format(VteFormat format,
                    int *n_targets)
 {
         switch (format) {
         case VTE_FORMAT_TEXT: {
-                static GtkTargetEntry *text_targets = nullptr;
+                static CtkTargetEntry *text_targets = nullptr;
                 static int n_text_targets;
 
                 if (text_targets == nullptr) {
@@ -6533,7 +6533,7 @@ targets_for_format(VteFormat format,
         }
 
         case VTE_FORMAT_HTML: {
-                static GtkTargetEntry *html_targets = nullptr;
+                static CtkTargetEntry *html_targets = nullptr;
                 static int n_html_targets;
 
                 if (html_targets == nullptr) {
@@ -7172,7 +7172,7 @@ Terminal::apply_font_metrics(int cell_width,
                                        int cell_height,
                                        int char_ascent,
                                        int char_descent,
-                                       GtkBorder char_spacing)
+                                       CtkBorder char_spacing)
 {
         int char_height;
 	bool resize = false, cresize = false;
@@ -7203,7 +7203,7 @@ Terminal::apply_font_metrics(int cell_width,
 		resize = true;
                 m_char_descent = char_descent;
 	}
-        if (memcmp(&char_spacing, &m_char_padding, sizeof(GtkBorder)) != 0) {
+        if (memcmp(&char_spacing, &m_char_padding, sizeof(CtkBorder)) != 0) {
                 resize = true;
                 m_char_padding = char_spacing;
         }
@@ -7255,7 +7255,7 @@ Terminal::ensure_font()
 		if (m_fontdirty) {
                         int cell_width, cell_height;
                         int char_ascent, char_descent;
-                        GtkBorder char_spacing;
+                        CtkBorder char_spacing;
 			m_fontdirty = false;
 			m_draw.set_text_font(
                                                  m_widget,
@@ -7657,7 +7657,7 @@ Terminal::vadjustment_value_changed()
 }
 
 void
-Terminal::widget_set_vadjustment(vte::glib::RefPtr<GtkAdjustment>&& adjustment)
+Terminal::widget_set_vadjustment(vte::glib::RefPtr<CtkAdjustment>&& adjustment)
 {
         if (adjustment && adjustment == m_vadjustment)
                 return;
@@ -7835,7 +7835,7 @@ Terminal::widget_get_preferred_height(int *minimum_height,
 }
 
 void
-Terminal::widget_size_allocate(GtkAllocation *allocation)
+Terminal::widget_size_allocate(CtkAllocation *allocation)
 {
 	glong width, height;
 	gboolean repaint, update_scrollback;

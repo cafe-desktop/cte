@@ -669,7 +669,7 @@ vte_terminal_accessible_visibility_notify(VteTerminal *terminal,
 					  gpointer data)
 {
         VteTerminalAccessible *accessible = (VteTerminalAccessible *)data;
-	GtkWidget *widget;
+	CtkWidget *widget;
 	gboolean visible;
 
 	visible = event->state != GDK_VISIBILITY_FULLY_OBSCURED;
@@ -779,7 +779,7 @@ vte_terminal_accessible_finalize(GObject *object)
 {
         VteTerminalAccessible *accessible = VTE_TERMINAL_ACCESSIBLE(object);
 	VteTerminalAccessiblePrivate *priv = (VteTerminalAccessiblePrivate *)_vte_terminal_accessible_get_instance_private(accessible);
-        GtkWidget *widget;
+        CtkWidget *widget;
 	gint i;
 
 	_vte_debug_print(VTE_DEBUG_ALLY, "Finalizing accessible peer.\n");
@@ -1391,7 +1391,7 @@ static gint
 vte_terminal_accessible_get_n_selections(AtkText *text)
 {
         VteTerminalAccessible *accessible = VTE_TERMINAL_ACCESSIBLE(text);
-	GtkWidget *widget;
+	CtkWidget *widget;
 	VteTerminal *terminal;
 
 	vte_terminal_accessible_update_private_data_if_needed(accessible,
@@ -1412,7 +1412,7 @@ vte_terminal_accessible_get_selection(AtkText *text, gint selection_number,
 {
         VteTerminalAccessible *accessible = VTE_TERMINAL_ACCESSIBLE(text);
 	VteTerminalAccessiblePrivate *priv = (VteTerminalAccessiblePrivate *)_vte_terminal_accessible_get_instance_private(accessible);
-	GtkWidget *widget;
+	CtkWidget *widget;
 
 	if (selection_number != 0)
 		return NULL;
@@ -1445,7 +1445,7 @@ vte_terminal_accessible_add_selection(AtkText *text,
 {
         VteTerminalAccessible *accessible = VTE_TERMINAL_ACCESSIBLE(text);
 	VteTerminalAccessiblePrivate *priv = (VteTerminalAccessiblePrivate *)_vte_terminal_accessible_get_instance_private(accessible);
-	GtkWidget *widget;
+	CtkWidget *widget;
 
 	vte_terminal_accessible_update_private_data_if_needed(accessible,
 							      NULL, NULL);
@@ -1467,7 +1467,7 @@ vte_terminal_accessible_remove_selection(AtkText *text,
 					 gint selection_number)
 {
         VteTerminalAccessible *accessible = VTE_TERMINAL_ACCESSIBLE(text);
-	GtkWidget *widget;
+	CtkWidget *widget;
 	VteTerminal *terminal;
 
 	vte_terminal_accessible_update_private_data_if_needed(accessible,
@@ -1496,7 +1496,7 @@ vte_terminal_accessible_set_selection(AtkText *text, gint selection_number,
 				      gint start_offset, gint end_offset)
 {
         VteTerminalAccessible *accessible = VTE_TERMINAL_ACCESSIBLE(text);
-	GtkWidget *widget;
+	CtkWidget *widget;
 	VteTerminal *terminal;
 
 	vte_terminal_accessible_update_private_data_if_needed(accessible,
@@ -1580,7 +1580,7 @@ vte_terminal_accessible_set_size(AtkComponent *component,
 				 gint width, gint height)
 {
         VteTerminalAccessible *accessible = VTE_TERMINAL_ACCESSIBLE(component);
-	GtkWidget *widget;
+	CtkWidget *widget;
 
 	widget = ctk_accessible_get_widget (CTK_ACCESSIBLE(accessible));
 	if (widget == NULL)
@@ -1631,7 +1631,7 @@ vte_terminal_accessible_component_iface_init(AtkComponentIface *component)
 static gboolean
 vte_terminal_accessible_do_action (AtkAction *accessible, int i)
 {
-	GtkWidget *widget;
+	CtkWidget *widget;
 	gboolean retval = FALSE;
 
 	g_return_val_if_fail (i < LAST_ACTION, FALSE);

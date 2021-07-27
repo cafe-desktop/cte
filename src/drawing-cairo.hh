@@ -75,7 +75,7 @@ public:
                    vte::color::rgb const* color,
                    double alpha);
         void clear_font_cache();
-        void set_text_font(GtkWidget* widget,
+        void set_text_font(CtkWidget* widget,
                            PangoFontDescription const* fontdesc,
                            double cell_width_scale,
                            double cell_height_scale);
@@ -83,7 +83,7 @@ public:
                               int* cell_height,
                               int* char_ascent,
                               int* char_descent,
-                              GtkBorder* char_spacing);
+                              CtkBorder* char_spacing);
         void get_char_edges(vteunistr c,
                             int columns,
                             uint32_t attr,
@@ -151,7 +151,7 @@ private:
 	FontInfo* m_fonts[4]{nullptr, nullptr, nullptr, nullptr};
         int m_cell_width{1};
         int m_cell_height{1};
-        GtkBorder m_char_spacing{1, 1, 1, 1};
+        CtkBorder m_char_spacing{1, 1, 1, 1};
 
 	cairo_t *m_cr{nullptr}; // unowned
 

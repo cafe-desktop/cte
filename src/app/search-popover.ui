@@ -18,11 +18,11 @@
 -->
 <interface>
   <requires lib="ctk+" version="3.16"/>
-  <template class="VteappSearchPopover" parent="GtkPopover">
+  <template class="VteappSearchPopover" parent="CtkPopover">
     <property name="can_focus">False</property>
     <property name="transitions_enabled">False</property>
     <child>
-      <object class="GtkBox" id="box1">
+      <object class="CtkBox" id="box1">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="margin_left">12</property>
@@ -31,16 +31,16 @@
         <property name="margin_bottom">12</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkBox" id="box2">
+          <object class="CtkBox" id="box2">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="spacing">18</property>
             <child>
-              <object class="GtkBox" id="box4">
+              <object class="CtkBox" id="box4">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkSearchEntry" id="search_entry">
+                  <object class="CtkSearchEntry" id="search_entry">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="activates_default">True</property>
@@ -57,14 +57,14 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="search_prev_button">
+                  <object class="CtkButton" id="search_prev_button">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="tooltip_text" translatable="yes">Search for previous occurrence</property>
                     <property name="focus_on_click">False</property>
                     <child>
-                      <object class="GtkImage" id="image2">
+                      <object class="CtkImage" id="image2">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="icon_name">go-up-symbolic</property>
@@ -79,7 +79,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="search_next_button">
+                  <object class="CtkButton" id="search_next_button">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="can_default">True</property>
@@ -87,7 +87,7 @@
                     <property name="tooltip_text" translatable="yes">Search for next occurrence</property>
                     <property name="focus_on_click">False</property>
                     <child>
-                      <object class="GtkImage" id="image3">
+                      <object class="CtkImage" id="image3">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="icon_name">go-down-symbolic</property>
@@ -112,14 +112,14 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToggleButton" id="reveal_button">
+              <object class="CtkToggleButton" id="reveal_button">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="tooltip_text" translatable="yes">Toggle search options</property>
                 <property name="focus_on_click">False</property>
                 <child>
-                  <object class="GtkImage" id="image1">
+                  <object class="CtkImage" id="image1">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="icon_name">open-menu-symbolic</property>
@@ -137,13 +137,13 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="close_button">
+              <object class="CtkButton" id="close_button">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="focus_on_click">False</property>
                 <child>
-                  <object class="GtkImage" id="image4">
+                  <object class="CtkImage" id="image4">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="icon_name">window-close-symbolic</property>
@@ -165,19 +165,19 @@
           </packing>
         </child>
         <child>
-          <object class="GtkRevealer" id="revealer">
+          <object class="CtkRevealer" id="revealer">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="transition_type">none</property>
             <child>
-              <object class="GtkBox" id="box3">
+              <object class="CtkBox" id="box3">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="margin_top">18</property>
                 <property name="orientation">vertical</property>
                 <property name="spacing">6</property>
                 <child>
-                  <object class="GtkCheckButton" id="match_case_checkbutton">
+                  <object class="CtkCheckButton" id="match_case_checkbutton">
                     <property name="label" translatable="yes">_Match case</property>
                     <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
@@ -196,7 +196,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkCheckButton" id="entire_word_checkbutton">
+                  <object class="CtkCheckButton" id="entire_word_checkbutton">
                     <property name="label" translatable="yes">Match _entire word only</property>
                     <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
@@ -214,7 +214,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkCheckButton" id="regex_checkbutton">
+                  <object class="CtkCheckButton" id="regex_checkbutton">
                     <property name="label" translatable="yes">Match as _regular expression</property>
                     <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
@@ -232,7 +232,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkCheckButton" id="wrap_around_checkbutton">
+                  <object class="CtkCheckButton" id="wrap_around_checkbutton">
                     <property name="label" translatable="yes">_Wrap around</property>
                     <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
