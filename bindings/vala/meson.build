@@ -28,7 +28,6 @@ libvte_ctk3_vapi_deps = [
   'gio-2.0',
   'glib-2.0',
   'pango',
-  'ctk+-3.0',
 ]
 
 libvte_ctk3_vapi_dep = gnome.generate_vapi(
@@ -54,6 +53,7 @@ vapp_resource_sources = gnome.compile_resources(
 )
 
 vapp_sources = vapp_resource_sources + files(
+  'ctk+-3.0.vapi',
   'config.vapi',
   'app.vala'
 )
