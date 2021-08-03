@@ -19,21 +19,21 @@
 namespace Test
 {
 
-[CtkTemplate (ui = "/org/gnome/vte/test/app/ui/search-popover.ui")]
+[GtkTemplate (ui = "/org/gnome/vte/test/app/ui/search-popover.ui")]
 class SearchPopover : Ctk.Popover
 {
   public Vte.Terminal terminal { get; construct set; }
 
-  [CtkChild] private Ctk.SearchEntry search_entry;
-  [CtkChild] private Ctk.Button search_prev_button;
-  [CtkChild] private Ctk.Button search_next_button;
-  [CtkChild] private Ctk.Button close_button;
-  [CtkChild] private Ctk.ToggleButton  match_case_checkbutton;
-  [CtkChild] private Ctk.ToggleButton entire_word_checkbutton;
-  [CtkChild] private Ctk.ToggleButton regex_checkbutton;
-  [CtkChild] private Ctk.ToggleButton wrap_around_checkbutton;
-  [CtkChild] private Ctk.Button reveal_button;
-  [CtkChild] private Ctk.Revealer revealer;
+  [GtkChild] private Ctk.SearchEntry search_entry;
+  [GtkChild] private Ctk.Button search_prev_button;
+  [GtkChild] private Ctk.Button search_next_button;
+  [GtkChild] private Ctk.Button close_button;
+  [GtkChild] private Ctk.ToggleButton  match_case_checkbutton;
+  [GtkChild] private Ctk.ToggleButton entire_word_checkbutton;
+  [GtkChild] private Ctk.ToggleButton regex_checkbutton;
+  [GtkChild] private Ctk.ToggleButton wrap_around_checkbutton;
+  [GtkChild] private Ctk.Button reveal_button;
+  [GtkChild] private Ctk.Revealer revealer;
 
   private bool regex_caseless = false;
   private string? regex_pattern = null;
@@ -172,17 +172,17 @@ class SearchPopover : Ctk.Popover
 
 } /* class SearchPopover */
 
-[CtkTemplate (ui = "/org/gnome/vte/test/app/ui/window.ui")]
+[GtkTemplate (ui = "/org/gnome/vte/test/app/ui/window.ui")]
 class Window : Ctk.ApplicationWindow
 {
-  [CtkChild] private Ctk.Scrollbar scrollbar;
-  [CtkChild] private Ctk.Box terminal_box;
-  /* [CtkChild] private Ctk.Box notifications_box; */
-  [CtkChild] private Ctk.Widget readonly_emblem;
-  /* [CtkChild] private Ctk.Button copy_button; */
-  /* [CtkChild] private Ctk.Button paste_button; */
-  [CtkChild] private Ctk.ToggleButton find_button;
-  [CtkChild] private Ctk.MenuButton gear_button;
+  [GtkChild] private Ctk.Scrollbar scrollbar;
+  [GtkChild] private Ctk.Box terminal_box;
+  /* [GtkChild] private Ctk.Box notifications_box; */
+  [GtkChild] private Ctk.Widget readonly_emblem;
+  /* [GtkChild] private Ctk.Button copy_button; */
+  /* [GtkChild] private Ctk.Button paste_button; */
+  [GtkChild] private Ctk.ToggleButton find_button;
+  [GtkChild] private Ctk.MenuButton gear_button;
 
   private Vte.Terminal terminal;
   private Ctk.Clipboard clipboard;
