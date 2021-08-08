@@ -86,7 +86,7 @@ vapp_deps = [
   glib_dep,
   ctk3_dep,
 #  libvte_ctk3_bapi_dep,
-  posix_dep,
+#  posix_dep,
 ]
 
 vapp = executable(
