@@ -70,7 +70,7 @@
       </item>
     </section>
   </menu>
-  <template class="VteappWindow" parent="CtkApplicationWindow">
+  <template class="BteappWindow" parent="CtkApplicationWindow">
     <property name="can_focus">False</property>
     <property name="role">bte-terminal</property>
     <property name="icon_name">utilities-terminal</property>

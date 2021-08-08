@@ -28,7 +28,7 @@
 G_BEGIN_DECLS
 
 /**
- * VteCursorBlinkMode:
+ * BteCursorBlinkMode:
  * @VTE_CURSOR_BLINK_SYSTEM: Follow CTK+ settings for cursor blinking.
  * @VTE_CURSOR_BLINK_ON: Cursor blinks.
  * @VTE_CURSOR_BLINK_OFF: Cursor does not blink.
@@ -40,10 +40,10 @@ typedef enum {
         VTE_CURSOR_BLINK_SYSTEM,
         VTE_CURSOR_BLINK_ON,
         VTE_CURSOR_BLINK_OFF
-} VteCursorBlinkMode;
+} BteCursorBlinkMode;
 
 /**
- * VteCursorShape:
+ * BteCursorShape:
  * @VTE_CURSOR_SHAPE_BLOCK: Draw a block cursor.  This is the default.
  * @VTE_CURSOR_SHAPE_IBEAM: Draw a vertical bar on the left side of character.
  * This is similar to the default cursor for other CTK+ widgets.
@@ -56,10 +56,10 @@ typedef enum {
         VTE_CURSOR_SHAPE_BLOCK,
         VTE_CURSOR_SHAPE_IBEAM,
         VTE_CURSOR_SHAPE_UNDERLINE
-} VteCursorShape;
+} BteCursorShape;
 
 /**
- * VteTextBlinkMode:
+ * BteTextBlinkMode:
  * @VTE_TEXT_BLINK_NEVER: Do not blink the text.
  * @VTE_TEXT_BLINK_FOCUSED: Allow blinking text only if the terminal is focused.
  * @VTE_TEXT_BLINK_UNFOCUSED: Allow blinking text only if the terminal is unfocused.
@@ -75,10 +75,10 @@ typedef enum {
         VTE_TEXT_BLINK_FOCUSED   = 1,
         VTE_TEXT_BLINK_UNFOCUSED = 2,
         VTE_TEXT_BLINK_ALWAYS    = 3
-} VteTextBlinkMode;
+} BteTextBlinkMode;
 
 /**
- * VteEraseBinding:
+ * BteEraseBinding:
  * @VTE_ERASE_AUTO: For backspace, attempt to determine the right value from the terminal's IO settings.  For delete, use the control sequence.
  * @VTE_ERASE_ASCII_BACKSPACE: Send an ASCII backspace character (0x08).
  * @VTE_ERASE_ASCII_DELETE: Send an ASCII delete character (0x7F).
@@ -95,20 +95,20 @@ typedef enum {
 	VTE_ERASE_ASCII_DELETE,
 	VTE_ERASE_DELETE_SEQUENCE,
 	VTE_ERASE_TTY
-} VteEraseBinding;
+} BteEraseBinding;
 
 /**
- * VtePtyError:
+ * BtePtyError:
  * @VTE_PTY_ERROR_PTY_HELPER_FAILED: Obsolete. Deprecated: 0.42
  * @VTE_PTY_ERROR_PTY98_FAILED: failure when using PTY98 to allocate the PTY
  */
 typedef enum {
   VTE_PTY_ERROR_PTY_HELPER_FAILED = 0,
   VTE_PTY_ERROR_PTY98_FAILED
-} VtePtyError;
+} BtePtyError;
 
 /**
- * VtePtyFlags:
+ * BtePtyFlags:
  * @VTE_PTY_NO_LASTLOG: Unused. Deprecated: 0.38
  * @VTE_PTY_NO_UTMP: Unused. Deprecated: 0.38
  * @VTE_PTY_NO_WTMP: Unused. Deprecated: 0.38
@@ -129,10 +129,10 @@ typedef enum {
   VTE_PTY_NO_SESSION  = 1 << 5,
   VTE_PTY_NO_CTTY     = 1 << 6,
   VTE_PTY_DEFAULT     = 0
-} VtePtyFlags;
+} BtePtyFlags;
 
 /**
- * VteWriteFlags:
+ * BteWriteFlags:
  * @VTE_WRITE_DEFAULT: Write contents as UTF-8 text.  This is the default.
  *
  * A flag type to determine how terminal contents should be written
@@ -140,10 +140,10 @@ typedef enum {
  */
 typedef enum {
   VTE_WRITE_DEFAULT = 0
-} VteWriteFlags;
+} BteWriteFlags;
 
 /**
- * VteRegexError:
+ * BteRegexError:
  * @VTE_REGEX_ERROR_INCOMPATIBLE: The PCRE2 library was built without
  *   Unicode support which is required for VTE
  * @VTE_REGEX_ERROR_NOT_SUPPORTED: Regexes are not supported because VTE was
@@ -160,10 +160,10 @@ typedef enum {
         /* VTE specific values */
         VTE_REGEX_ERROR_INCOMPATIBLE  = G_MAXINT-1,
         VTE_REGEX_ERROR_NOT_SUPPORTED = G_MAXINT
-} VteRegexError;
+} BteRegexError;
 
 /**
- * VteFormat:
+ * BteFormat:
  * @VTE_FORMAT_TEXT: Export as plain text
  * @VTE_FORMAT_HTML: Export as HTML formatted text
  *
@@ -175,10 +175,10 @@ typedef enum {
 typedef enum {
         VTE_FORMAT_TEXT = 1,
         VTE_FORMAT_HTML = 2
-} VteFormat;
+} BteFormat;
 
 /**
- * VteFeatureFlags:
+ * BteFeatureFlags:
  * @VTE_FEATURE_FLAG_BIDI: whether VTE was built with bidirectional text support
  * @VTE_FEATURE_FLAG_ICU: whether VTE was built with ICU support
  * @VTE_FEATURE_FLAG_SYSTEMD: whether VTE was built with systemd support
@@ -194,7 +194,7 @@ typedef enum /*< skip >*/ {
         VTE_FEATURE_FLAG_SYSTEMD = 1ULL << 2,
         VTE_FEATURE_FLAG_SIXEL   = 1ULL << 3,
         VTE_FEATURE_FLAGS_MASK   = 0xFFFFFFFFFFFFFFFFULL, /* force enum to 64 bit */
-} VteFeatureFlags;
+} BteFeatureFlags;
 
 G_END_DECLS
 

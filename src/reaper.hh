@@ -23,8 +23,8 @@
 
 #include <glib-object.h>
 
-typedef struct _VteReaper VteReaper;
+typedef struct _BteReaper BteReaper;
 
-VteReaper *bte_reaper_ref(void);
+BteReaper *bte_reaper_ref(void);
 
 void bte_reaper_add_child(GPid pid);

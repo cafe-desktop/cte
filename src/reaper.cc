@@ -21,27 +21,27 @@
 #include "debug.h"
 #include "reaper.hh"
 
-struct _VteReaper {
+struct _BteReaper {
         GObject parent_instance;
 };
 
-struct _VteReaperClass {
+struct _BteReaperClass {
         GObjectClass parent_class;
 };
-typedef struct _VteReaperClass VteReaperClass;
+typedef struct _BteReaperClass BteReaperClass;
 
 #define VTE_TYPE_REAPER            (bte_reaper_get_type())
-#define VTE_REAPER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), VTE_TYPE_REAPER, VteReaper))
-#define VTE_REAPER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  VTE_TYPE_REAPER, VteReaperClass))
+#define VTE_REAPER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), VTE_TYPE_REAPER, BteReaper))
+#define VTE_REAPER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  VTE_TYPE_REAPER, BteReaperClass))
 #define VTE_IS_REAPER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), VTE_TYPE_REAPER))
 #define VTE_IS_REAPER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  VTE_TYPE_REAPER))
-#define VTE_REAPER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  VTE_TYPE_REAPER, VteReaperClass))
+#define VTE_REAPER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  VTE_TYPE_REAPER, BteReaperClass))
 
 static GType bte_reaper_get_type(void);
 
-G_DEFINE_TYPE(VteReaper, bte_reaper, G_TYPE_OBJECT)
+G_DEFINE_TYPE(BteReaper, bte_reaper, G_TYPE_OBJECT)
 
-static VteReaper *singleton_reaper = nullptr;
+static BteReaper *singleton_reaper = nullptr;
 
 static void
 bte_reaper_child_watch_cb(GPid pid,
@@ -71,7 +71,7 @@ bte_reaper_add_child(GPid pid)
 }
 
 static void
-bte_reaper_init(VteReaper *reaper)
+bte_reaper_init(BteReaper *reaper)
 {
 }
 
@@ -99,17 +99,17 @@ bte_reaper_finalize(GObject *reaper)
 }
 
 static void
-bte_reaper_class_init(VteReaperClass *klass)
+bte_reaper_class_init(BteReaperClass *klass)
 {
         GObjectClass *gobject_class;
 
         /*
-         * VteReaper::child-exited:
+         * BteReaper::child-exited:
          * @btereaper: the object which received the signal
          * @arg1: the process ID of the exited child
          * @arg2: the status of the exited child, as returned by waitpid()
          *
-         * Emitted when the #VteReaper object detects that a child of the
+         * Emitted when the #BteReaper object detects that a child of the
          * current process has exited.
          */
         g_signal_new(g_intern_static_string("child-exited"),
@@ -131,16 +131,16 @@ bte_reaper_class_init(VteReaperClass *klass)
 /*
  * bte_reaper_ref:
  *
- * Finds the address of the global #VteReaper object, creating the object if
+ * Finds the address of the global #BteReaper object, creating the object if
  * necessary.
  *
- * Returns: a reference to the global #VteReaper object, which
+ * Returns: a reference to the global #BteReaper object, which
  *  must be unreffed when done with it
  */
-VteReaper *
+BteReaper *
 bte_reaper_ref(void)
 {
-        return (VteReaper*)g_object_new(VTE_TYPE_REAPER, nullptr);
+        return (BteReaper*)g_object_new(VTE_TYPE_REAPER, nullptr);
 }
 
 #ifdef MAIN
@@ -165,7 +165,7 @@ child_exited(GObject *object, int pid, int status, gpointer data)
 int
 main(int argc, char **argv)
 {
-        VteReaper *reaper;
+        BteReaper *reaper;
         pid_t p, q;
 
         _bte_debug_init();

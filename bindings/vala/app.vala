@@ -22,7 +22,7 @@ namespace Test
 [CtkTemplate (ui = "/org/gnome/bte/test/app/ui/search-popover.ui")]
 class SearchPopover : Ctk.Popover
 {
-  public Vte.Terminal terminal { get; construct set; }
+  public Bte.Terminal terminal { get; construct set; }
 
   [CtkChild] private Ctk.SearchEntry search_entry;
   [CtkChild] private Ctk.Button search_prev_button;
@@ -39,7 +39,7 @@ class SearchPopover : Ctk.Popover
   private string? regex_pattern = null;
   private bool has_regex = false;
 
-  public SearchPopover(Vte.Terminal term,
+  public SearchPopover(Bte.Terminal term,
                        Ctk.Widget relative_to)
   {
     Object(relative_to: relative_to, terminal: term);
@@ -86,7 +86,7 @@ class SearchPopover : Ctk.Popover
     string pattern = null;
     bool caseless = false;
     GLib.Regex? gregex = null;
-    Vte.Regex? regex = null;
+    Bte.Regex? regex = null;
 
     search_text = search_entry.get_text();
     caseless = !match_case_checkbutton.active;
@@ -115,7 +115,7 @@ class SearchPopover : Ctk.Popover
           flags = 0x40080400u /* PCRE2_UTF | PCRE2_NO_UTF_CHECK | PCRE2_MULTILINE */;
           if (caseless)
             flags |= 0x00000008u; /* PCRE2_CASELESS */
-          regex = new Vte.Regex.for_search(pattern, pattern.length, flags);
+          regex = new Bte.Regex.for_search(pattern, pattern.length, flags);
 
           try {
             regex.jit(0x00000001u /* PCRE2_JIT_COMPLETE */);
@@ -184,7 +184,7 @@ class Window : Ctk.ApplicationWindow
   [CtkChild] private Ctk.ToggleButton find_button;
   [CtkChild] private Ctk.MenuButton gear_button;
 
-  private Vte.Terminal terminal;
+  private Bte.Terminal terminal;
   private Ctk.Clipboard clipboard;
   private GLib.Pid child_pid;
   private SearchPopover search_popover;
@@ -209,7 +209,7 @@ class Window : Ctk.ApplicationWindow
     Object(application: app);
 
     /* Create terminal and connect scrollbar */
-    terminal = new Vte.Terminal();
+    terminal = new Bte.Terminal();
     var margin = Options.extra_margin;
     if (margin > 0) {
       terminal.margin_start =
@@ -376,9 +376,9 @@ class Window : Ctk.ApplicationWindow
         int tag;
 
         if (!Options.no_pcre) {
-          Vte.Regex regex;
+          Bte.Regex regex;
 
-          regex = new Vte.Regex.for_match(dingus[i], dingus[i].length,
+          regex = new Bte.Regex.for_match(dingus[i], dingus[i].length,
                                           0x40080408u /* PCRE2_UTF | PCRE2_NO_UTF_CHECK | PCRE2_CASELESS | PCRE2_MULTILINE */);
           try {
             regex.jit(0x00000001u /* PCRE2_JIT_COMPLETE */);
@@ -451,7 +451,7 @@ class Window : Ctk.ApplicationWindow
     Shell.parse_argv(command, out argv);
     launch_idle_id = GLib.Idle.add(() => {
         try {
-          terminal.spawn_sync(Vte.PtyFlags.DEFAULT,
+          terminal.spawn_sync(Bte.PtyFlags.DEFAULT,
                               Options.working_directory,
                               argv,
                               Options.environment,
@@ -472,7 +472,7 @@ class Window : Ctk.ApplicationWindow
   {
     string? shell;
 
-    shell = Vte.get_user_shell();
+    shell = Bte.get_user_shell();
     if (shell == null || shell[0] == '\0')
       shell = Environment.get_variable("SHELL");
     if (shell == null || shell[0] == '\0')
@@ -483,10 +483,10 @@ class Window : Ctk.ApplicationWindow
 
   private void fork() throws Error
   {
-    Vte.Pty pty;
+    Bte.Pty pty;
     Posix.pid_t pid;
 
-    pty = new Vte.Pty.sync(Vte.PtyFlags.DEFAULT, null);
+    pty = new Bte.Pty.sync(Bte.PtyFlags.DEFAULT, null);
 
     pid = Posix.fork();
 
@@ -569,7 +569,7 @@ class Window : Ctk.ApplicationWindow
     size_t len;
     unowned string str = parameter.get_string(out len);
     
-    terminal.copy_clipboard_format(str == "html" ? Vte.Format.HTML : Vte.Format.TEXT);
+    terminal.copy_clipboard_format(str == "html" ? Bte.Format.HTML : Bte.Format.TEXT);
   }
 
   private void action_copy_match_cb(GLib.SimpleAction action, GLib.Variant? parameter)
@@ -653,12 +653,12 @@ class Window : Ctk.ApplicationWindow
     return true;
   }
 
-  private void char_size_changed_cb(Vte.Terminal terminal, uint width, uint height)
+  private void char_size_changed_cb(Bte.Terminal terminal, uint width, uint height)
   {
     update_geometry();
   }
 
-  private void child_exited_cb(Vte.Terminal terminal, int status)
+  private void child_exited_cb(Bte.Terminal terminal, int status)
   {
     printerr("Child exited with status %x\n", status);
 
@@ -666,7 +666,7 @@ class Window : Ctk.ApplicationWindow
       try {
         var file = GLib.File.new_for_commandline_arg(Options.output_filename);
         var stream = file.replace(null, false, GLib.FileCreateFlags.NONE, null);
-        terminal.write_contents_sync(stream, Vte.WriteFlags.DEFAULT, null);
+        terminal.write_contents_sync(stream, Bte.WriteFlags.DEFAULT, null);
       } catch (Error e) {
         printerr("Failed to write output to \"%s\": %s\n",
                  Options.output_filename, e.message);
@@ -684,32 +684,32 @@ class Window : Ctk.ApplicationWindow
     update_paste_sensitivity();
   }
 
-  private void decrease_font_size_cb(Vte.Terminal terminal)
+  private void decrease_font_size_cb(Bte.Terminal terminal)
   {
     adjust_font_size(1.0 / 1.2);
   }
 
-  public void deiconify_window_cb(Vte.Terminal terminal)
+  public void deiconify_window_cb(Bte.Terminal terminal)
   {
     deiconify();
   }
 
-  private void icon_title_changed_cb(Vte.Terminal terminal)
+  private void icon_title_changed_cb(Bte.Terminal terminal)
   {
     get_window().set_icon_name(terminal.get_icon_title());
   }
 
-  private void iconify_window_cb(Vte.Terminal terminal)
+  private void iconify_window_cb(Bte.Terminal terminal)
   {
     iconify();
   }
 
-  private void increase_font_size_cb(Vte.Terminal terminal)
+  private void increase_font_size_cb(Bte.Terminal terminal)
   {
     adjust_font_size(1.2);
   }
 
-  private void lower_window_cb(Vte.Terminal terminal)
+  private void lower_window_cb(Bte.Terminal terminal)
   {
     if (!get_realized())
       return;
@@ -717,19 +717,19 @@ class Window : Ctk.ApplicationWindow
     get_window().lower();
   }
 
-  private void maximize_window_cb(Vte.Terminal terminal)
+  private void maximize_window_cb(Bte.Terminal terminal)
   {
     maximize();
   }
 
-  private void move_window_cb(Vte.Terminal terminal, uint x, uint y)
+  private void move_window_cb(Bte.Terminal terminal, uint x, uint y)
   {
     move((int)x, (int)y);
   }
 
   private void notify_cb(Object object, ParamSpec pspec)
   {
-    if (pspec.owner_type != typeof(Vte.Terminal))
+    if (pspec.owner_type != typeof(Bte.Terminal))
       return;
 
     var value = GLib.Value(pspec.value_type);
@@ -738,7 +738,7 @@ class Window : Ctk.ApplicationWindow
     print("NOTIFY property \"%s\" value %s\n", pspec.name, str);
   }
 
-  private void raise_window_cb(Vte.Terminal terminal)
+  private void raise_window_cb(Bte.Terminal terminal)
   {
     if (!get_realized())
       return;
@@ -751,12 +751,12 @@ class Window : Ctk.ApplicationWindow
     update_geometry();
   }
 
-  private void refresh_window_cb(Vte.Terminal terminal)
+  private void refresh_window_cb(Bte.Terminal terminal)
   {
     queue_draw();
   }
 
-  private void resize_window_cb(Vte.Terminal terminal, uint columns, uint rows)
+  private void resize_window_cb(Bte.Terminal terminal, uint columns, uint rows)
   {
     if (columns < 2 || rows < 2)
       return;
@@ -765,17 +765,17 @@ class Window : Ctk.ApplicationWindow
     resize_to_geometry((int)columns, (int)rows);
   }
 
-  private void restore_window_cb(Vte.Terminal terminal)
+  private void restore_window_cb(Bte.Terminal terminal)
   {
     unmaximize();
   }
 
-  private void selection_changed_cb(Vte.Terminal terminal)
+  private void selection_changed_cb(Bte.Terminal terminal)
   {
     update_copy_sensitivity();
   }
 
-  private void window_title_changed_cb(Vte.Terminal terminal)
+  private void window_title_changed_cb(Bte.Terminal terminal)
   {
     set_title(terminal.get_window_title());
   }
@@ -786,7 +786,7 @@ class App : Ctk.Application
 {
   public App()
   {
-    Object(application_id: "org.gnome.Vte.Test.App",
+    Object(application_id: "org.gnome.Bte.Test.App",
            flags: ApplicationFlags.NON_UNIQUE);
 
     var settings = Ctk.Settings.get_default();
@@ -960,25 +960,25 @@ class App : Ctk.Application
       return get_color(hl_fg_color_string);
     }
 
-    public static Vte.CursorBlinkMode get_cursor_blink_mode()
+    public static Bte.CursorBlinkMode get_cursor_blink_mode()
     {
-      Vte.CursorBlinkMode value;
+      Bte.CursorBlinkMode value;
       if (cursor_blink_mode_string != null)
-        value = (Vte.CursorBlinkMode)parse_enum(typeof(Vte.CursorBlinkMode),
+        value = (Bte.CursorBlinkMode)parse_enum(typeof(Bte.CursorBlinkMode),
                                                 cursor_blink_mode_string);
       else
-        value = Vte.CursorBlinkMode.SYSTEM;
+        value = Bte.CursorBlinkMode.SYSTEM;
       return value;
     }
 
-    public static Vte.CursorShape get_cursor_shape()
+    public static Bte.CursorShape get_cursor_shape()
     {
-      Vte.CursorShape value;
+      Bte.CursorShape value;
       if (cursor_shape_string != null)
-        value = (Vte.CursorShape)parse_enum(typeof(Vte.CursorShape),
+        value = (Bte.CursorShape)parse_enum(typeof(Bte.CursorShape),
                                             cursor_shape_string);
       else
-        value = Vte.CursorShape.BLOCK;
+        value = Bte.CursorShape.BLOCK;
       return value;
     }
 
@@ -1038,7 +1038,7 @@ class App : Ctk.Application
       { "no-shell", 'S', 0, OptionArg.NONE, ref no_shell,
         "Disable spawning a shell inside the terminal", null },
       { "object-notifications", 'N', 0, OptionArg.NONE, ref object_notifications,
-        "Print VteTerminal object notifications", null },
+        "Print BteTerminal object notifications", null },
       { "output-file", 0, 0, OptionArg.FILENAME, ref output_filename,
         "Save terminal contents to file at exit", null },
       { "reverse", 0, 0, OptionArg.NONE, ref reverse,

@@ -20,9 +20,9 @@
 #include "bte/btepty.h"
 #include "pty.hh"
 
-bte::base::Pty* _bte_pty_get_impl(VtePty* pty);
+bte::base::Pty* _bte_pty_get_impl(BtePty* pty);
 
-bool _bte_pty_spawn_sync(VtePty* pty,
+bool _bte_pty_spawn_sync(BtePty* pty,
                          char const* working_directory,
                          char const* const* argv,
                          char const* const* envv,
@@ -37,7 +37,7 @@ bool _bte_pty_spawn_sync(VtePty* pty,
 
 bool _bte_pty_check_envv(char const* const* envv) noexcept;
 
-bool _bte_pty_set_size(VtePty *pty,
+bool _bte_pty_set_size(BtePty *pty,
                        int rows,
                        int columns,
                        int cell_height_px,

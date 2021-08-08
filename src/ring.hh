@@ -30,9 +30,9 @@
 
 #include <type_traits>
 
-typedef struct _VteVisualPosition {
+typedef struct _BteVisualPosition {
 	long row, col;
-} VteVisualPosition;
+} BteVisualPosition;
 
 namespace bte {
 
@@ -72,8 +72,8 @@ public:
 
         //FIXMEchpe rename this to at()
         //FIXMEchpe use references not pointers
-        VteRowData const* index(row_t position); /* const? */
-        VteRowData* index_writable(row_t position);
+        BteRowData const* index(row_t position); /* const? */
+        BteRowData* index_writable(row_t position);
         bool is_soft_wrapped(row_t position);
 
         void hyperlink_maybe_gc(row_t increment);
@@ -86,15 +86,15 @@ public:
         row_t reset();
         void resize(row_t max_rows = kDefaultMaxRows);
         void shrink(row_t max_len = kDefaultMaxRows);
-        VteRowData* insert(row_t position, guint8 bidi_flags);
-        VteRowData* append(guint8 bidi_flags);
+        BteRowData* insert(row_t position, guint8 bidi_flags);
+        BteRowData* append(guint8 bidi_flags);
         void remove(row_t position);
         void drop_scrollback(row_t position);
         void set_visible_rows(row_t rows);
         void rewrap(column_t columns,
-                    VteVisualPosition** markers);
+                    BteVisualPosition** markers);
         bool write_contents(GOutputStream* stream,
-                            VteWriteFlags flags,
+                            BteWriteFlags flags,
                             GCancellable* cancellable,
                             GError** error);
 
@@ -106,14 +106,14 @@ private:
 
         inline GString* hyperlink_get(hyperlink_idx_t idx) const { return (GString*)g_ptr_array_index(m_hyperlinks, idx); }
 
-        inline VteRowData* get_writable_index(row_t position) const { return &m_array[position & m_mask]; }
+        inline BteRowData* get_writable_index(row_t position) const { return &m_array[position & m_mask]; }
 
         void hyperlink_gc();
         hyperlink_idx_t get_hyperlink_idx_no_update_current(char const* hyperlink);
 
         typedef struct _CellAttrChange {
                 gsize text_end_offset;  /* offset of first character no longer using this attr */
-                VteStreamCellAttr attr;
+                BteStreamCellAttr attr;
         } CellAttrChange;
 
         typedef struct _RowRecord {
@@ -160,8 +160,8 @@ private:
                                               column_t* column);
 
         bool write_row(GOutputStream* stream,
-                       VteRowData* row,
-                       VteWriteFlags flags,
+                       BteRowData* row,
+                       BteWriteFlags flags,
                        GCancellable* cancellable,
                        GError** error);
 
@@ -175,9 +175,9 @@ private:
         void maybe_discard_one_row();
 
         void freeze_row(row_t position,
-                        VteRowData const* row);
+                        BteRowData const* row);
         void thaw_row(row_t position,
-                      VteRowData* row,
+                      BteRowData* row,
                       bool do_truncate,
                       int hyperlink_column,
                       char const** hyperlink);
@@ -190,29 +190,29 @@ private:
 	/* Writable */
 	row_t m_writable{0};
         row_t m_mask{31};
-	VteRowData *m_array;
+	BteRowData *m_array;
 
         /* Storage:
          *
-         * row_stream contains records of VteRowRecord for each physical row.
+         * row_stream contains records of BteRowRecord for each physical row.
          * (This stream is regenerated when the contents rewrap on resize.)
          *
          * text_stream is the text in UTF-8.
          *
          * attr_stream contains entries that consist of:
-         *  - a VteCellAttrChange.
+         *  - a BteCellAttrChange.
          *  - a string of attr.hyperlink_length length containing the (typically empty) hyperlink data.
          *    As far as the ring is concerned, this hyperlink data is opaque. Only the caller cares that
          *    if nonempty, it actually contains the ID and URI separated with a semicolon. Not NUL terminated.
          *  - 2 bytes repeating attr.hyperlink_length so that we can walk backwards.
          */
 	bool m_has_streams;
-	VteStream *m_attr_stream, *m_text_stream, *m_row_stream;
+	BteStream *m_attr_stream, *m_text_stream, *m_row_stream;
 	size_t m_last_attr_text_start_offset{0};
-	VteCellAttr m_last_attr;
+	BteCellAttr m_last_attr;
 	GString *m_utf8_buffer;
 
-	VteRowData m_cached_row;
+	BteRowData m_cached_row;
 	row_t m_cached_row_num{(row_t)-1};
 
         row_t m_visible_rows{0};  /* to keep at least a screenful of lines in memory, bug 646098 comment 12 */
@@ -236,29 +236,29 @@ G_BEGIN_DECLS
 
 /* temp compat API */
 
-typedef bte::base::Ring VteRing;
+typedef bte::base::Ring BteRing;
 
-static inline bool _bte_ring_contains(VteRing *ring, gulong position) { return ring->contains(position); }
-static inline glong _bte_ring_delta(VteRing *ring) { return ring->delta(); }
-static inline glong _bte_ring_length(VteRing *ring) { return ring->length(); }
-static inline glong _bte_ring_next(VteRing *ring) { return ring->next(); }
-static inline const VteRowData *_bte_ring_index (VteRing *ring, gulong position) { return ring->index(position); }
-static inline VteRowData *_bte_ring_index_writable (VteRing *ring, gulong position) { return ring->index_writable(position); }
-static inline void _bte_ring_hyperlink_maybe_gc (VteRing *ring, gulong increment) { ring->hyperlink_maybe_gc(increment); }
-static inline auto _bte_ring_get_hyperlink_idx (VteRing *ring, const char *hyperlink) { return ring->get_hyperlink_idx(hyperlink); }
-static inline auto _bte_ring_get_hyperlink_at_position (VteRing *ring, gulong position, int col, bool update_hover_idx, const char **hyperlink) { return ring->get_hyperlink_at_position(position, col, update_hover_idx, hyperlink); }
-static inline long _bte_ring_reset (VteRing *ring) { return ring->reset(); }
-static inline void _bte_ring_resize (VteRing *ring, gulong max_rows) { ring->resize(max_rows); }
-static inline void _bte_ring_shrink (VteRing *ring, gulong max_len) { ring->shrink(max_len); }
-static inline VteRowData *_bte_ring_insert (VteRing *ring, gulong position, guint8 bidi_flags) { return ring->insert(position, bidi_flags); }
-static inline VteRowData *_bte_ring_append (VteRing *ring, guint8 bidi_flags) { return ring->append(bidi_flags); }
-static inline void _bte_ring_remove (VteRing *ring, gulong position) { ring->remove(position); }
-static inline void _bte_ring_drop_scrollback (VteRing *ring, gulong position) { ring->drop_scrollback(position); }
-static inline void _bte_ring_set_visible_rows (VteRing *ring, gulong rows) { ring->set_visible_rows(rows); }
-static inline void _bte_ring_rewrap (VteRing *ring, glong columns, VteVisualPosition **markers) { ring->rewrap(columns, markers); }
-static inline gboolean _bte_ring_write_contents (VteRing *ring,
+static inline bool _bte_ring_contains(BteRing *ring, gulong position) { return ring->contains(position); }
+static inline glong _bte_ring_delta(BteRing *ring) { return ring->delta(); }
+static inline glong _bte_ring_length(BteRing *ring) { return ring->length(); }
+static inline glong _bte_ring_next(BteRing *ring) { return ring->next(); }
+static inline const BteRowData *_bte_ring_index (BteRing *ring, gulong position) { return ring->index(position); }
+static inline BteRowData *_bte_ring_index_writable (BteRing *ring, gulong position) { return ring->index_writable(position); }
+static inline void _bte_ring_hyperlink_maybe_gc (BteRing *ring, gulong increment) { ring->hyperlink_maybe_gc(increment); }
+static inline auto _bte_ring_get_hyperlink_idx (BteRing *ring, const char *hyperlink) { return ring->get_hyperlink_idx(hyperlink); }
+static inline auto _bte_ring_get_hyperlink_at_position (BteRing *ring, gulong position, int col, bool update_hover_idx, const char **hyperlink) { return ring->get_hyperlink_at_position(position, col, update_hover_idx, hyperlink); }
+static inline long _bte_ring_reset (BteRing *ring) { return ring->reset(); }
+static inline void _bte_ring_resize (BteRing *ring, gulong max_rows) { ring->resize(max_rows); }
+static inline void _bte_ring_shrink (BteRing *ring, gulong max_len) { ring->shrink(max_len); }
+static inline BteRowData *_bte_ring_insert (BteRing *ring, gulong position, guint8 bidi_flags) { return ring->insert(position, bidi_flags); }
+static inline BteRowData *_bte_ring_append (BteRing *ring, guint8 bidi_flags) { return ring->append(bidi_flags); }
+static inline void _bte_ring_remove (BteRing *ring, gulong position) { ring->remove(position); }
+static inline void _bte_ring_drop_scrollback (BteRing *ring, gulong position) { ring->drop_scrollback(position); }
+static inline void _bte_ring_set_visible_rows (BteRing *ring, gulong rows) { ring->set_visible_rows(rows); }
+static inline void _bte_ring_rewrap (BteRing *ring, glong columns, BteVisualPosition **markers) { ring->rewrap(columns, markers); }
+static inline gboolean _bte_ring_write_contents (BteRing *ring,
                                                  GOutputStream *stream,
-                                                 VteWriteFlags flags,
+                                                 BteWriteFlags flags,
                                                  GCancellable *cancellable,
                                                  GError **error) { return ring->write_contents(stream, flags, cancellable, error); }
 

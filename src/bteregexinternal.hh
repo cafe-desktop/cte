@@ -21,20 +21,20 @@
 
 static inline auto wrapper_from_regex(bte::base::Regex* regex)
 {
-        return reinterpret_cast<VteRegex*>(regex);
+        return reinterpret_cast<BteRegex*>(regex);
 }
 
-static inline auto regex_from_wrapper(VteRegex* regex)
+static inline auto regex_from_wrapper(BteRegex* regex)
 {
         return reinterpret_cast<bte::base::Regex*>(regex);
 }
 
-static inline auto regex_array_from_wrappers(VteRegex** regexes)
+static inline auto regex_array_from_wrappers(BteRegex** regexes)
 {
         return const_cast<bte::base::Regex const**>(reinterpret_cast<bte::base::Regex**>(regexes));
 }
 
-bool _bte_regex_has_purpose(VteRegex* regex,
+bool _bte_regex_has_purpose(BteRegex* regex,
                             bte::base::Regex::Purpose purpose);
 
-bool _bte_regex_has_multiline_compile_flag(VteRegex* regex);
+bool _bte_regex_has_multiline_compile_flag(BteRegex* regex);

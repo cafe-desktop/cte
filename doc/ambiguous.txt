@@ -38,7 +38,7 @@ account any context information.  Method C fails on glibc-based systems
 because glibc uses method D and the two methods produce different
 results for the same wchar_t values.
 
-So the VteTerminal widget uses approach D.  Depending on the context in
+So the BteTerminal widget uses approach D.  Depending on the context in
 which a character was received (a combination of the terminal's encoding
 and whether or not the character was received as an ISO-2022 sequence),
 a character is internally assigned a width when it is received from the

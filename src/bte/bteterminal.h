@@ -36,89 +36,89 @@
 G_BEGIN_DECLS
 
 #define VTE_TYPE_TERMINAL            (bte_terminal_get_type())
-#define VTE_TERMINAL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), VTE_TYPE_TERMINAL, VteTerminal))
-#define VTE_TERMINAL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  VTE_TYPE_TERMINAL, VteTerminalClass))
+#define VTE_TERMINAL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), VTE_TYPE_TERMINAL, BteTerminal))
+#define VTE_TERMINAL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  VTE_TYPE_TERMINAL, BteTerminalClass))
 #define VTE_IS_TERMINAL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), VTE_TYPE_TERMINAL))
 #define VTE_IS_TERMINAL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  VTE_TYPE_TERMINAL))
-#define VTE_TERMINAL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  VTE_TYPE_TERMINAL, VteTerminalClass))
+#define VTE_TERMINAL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  VTE_TYPE_TERMINAL, BteTerminalClass))
 
-typedef struct _VteTerminal             VteTerminal;
-typedef struct _VteTerminalClass        VteTerminalClass;
-typedef struct _VteTerminalClassPrivate VteTerminalClassPrivate;
-typedef struct _VteCharAttributes       VteCharAttributes;
+typedef struct _BteTerminal             BteTerminal;
+typedef struct _BteTerminalClass        BteTerminalClass;
+typedef struct _BteTerminalClassPrivate BteTerminalClassPrivate;
+typedef struct _BteCharAttributes       BteCharAttributes;
 
 /**
- * VteTerminal:
+ * BteTerminal:
  */
-struct _VteTerminal {
+struct _BteTerminal {
 	CtkWidget widget;
         /*< private >*/
 	gpointer *_unused_padding[1]; /* FIXMEchpe: remove this field on the next ABI break */
 };
 
 /**
- * VteTerminalClass:
+ * BteTerminalClass:
  *
  * All of these fields should be considered read-only, except for derived classes.
  */
-struct _VteTerminalClass {
+struct _BteTerminalClass {
 	/*< public > */
 	/* Inherited parent class. */
 	CtkWidgetClass parent_class;
 
 	/*< protected > */
 	/* Default signal handlers. */
-	void (*eof)(VteTerminal* terminal);
-	void (*child_exited)(VteTerminal* terminal, int status);
-	void (*encoding_changed)(VteTerminal* terminal);
-	void (*char_size_changed)(VteTerminal* terminal, guint char_width, guint char_height);
-	void (*window_title_changed)(VteTerminal* terminal);
-	void (*icon_title_changed)(VteTerminal* terminal);
-	void (*selection_changed)(VteTerminal* terminal);
-	void (*contents_changed)(VteTerminal* terminal);
-	void (*cursor_moved)(VteTerminal* terminal);
-	void (*commit)(VteTerminal* terminal, const gchar *text, guint size);
+	void (*eof)(BteTerminal* terminal);
+	void (*child_exited)(BteTerminal* terminal, int status);
+	void (*encoding_changed)(BteTerminal* terminal);
+	void (*char_size_changed)(BteTerminal* terminal, guint char_width, guint char_height);
+	void (*window_title_changed)(BteTerminal* terminal);
+	void (*icon_title_changed)(BteTerminal* terminal);
+	void (*selection_changed)(BteTerminal* terminal);
+	void (*contents_changed)(BteTerminal* terminal);
+	void (*cursor_moved)(BteTerminal* terminal);
+	void (*commit)(BteTerminal* terminal, const gchar *text, guint size);
 
-	void (*deiconify_window)(VteTerminal* terminal);
-	void (*iconify_window)(VteTerminal* terminal);
-	void (*raise_window)(VteTerminal* terminal);
-	void (*lower_window)(VteTerminal* terminal);
-	void (*refresh_window)(VteTerminal* terminal);
-	void (*restore_window)(VteTerminal* terminal);
-	void (*maximize_window)(VteTerminal* terminal);
-	void (*resize_window)(VteTerminal* terminal, guint width, guint height);
-	void (*move_window)(VteTerminal* terminal, guint x, guint y);
+	void (*deiconify_window)(BteTerminal* terminal);
+	void (*iconify_window)(BteTerminal* terminal);
+	void (*raise_window)(BteTerminal* terminal);
+	void (*lower_window)(BteTerminal* terminal);
+	void (*refresh_window)(BteTerminal* terminal);
+	void (*restore_window)(BteTerminal* terminal);
+	void (*maximize_window)(BteTerminal* terminal);
+	void (*resize_window)(BteTerminal* terminal, guint width, guint height);
+	void (*move_window)(BteTerminal* terminal, guint x, guint y);
 
         /* FIXMEchpe: should these return gboolean and have defaul thandlers
          * settings the "scale" property?
          */
-	void (*increase_font_size)(VteTerminal* terminal);
-	void (*decrease_font_size)(VteTerminal* terminal);
+	void (*increase_font_size)(BteTerminal* terminal);
+	void (*decrease_font_size)(BteTerminal* terminal);
 
-	void (*text_modified)(VteTerminal* terminal);
-	void (*text_inserted)(VteTerminal* terminal);
-	void (*text_deleted)(VteTerminal* terminal);
-	void (*text_scrolled)(VteTerminal* terminal, gint delta);
-	void (*copy_clipboard)(VteTerminal* terminal);
-	void (*paste_clipboard)(VteTerminal* terminal);
+	void (*text_modified)(BteTerminal* terminal);
+	void (*text_inserted)(BteTerminal* terminal);
+	void (*text_deleted)(BteTerminal* terminal);
+	void (*text_scrolled)(BteTerminal* terminal, gint delta);
+	void (*copy_clipboard)(BteTerminal* terminal);
+	void (*paste_clipboard)(BteTerminal* terminal);
 
-	void (*bell)(VteTerminal* terminal);
+	void (*bell)(BteTerminal* terminal);
 
         /* Padding for future expansion. */
         gpointer padding[16];
 
-        VteTerminalClassPrivate *priv;
+        BteTerminalClassPrivate *priv;
 };
 
 /* The structure we return as the supplemental attributes for strings. */
-struct _VteCharAttributes {
+struct _BteCharAttributes {
         /*< private >*/
         long row, column;  /* logical column */
 	PangoColor fore, back;
 	guint underline:1, strikethrough:1, columns:4;
 };
 
-typedef gboolean (*VteSelectionFunc)(VteTerminal *terminal,
+typedef gboolean (*BteSelectionFunc)(BteTerminal *terminal,
                                      glong column,
                                      glong row,
                                      gpointer data) _VTE_GNUC_NONNULL(1);
@@ -131,23 +131,23 @@ _VTE_PUBLIC
 CtkWidget *bte_terminal_new(void) _VTE_CXX_NOEXCEPT;
 
 _VTE_PUBLIC
-VtePty *bte_terminal_pty_new_sync (VteTerminal *terminal,
-                                   VtePtyFlags flags,
+BtePty *bte_terminal_pty_new_sync (BteTerminal *terminal,
+                                   BtePtyFlags flags,
                                    GCancellable *cancellable,
                                    GError **error) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 _VTE_PUBLIC
-void bte_terminal_watch_child (VteTerminal *terminal,
+void bte_terminal_watch_child (BteTerminal *terminal,
                                GPid child_pid) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
-typedef void (* VteTerminalSpawnAsyncCallback) (VteTerminal *terminal,
+typedef void (* BteTerminalSpawnAsyncCallback) (BteTerminal *terminal,
                                                 GPid pid,
                                                 GError *error,
                                                 gpointer user_data);
 
 _VTE_PUBLIC
-void bte_terminal_spawn_async(VteTerminal *terminal,
-                              VtePtyFlags pty_flags,
+void bte_terminal_spawn_async(BteTerminal *terminal,
+                              BtePtyFlags pty_flags,
                               const char *working_directory,
                               char **argv,
                               char **envv,
@@ -157,12 +157,12 @@ void bte_terminal_spawn_async(VteTerminal *terminal,
                               GDestroyNotify child_setup_data_destroy,
                               int timeout,
                               GCancellable *cancellable,
-                              VteTerminalSpawnAsyncCallback callback,
+                              BteTerminalSpawnAsyncCallback callback,
                               gpointer user_data) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) _VTE_GNUC_NONNULL(4);
 
 _VTE_PUBLIC
-void bte_terminal_spawn_with_fds_async(VteTerminal* terminal,
-                                       VtePtyFlags pty_flags,
+void bte_terminal_spawn_with_fds_async(BteTerminal* terminal,
+                                       BtePtyFlags pty_flags,
                                        char const* working_directory,
                                        char const* const* argv,
                                        char const* const* envv,
@@ -176,330 +176,330 @@ void bte_terminal_spawn_with_fds_async(VteTerminal* terminal,
                                        GDestroyNotify child_setup_data_destroy,
                                        int timeout,
                                        GCancellable* cancellable,
-                                       VteTerminalSpawnAsyncCallback callback,
+                                       BteTerminalSpawnAsyncCallback callback,
                                        gpointer user_data) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) _VTE_GNUC_NONNULL(4);
 
 /* Send data to the terminal to display, or to the terminal's forked command
  * to handle in some way.  If it's 'cat', they should be the same. */
 _VTE_PUBLIC
-void bte_terminal_feed(VteTerminal *terminal,
+void bte_terminal_feed(BteTerminal *terminal,
                        const char *data,
                        gssize length) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-void bte_terminal_feed_child(VteTerminal *terminal,
+void bte_terminal_feed_child(BteTerminal *terminal,
                              const char *text,
                              gssize length) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 /* Copy currently-selected text to the clipboard, or from the clipboard to
  * the terminal. */
 _VTE_PUBLIC
-void bte_terminal_copy_clipboard_format(VteTerminal *terminal,
-                                        VteFormat format) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+void bte_terminal_copy_clipboard_format(BteTerminal *terminal,
+                                        BteFormat format) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-void bte_terminal_paste_clipboard(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+void bte_terminal_paste_clipboard(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-void bte_terminal_copy_primary(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+void bte_terminal_copy_primary(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-void bte_terminal_paste_primary(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+void bte_terminal_paste_primary(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-void bte_terminal_select_all(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+void bte_terminal_select_all(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-void bte_terminal_unselect_all(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+void bte_terminal_unselect_all(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 /* By-word selection */
 _VTE_PUBLIC
-void bte_terminal_set_word_char_exceptions(VteTerminal *terminal,
+void bte_terminal_set_word_char_exceptions(BteTerminal *terminal,
                                            const char *exceptions) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-const char *bte_terminal_get_word_char_exceptions(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+const char *bte_terminal_get_word_char_exceptions(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 /* Set the terminal's size. */
 _VTE_PUBLIC
-void bte_terminal_set_size(VteTerminal *terminal,
+void bte_terminal_set_size(BteTerminal *terminal,
 			   glong columns, glong rows) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 _VTE_PUBLIC
-void bte_terminal_set_font_scale(VteTerminal *terminal,
+void bte_terminal_set_font_scale(BteTerminal *terminal,
                                  gdouble scale) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-gdouble bte_terminal_get_font_scale(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+gdouble bte_terminal_get_font_scale(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 _VTE_PUBLIC
-void bte_terminal_set_cell_width_scale(VteTerminal *terminal,
+void bte_terminal_set_cell_width_scale(BteTerminal *terminal,
                                        double scale) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-double bte_terminal_get_cell_width_scale(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+double bte_terminal_get_cell_width_scale(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 _VTE_PUBLIC
-void bte_terminal_set_cell_height_scale(VteTerminal *terminal,
+void bte_terminal_set_cell_height_scale(BteTerminal *terminal,
                                         double scale) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-double bte_terminal_get_cell_height_scale(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+double bte_terminal_get_cell_height_scale(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 /* Set various on-off settings. */
 _VTE_PUBLIC
-void bte_terminal_set_text_blink_mode(VteTerminal *terminal,
-                                      VteTextBlinkMode text_blink_mode) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+void bte_terminal_set_text_blink_mode(BteTerminal *terminal,
+                                      BteTextBlinkMode text_blink_mode) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-VteTextBlinkMode bte_terminal_get_text_blink_mode(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+BteTextBlinkMode bte_terminal_get_text_blink_mode(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-void bte_terminal_set_audible_bell(VteTerminal *terminal,
+void bte_terminal_set_audible_bell(BteTerminal *terminal,
                                    gboolean is_audible) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-gboolean bte_terminal_get_audible_bell(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+gboolean bte_terminal_get_audible_bell(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-void bte_terminal_set_scroll_on_output(VteTerminal *terminal,
+void bte_terminal_set_scroll_on_output(BteTerminal *terminal,
                                        gboolean scroll) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-gboolean bte_terminal_get_scroll_on_output(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+gboolean bte_terminal_get_scroll_on_output(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-void bte_terminal_set_scroll_on_keystroke(VteTerminal *terminal,
+void bte_terminal_set_scroll_on_keystroke(BteTerminal *terminal,
 					  gboolean scroll) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-gboolean bte_terminal_get_scroll_on_keystroke(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+gboolean bte_terminal_get_scroll_on_keystroke(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 /* Set the color scheme. */
 _VTE_PUBLIC
-void bte_terminal_set_color_bold(VteTerminal *terminal,
+void bte_terminal_set_color_bold(BteTerminal *terminal,
                                  const CdkRGBA *bold) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-void bte_terminal_set_color_foreground(VteTerminal *terminal,
+void bte_terminal_set_color_foreground(BteTerminal *terminal,
                                        const CdkRGBA *foreground) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) _VTE_GNUC_NONNULL(2);
 _VTE_PUBLIC
-void bte_terminal_set_color_background(VteTerminal *terminal,
+void bte_terminal_set_color_background(BteTerminal *terminal,
                                        const CdkRGBA *background) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) _VTE_GNUC_NONNULL(2);
 _VTE_PUBLIC
-void bte_terminal_set_color_cursor(VteTerminal *terminal,
+void bte_terminal_set_color_cursor(BteTerminal *terminal,
                                    const CdkRGBA *cursor_background) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-void bte_terminal_set_color_cursor_foreground(VteTerminal *terminal,
+void bte_terminal_set_color_cursor_foreground(BteTerminal *terminal,
                                               const CdkRGBA *cursor_foreground) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-void bte_terminal_set_color_highlight(VteTerminal *terminal,
+void bte_terminal_set_color_highlight(BteTerminal *terminal,
                                       const CdkRGBA *highlight_background) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-void bte_terminal_set_color_highlight_foreground(VteTerminal *terminal,
+void bte_terminal_set_color_highlight_foreground(BteTerminal *terminal,
                                                  const CdkRGBA *highlight_foreground) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-void bte_terminal_set_colors(VteTerminal *terminal,
+void bte_terminal_set_colors(BteTerminal *terminal,
                              const CdkRGBA *foreground,
                              const CdkRGBA *background,
                              const CdkRGBA *palette,
                              gsize palette_size) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 _VTE_PUBLIC
-void bte_terminal_set_default_colors(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+void bte_terminal_set_default_colors(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 /* Set whether or not the cursor blinks. */
 _VTE_PUBLIC
-void bte_terminal_set_cursor_blink_mode(VteTerminal *terminal,
-					VteCursorBlinkMode mode) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+void bte_terminal_set_cursor_blink_mode(BteTerminal *terminal,
+					BteCursorBlinkMode mode) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-VteCursorBlinkMode bte_terminal_get_cursor_blink_mode(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+BteCursorBlinkMode bte_terminal_get_cursor_blink_mode(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 /* Set cursor shape */
 _VTE_PUBLIC
-void bte_terminal_set_cursor_shape(VteTerminal *terminal,
-				   VteCursorShape shape) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+void bte_terminal_set_cursor_shape(BteTerminal *terminal,
+				   BteCursorShape shape) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-VteCursorShape bte_terminal_get_cursor_shape(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+BteCursorShape bte_terminal_get_cursor_shape(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 /* Set the number of scrollback lines, above or at an internal minimum. */
 _VTE_PUBLIC
-void bte_terminal_set_scrollback_lines(VteTerminal *terminal,
+void bte_terminal_set_scrollback_lines(BteTerminal *terminal,
                                        glong lines) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-glong bte_terminal_get_scrollback_lines(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+glong bte_terminal_get_scrollback_lines(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 /* Set or retrieve the current font. */
 _VTE_PUBLIC
-void bte_terminal_set_font(VteTerminal *terminal,
+void bte_terminal_set_font(BteTerminal *terminal,
 			   const PangoFontDescription *font_desc) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-const PangoFontDescription *bte_terminal_get_font(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+const PangoFontDescription *bte_terminal_get_font(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 _VTE_PUBLIC
-void bte_terminal_set_bold_is_bright(VteTerminal *terminal,
+void bte_terminal_set_bold_is_bright(BteTerminal *terminal,
                                      gboolean bold_is_bright) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-gboolean bte_terminal_get_bold_is_bright(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+gboolean bte_terminal_get_bold_is_bright(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 _VTE_PUBLIC
-void bte_terminal_set_allow_hyperlink(VteTerminal *terminal,
+void bte_terminal_set_allow_hyperlink(BteTerminal *terminal,
                                       gboolean allow_hyperlink) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-gboolean bte_terminal_get_allow_hyperlink(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+gboolean bte_terminal_get_allow_hyperlink(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 /* Check if the terminal is the current selection owner. */
 _VTE_PUBLIC
-gboolean bte_terminal_get_has_selection(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+gboolean bte_terminal_get_has_selection(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 /* Set what happens when the user strikes backspace or delete. */
 _VTE_PUBLIC
-void bte_terminal_set_backspace_binding(VteTerminal *terminal,
-					VteEraseBinding binding) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+void bte_terminal_set_backspace_binding(BteTerminal *terminal,
+					BteEraseBinding binding) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-void bte_terminal_set_delete_binding(VteTerminal *terminal,
-				     VteEraseBinding binding) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+void bte_terminal_set_delete_binding(BteTerminal *terminal,
+				     BteEraseBinding binding) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 /* BiDi and shaping */
 _VTE_PUBLIC
-void bte_terminal_set_enable_bidi(VteTerminal *terminal,
+void bte_terminal_set_enable_bidi(BteTerminal *terminal,
                                   gboolean enable_bidi) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-gboolean bte_terminal_get_enable_bidi(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+gboolean bte_terminal_get_enable_bidi(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 _VTE_PUBLIC
-void bte_terminal_set_enable_shaping(VteTerminal *terminal,
+void bte_terminal_set_enable_shaping(BteTerminal *terminal,
                                      gboolean enable_shaping) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-gboolean bte_terminal_get_enable_shaping(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+gboolean bte_terminal_get_enable_shaping(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 /* Manipulate the autohide setting. */
 _VTE_PUBLIC
-void bte_terminal_set_mouse_autohide(VteTerminal *terminal,
+void bte_terminal_set_mouse_autohide(BteTerminal *terminal,
                                      gboolean setting) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-gboolean bte_terminal_get_mouse_autohide(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+gboolean bte_terminal_get_mouse_autohide(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 /* Reset the terminal, optionally clearing the tab stops and line history. */
 _VTE_PUBLIC
-void bte_terminal_reset(VteTerminal *terminal,
+void bte_terminal_reset(BteTerminal *terminal,
                         gboolean clear_tabstops,
 			gboolean clear_history) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 /* Read the contents of the terminal, using a callback function to determine
  * if a particular location on the screen (0-based) is interesting enough to
  * include.  Each byte in the returned string will have a corresponding
- * VteCharAttributes structure in the passed GArray, if the array was not %NULL.
+ * BteCharAttributes structure in the passed GArray, if the array was not %NULL.
  * Note that it will have one entry per byte, not per character, so indexes
  * should match up exactly. */
 _VTE_PUBLIC
-char *bte_terminal_get_text(VteTerminal *terminal,
-			    VteSelectionFunc is_selected,
+char *bte_terminal_get_text(BteTerminal *terminal,
+			    BteSelectionFunc is_selected,
 			    gpointer user_data,
 			    GArray *attributes) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) G_GNUC_MALLOC;
 _VTE_PUBLIC
-char *bte_terminal_get_text_range(VteTerminal *terminal,
+char *bte_terminal_get_text_range(BteTerminal *terminal,
 				  glong start_row, glong start_col,
 				  glong end_row, glong end_col,
-				  VteSelectionFunc is_selected,
+				  BteSelectionFunc is_selected,
 				  gpointer user_data,
 				  GArray *attributes) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) G_GNUC_MALLOC;
 _VTE_PUBLIC
-void bte_terminal_get_cursor_position(VteTerminal *terminal,
+void bte_terminal_get_cursor_position(BteTerminal *terminal,
 				      glong *column,
                                       glong *row) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 _VTE_PUBLIC
-char *bte_terminal_hyperlink_check_event(VteTerminal *terminal,
+char *bte_terminal_hyperlink_check_event(BteTerminal *terminal,
                                          CdkEvent *event) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) _VTE_GNUC_NONNULL(2) G_GNUC_MALLOC;
 
 /* Add a matching expression, returning the tag the widget assigns to that
  * expression. */
 _VTE_PUBLIC
-int bte_terminal_match_add_regex(VteTerminal *terminal,
-                                 VteRegex *regex,
+int bte_terminal_match_add_regex(BteTerminal *terminal,
+                                 BteRegex *regex,
                                  guint32 flags) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) _VTE_GNUC_NONNULL(2);
 /* Set the cursor to be used when the pointer is over a given match. */
 _VTE_PUBLIC
-void bte_terminal_match_set_cursor_name(VteTerminal *terminal,
+void bte_terminal_match_set_cursor_name(BteTerminal *terminal,
 					int tag,
                                         const char *cursor_name) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) _VTE_GNUC_NONNULL(3);
 _VTE_PUBLIC
-void bte_terminal_match_remove(VteTerminal *terminal,
+void bte_terminal_match_remove(BteTerminal *terminal,
                                int tag) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-void bte_terminal_match_remove_all(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+void bte_terminal_match_remove_all(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 /* Check if a given cell on the screen contains part of a matched string.  If
  * it does, return the string, and store the match tag in the optional tag
  * argument. */
 _VTE_PUBLIC
-char *bte_terminal_match_check_event(VteTerminal *terminal,
+char *bte_terminal_match_check_event(BteTerminal *terminal,
                                      CdkEvent *event,
                                      int *tag) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) _VTE_GNUC_NONNULL(2) G_GNUC_MALLOC;
 _VTE_PUBLIC
-char **bte_terminal_event_check_regex_array(VteTerminal *terminal,
+char **bte_terminal_event_check_regex_array(BteTerminal *terminal,
                                             CdkEvent *event,
-                                            VteRegex **regexes,
+                                            BteRegex **regexes,
                                             gsize n_regexes,
                                             guint32 match_flags,
                                             gsize *n_matches) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) _VTE_GNUC_NONNULL(2) G_GNUC_MALLOC;
 _VTE_PUBLIC
-gboolean bte_terminal_event_check_regex_simple(VteTerminal *terminal,
+gboolean bte_terminal_event_check_regex_simple(BteTerminal *terminal,
                                                CdkEvent *event,
-                                               VteRegex **regexes,
+                                               BteRegex **regexes,
                                                gsize n_regexes,
                                                guint32 match_flags,
                                                char **matches) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) _VTE_GNUC_NONNULL(2);
 
 _VTE_PUBLIC
-void      bte_terminal_search_set_regex      (VteTerminal *terminal,
-                                              VteRegex    *regex,
+void      bte_terminal_search_set_regex      (BteTerminal *terminal,
+                                              BteRegex    *regex,
                                               guint32      flags) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-VteRegex *bte_terminal_search_get_regex      (VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+BteRegex *bte_terminal_search_get_regex      (BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-void      bte_terminal_search_set_wrap_around (VteTerminal *terminal,
+void      bte_terminal_search_set_wrap_around (BteTerminal *terminal,
 					       gboolean     wrap_around) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-gboolean  bte_terminal_search_get_wrap_around (VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+gboolean  bte_terminal_search_get_wrap_around (BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-gboolean  bte_terminal_search_find_previous   (VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+gboolean  bte_terminal_search_find_previous   (BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-gboolean  bte_terminal_search_find_next       (VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+gboolean  bte_terminal_search_find_next       (BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 
 /* CJK compatibility setting */
 _VTE_PUBLIC
-void bte_terminal_set_cjk_ambiguous_width(VteTerminal *terminal,
+void bte_terminal_set_cjk_ambiguous_width(BteTerminal *terminal,
                                           int width) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-int bte_terminal_get_cjk_ambiguous_width(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+int bte_terminal_get_cjk_ambiguous_width(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 _VTE_PUBLIC
-void bte_terminal_set_pty(VteTerminal *terminal,
-                          VtePty *pty) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+void bte_terminal_set_pty(BteTerminal *terminal,
+                          BtePty *pty) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-VtePty *bte_terminal_get_pty(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+BtePty *bte_terminal_get_pty(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 /* Accessors for bindings. */
 _VTE_PUBLIC
-glong bte_terminal_get_char_width(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+glong bte_terminal_get_char_width(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-glong bte_terminal_get_char_height(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+glong bte_terminal_get_char_height(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-glong bte_terminal_get_row_count(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+glong bte_terminal_get_row_count(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-glong bte_terminal_get_column_count(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+glong bte_terminal_get_column_count(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-const char *bte_terminal_get_window_title(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+const char *bte_terminal_get_window_title(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-const char *bte_terminal_get_current_directory_uri(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+const char *bte_terminal_get_current_directory_uri(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-const char *bte_terminal_get_current_file_uri(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+const char *bte_terminal_get_current_file_uri(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 /* misc */
 _VTE_PUBLIC
-void bte_terminal_set_input_enabled (VteTerminal *terminal,
+void bte_terminal_set_input_enabled (BteTerminal *terminal,
                                      gboolean enabled) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-gboolean bte_terminal_get_input_enabled (VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+gboolean bte_terminal_get_input_enabled (BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 /* rarely useful functions */
 _VTE_PUBLIC
-void bte_terminal_set_clear_background(VteTerminal* terminal,
+void bte_terminal_set_clear_background(BteTerminal* terminal,
                                        gboolean setting) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 _VTE_PUBLIC
-void bte_terminal_get_color_background_for_draw(VteTerminal* terminal,
+void bte_terminal_get_color_background_for_draw(BteTerminal* terminal,
                                                 CdkRGBA* color) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) _VTE_GNUC_NONNULL(2);
 
 /* Writing contents out */
 _VTE_PUBLIC
-gboolean bte_terminal_write_contents_sync (VteTerminal *terminal,
+gboolean bte_terminal_write_contents_sync (BteTerminal *terminal,
                                            GOutputStream *stream,
-                                           VteWriteFlags flags,
+                                           BteWriteFlags flags,
                                            GCancellable *cancellable,
                                            GError **error) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) _VTE_GNUC_NONNULL(2);
 
@@ -507,13 +507,13 @@ gboolean bte_terminal_write_contents_sync (VteTerminal *terminal,
 
 /* Set or get whether SIXEL image support is enabled */
 _VTE_PUBLIC
-void bte_terminal_set_enable_sixel(VteTerminal *terminal,
+void bte_terminal_set_enable_sixel(BteTerminal *terminal,
                                     gboolean enabled) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 _VTE_PUBLIC
-gboolean bte_terminal_get_enable_sixel(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+gboolean bte_terminal_get_enable_sixel(BteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
-G_DEFINE_AUTOPTR_CLEANUP_FUNC(VteTerminal, g_object_unref)
+G_DEFINE_AUTOPTR_CLEANUP_FUNC(BteTerminal, g_object_unref)
 
 G_END_DECLS
 

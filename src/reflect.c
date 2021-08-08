@@ -53,7 +53,7 @@ terminal_adjustment_text_view(CtkWidget *terminal)
 #endif
 #ifdef USE_VTE
 /*
- * Implementation for a VteTerminal widget.
+ * Implementation for a BteTerminal widget.
  */
 static void
 terminal_init_bte(CtkWidget **terminal)

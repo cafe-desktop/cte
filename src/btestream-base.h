@@ -24,79 +24,79 @@
 G_BEGIN_DECLS
 
 /*
- * VteStream: Abstract base stream class
+ * BteStream: Abstract base stream class
  */
 
-struct _VteStream {
+struct _BteStream {
 	GObject parent;
 };
 
-typedef struct _VteStreamClass {
+typedef struct _BteStreamClass {
 	GObjectClass parent_class;
 
-	void (*reset) (VteStream *stream, gsize offset);
-	gboolean (*read) (VteStream *stream, gsize offset, char *data, gsize len);
-	void (*append) (VteStream *stream, const char *data, gsize len);
-	void (*truncate) (VteStream *stream, gsize offset);
-	void (*advance_tail) (VteStream *stream, gsize offset);
-	gsize (*tail) (VteStream *stream);
-	gsize (*head) (VteStream *stream);
-} VteStreamClass;
+	void (*reset) (BteStream *stream, gsize offset);
+	gboolean (*read) (BteStream *stream, gsize offset, char *data, gsize len);
+	void (*append) (BteStream *stream, const char *data, gsize len);
+	void (*truncate) (BteStream *stream, gsize offset);
+	void (*advance_tail) (BteStream *stream, gsize offset);
+	gsize (*tail) (BteStream *stream);
+	gsize (*head) (BteStream *stream);
+} BteStreamClass;
 
 static GType _bte_stream_get_type (void);
 #define VTE_TYPE_STREAM _bte_stream_get_type ()
-#define VTE_STREAM_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), VTE_TYPE_STREAM, VteStreamClass))
+#define VTE_STREAM_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), VTE_TYPE_STREAM, BteStreamClass))
 
-G_DEFINE_ABSTRACT_TYPE (VteStream, _bte_stream, G_TYPE_OBJECT)
+G_DEFINE_ABSTRACT_TYPE (BteStream, _bte_stream, G_TYPE_OBJECT)
 
 static void
-_bte_stream_class_init (VteStreamClass *klass G_GNUC_UNUSED)
+_bte_stream_class_init (BteStreamClass *klass G_GNUC_UNUSED)
 {
 }
 
 static void
-_bte_stream_init (VteStream *stream G_GNUC_UNUSED)
+_bte_stream_init (BteStream *stream G_GNUC_UNUSED)
 {
 }
 
 void
-_bte_stream_reset (VteStream *stream, gsize offset)
+_bte_stream_reset (BteStream *stream, gsize offset)
 {
 	VTE_STREAM_GET_CLASS (stream)->reset (stream, offset);
 }
 
 gboolean
-_bte_stream_read (VteStream *stream, gsize offset, char *data, gsize len)
+_bte_stream_read (BteStream *stream, gsize offset, char *data, gsize len)
 {
 	return VTE_STREAM_GET_CLASS (stream)->read (stream, offset, data, len);
 }
 
 void
-_bte_stream_append (VteStream *stream, const char *data, gsize len)
+_bte_stream_append (BteStream *stream, const char *data, gsize len)
 {
 	VTE_STREAM_GET_CLASS (stream)->append (stream, data, len);
 }
 
 void
-_bte_stream_truncate (VteStream *stream, gsize offset)
+_bte_stream_truncate (BteStream *stream, gsize offset)
 {
 	VTE_STREAM_GET_CLASS (stream)->truncate (stream, offset);
 }
 
 void
-_bte_stream_advance_tail (VteStream *stream, gsize offset)
+_bte_stream_advance_tail (BteStream *stream, gsize offset)
 {
 	VTE_STREAM_GET_CLASS (stream)->advance_tail (stream, offset);
 }
 
 gsize
-_bte_stream_tail (VteStream *stream)
+_bte_stream_tail (BteStream *stream)
 {
 	return VTE_STREAM_GET_CLASS (stream)->tail (stream);
 }
 
 gsize
-_bte_stream_head (VteStream *stream)
+_bte_stream_head (BteStream *stream)
 {
 	return VTE_STREAM_GET_CLASS (stream)->head (stream);
 }

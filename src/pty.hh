@@ -31,11 +31,11 @@ class Pty {
 private:
         mutable volatile int m_refcount{1};
         bte::libc::FD m_pty_fd{};
-        VtePtyFlags m_flags{VTE_PTY_DEFAULT};
+        BtePtyFlags m_flags{VTE_PTY_DEFAULT};
 
 public:
         constexpr Pty(bte::libc::FD&& fd,
-                      VtePtyFlags flags = VTE_PTY_DEFAULT) noexcept
+                      BtePtyFlags flags = VTE_PTY_DEFAULT) noexcept
                 : m_pty_fd{std::move(fd)},
                   m_flags{flags}
         {
@@ -64,9 +64,9 @@ public:
                       int* columns) const noexcept;
         bool set_utf8(bool utf8) const noexcept;
 
-        static Pty* create(VtePtyFlags flags);
+        static Pty* create(BtePtyFlags flags);
         static Pty* create_foreign(int fd,
-                                   VtePtyFlags flags);
+                                   BtePtyFlags flags);
 };
 
 } // namespace bte::base

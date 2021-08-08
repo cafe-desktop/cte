@@ -405,7 +405,7 @@ fd_setup(bte::libc::FD& fd)
 
 /*
  * _bte_pty_open_posix:
- * @pty: a #VtePty
+ * @pty: a #BtePty
  * @error: a location to store a #GError, or %NULL
  *
  * Opens a new file descriptor to a new PTY master.
@@ -543,7 +543,7 @@ Pty::set_utf8(bool utf8) const noexcept
 }
 
 Pty*
-Pty::create(VtePtyFlags flags)
+Pty::create(BtePtyFlags flags)
 {
         auto fd = _bte_pty_open_posix();
         if (!fd)
@@ -554,7 +554,7 @@ Pty::create(VtePtyFlags flags)
 
 Pty*
 Pty::create_foreign(int foreign_fd,
-                    VtePtyFlags flags)
+                    BtePtyFlags flags)
 {
         auto fd = _bte_pty_open_foreign(foreign_fd);
         if (!fd)

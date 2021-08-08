@@ -146,13 +146,13 @@ Terminal::unset_widget() noexcept
         m_widget = nullptr;
 }
 
-// FIXMEchpe replace this with a method on VteRing
-VteRowData*
+// FIXMEchpe replace this with a method on BteRing
+BteRowData*
 Terminal::ring_insert(bte::grid::row_t position,
                                 bool fill)
 {
-	VteRowData *row;
-	VteRing *ring = m_screen->row_data;
+	BteRowData *row;
+	BteRing *ring = m_screen->row_data;
         bool const not_default_bg = (m_color_defaults.attr.back() != VTE_DEFAULT_BG);
 
 	while (G_UNLIKELY (_bte_ring_next (ring) < position)) {
@@ -166,14 +166,14 @@ Terminal::ring_insert(bte::grid::row_t position,
 	return row;
 }
 
-// FIXMEchpe replace this with a method on VteRing
-VteRowData*
+// FIXMEchpe replace this with a method on BteRing
+BteRowData*
 Terminal::ring_append(bool fill)
 {
 	return ring_insert(_bte_ring_next(m_screen->row_data), fill);
 }
 
-// FIXMEchpe replace this with a method on VteRing
+// FIXMEchpe replace this with a method on BteRing
 void
 Terminal::ring_remove(bte::grid::row_t position)
 {
@@ -479,11 +479,11 @@ Terminal::invalidate_all()
 /* Find the row in the given position in the backscroll buffer.
  * Note that calling this method may invalidate the return value of
  * a previous find_row_data() call. */
-// FIXMEchpe replace this with a method on VteRing
-VteRowData const*
+// FIXMEchpe replace this with a method on BteRing
+BteRowData const*
 Terminal::find_row_data(bte::grid::row_t row) const
 {
-	VteRowData const* rowdata = nullptr;
+	BteRowData const* rowdata = nullptr;
 
 	if (G_LIKELY(_bte_ring_contains(m_screen->row_data, row))) {
 		rowdata = _bte_ring_index(m_screen->row_data, row);
@@ -492,11 +492,11 @@ Terminal::find_row_data(bte::grid::row_t row) const
 }
 
 /* Find the row in the given position in the backscroll buffer. */
-// FIXMEchpe replace this with a method on VteRing
-VteRowData*
+// FIXMEchpe replace this with a method on BteRing
+BteRowData*
 Terminal::find_row_data_writable(bte::grid::row_t row) const
 {
-	VteRowData *rowdata = nullptr;
+	BteRowData *rowdata = nullptr;
 
 	if (G_LIKELY (_bte_ring_contains(m_screen->row_data, row))) {
 		rowdata = _bte_ring_index_writable(m_screen->row_data, row);
@@ -507,13 +507,13 @@ Terminal::find_row_data_writable(bte::grid::row_t row) const
 /* Find the character an the given position in the backscroll buffer.
  * Note that calling this method may invalidate the return value of
  * a previous find_row_data() call. */
-// FIXMEchpe replace this with a method on VteRing
-VteCell const*
+// FIXMEchpe replace this with a method on BteRing
+BteCell const*
 Terminal::find_charcell(bte::grid::column_t col,
                                   bte::grid::row_t row) const
 {
-	VteRowData const* rowdata;
-	VteCell const* ret = nullptr;
+	BteRowData const* rowdata;
+	BteCell const* ret = nullptr;
 
 	if (_bte_ring_contains(m_screen->row_data, row)) {
 		rowdata = _bte_ring_index(m_screen->row_data, row);
@@ -522,16 +522,16 @@ Terminal::find_charcell(bte::grid::column_t col,
 	return ret;
 }
 
-// FIXMEchpe replace this with a method on VteRing
+// FIXMEchpe replace this with a method on BteRing
 bte::grid::column_t
 Terminal::find_start_column(bte::grid::column_t col,
                                       bte::grid::row_t row) const
 {
-	VteRowData const* row_data = find_row_data(row);
+	BteRowData const* row_data = find_row_data(row);
 	if (G_UNLIKELY (col < 0))
 		return col;
 	if (row_data != nullptr) {
-		const VteCell *cell = _bte_row_data_get (row_data, col);
+		const BteCell *cell = _bte_row_data_get (row_data, col);
 		while (col > 0 && cell != NULL && cell->attr.fragment()) {
 			cell = _bte_row_data_get (row_data, --col);
 		}
@@ -539,17 +539,17 @@ Terminal::find_start_column(bte::grid::column_t col,
 	return MAX(col, 0);
 }
 
-// FIXMEchpe replace this with a method on VteRing
+// FIXMEchpe replace this with a method on BteRing
 bte::grid::column_t
 Terminal::find_end_column(bte::grid::column_t col,
                                     bte::grid::row_t row) const
 {
-	VteRowData const* row_data = find_row_data(row);
+	BteRowData const* row_data = find_row_data(row);
 	gint columns = 0;
 	if (G_UNLIKELY (col < 0))
 		return col;
 	if (row_data != NULL) {
-		const VteCell *cell = _bte_row_data_get (row_data, col);
+		const BteCell *cell = _bte_row_data_get (row_data, col);
 		while (col > 0 && cell != NULL && cell->attr.fragment()) {
 			cell = _bte_row_data_get (row_data, --col);
 		}
@@ -570,7 +570,7 @@ Terminal::set_hard_wrapped(bte::grid::row_t row)
         g_assert_cmpint(row, >=, m_screen->insert_delta - 1);
         g_assert_cmpint(row, <, m_screen->insert_delta + m_row_count);
 
-        VteRowData *row_data = find_row_data_writable(row);
+        BteRowData *row_data = find_row_data_writable(row);
 
         /* It's okay for this row not to be covered by the ring. */
         if (row_data == nullptr || !row_data->attr.soft_wrapped)
@@ -591,7 +591,7 @@ Terminal::set_soft_wrapped(bte::grid::row_t row)
         g_assert_cmpint(row, >=, m_screen->insert_delta);
         g_assert_cmpint(row, <, m_screen->insert_delta + m_row_count);
 
-        VteRowData *row_data = find_row_data_writable(row);
+        BteRowData *row_data = find_row_data_writable(row);
         g_assert(row_data != nullptr);
 
         if (row_data->attr.soft_wrapped)
@@ -783,7 +783,7 @@ Terminal::emit_eof()
 }
 
 static gboolean
-emit_eof_idle_cb(VteTerminal *terminal)
+emit_eof_idle_cb(BteTerminal *terminal)
 try
 {
         _bte_terminal_get_impl(terminal)->emit_eof();
@@ -818,7 +818,7 @@ Terminal::emit_child_exited()
 }
 
 static gboolean
-emit_child_exited_idle_cb(VteTerminal *terminal)
+emit_child_exited_idle_cb(BteTerminal *terminal)
 try
 {
         _bte_terminal_get_impl(terminal)->emit_child_exited();
@@ -1013,7 +1013,7 @@ Terminal::match_contents_refresh()
 
 {
 	match_contents_clear();
-	GArray *array = g_array_new(FALSE, TRUE, sizeof(struct _VteCharAttributes));
+	GArray *array = g_array_new(FALSE, TRUE, sizeof(struct _BteCharAttributes));
         auto match_contents = get_text_displayed(true /* wrap */,
                                                  array);
         m_match_contents = g_string_free(match_contents, FALSE);
@@ -1062,14 +1062,14 @@ Terminal::match_rowcol_to_offset(bte::grid::column_t column,
 {
         /* FIXME: use gsize, after making sure the code below doesn't underflow offset */
         gssize offset, sattr, eattr;
-        struct _VteCharAttributes *attr = NULL;
+        struct _BteCharAttributes *attr = NULL;
 
 	/* Map the pointer position to a portion of the string. */
         // FIXME do a bsearch here?
 	eattr = m_match_attributes->len;
 	for (offset = eattr; offset--; ) {
 		attr = &g_array_index(m_match_attributes,
-				      struct _VteCharAttributes,
+				      struct _BteCharAttributes,
 				      offset);
 		if (row < attr->row) {
 			eattr = offset;
@@ -1123,7 +1123,7 @@ Terminal::match_rowcol_to_offset(bte::grid::column_t column,
 	} else {
 		for (sattr = offset; sattr > 0; sattr--) {
 			attr = &g_array_index(m_match_attributes,
-					      struct _VteCharAttributes,
+					      struct _BteCharAttributes,
 					      sattr);
 			if (row > attr->row) {
 				break;
@@ -1154,12 +1154,12 @@ Terminal::match_rowcol_to_offset(bte::grid::column_t column,
         *eattr_ptr = eattr;
 
         _VTE_DEBUG_IF(VTE_DEBUG_REGEX) {
-                struct _VteCharAttributes *_sattr, *_eattr;
+                struct _BteCharAttributes *_sattr, *_eattr;
                 _sattr = &g_array_index(m_match_attributes,
-                                        struct _VteCharAttributes,
+                                        struct _BteCharAttributes,
                                         sattr);
                 _eattr = &g_array_index(m_match_attributes,
-                                        struct _VteCharAttributes,
+                                        struct _BteCharAttributes,
                                         eattr - 1);
                 g_printerr("Cursor is in line from %" G_GSIZE_FORMAT "(%ld,%ld) to %" G_GSIZE_FORMAT "(%ld,%ld)\n",
                            sattr, _sattr->column, _sattr->row,
@@ -1248,13 +1248,13 @@ Terminal::match_check_pcre(pcre2_match_data_8 *match_data,
 
                 _VTE_DEBUG_IF(VTE_DEBUG_REGEX) {
                         gchar *result;
-                        struct _VteCharAttributes *_sattr, *_eattr;
+                        struct _BteCharAttributes *_sattr, *_eattr;
                         result = g_strndup(line + rm_so, rm_eo - rm_so);
                         _sattr = &g_array_index(m_match_attributes,
-                                                struct _VteCharAttributes,
+                                                struct _BteCharAttributes,
                                                 rm_so);
                         _eattr = &g_array_index(m_match_attributes,
-                                                struct _VteCharAttributes,
+                                                struct _BteCharAttributes,
                                                 rm_eo - 1);
                         g_printerr("%s match `%s' from %" G_GSIZE_FORMAT "(%ld,%ld) to %" G_GSIZE_FORMAT "(%ld,%ld) (%" G_GSSIZE_FORMAT ").\n",
                                    r == PCRE2_ERROR_PARTIAL ? "Partial":"Full",
@@ -1358,12 +1358,12 @@ Terminal::match_check_internal_pcre(bte::grid::column_t column,
                 *match = nullptr;
 
                 _VTE_DEBUG_IF(VTE_DEBUG_REGEX) {
-                        struct _VteCharAttributes *_sattr, *_eattr;
+                        struct _BteCharAttributes *_sattr, *_eattr;
                         _sattr = &g_array_index(m_match_attributes,
-                                                struct _VteCharAttributes,
+                                                struct _BteCharAttributes,
                                                 start_blank);
                         _eattr = &g_array_index(m_match_attributes,
-                                                struct _VteCharAttributes,
+                                                struct _BteCharAttributes,
                                                 end_blank - 1);
                         g_printerr("No-match region from %" G_GSIZE_FORMAT "(%ld,%ld) to %" G_GSIZE_FORMAT "(%ld,%ld)\n",
                                    start_blank, _sattr->column, _sattr->row,
@@ -2082,11 +2082,11 @@ Terminal::set_cjk_ambiguous_width(int width)
         return true;
 }
 
-// FIXMEchpe replace this with a method on VteRing
-VteRowData *
+// FIXMEchpe replace this with a method on BteRing
+BteRowData *
 Terminal::insert_rows (guint cnt)
 {
-	VteRowData *row;
+	BteRowData *row;
 	do {
 		row = ring_append(false);
 	} while(--cnt);
@@ -2095,10 +2095,10 @@ Terminal::insert_rows (guint cnt)
 
 /* Make sure we have enough rows and columns to hold data at the current
  * cursor position. */
-VteRowData *
+BteRowData *
 Terminal::ensure_row()
 {
-	VteRowData *row;
+	BteRowData *row;
 
 	/* Figure out how many rows we need to add. */
 	auto const delta = m_screen->cursor.row - _bte_ring_next(m_screen->row_data) + 1;
@@ -2114,10 +2114,10 @@ Terminal::ensure_row()
 	return row;
 }
 
-VteRowData *
+BteRowData *
 Terminal::ensure_cursor()
 {
-	VteRowData *row = ensure_row();
+	BteRowData *row = ensure_row();
         _bte_row_data_fill(row, &basic_cell, m_screen->cursor.col);
 
 	return row;
@@ -2212,7 +2212,7 @@ Terminal::set_pointer_autohidden(bool autohidden)
 bte::color::rgb const*
 Terminal::get_color(int entry) const
 {
-	VtePaletteColor const* palette_color = &m_palette[entry];
+	BtePaletteColor const* palette_color = &m_palette[entry];
 	guint source;
 	for (source = 0; source < G_N_ELEMENTS(palette_color->sources); source++)
 		if (palette_color->sources[source].is_set)
@@ -2228,7 +2228,7 @@ Terminal::set_color(int entry,
 {
         g_assert(entry >= 0 && entry < VTE_PALETTE_SIZE);
 
-	VtePaletteColor *palette_color = &m_palette[entry];
+	BtePaletteColor *palette_color = &m_palette[entry];
 
         _bte_debug_print(VTE_DEBUG_MISC,
                          "Set %s color[%d] to (%04x,%04x,%04x).\n",
@@ -2259,7 +2259,7 @@ Terminal::reset_color(int entry,
 {
         g_assert(entry >= 0 && entry < VTE_PALETTE_SIZE);
 
-	VtePaletteColor *palette_color = &m_palette[entry];
+	BtePaletteColor *palette_color = &m_palette[entry];
 
         _bte_debug_print(VTE_DEBUG_MISC,
                          "Reset %s color[%d].\n",
@@ -2307,7 +2307,7 @@ Terminal::set_colors_default()
 
 /*
  * Terminal::set_colors:
- * @terminal: a #VteTerminal
+ * @terminal: a #BteTerminal
  * @foreground: (allow-none): the new foreground color, or %NULL
  * @background: (allow-none): the new background color, or %NULL
  * @palette: (array length=palette_size zero-terminated=0): the color palette
@@ -2602,9 +2602,9 @@ void
 Terminal::cleanup_fragments(long start,
                                       long end)
 {
-        VteRowData *row = ensure_row();
-        const VteCell *cell_start;
-        VteCell *cell_end, *cell_col;
+        BteRowData *row = ensure_row();
+        const BteCell *cell_start;
+        BteCell *cell_end, *cell_col;
         gboolean cell_start_is_fragment;
         long col;
 
@@ -2740,7 +2740,7 @@ Terminal::cursor_down(bool explicit_sequence)
                 bool const not_default_bg = (m_color_defaults.attr.back() != VTE_DEFAULT_BG);
 
                 if (explicit_sequence && not_default_bg) {
-			VteRowData *rowdata = ensure_row();
+			BteRowData *rowdata = ensure_row();
                         _bte_row_data_fill (rowdata, &m_color_defaults, m_column_count);
 		}
         } else if (m_screen->cursor.row < m_screen->insert_delta + m_row_count - 1) {
@@ -2766,7 +2766,7 @@ Terminal::drop_scrollback()
 
 /* Restore cursor on a screen. */
 void
-Terminal::restore_cursor(VteScreen *screen__)
+Terminal::restore_cursor(BteScreen *screen__)
 {
         screen__->cursor.col = screen__->saved.cursor.col;
         screen__->cursor.row = screen__->insert_delta + CLAMP(screen__->saved.cursor.row,
@@ -2786,7 +2786,7 @@ Terminal::restore_cursor(VteScreen *screen__)
 
 /* Save cursor on a screen__. */
 void
-Terminal::save_cursor(VteScreen *screen__)
+Terminal::save_cursor(BteScreen *screen__)
 {
         screen__->saved.cursor.col = screen__->cursor.col;
         screen__->saved.cursor.row = screen__->cursor.row - screen__->insert_delta;
@@ -2809,8 +2809,8 @@ Terminal::insert_char(gunichar c,
                                 bool insert,
                                 bool invalidate_now)
 {
-	VteCellAttr attr;
-	VteRowData *row;
+	BteCellAttr attr;
+	BteRowData *row;
 	long col;
 	int columns, i;
 	bool line_wrapped = false; /* cursor moved before char inserted */
@@ -2903,7 +2903,7 @@ Terminal::insert_char(gunichar c,
 		/* It's a combining mark */
 
 		long row_num;
-		VteCell *cell;
+		BteCell *cell;
 
 		_bte_debug_print(VTE_DEBUG_PARSER, "combining U+%04X", c);
 
@@ -2977,7 +2977,7 @@ Terminal::insert_char(gunichar c,
 	attr.set_columns(columns);
 
 	{
-		VteCell *pcell = _bte_row_data_get_writable (row, col);
+		BteCell *pcell = _bte_row_data_get_writable (row, col);
 		pcell->c = c;
 		pcell->attr = attr;
 		col++;
@@ -2986,7 +2986,7 @@ Terminal::insert_char(gunichar c,
 	/* insert wide-char fragments */
 	attr.set_fragment(true);
 	for (i = 1; i < columns; i++) {
-		VteCell *pcell = _bte_row_data_get_writable (row, col);
+		BteCell *pcell = _bte_row_data_get_writable (row, col);
 		pcell->c = c;
 		pcell->attr = attr;
 		col++;
@@ -3028,7 +3028,7 @@ void
 Terminal::apply_bidi_attributes(bte::grid::row_t start, guint8 bidi_flags, guint8 bidi_flags_mask)
 {
         bte::grid::row_t row = start;
-        VteRowData *rowdata;
+        BteRowData *rowdata;
 
         bidi_flags &= bidi_flags_mask;
 
@@ -3079,7 +3079,7 @@ Terminal::maybe_apply_bidi_attributes(guint8 bidi_flags_mask)
         auto row = m_screen->cursor.row;
 
         if (row > _bte_ring_delta (m_screen->row_data)) {
-                const VteRowData *rowdata = _bte_ring_index (m_screen->row_data, row - 1);
+                const BteRowData *rowdata = _bte_ring_index (m_screen->row_data, row - 1);
                 if (rowdata != nullptr && rowdata->attr.soft_wrapped) {
                         _bte_debug_print(VTE_DEBUG_BIDI,
                                          "No, we're not after a hard wrap.\n");
@@ -3094,7 +3094,7 @@ Terminal::maybe_apply_bidi_attributes(guint8 bidi_flags_mask)
 }
 
 static void
-reaper_child_exited_cb(VteReaper *reaper,
+reaper_child_exited_cb(BteReaper *reaper,
                        int ipid,
                        int status,
                        bte::terminal::Terminal* that) noexcept
@@ -3270,12 +3270,12 @@ Terminal::pty_scroll_lock_changed(bool locked)
  * Terminal::watch_child:
  * @child_pid: a #pid_t
  *
- * Watches @child_pid. When the process exists, the #VteTerminal::child-exited
+ * Watches @child_pid. When the process exists, the #BteTerminal::child-exited
  * signal will be called with the child's exit status.
  *
- * Prior to calling this function, a #VtePty must have been set in @terminal
+ * Prior to calling this function, a #BtePty must have been set in @terminal
  * using bte_terminal_set_pty().
- * When the child exits, the terminal's #VtePty will be set to %NULL.
+ * When the child exits, the terminal's #BtePty will be set to %NULL.
  *
  * Note: g_child_watch_add() or g_child_watch_add_full() must not have
  * been called for @child_pid, nor a #GSource for it been created with
@@ -3348,7 +3348,7 @@ Terminal::process_incoming()
 void
 Terminal::process_incoming_utf8()
 {
-	VteVisualPosition saved_cursor;
+	BteVisualPosition saved_cursor;
 	gboolean saved_cursor_visible;
         CursorStyle saved_cursor_style;
         bte::grid::row_t bbox_top, bbox_bottom;
@@ -3628,7 +3628,7 @@ Terminal::process_incoming_utf8()
 void
 Terminal::process_incoming_pcterm()
 {
-	VteVisualPosition saved_cursor;
+	BteVisualPosition saved_cursor;
 	gboolean saved_cursor_visible;
         CursorStyle saved_cursor_style;
         bte::grid::row_t bbox_top, bbox_bottom;
@@ -4195,7 +4195,7 @@ Terminal::send_child(std::string_view const& data)
 }
 
 /*
- * VteTerminal::feed_child:
+ * BteTerminal::feed_child:
  * @str: data to send to the child
  *
  * Sends UTF-8 text to the child as if it were entered by the user
@@ -4840,7 +4840,7 @@ Terminal::widget_key_press(KeyEvent const& event)
                                 /* In keyboard arrow swapping mode, the left and right arrows need swapping
                                  * if the cursor stands inside a (possibly autodetected) RTL paragraph. */
                                 ensure_row();
-                                VteRowData const *row_data = find_row_data(m_screen->cursor.row);
+                                BteRowData const *row_data = find_row_data(m_screen->cursor.row);
                                 bool rtl;
                                 if ((row_data->attr.bidi_flags & (VTE_BIDI_FLAG_IMPLICIT | VTE_BIDI_FLAG_AUTO))
                                                               == (VTE_BIDI_FLAG_IMPLICIT | VTE_BIDI_FLAG_AUTO)) {
@@ -5036,7 +5036,7 @@ Terminal::is_same_class(bte::grid::column_t acol,
                                   bte::grid::column_t bcol,
                                   bte::grid::row_t brow) const
 {
-	VteCell const* pcell = nullptr;
+	BteCell const* pcell = nullptr;
 	bool word_char;
 	if ((pcell = find_charcell(acol, arow)) != nullptr && pcell->c != 0) {
                 /* Group together if they're fragments of the very same character (not just character value) */
@@ -5108,8 +5108,8 @@ Terminal::resolve_selection_endpoint(bte::grid::halfcoords const& rowcolhalf, bo
         auto col = rowcolhalf.halfcolumn().column();  /* Points to an actual cell now. At the end of this
                                                          method it'll point to a boundary. */
         auto half = rowcolhalf.halfcolumn().half();  /* 0 for left half, 1 for right half of the cell. */
-        VteRowData const* rowdata;
-        VteCell const* cell;
+        BteRowData const* rowdata;
+        BteCell const* cell;
         int len;
 
         if (m_selection_block_mode) {
@@ -5408,7 +5408,7 @@ Terminal::cell_is_selected_log(bte::grid::column_t lcol,
         if (m_selection_block_mode) {
                 /* In block mode, make sure CJKs and TABs aren't cut in half. */
                 while (lcol > 0) {
-                        VteCell const* cell = find_charcell(lcol, row);
+                        BteCell const* cell = find_charcell(lcol, row);
                         if (!cell || !cell->attr.fragment())
                                 break;
                         lcol--;
@@ -5723,7 +5723,7 @@ Terminal::hyperlink_invalidate_and_get_bbox(bte::base::Ring::hyperlink_idx_t idx
         auto end_row = last_displayed_row() + 1;
         bte::grid::row_t row, top = LONG_MAX, bottom = -1;
         bte::grid::column_t col, left = LONG_MAX, right = -1;
-        const VteRowData *rowdata;
+        const BteRowData *rowdata;
 
         g_assert (idx != 0);
 
@@ -5771,7 +5771,7 @@ Terminal::hyperlink_invalidate_and_get_bbox(bte::base::Ring::hyperlink_idx_t idx
 void
 Terminal::hyperlink_hilite_update()
 {
-        const VteRowData *rowdata;
+        const BteRowData *rowdata;
         bool do_check_hilite;
         bte::grid::coords rowcol;
         bte::base::Ring::hyperlink_idx_t new_hyperlink_hover_idx = 0;
@@ -5933,12 +5933,12 @@ Terminal::match_hilite_update()
 	/* Read the new locations. */
 	if (start < m_match_attributes->len &&
             end < m_match_attributes->len) {
-                struct _VteCharAttributes const *sa, *ea;
+                struct _BteCharAttributes const *sa, *ea;
 		sa = &g_array_index(m_match_attributes,
-                                   struct _VteCharAttributes,
+                                   struct _BteCharAttributes,
                                    start);
                 ea = &g_array_index(m_match_attributes,
-                                    struct _VteCharAttributes,
+                                    struct _BteCharAttributes,
                                     end);
 
                 /* convert from inclusive to exclusive (a.k.a. boundary) ending, taking a possible last CJK character into account */
@@ -6099,9 +6099,9 @@ Terminal::get_text(bte::grid::row_t start_row,
                              bool wrap,
                              GArray *attributes)
 {
-	const VteCell *pcell = NULL;
+	const BteCell *pcell = NULL;
 	GString *string;
-	struct _VteCharAttributes attr;
+	struct _BteCharAttributes attr;
 	bte::color::rgb fore, back;
         std::unique_ptr<bte::base::RingView> ringview;
         bte::base::BidiRow const *bidirow = nullptr;
@@ -6132,7 +6132,7 @@ Terminal::get_text(bte::grid::row_t start_row,
         bte::grid::column_t lcol = block ? 0 : start_col;
         bte::grid::row_t row;
         for (row = start_row; row < end_row + 1; row++, lcol = 0) {
-		VteRowData const* row_data = find_row_data(row);
+		BteRowData const* row_data = find_row_data(row);
                 gsize last_empty, last_nonempty;
                 bte::grid::column_t last_emptycol, last_nonemptycol;
                 bte::grid::column_t line_last_column = (!block && row == end_row) ? end_col : m_column_count;
@@ -6328,14 +6328,14 @@ Terminal::checksum_area(bte::grid::row_t start_row,
 #endif /* VTE_DEBUG */
 
 /*
- * Compares the visual attributes of a VteCellAttr for equality, but ignores
+ * Compares the visual attributes of a BteCellAttr for equality, but ignores
  * attributes that tend to change from character to character or are otherwise
  * strange (in particular: fragment, columns).
  */
-// FIXMEchpe: make VteCellAttr a class with operator==
+// FIXMEchpe: make BteCellAttr a class with operator==
 static bool
-bte_terminal_cellattr_equal(VteCellAttr const* attr1,
-                            VteCellAttr const* attr2)
+bte_terminal_cellattr_equal(BteCellAttr const* attr1,
+                            BteCellAttr const* attr2)
 {
         //FIXMEchpe why exclude DIM here?
 	return (((attr1->attr ^ attr2->attr) & VTE_ATTR_ALL_MASK) == 0 &&
@@ -6344,12 +6344,12 @@ bte_terminal_cellattr_equal(VteCellAttr const* attr1,
 }
 
 /*
- * Wraps a given string according to the VteCellAttr in HTML tags. Used
+ * Wraps a given string according to the BteCellAttr in HTML tags. Used
  * old-style HTML (and not CSS) for better compatibility with, for example,
  * evolution's mail editor component.
  */
 char *
-Terminal::cellattr_to_html(VteCellAttr const* attr,
+Terminal::cellattr_to_html(BteCellAttr const* attr,
                                      char const* text) const
 {
 	GString *string;
@@ -6436,13 +6436,13 @@ Terminal::cellattr_to_html(VteCellAttr const* attr,
 }
 
 /*
- * Similar to find_charcell(), but takes a VteCharAttribute for
- * indexing and returns the VteCellAttr.
+ * Similar to find_charcell(), but takes a BteCharAttribute for
+ * indexing and returns the BteCellAttr.
  */
-VteCellAttr const*
-Terminal::char_to_cell_attr(VteCharAttributes const* attr) const
+BteCellAttr const*
+Terminal::char_to_cell_attr(BteCharAttributes const* attr) const
 {
-	VteCell const* cell = find_charcell(attr->column, attr->row);
+	BteCell const* cell = find_charcell(attr->column, attr->row);
 	if (cell)
 		return &cell->attr;
 	return nullptr;
@@ -6451,7 +6451,7 @@ Terminal::char_to_cell_attr(VteCharAttributes const* attr) const
 /*
  * Terminal::attributes_to_html:
  * @text: A string as returned by the bte_terminal_get_* family of functions.
- * @attrs: (array) (element-type Vte.CharAttributes): text attributes, as created by bte_terminal_get_*
+ * @attrs: (array) (element-type Bte.CharAttributes): text attributes, as created by bte_terminal_get_*
  *
  * Marks the given text up according to the given attributes, using HTML <span>
  * commands, and wraps the string in a <pre> element. The attributes have to be
@@ -6466,7 +6466,7 @@ Terminal::attributes_to_html(GString* text_string,
 {
 	GString *string;
 	guint from,to;
-	const VteCellAttr *attr;
+	const BteCellAttr *attr;
 	char *escaped, *marked;
 
         char const* text = text_string->str;
@@ -6490,11 +6490,11 @@ Terminal::attributes_to_html(GString* text_string,
 			from = ++to;
 		} else {
 			attr = char_to_cell_attr(
-				&g_array_index(attrs, VteCharAttributes, from));
+				&g_array_index(attrs, BteCharAttributes, from));
 			while (text[to] != '\0' && text[to] != '\n' &&
 			       bte_terminal_cellattr_equal(attr,
                                                            char_to_cell_attr(
-						&g_array_index(attrs, VteCharAttributes, to))))
+						&g_array_index(attrs, BteCharAttributes, to))))
 			{
 				to++;
 			}
@@ -6512,7 +6512,7 @@ Terminal::attributes_to_html(GString* text_string,
 }
 
 static CtkTargetEntry*
-targets_for_format(VteFormat format,
+targets_for_format(BteFormat format,
                    int *n_targets)
 {
         switch (format) {
@@ -6559,14 +6559,14 @@ targets_for_format(VteFormat format,
 /* Place the selected text onto the clipboard.  Do this asynchronously so that
  * we get notified when the selection we placed on the clipboard is replaced. */
 void
-Terminal::widget_copy(VteSelection sel,
-                                VteFormat format)
+Terminal::widget_copy(BteSelection sel,
+                                BteFormat format)
 {
         /* Only put HTML on the CLIPBOARD, not PRIMARY */
         g_assert(sel == VTE_SELECTION_CLIPBOARD || format == VTE_FORMAT_TEXT);
 
 	/* Chuck old selected text and retrieve the newly-selected text. */
-        GArray *attributes = g_array_new(FALSE, TRUE, sizeof(struct _VteCharAttributes));
+        GArray *attributes = g_array_new(FALSE, TRUE, sizeof(struct _BteCharAttributes));
         auto selection = get_selected_text(attributes);
 
         if (m_selection[sel]) {
@@ -7424,17 +7424,17 @@ Terminal::refresh_size()
 
 /* Resize the given screen (normal or alternate) of the terminal. */
 void
-Terminal::screen_set_size(VteScreen *screen_,
+Terminal::screen_set_size(BteScreen *screen_,
                                     long old_columns,
                                     long old_rows,
                                     bool do_rewrap)
 {
-	VteRing *ring = screen_->row_data;
-	VteVisualPosition cursor_saved_absolute;
-	VteVisualPosition below_viewport;
-	VteVisualPosition below_current_paragraph;
-        VteVisualPosition selection_start, selection_end;
-	VteVisualPosition *markers[7];
+	BteRing *ring = screen_->row_data;
+	BteVisualPosition cursor_saved_absolute;
+	BteVisualPosition below_viewport;
+	BteVisualPosition below_current_paragraph;
+        BteVisualPosition selection_start, selection_end;
+	BteVisualPosition *markers[7];
         gboolean was_scrolled_to_top = ((long) ceil(screen_->scroll_delta) == _bte_ring_delta(ring));
         gboolean was_scrolled_to_bottom = ((long) screen_->scroll_delta == screen_->insert_delta);
 	glong old_top_lines;
@@ -7684,7 +7684,7 @@ Terminal::widget_set_vadjustment(bte::glib::RefPtr<CtkAdjustment>&& adjustment)
 }
 
 Terminal::Terminal(bte::platform::Widget* w,
-                   VteTerminal *t) :
+                   BteTerminal *t) :
         m_real_widget(w),
         m_terminal(t),
         m_widget(&t->widget),
@@ -8041,7 +8041,7 @@ swap (guint *a, guint *b)
 
 // FIXMEchpe probably @attr should be passed by ref
 void
-Terminal::determine_colors(VteCellAttr const* attr,
+Terminal::determine_colors(BteCellAttr const* attr,
                                      bool is_selected,
                                      bool is_cursor,
                                      guint *pfore,
@@ -8133,7 +8133,7 @@ Terminal::determine_colors(VteCellAttr const* attr,
 }
 
 void
-Terminal::determine_colors(VteCell const* cell,
+Terminal::determine_colors(BteCell const* cell,
                                      bool highlight,
                                      guint *fore,
                                      guint *back,
@@ -8145,7 +8145,7 @@ Terminal::determine_colors(VteCell const* cell,
 }
 
 void
-Terminal::determine_cursor_colors(VteCell const* cell,
+Terminal::determine_cursor_colors(BteCell const* cell,
                                             bool highlight,
                                             guint *fore,
                                             guint *back,
@@ -8374,7 +8374,7 @@ Terminal::draw_cells(bte::view::DrawingContext::TextRequest* items,
  * the right thing. */
 void
 Terminal::fudge_pango_colors(GSList *attributes,
-                                       VteCell *cells,
+                                       BteCell *cells,
                                        gsize n)
 {
 	gsize i, sumlen = 0;
@@ -8445,7 +8445,7 @@ Terminal::fudge_pango_colors(GSList *attributes,
 /* Apply the attribute given in the PangoAttribute to the list of cells. */
 void
 Terminal::apply_pango_attr(PangoAttribute *attr,
-                                     VteCell *cells,
+                                     BteCell *cells,
                                      gsize n_cells)
 {
 	guint i, ival;
@@ -8549,7 +8549,7 @@ Terminal::apply_pango_attr(PangoAttribute *attr,
  * string (byte-wise) which the attributes describe. */
 void
 Terminal::translate_pango_cells(PangoAttrList *attrs,
-                                          VteCell *cells,
+                                          BteCell *cells,
                                           gsize n_cells)
 {
 	PangoAttribute *attr;
@@ -8598,7 +8598,7 @@ Terminal::draw_cells_with_attributes(bte::view::DrawingContext::TextRequest* ite
                                                gint height)
 {
         int i, j, cell_count;
-	VteCell *cells;
+	BteCell *cells;
 	char scratch_buf[VTE_UTF8_BPC];
         guint fore, back, deco;
 
@@ -8611,7 +8611,7 @@ Terminal::draw_cells_with_attributes(bte::view::DrawingContext::TextRequest* ite
 	for (i = 0, cell_count = 0; i < n; i++) {
 		cell_count += g_unichar_to_utf8(items[i].c, scratch_buf);
 	}
-	cells = g_new(VteCell, cell_count);
+	cells = g_new(BteCell, cell_count);
 	translate_pango_cells(attrs, cells, cell_count);
 	for (i = 0, j = 0; i < n; i++) {
                 determine_colors(&cells[j], false, &fore, &back, &deco);
@@ -8648,7 +8648,7 @@ Terminal::ringview_update()
  * of multiple-draw APIs by finding runs of characters with identical
  * attributes and bundling them together. */
 void
-Terminal::draw_rows(VteScreen *screen_,
+Terminal::draw_rows(BteScreen *screen_,
                     cairo_region_t const* region,
                     bte::grid::row_t start_row,
                     bte::grid::row_t end_row,
@@ -8666,8 +8666,8 @@ Terminal::draw_rows(VteScreen *screen_,
         gboolean nrtl = FALSE, rtl;  /* for debugging */
         uint32_t attr = 0, nattr;
 	guint item_count;
-	const VteCell *cell;
-	VteRowData const* row_data;
+	const BteCell *cell;
+	BteRowData const* row_data;
         bte::base::BidiRow const* bidirow;
 
         auto const column_count = m_column_count;
@@ -8977,7 +8977,7 @@ Terminal::paint_cursor()
 
         /* Find the first cell of the character "under" the cursor.
          * This is for CJK.  For TAB, paint the cursor where it really is. */
-        VteRowData const *row_data = find_row_data(drow);
+        BteRowData const *row_data = find_row_data(drow);
         bte::base::BidiRow const *bidirow = m_ringview.get_bidirow(drow);
 
         auto cell = find_charcell(lcol, drow);
@@ -9676,7 +9676,7 @@ Terminal::decscusr_cursor_blink() const noexcept
 
 /*
  * Terminal::decscusr_cursor_shape:
- * @terminal: a #VteTerminal
+ * @terminal: a #BteTerminal
  *
  * Returns the cursor shape set by DECSCUSR. If DECSCUSR was never called,
  * or it set the cursor shape to terminal default, this returns the value
@@ -9708,7 +9708,7 @@ Terminal::set_scrollback_lines(long lines)
 {
         glong low, high, next;
         double scroll_delta;
-	VteScreen *scrn;
+	BteScreen *scrn;
 
 	if (lines < 0)
 		lines = G_MAXLONG;
@@ -10535,7 +10535,7 @@ catch (...)
 
 bool
 Terminal::write_contents_sync (GOutputStream *stream,
-                                         VteWriteFlags flags,
+                                         BteWriteFlags flags,
                                          GCancellable *cancellable,
                                          GError **error)
 {
@@ -10552,7 +10552,7 @@ Terminal::write_contents_sync (GOutputStream *stream,
 
 /*
  * Terminal::search_set_regex:
- * @regex: (allow-none): a #VteRegex, or %nullptr
+ * @regex: (allow-none): a #BteRegex, or %nullptr
  * @flags: PCRE2 match flags, or 0
  *
  * Sets the regex to search for. Unsets the search regex when passed %nullptr.
@@ -10592,7 +10592,7 @@ Terminal::search_rows(pcre2_match_context_8 *match_context,
 {
 	int start, end;
 	long start_col, end_col;
-	VteCharAttributes *ca;
+	BteCharAttributes *ca;
 	GArray *attrs;
 	gdouble value, page_size;
 
@@ -10645,7 +10645,7 @@ Terminal::search_rows(pcre2_match_context_8 *match_context,
 	/* Fetch text again, with attributes */
 	g_string_free(row_text, TRUE);
 	if (!m_search_attrs)
-		m_search_attrs = g_array_new (FALSE, TRUE, sizeof (VteCharAttributes));
+		m_search_attrs = g_array_new (FALSE, TRUE, sizeof (BteCharAttributes));
 	attrs = m_search_attrs;
 	row_text = get_text(start_row, 0,
                             end_row, 0,
@@ -10653,10 +10653,10 @@ Terminal::search_rows(pcre2_match_context_8 *match_context,
                             true /* wrap */,
                             attrs);
 
-	ca = &g_array_index (attrs, VteCharAttributes, start);
+	ca = &g_array_index (attrs, BteCharAttributes, start);
 	start_row = ca->row;
 	start_col = ca->column;
-	ca = &g_array_index (attrs, VteCharAttributes, end - 1);
+	ca = &g_array_index (attrs, BteCharAttributes, end - 1);
 	end_row = ca->row;
         end_col = ca->column + ca->columns;
 
@@ -10684,7 +10684,7 @@ Terminal::search_rows_iter(pcre2_match_context_8 *match_context,
                                      bte::grid::row_t end_row,
                                      bool backward)
 {
-	const VteRowData *row;
+	const BteRowData *row;
 	long iter_start_row, iter_end_row;
 
 	if (backward) {

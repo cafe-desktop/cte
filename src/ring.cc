@@ -27,7 +27,7 @@
 #include <string.h>
 
 /*
- * Copy the common attributes from VteCellAttr to VteStreamCellAttr or vice versa.
+ * Copy the common attributes from BteCellAttr to BteStreamCellAttr or vice versa.
  */
 static inline void
 _attrcpy (void *dst, void *src)
@@ -38,7 +38,7 @@ _attrcpy (void *dst, void *src)
 using namespace bte::base;
 
 /*
- * VteRing: A buffer ring
+ * BteRing: A buffer ring
  */
 
 #ifdef VTE_DEBUG
@@ -68,7 +68,7 @@ Ring::Ring(row_t max_rows,
 {
 	_bte_debug_print(VTE_DEBUG_RING, "New ring %p.\n", this);
 
-	m_array = (VteRowData* ) g_malloc0 (sizeof (m_array[0]) * (m_mask + 1));
+	m_array = (BteRowData* ) g_malloc0 (sizeof (m_array[0]) * (m_mask + 1));
 
 	if (has_streams) {
 		m_attr_stream = _bte_file_stream_new ();
@@ -122,7 +122,7 @@ Ring::hyperlink_gc()
 {
         row_t i, j;
         hyperlink_idx_t idx;
-        VteRowData* row;
+        BteRowData* row;
         char *used;
 
         _bte_debug_print (VTE_DEBUG_HYPERLINK,
@@ -286,9 +286,9 @@ Ring::get_hyperlink_idx(char const* hyperlink)
 
 void
 Ring::freeze_row(row_t position,
-                 VteRowData const* row)
+                 BteRowData const* row)
 {
-	VteCell *cell;
+	BteCell *cell;
 	GString *buffer = m_utf8_buffer;
         GString *hyperlink;
 	int i;
@@ -306,7 +306,7 @@ Ring::freeze_row(row_t position,
 
 	g_string_set_size (buffer, 0);
 	for (i = 0, cell = row->cells; i < row->len; i++, cell++) {
-		VteCellAttr attr;
+		BteCellAttr attr;
 		int num_chars;
 
 		/* Attr storage:
@@ -325,7 +325,7 @@ Ring::freeze_row(row_t position,
 			CellAttrChange attr_change;
                         guint16 hyperlink_length;
 
-			if (memcmp(&m_last_attr, &attr, sizeof (VteCellAttr)) != 0) {
+			if (memcmp(&m_last_attr, &attr, sizeof (BteCellAttr)) != 0) {
 				m_last_attr_text_start_offset = record.text_start_offset + buffer->len;
 				memset(&attr_change, 0, sizeof (attr_change));
 				attr_change.text_end_offset = m_last_attr_text_start_offset;
@@ -391,15 +391,15 @@ Ring::freeze_row(row_t position,
  * Optionally updates the hyperlink parameter to point to the ring-owned hyperlink target. */
 void
 Ring::thaw_row(row_t position,
-               VteRowData* row,
+               BteRowData* row,
                bool do_truncate,
                int hyperlink_column,
                char const** hyperlink)
 {
 	RowRecord records[2], record;
-	VteCellAttr attr;
+	BteCellAttr attr;
 	CellAttrChange attr_change;
-	VteCell cell;
+	BteCell cell;
 	char const* p, *q, *end;
 	GString *buffer = m_utf8_buffer;
         char hyperlink_readbuf[VTE_HYPERLINK_TOTAL_LENGTH_MAX + 1];
@@ -594,7 +594,7 @@ Ring::reset()
         return m_end;
 }
 
-VteRowData const*
+BteRowData const*
 Ring::index(row_t position)
 {
 	if (G_LIKELY (position >= m_writable))
@@ -612,7 +612,7 @@ Ring::index(row_t position)
 bool
 Ring::is_soft_wrapped(row_t position)
 {
-        const VteRowData *row;
+        const BteRowData *row;
         RowRecord record;
 
         if (G_UNLIKELY (position < m_start || position >= m_end))
@@ -668,7 +668,7 @@ Ring::get_hyperlink_at_position(row_t position,
         }
 
         if (G_LIKELY (position >= m_writable)) {
-                VteRowData* row = get_writable_index(position);
+                BteRowData* row = get_writable_index(position);
                 if (col >= _bte_row_data_length(row)) {
                         if (update_hover_idx)
                                 m_hyperlink_hover_idx = 0;
@@ -689,7 +689,7 @@ Ring::get_hyperlink_at_position(row_t position,
         return idx;
 }
 
-VteRowData*
+BteRowData*
 Ring::index_writable(row_t position)
 {
 	ensure_writable(position);
@@ -699,7 +699,7 @@ Ring::index_writable(row_t position)
 void
 Ring::freeze_one_row()
 {
-	VteRowData* row;
+	BteRowData* row;
 
 	if (G_UNLIKELY (m_writable == m_start))
 		reset_streams(m_writable);
@@ -713,7 +713,7 @@ Ring::freeze_one_row()
 void
 Ring::thaw_one_row()
 {
-	VteRowData* row;
+	BteRowData* row;
 
 	g_assert_cmpuint(m_start, <, m_writable);
 
@@ -769,7 +769,7 @@ void
 Ring::ensure_writable_room()
 {
 	row_t new_mask, old_mask, i, end;
-	VteRowData* old_array, *new_array;;
+	BteRowData* old_array, *new_array;;
 
         /* Keep at least m_visible_rows + 1 rows in the ring.
          * The BiDi spec requires that the just scrolled out row
@@ -788,7 +788,7 @@ Ring::ensure_writable_room()
 
 	_bte_debug_print(VTE_DEBUG_RING, "Enlarging writable array from %lu to %lu\n", old_mask, m_mask);
 
-	m_array = (VteRowData* ) g_malloc0(sizeof (m_array[0]) * (m_mask + 1));
+	m_array = (BteRowData* ) g_malloc0(sizeof (m_array[0]) * (m_mask + 1));
 
 	new_mask = m_mask;
 	new_array = m_array;
@@ -871,11 +871,11 @@ Ring::shrink(row_t max_len)
  *
  * Return: the newly added row.
  */
-VteRowData*
+BteRowData*
 Ring::insert(row_t position, guint8 bidi_flags)
 {
 	row_t i;
-	VteRowData* row, tmp;
+	BteRowData* row, tmp;
 
 	_bte_debug_print(VTE_DEBUG_RING, "Inserting at position %lu.\n", position);
 	validate();
@@ -913,7 +913,7 @@ void
 Ring::remove(row_t position)
 {
 	row_t i;
-	VteRowData tmp;
+	BteRowData tmp;
 
 	_bte_debug_print(VTE_DEBUG_RING, "Removing item at position %lu.\n", position);
         validate();
@@ -944,7 +944,7 @@ Ring::remove(row_t position)
  *
  * Return: the newly added row.
  */
-VteRowData*
+BteRowData*
 Ring::append(guint8 bidi_flags)
 {
         return insert(next(), bidi_flags);
@@ -992,9 +992,9 @@ Ring::frozen_row_column_to_text_offset(row_t position,
 				       CellTextOffset* offset)
 {
 	RowRecord records[2];
-	VteCell *cell;
+	BteCell *cell;
 	GString *buffer = m_utf8_buffer;
-	VteRowData const* row;
+	BteRowData const* row;
 	unsigned int i, num_chars, off;
 
 	if (position >= m_end) {
@@ -1070,9 +1070,9 @@ Ring::frozen_row_text_offset_to_column(row_t position,
 				       column_t* column)
 {
 	RowRecord records[2];
-	VteCell *cell;
+	BteCell *cell;
 	GString *buffer = m_utf8_buffer;
-	VteRowData const* row;
+	BteRowData const* row;
 	unsigned int i, off, num_chars, nc;
 
 	if (position >= m_end) {
@@ -1143,7 +1143,7 @@ Ring::frozen_row_text_offset_to_column(row_t position,
 /**
  * Ring::rewrap:
  * @columns: new number of columns
- * @markers: 0-terminated array of #VteVisualPosition
+ * @markers: 0-terminated array of #BteVisualPosition
  *
  * Reflow the @ring to match the new number of @columns.
  * For all @markers, find the cell at that position and update them to
@@ -1152,16 +1152,16 @@ Ring::frozen_row_text_offset_to_column(row_t position,
 /* See ../doc/rewrap.txt for design and implementation details. */
 void
 Ring::rewrap(column_t columns,
-             VteVisualPosition** markers)
+             BteVisualPosition** markers)
 {
 	row_t old_row_index, new_row_index;
 	int i;
 	int num_markers = 0;
 	CellTextOffset *marker_text_offsets;
-	VteVisualPosition *new_markers;
+	BteVisualPosition *new_markers;
 	RowRecord old_record;
 	CellAttrChange attr_change;
-	VteStream *new_row_stream;
+	BteStream *new_row_stream;
 	gsize paragraph_start_text_offset;
 	gsize paragraph_end_text_offset;
 	gsize paragraph_len;  /* excluding trailing '\n' */
@@ -1184,7 +1184,7 @@ Ring::rewrap(column_t columns,
 	while (markers[num_markers] != nullptr)
 		num_markers++;
 	marker_text_offsets = (CellTextOffset *) g_malloc(num_markers * sizeof (marker_text_offsets[0]));
-	new_markers = (VteVisualPosition *) g_malloc(num_markers * sizeof (new_markers[0]));
+	new_markers = (BteVisualPosition *) g_malloc(num_markers * sizeof (new_markers[0]));
 	for (i = 0; i < num_markers; i++) {
 		/* Convert visual column into byte offset */
 		if (!frozen_row_column_to_text_offset(markers[i]->row, markers[i]->col, &marker_text_offsets[i]))
@@ -1398,12 +1398,12 @@ err:
 
 bool
 Ring::write_row(GOutputStream* stream,
-                VteRowData* row,
-                VteWriteFlags flags,
+                BteRowData* row,
+                BteWriteFlags flags,
                 GCancellable* cancellable,
                 GError** error)
 {
-	VteCell *cell;
+	BteCell *cell;
 	GString *buffer = m_utf8_buffer;
 	int i;
 	gsize bytes_written;
@@ -1424,7 +1424,7 @@ Ring::write_row(GOutputStream* stream,
 /**
  * Ring::write_contents:
  * @stream: a #GOutputStream to write to
- * @flags: a set of #VteWriteFlags
+ * @flags: a set of #BteWriteFlags
  * @cancellable: optional #GCancellable object, %nullptr to ignore
  * @error: a #GError location to store the error occuring, or %nullptr to ignore
  *
@@ -1434,7 +1434,7 @@ Ring::write_row(GOutputStream* stream,
  */
 bool
 Ring::write_contents(GOutputStream* stream,
-                     VteWriteFlags flags,
+                     BteWriteFlags flags,
                      GCancellable* cancellable,
                      GError** error)
 {

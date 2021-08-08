@@ -30,7 +30,7 @@ if get_option('ctk3')
     dependencies: libbte_ctk3_dep,
     extra_args: '-DVTE_COMPILATION',
     nsversion: bte_ctk3_api_version,
-    namespace: 'Vte',
+    namespace: 'Bte',
     export_packages: bte_ctk3_api_name,
     header: 'bte' / 'bte.h',
     install: true,

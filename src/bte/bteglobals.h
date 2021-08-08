@@ -33,7 +33,7 @@ _VTE_PUBLIC
 const char *bte_get_features (void) _VTE_CXX_NOEXCEPT;
 
 _VTE_PUBLIC
-VteFeatureFlags bte_get_feature_flags(void) _VTE_CXX_NOEXCEPT;
+BteFeatureFlags bte_get_feature_flags(void) _VTE_CXX_NOEXCEPT;
 
 #define VTE_TEST_FLAGS_NONE (G_GUINT64_CONSTANT(0))
 #define VTE_TEST_FLAGS_ALL (~G_GUINT64_CONSTANT(0))

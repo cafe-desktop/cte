@@ -47,7 +47,7 @@
  * and we combine them and get a new bteunistr.  So, that is exactly how we
  * encode bteunistr's: all we need to know about a bteunistr to be able to
  * reconstruct its string is the bteunistr and the gunichar that joined to
- * form it.  That's what VteUnistrDecomp is.  That is the decomposition.
+ * form it.  That's what BteUnistrDecomp is.  That is the decomposition.
  *
  * We start giving new bteunistr's unique numbers starting at
  * %VTE_UNISTR_START+1 and going up.  We keep the decompositions in a GArray,
@@ -80,7 +80,7 @@
 
 static bteunistr unistr_next = VTE_UNISTR_START + 1;
 
-struct VteUnistrDecomp {
+struct BteUnistrDecomp {
 	bteunistr prefix;
 	gunichar  suffix;
 };
@@ -88,13 +88,13 @@ struct VteUnistrDecomp {
 GArray     *unistr_decomp;
 GHashTable *unistr_comp;
 
-#define DECOMP_FROM_INDEX(i)	g_array_index (unistr_decomp, struct VteUnistrDecomp, (i))
+#define DECOMP_FROM_INDEX(i)	g_array_index (unistr_decomp, struct BteUnistrDecomp, (i))
 #define DECOMP_FROM_UNISTR(s)	DECOMP_FROM_INDEX ((s) - VTE_UNISTR_START)
 
 static guint
 unistr_comp_hash (gconstpointer key)
 {
-	struct VteUnistrDecomp *decomp;
+	struct BteUnistrDecomp *decomp;
 	decomp = &DECOMP_FROM_INDEX (GPOINTER_TO_UINT (key));
 	return decomp->prefix ^ decomp->suffix;
 }
@@ -104,20 +104,20 @@ unistr_comp_equal (gconstpointer a, gconstpointer b)
 {
 	return 0 == memcmp (&DECOMP_FROM_INDEX (GPOINTER_TO_UINT (a)),
 			    &DECOMP_FROM_INDEX (GPOINTER_TO_UINT (b)),
-			    sizeof (struct VteUnistrDecomp));
+			    sizeof (struct BteUnistrDecomp));
 }
 
 bteunistr
 _bte_unistr_append_unichar (bteunistr s, gunichar c)
 {
-	struct VteUnistrDecomp decomp;
+	struct BteUnistrDecomp decomp;
 	bteunistr ret = 0;
 
 	decomp.prefix = s;
 	decomp.suffix = c;
 
 	if (G_UNLIKELY (!unistr_decomp)) {
-		unistr_decomp = g_array_new (FALSE, TRUE, sizeof (struct VteUnistrDecomp));
+		unistr_decomp = g_array_new (FALSE, TRUE, sizeof (struct BteUnistrDecomp));
 		g_array_set_size (unistr_decomp, 1);
 		unistr_comp = g_hash_table_new (unistr_comp_hash, unistr_comp_equal);
 	} else {
@@ -166,7 +166,7 @@ void
 _bte_unistr_append_to_gunichars (bteunistr s, GArray *a)
 {
         if (G_UNLIKELY (s >= VTE_UNISTR_START)) {
-                struct VteUnistrDecomp *decomp;
+                struct BteUnistrDecomp *decomp;
                 decomp = &DECOMP_FROM_UNISTR (s);
                 _bte_unistr_append_to_gunichars (decomp->prefix, a);
                 s = decomp->suffix;
@@ -200,7 +200,7 @@ _bte_unistr_append_to_string (bteunistr s, GString *gs)
 {
 	g_return_if_fail (s < unistr_next);
 	if (G_UNLIKELY (s >= VTE_UNISTR_START)) {
-		struct VteUnistrDecomp *decomp;
+		struct BteUnistrDecomp *decomp;
 		decomp = &DECOMP_FROM_UNISTR (s);
 		_bte_unistr_append_to_string (decomp->prefix, gs);
 		s = decomp->suffix;

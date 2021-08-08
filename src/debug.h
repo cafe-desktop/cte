@@ -68,7 +68,7 @@ typedef enum {
         VTE_DEBUG_BIDI          = 1 << 28,
         VTE_DEBUG_CONVERSION    = 1 << 29,
         VTE_DEBUG_EXCEPTIONS    = 1 << 30,
-} VteDebugFlags;
+} BteDebugFlags;
 
 void _bte_debug_init(void);
 const char *_bte_debug_sequence_to_string(const char *str,

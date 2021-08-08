@@ -29,7 +29,7 @@
 
 G_BEGIN_DECLS
 
-typedef struct _VteRegex VteRegex;
+typedef struct _BteRegex BteRegex;
 
 #define VTE_TYPE_REGEX (bte_regex_get_type())
 
@@ -45,36 +45,36 @@ GQuark bte_regex_error_quark (void);
 #define VTE_REGEX_FLAGS_DEFAULT (0x00080000u | 0x40000000u | 0x00100000u)
 
 _VTE_PUBLIC
-VteRegex *bte_regex_ref      (VteRegex *regex) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+BteRegex *bte_regex_ref      (BteRegex *regex) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 _VTE_PUBLIC
-VteRegex *bte_regex_unref    (VteRegex *regex) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+BteRegex *bte_regex_unref    (BteRegex *regex) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 _VTE_PUBLIC
-VteRegex *bte_regex_new_for_match (const char *pattern,
+BteRegex *bte_regex_new_for_match (const char *pattern,
                                    gssize      pattern_length,
                                    guint32     flags,
                                    GError    **error) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 _VTE_PUBLIC
-VteRegex *bte_regex_new_for_search (const char *pattern,
+BteRegex *bte_regex_new_for_search (const char *pattern,
                                     gssize      pattern_length,
                                     guint32     flags,
                                     GError    **error) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 _VTE_PUBLIC
-gboolean  bte_regex_jit     (VteRegex *regex,
+gboolean  bte_regex_jit     (BteRegex *regex,
                              guint32   flags,
                              GError  **error) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 _VTE_PUBLIC
-char *bte_regex_substitute(VteRegex *regex,
+char *bte_regex_substitute(BteRegex *regex,
                            const char *subject,
                            const char *replacement,
                            guint32 flags,
                            GError **error) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) _VTE_GNUC_NONNULL(2) _VTE_GNUC_NONNULL(3) G_GNUC_MALLOC;
 
-G_DEFINE_AUTOPTR_CLEANUP_FUNC(VteRegex, bte_regex_unref)
+G_DEFINE_AUTOPTR_CLEANUP_FUNC(BteRegex, bte_regex_unref)
 
 G_END_DECLS
 

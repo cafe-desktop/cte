@@ -32,30 +32,30 @@
 G_BEGIN_DECLS
 
 /*
- * VteRowAttr: A single row's attributes
+ * BteRowAttr: A single row's attributes
  */
 
-typedef struct _VteRowAttr {
+typedef struct _BteRowAttr {
         guint8 soft_wrapped  : 1;
         guint8 bidi_flags    : 4;
-} VteRowAttr;
-static_assert(sizeof (VteRowAttr) == 1, "VteRowAttr has wrong size");
+} BteRowAttr;
+static_assert(sizeof (BteRowAttr) == 1, "BteRowAttr has wrong size");
 
 /*
- * VteRowData: A single row's data
+ * BteRowData: A single row's data
  */
 
-typedef struct _VteRowData {
-	VteCell *cells;
+typedef struct _BteRowData {
+	BteCell *cells;
 	guint16 len;
-	VteRowAttr attr;
-} VteRowData;
+	BteRowAttr attr;
+} BteRowData;
 
 
 #define _bte_row_data_length(__row)			((__row)->len + 0)
 
-static inline const VteCell *
-_bte_row_data_get (const VteRowData *row, gulong col)
+static inline const BteCell *
+_bte_row_data_get (const BteRowData *row, gulong col)
 {
 	if (G_UNLIKELY (row->len <= col))
 		return NULL;
@@ -63,8 +63,8 @@ _bte_row_data_get (const VteRowData *row, gulong col)
 	return &row->cells[col];
 }
 
-static inline VteCell *
-_bte_row_data_get_writable (VteRowData *row, gulong col)
+static inline BteCell *
+_bte_row_data_get_writable (BteRowData *row, gulong col)
 {
 	if (G_UNLIKELY (row->len <= col))
 		return NULL;
@@ -72,15 +72,15 @@ _bte_row_data_get_writable (VteRowData *row, gulong col)
 	return &row->cells[col];
 }
 
-void _bte_row_data_init (VteRowData *row);
-void _bte_row_data_clear (VteRowData *row);
-void _bte_row_data_fini (VteRowData *row);
-void _bte_row_data_insert (VteRowData *row, gulong col, const VteCell *cell);
-void _bte_row_data_append (VteRowData *row, const VteCell *cell);
-void _bte_row_data_remove (VteRowData *row, gulong col);
-void _bte_row_data_fill (VteRowData *row, const VteCell *cell, gulong len);
-void _bte_row_data_shrink (VteRowData *row, gulong max_len);
-void _bte_row_data_copy (const VteRowData *src, VteRowData *dst);
-guint16 _bte_row_data_nonempty_length (const VteRowData *row);
+void _bte_row_data_init (BteRowData *row);
+void _bte_row_data_clear (BteRowData *row);
+void _bte_row_data_fini (BteRowData *row);
+void _bte_row_data_insert (BteRowData *row, gulong col, const BteCell *cell);
+void _bte_row_data_append (BteRowData *row, const BteCell *cell);
+void _bte_row_data_remove (BteRowData *row, gulong col);
+void _bte_row_data_fill (BteRowData *row, const BteCell *cell, gulong len);
+void _bte_row_data_shrink (BteRowData *row, gulong max_len);
+void _bte_row_data_copy (const BteRowData *src, BteRowData *dst);
+guint16 _bte_row_data_nonempty_length (const BteRowData *row);
 
 G_END_DECLS
