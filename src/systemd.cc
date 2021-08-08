@@ -55,7 +55,7 @@ create_scope_for_pid_sync(pid_t pid,
         auto uuid = bte::glib::take_string(g_uuid_string_random());
         auto scope = bte::glib::take_string(g_strdup_printf("bte-spawn-%s.scope", uuid.get()));
         auto prgname = bte::glib::take_string(g_utf8_make_valid(g_get_prgname(), -1));
-        auto description = bte::glib::take_string(g_strdup_printf("VTE child process %d launched by %s process %d", pid, prgname.get(), getpid()));
+        auto description = bte::glib::take_string(g_strdup_printf("BTE child process %d launched by %s process %d", pid, prgname.get(), getpid()));
 
         auto builder_stack = GVariantBuilder{};
         auto builder = &builder_stack;

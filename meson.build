@@ -119,7 +119,7 @@ config_h = configuration_data()
 
 config_h.set_quoted('GETTEXT_PACKAGE', bte_gettext_domain)
 config_h.set_quoted('VERSION', bte_version)
-config_h.set('VTE_DEBUG', enable_debug)
+config_h.set('BTE_DEBUG', enable_debug)
 config_h.set('WITH_A11Y', get_option('a11y'))
 config_h.set('WITH_FRIBIDI', get_option('fribidi'))
 config_h.set('WITH_GNUTLS', get_option('gnutls'))
@@ -487,7 +487,7 @@ configure_file(
 # Summary
 
 output = '\n'
-output += 'Configuration for VTE:\n\n'
+output += 'Configuration for BTE:\n\n'
 output += '  Version:      ' + bte_version + '\n'
 output += '\n'
 output += '  C compiler:   ' + cc.get_id() + ' (version ' + cc.version() + ')\n'

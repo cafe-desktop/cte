@@ -36,152 +36,152 @@ struct bte_seq_t;
  * host side is not used by anyone.
  */
 
-#define VTE_PARSER_ARG_MAX (32)
+#define BTE_PARSER_ARG_MAX (32)
 
 enum {
-        VTE_SEQ_NONE,        /* placeholder, no sequence parsed */
+        BTE_SEQ_NONE,        /* placeholder, no sequence parsed */
 
-        VTE_SEQ_IGNORE,      /* no-op character */
-        VTE_SEQ_GRAPHIC,     /* graphic character */
-        VTE_SEQ_CONTROL,     /* control character */
-        VTE_SEQ_ESCAPE,      /* escape sequence */
-        VTE_SEQ_CSI,         /* control sequence function */
-        VTE_SEQ_DCS,         /* device control string */
-        VTE_SEQ_OSC,         /* operating system control */
-        VTE_SEQ_SCI,         /* single character control function */
-        VTE_SEQ_APC,         /* application program command */
-        VTE_SEQ_PM,          /* privacy message */
-        VTE_SEQ_SOS,         /* start of string */
+        BTE_SEQ_IGNORE,      /* no-op character */
+        BTE_SEQ_GRAPHIC,     /* graphic character */
+        BTE_SEQ_CONTROL,     /* control character */
+        BTE_SEQ_ESCAPE,      /* escape sequence */
+        BTE_SEQ_CSI,         /* control sequence function */
+        BTE_SEQ_DCS,         /* device control string */
+        BTE_SEQ_OSC,         /* operating system control */
+        BTE_SEQ_SCI,         /* single character control function */
+        BTE_SEQ_APC,         /* application program command */
+        BTE_SEQ_PM,          /* privacy message */
+        BTE_SEQ_SOS,         /* start of string */
 
-        VTE_SEQ_N,
+        BTE_SEQ_N,
 };
 
 enum {
-        VTE_SEQ_INTERMEDIATE_CHAR_NONE    = 0,
+        BTE_SEQ_INTERMEDIATE_CHAR_NONE    = 0,
 
-        VTE_SEQ_INTERMEDIATE_CHAR_SPACE   = ' ',  /* 02/00 */
-        VTE_SEQ_INTERMEDIATE_CHAR_BANG    = '!',  /* 02/01 */
-        VTE_SEQ_INTERMEDIATE_CHAR_DQUOTE  = '"',  /* 02/02 */
-        VTE_SEQ_INTERMEDIATE_CHAR_HASH    = '#',  /* 02/03 */
-        VTE_SEQ_INTERMEDIATE_CHAR_CASH    = '$',  /* 02/04 */
-        VTE_SEQ_INTERMEDIATE_CHAR_PERCENT = '%',  /* 02/05 */
-        VTE_SEQ_INTERMEDIATE_CHAR_AND     = '&',  /* 02/06 */
-        VTE_SEQ_INTERMEDIATE_CHAR_SQUOTE  = '\'', /* 02/07 */
-        VTE_SEQ_INTERMEDIATE_CHAR_POPEN   = '(',  /* 02/08 */
-        VTE_SEQ_INTERMEDIATE_CHAR_PCLOSE  = ')',  /* 02/09 */
-        VTE_SEQ_INTERMEDIATE_CHAR_MULT    = '*',  /* 02/10 */
-        VTE_SEQ_INTERMEDIATE_CHAR_PLUS    = '+',  /* 02/11 */
-        VTE_SEQ_INTERMEDIATE_CHAR_COMMA   = ',',  /* 02/12 */
-        VTE_SEQ_INTERMEDIATE_CHAR_MINUS   = '-',  /* 02/13 */
-        VTE_SEQ_INTERMEDIATE_CHAR_DOT     = '.',  /* 02/14 */
-        VTE_SEQ_INTERMEDIATE_CHAR_SLASH   = '/',  /* 02/15 */
+        BTE_SEQ_INTERMEDIATE_CHAR_SPACE   = ' ',  /* 02/00 */
+        BTE_SEQ_INTERMEDIATE_CHAR_BANG    = '!',  /* 02/01 */
+        BTE_SEQ_INTERMEDIATE_CHAR_DQUOTE  = '"',  /* 02/02 */
+        BTE_SEQ_INTERMEDIATE_CHAR_HASH    = '#',  /* 02/03 */
+        BTE_SEQ_INTERMEDIATE_CHAR_CASH    = '$',  /* 02/04 */
+        BTE_SEQ_INTERMEDIATE_CHAR_PERCENT = '%',  /* 02/05 */
+        BTE_SEQ_INTERMEDIATE_CHAR_AND     = '&',  /* 02/06 */
+        BTE_SEQ_INTERMEDIATE_CHAR_SQUOTE  = '\'', /* 02/07 */
+        BTE_SEQ_INTERMEDIATE_CHAR_POPEN   = '(',  /* 02/08 */
+        BTE_SEQ_INTERMEDIATE_CHAR_PCLOSE  = ')',  /* 02/09 */
+        BTE_SEQ_INTERMEDIATE_CHAR_MULT    = '*',  /* 02/10 */
+        BTE_SEQ_INTERMEDIATE_CHAR_PLUS    = '+',  /* 02/11 */
+        BTE_SEQ_INTERMEDIATE_CHAR_COMMA   = ',',  /* 02/12 */
+        BTE_SEQ_INTERMEDIATE_CHAR_MINUS   = '-',  /* 02/13 */
+        BTE_SEQ_INTERMEDIATE_CHAR_DOT     = '.',  /* 02/14 */
+        BTE_SEQ_INTERMEDIATE_CHAR_SLASH   = '/',  /* 02/15 */
 };
 
 enum {
-        VTE_SEQ_PARAMETER_CHAR_NONE  = 0,
+        BTE_SEQ_PARAMETER_CHAR_NONE  = 0,
 
         /* Numbers; not used         *  03/00..03/09 */
         /* COLON is reserved         = ':'   * 03/10 */
         /* SEMICOLON is reserved     = ';'   * 03/11 */
-        VTE_SEQ_PARAMETER_CHAR_LT    = '<', /* 03/12 */
-        VTE_SEQ_PARAMETER_CHAR_EQUAL = '=', /* 03/13 */
-        VTE_SEQ_PARAMETER_CHAR_GT    = '>', /* 03/14 */
-        VTE_SEQ_PARAMETER_CHAR_WHAT  = '?'  /* 03/15 */
+        BTE_SEQ_PARAMETER_CHAR_LT    = '<', /* 03/12 */
+        BTE_SEQ_PARAMETER_CHAR_EQUAL = '=', /* 03/13 */
+        BTE_SEQ_PARAMETER_CHAR_GT    = '>', /* 03/14 */
+        BTE_SEQ_PARAMETER_CHAR_WHAT  = '?'  /* 03/15 */
 };
 
-#define VTE_SEQ_MAKE_INTERMEDIATE(c) ((c) - ' ' + 1)
+#define BTE_SEQ_MAKE_INTERMEDIATE(c) ((c) - ' ' + 1)
 
 enum {
-        VTE_SEQ_INTERMEDIATE_NONE      = 0,
+        BTE_SEQ_INTERMEDIATE_NONE      = 0,
 
-        VTE_SEQ_INTERMEDIATE_SPACE     = VTE_SEQ_MAKE_INTERMEDIATE(VTE_SEQ_INTERMEDIATE_CHAR_SPACE  ),
-        VTE_SEQ_INTERMEDIATE_BANG      = VTE_SEQ_MAKE_INTERMEDIATE(VTE_SEQ_INTERMEDIATE_CHAR_BANG   ),
-        VTE_SEQ_INTERMEDIATE_DQUOTE    = VTE_SEQ_MAKE_INTERMEDIATE(VTE_SEQ_INTERMEDIATE_CHAR_DQUOTE ),
-        VTE_SEQ_INTERMEDIATE_HASH      = VTE_SEQ_MAKE_INTERMEDIATE(VTE_SEQ_INTERMEDIATE_CHAR_HASH   ),
-        VTE_SEQ_INTERMEDIATE_CASH      = VTE_SEQ_MAKE_INTERMEDIATE(VTE_SEQ_INTERMEDIATE_CHAR_CASH   ),
-        VTE_SEQ_INTERMEDIATE_PERCENT   = VTE_SEQ_MAKE_INTERMEDIATE(VTE_SEQ_INTERMEDIATE_CHAR_PERCENT),
-        VTE_SEQ_INTERMEDIATE_AND       = VTE_SEQ_MAKE_INTERMEDIATE(VTE_SEQ_INTERMEDIATE_CHAR_AND    ),
-        VTE_SEQ_INTERMEDIATE_SQUOTE    = VTE_SEQ_MAKE_INTERMEDIATE(VTE_SEQ_INTERMEDIATE_CHAR_SQUOTE ),
-        VTE_SEQ_INTERMEDIATE_POPEN     = VTE_SEQ_MAKE_INTERMEDIATE(VTE_SEQ_INTERMEDIATE_CHAR_POPEN  ),
-        VTE_SEQ_INTERMEDIATE_PCLOSE    = VTE_SEQ_MAKE_INTERMEDIATE(VTE_SEQ_INTERMEDIATE_CHAR_PCLOSE ),
-        VTE_SEQ_INTERMEDIATE_MULT      = VTE_SEQ_MAKE_INTERMEDIATE(VTE_SEQ_INTERMEDIATE_CHAR_MULT   ),
-        VTE_SEQ_INTERMEDIATE_PLUS      = VTE_SEQ_MAKE_INTERMEDIATE(VTE_SEQ_INTERMEDIATE_CHAR_PLUS   ),
-        VTE_SEQ_INTERMEDIATE_COMMA     = VTE_SEQ_MAKE_INTERMEDIATE(VTE_SEQ_INTERMEDIATE_CHAR_COMMA  ),
-        VTE_SEQ_INTERMEDIATE_MINUS     = VTE_SEQ_MAKE_INTERMEDIATE(VTE_SEQ_INTERMEDIATE_CHAR_MINUS  ),
-        VTE_SEQ_INTERMEDIATE_DOT       = VTE_SEQ_MAKE_INTERMEDIATE(VTE_SEQ_INTERMEDIATE_CHAR_DOT    ),
-        VTE_SEQ_INTERMEDIATE_SLASH     = VTE_SEQ_MAKE_INTERMEDIATE(VTE_SEQ_INTERMEDIATE_CHAR_SLASH  ),
+        BTE_SEQ_INTERMEDIATE_SPACE     = BTE_SEQ_MAKE_INTERMEDIATE(BTE_SEQ_INTERMEDIATE_CHAR_SPACE  ),
+        BTE_SEQ_INTERMEDIATE_BANG      = BTE_SEQ_MAKE_INTERMEDIATE(BTE_SEQ_INTERMEDIATE_CHAR_BANG   ),
+        BTE_SEQ_INTERMEDIATE_DQUOTE    = BTE_SEQ_MAKE_INTERMEDIATE(BTE_SEQ_INTERMEDIATE_CHAR_DQUOTE ),
+        BTE_SEQ_INTERMEDIATE_HASH      = BTE_SEQ_MAKE_INTERMEDIATE(BTE_SEQ_INTERMEDIATE_CHAR_HASH   ),
+        BTE_SEQ_INTERMEDIATE_CASH      = BTE_SEQ_MAKE_INTERMEDIATE(BTE_SEQ_INTERMEDIATE_CHAR_CASH   ),
+        BTE_SEQ_INTERMEDIATE_PERCENT   = BTE_SEQ_MAKE_INTERMEDIATE(BTE_SEQ_INTERMEDIATE_CHAR_PERCENT),
+        BTE_SEQ_INTERMEDIATE_AND       = BTE_SEQ_MAKE_INTERMEDIATE(BTE_SEQ_INTERMEDIATE_CHAR_AND    ),
+        BTE_SEQ_INTERMEDIATE_SQUOTE    = BTE_SEQ_MAKE_INTERMEDIATE(BTE_SEQ_INTERMEDIATE_CHAR_SQUOTE ),
+        BTE_SEQ_INTERMEDIATE_POPEN     = BTE_SEQ_MAKE_INTERMEDIATE(BTE_SEQ_INTERMEDIATE_CHAR_POPEN  ),
+        BTE_SEQ_INTERMEDIATE_PCLOSE    = BTE_SEQ_MAKE_INTERMEDIATE(BTE_SEQ_INTERMEDIATE_CHAR_PCLOSE ),
+        BTE_SEQ_INTERMEDIATE_MULT      = BTE_SEQ_MAKE_INTERMEDIATE(BTE_SEQ_INTERMEDIATE_CHAR_MULT   ),
+        BTE_SEQ_INTERMEDIATE_PLUS      = BTE_SEQ_MAKE_INTERMEDIATE(BTE_SEQ_INTERMEDIATE_CHAR_PLUS   ),
+        BTE_SEQ_INTERMEDIATE_COMMA     = BTE_SEQ_MAKE_INTERMEDIATE(BTE_SEQ_INTERMEDIATE_CHAR_COMMA  ),
+        BTE_SEQ_INTERMEDIATE_MINUS     = BTE_SEQ_MAKE_INTERMEDIATE(BTE_SEQ_INTERMEDIATE_CHAR_MINUS  ),
+        BTE_SEQ_INTERMEDIATE_DOT       = BTE_SEQ_MAKE_INTERMEDIATE(BTE_SEQ_INTERMEDIATE_CHAR_DOT    ),
+        BTE_SEQ_INTERMEDIATE_SLASH     = BTE_SEQ_MAKE_INTERMEDIATE(BTE_SEQ_INTERMEDIATE_CHAR_SLASH  ),
 };
 
-#define VTE_SEQ_MAKE_PARAMETER(c) ('?' - (c) + 1)
+#define BTE_SEQ_MAKE_PARAMETER(c) ('?' - (c) + 1)
 
 enum {
-        VTE_SEQ_PARAMETER_NONE  = 0,
+        BTE_SEQ_PARAMETER_NONE  = 0,
 
-        VTE_SEQ_PARAMETER_LT    = VTE_SEQ_MAKE_PARAMETER(VTE_SEQ_PARAMETER_CHAR_LT   ),
-        VTE_SEQ_PARAMETER_EQUAL = VTE_SEQ_MAKE_PARAMETER(VTE_SEQ_PARAMETER_CHAR_EQUAL),
-        VTE_SEQ_PARAMETER_GT    = VTE_SEQ_MAKE_PARAMETER(VTE_SEQ_PARAMETER_CHAR_GT   ),
-        VTE_SEQ_PARAMETER_WHAT  = VTE_SEQ_MAKE_PARAMETER(VTE_SEQ_PARAMETER_CHAR_WHAT ),
+        BTE_SEQ_PARAMETER_LT    = BTE_SEQ_MAKE_PARAMETER(BTE_SEQ_PARAMETER_CHAR_LT   ),
+        BTE_SEQ_PARAMETER_EQUAL = BTE_SEQ_MAKE_PARAMETER(BTE_SEQ_PARAMETER_CHAR_EQUAL),
+        BTE_SEQ_PARAMETER_GT    = BTE_SEQ_MAKE_PARAMETER(BTE_SEQ_PARAMETER_CHAR_GT   ),
+        BTE_SEQ_PARAMETER_WHAT  = BTE_SEQ_MAKE_PARAMETER(BTE_SEQ_PARAMETER_CHAR_WHAT ),
 };
 
 enum {
-#define _VTE_CMD(cmd) VTE_CMD_##cmd,
-#define _VTE_NOP(cmd) VTE_CMD_##cmd,
+#define _BTE_CMD(cmd) BTE_CMD_##cmd,
+#define _BTE_NOP(cmd) BTE_CMD_##cmd,
 #include "parser-cmd.hh"
-#undef _VTE_CMD
-#undef _VTE_NOP
+#undef _BTE_CMD
+#undef _BTE_NOP
 
-        VTE_CMD_N,
-        VTE_CMD_NOP_FIRST = VTE_CMD_ACK
+        BTE_CMD_N,
+        BTE_CMD_NOP_FIRST = BTE_CMD_ACK
 };
 
 enum {
-#define _VTE_REPLY(cmd,type,final,pintro,intermediate,code) VTE_REPLY_##cmd,
+#define _BTE_REPLY(cmd,type,final,pintro,intermediate,code) BTE_REPLY_##cmd,
 #include "parser-reply.hh"
-#undef _VTE_REPLY
+#undef _BTE_REPLY
 
-        VTE_REPLY_N
+        BTE_REPLY_N
 };
 
 enum {
-#define _VTE_CHARSET_PASTE(name) VTE_CHARSET_##name,
-#define _VTE_CHARSET(name) _VTE_CHARSET_PASTE(name)
-#define _VTE_CHARSET_ALIAS_PASTE(name1,name2) VTE_CHARSET_##name1 = VTE_CHARSET_##name2,
-#define _VTE_CHARSET_ALIAS(name1,name2) _VTE_CHARSET_ALIAS_PASTE(name1,name2)
+#define _BTE_CHARSET_PASTE(name) BTE_CHARSET_##name,
+#define _BTE_CHARSET(name) _BTE_CHARSET_PASTE(name)
+#define _BTE_CHARSET_ALIAS_PASTE(name1,name2) BTE_CHARSET_##name1 = BTE_CHARSET_##name2,
+#define _BTE_CHARSET_ALIAS(name1,name2) _BTE_CHARSET_ALIAS_PASTE(name1,name2)
 #include "parser-charset.hh"
-#undef _VTE_CHARSET_PASTE
-#undef _VTE_CHARSET
-#undef _VTE_CHARSET_ALIAS_PASTE
-#undef _VTE_CHARSET_ALIAS
+#undef _BTE_CHARSET_PASTE
+#undef _BTE_CHARSET
+#undef _BTE_CHARSET_ALIAS_PASTE
+#undef _BTE_CHARSET_ALIAS
 };
 
 enum {
-#define _VTE_OSC(osc,value) VTE_OSC_##osc = value,
+#define _BTE_OSC(osc,value) BTE_OSC_##osc = value,
 #include "parser-osc.hh"
-#undef _VTE_OSC
+#undef _BTE_OSC
 
-        VTE_OSC_N
+        BTE_OSC_N
 };
 
 enum {
-#define _VTE_SGR(name, value) VTE_SGR_##name = value,
-#define _VTE_NGR(...)
+#define _BTE_SGR(name, value) BTE_SGR_##name = value,
+#define _BTE_NGR(...)
 #include "parser-sgr.hh"
-#undef _VTE_SGR
-#undef _VTE_NGR
+#undef _BTE_SGR
+#undef _BTE_NGR
 };
 
 enum {
-#define _VTE_SGR(name, value) VTE_DECSGR_##name = value,
-#define _VTE_NGR(...)
+#define _BTE_SGR(name, value) BTE_DECSGR_##name = value,
+#define _BTE_NGR(...)
 #include "parser-decsgr.hh"
-#undef _VTE_SGR
-#undef _VTE_NGR
+#undef _BTE_SGR
+#undef _BTE_NGR
 };
 
-#define VTE_CHARSET_CHARSET_MASK   ((1U << 16) - 1U)
-#define VTE_CHARSET_SLOT_OFFSET    (16)
-#define VTE_CHARSET_GET_CHARSET(c) ((c) & VTE_CHARSET_CHARSET_MASK)
-#define VTE_CHARSET_GET_SLOT(c)    ((c) >> VTE_CHARSET_SLOT_OFFSET)
+#define BTE_CHARSET_CHARSET_MASK   ((1U << 16) - 1U)
+#define BTE_CHARSET_SLOT_OFFSET    (16)
+#define BTE_CHARSET_GET_CHARSET(c) ((c) & BTE_CHARSET_CHARSET_MASK)
+#define BTE_CHARSET_GET_SLOT(c)    ((c) >> BTE_CHARSET_SLOT_OFFSET)
 
 struct bte_seq_t {
         unsigned int type;
@@ -192,7 +192,7 @@ struct bte_seq_t {
         unsigned int charset;
         unsigned int n_args;
         unsigned int n_final_args;
-        bte_seq_arg_t args[VTE_PARSER_ARG_MAX];
+        bte_seq_arg_t args[BTE_PARSER_ARG_MAX];
         bte_seq_string_t arg_str;
         uint32_t introducer;
 };

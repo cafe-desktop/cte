@@ -51,7 +51,7 @@ RingView::pause()
         if (m_paused)
                 return;
 
-        _bte_debug_print (VTE_DEBUG_RINGVIEW, "Ringview: pause, freeing %d rows, %d bidirows.\n",
+        _bte_debug_print (BTE_DEBUG_RINGVIEW, "Ringview: pause, freeing %d rows, %d bidirows.\n",
                                               m_rows_alloc_len, m_bidirows_alloc_len);
 
         for (i = 0; i < m_rows_alloc_len; i++) {
@@ -97,7 +97,7 @@ RingView::resume()
                 m_bidirows[i] = new BidiRow();
         }
 
-        _bte_debug_print (VTE_DEBUG_RINGVIEW, "Ringview: resume, allocating %d rows, %d bidirows\n",
+        _bte_debug_print (BTE_DEBUG_RINGVIEW, "Ringview: resume, allocating %d rows, %d bidirows\n",
                                               m_rows_alloc_len, m_bidirows_alloc_len);
 
         m_paused = false;
@@ -147,7 +147,7 @@ RingView::set_rows(bte::grid::row_t start, bte::grid::row_t len)
                         /* Don't realloc too aggressively. */
                         m_bidirows_alloc_len = std::max(m_bidirows_alloc_len + 1, m_bidirows_alloc_len * 5 / 4 /* whatever */);
                 }
-                _bte_debug_print (VTE_DEBUG_RINGVIEW, "Ringview: reallocate to %d bidirows\n",
+                _bte_debug_print (BTE_DEBUG_RINGVIEW, "Ringview: reallocate to %d bidirows\n",
                                                       m_bidirows_alloc_len);
                 m_bidirows = (BidiRow **) g_realloc (m_bidirows, sizeof (BidiRow *) * m_bidirows_alloc_len);
                 for (; i < m_bidirows_alloc_len; i++) {
@@ -199,18 +199,18 @@ RingView::update()
 
         /* Find the beginning of the topmost paragraph.
          *
-         * Extract at most VTE_RINGVIEW_PARAGRAPH_LENGTH_MAX context rows.
+         * Extract at most BTE_RINGVIEW_PARAGRAPH_LENGTH_MAX context rows.
          * If this safety limit is reached then together with the first
          * non-context row this paragraph fragment is already longer
-         * than VTE_RINGVIEW_PARAGRAPH_LENGTH_MAX lines, and thus the
+         * than BTE_RINGVIEW_PARAGRAPH_LENGTH_MAX lines, and thus the
          * BiDi code will skip it. */
         bte::grid::row_t row = m_start;
         const BteRowData *row_data;
 
-        _bte_debug_print (VTE_DEBUG_RINGVIEW, "Ringview: updating for [%ld..%ld] (%ld rows).\n",
+        _bte_debug_print (BTE_DEBUG_RINGVIEW, "Ringview: updating for [%ld..%ld] (%ld rows).\n",
                                               m_start, m_start + m_len - 1, m_len);
 
-        int i = VTE_RINGVIEW_PARAGRAPH_LENGTH_MAX;
+        int i = BTE_RINGVIEW_PARAGRAPH_LENGTH_MAX;
         while (i--) {
                 if (!m_ring->is_soft_wrapped(row - 1))
                         break;
@@ -219,19 +219,19 @@ RingView::update()
 
         /* Extract the data beginning at the found row.
          *
-         * Extract at most VTE_RINGVIEW_PARAGRAPH_LENGTH_MAX rows
+         * Extract at most BTE_RINGVIEW_PARAGRAPH_LENGTH_MAX rows
          * beyond the end of the specified area. Again, if this safety
          * limit is reached then together with the last non-context row
          * this paragraph fragment is already longer than
-         * VTE_RINGVIEW_PARAGRAPH_LENGTH_MAX lines, and thus the
+         * BTE_RINGVIEW_PARAGRAPH_LENGTH_MAX lines, and thus the
          * BiDi code will skip it. */
         m_top = row;
         m_rows_len = 0;
-        while (row < m_start + m_len + VTE_RINGVIEW_PARAGRAPH_LENGTH_MAX) {
+        while (row < m_start + m_len + BTE_RINGVIEW_PARAGRAPH_LENGTH_MAX) {
                 if (G_UNLIKELY (m_rows_len == m_rows_alloc_len)) {
                         /* Don't realloc too aggressively. */
                         m_rows_alloc_len = std::max(m_rows_alloc_len + 1, m_rows_alloc_len * 5 / 4 /* whatever */);
-                        _bte_debug_print (VTE_DEBUG_RINGVIEW, "Ringview: reallocate to %d rows\n",
+                        _bte_debug_print (BTE_DEBUG_RINGVIEW, "Ringview: reallocate to %d rows\n",
                                                               m_rows_alloc_len);
                         m_rows = (BteRowData **) g_realloc (m_rows, sizeof (BteRowData *) * m_rows_alloc_len);
                         for (int j = m_rows_len; j < m_rows_alloc_len; j++) {
@@ -268,7 +268,7 @@ RingView::update()
                         break;
         }
 
-        _bte_debug_print (VTE_DEBUG_RINGVIEW, "Ringview: extracted %ld+%ld context lines: [%ld..%ld] (%d rows).\n",
+        _bte_debug_print (BTE_DEBUG_RINGVIEW, "Ringview: extracted %ld+%ld context lines: [%ld..%ld] (%d rows).\n",
                                               m_start - m_top, (m_top + m_rows_len) - (m_start + m_len),
                                               m_top, m_top + m_rows_len - 1, m_rows_len);
 

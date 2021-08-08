@@ -15,6 +15,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#if !defined(_VTE_SEQ) || !defined(_VTE_NOQ)
-#error "Must define _VTE_SEQ and _VTE_NOQ before including this file"
+#if !defined(_BTE_SEQ) || !defined(_BTE_NOQ)
+#error "Must define _BTE_SEQ and _BTE_NOQ before including this file"
 #endif

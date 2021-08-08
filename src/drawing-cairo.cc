@@ -33,19 +33,19 @@
  */
 #define MAX_RUN_LENGTH 100
 
-#define VTE_DRAW_NORMAL      0
-#define VTE_DRAW_BOLD        1
-#define VTE_DRAW_ITALIC      2
-#define VTE_DRAW_BOLD_ITALIC 3
+#define BTE_DRAW_NORMAL      0
+#define BTE_DRAW_BOLD        1
+#define BTE_DRAW_ITALIC      2
+#define BTE_DRAW_BOLD_ITALIC 3
 
 static unsigned
 attr_to_style(uint32_t attr)
 {
 	auto style = unsigned{0};
-	if (attr & VTE_ATTR_BOLD)
-		style |= VTE_DRAW_BOLD;
-	if (attr & VTE_ATTR_ITALIC)
-		style |= VTE_DRAW_ITALIC;
+	if (attr & BTE_ATTR_BOLD)
+		style |= BTE_DRAW_BOLD;
+	if (attr & BTE_ATTR_ITALIC)
+		style |= BTE_DRAW_ITALIC;
 	return style;
 }
 
@@ -146,7 +146,7 @@ DrawingContext::set_text_font(CtkWidget* widget,
 	PangoFontDescription *bolditalicdesc = nullptr;
 	gint normal, bold, ratio;
 
-	_bte_debug_print (VTE_DEBUG_DRAW, "draw_set_text_font\n");
+	_bte_debug_print (BTE_DEBUG_DRAW, "draw_set_text_font\n");
 
         clear_font_cache();
 
@@ -162,10 +162,10 @@ DrawingContext::set_text_font(CtkWidget* widget,
 	bolditalicdesc = pango_font_description_copy (bolddesc);
 	pango_font_description_set_style (bolditalicdesc, PANGO_STYLE_ITALIC);
 
-	m_fonts[VTE_DRAW_NORMAL]  = FontInfo::create_for_widget(widget, fontdesc);
-	m_fonts[VTE_DRAW_BOLD]    = FontInfo::create_for_widget(widget, bolddesc);
-	m_fonts[VTE_DRAW_ITALIC]  = FontInfo::create_for_widget(widget, italicdesc);
-	m_fonts[VTE_DRAW_ITALIC | VTE_DRAW_BOLD] =
+	m_fonts[BTE_DRAW_NORMAL]  = FontInfo::create_for_widget(widget, fontdesc);
+	m_fonts[BTE_DRAW_BOLD]    = FontInfo::create_for_widget(widget, bolddesc);
+	m_fonts[BTE_DRAW_ITALIC]  = FontInfo::create_for_widget(widget, italicdesc);
+	m_fonts[BTE_DRAW_ITALIC | BTE_DRAW_BOLD] =
                 FontInfo::create_for_widget(widget, bolditalicdesc);
 	pango_font_description_free (bolddesc);
 	pango_font_description_free (italicdesc);
@@ -174,32 +174,32 @@ DrawingContext::set_text_font(CtkWidget* widget,
 	/* Decide if we should keep this bold font face, per bug 54926:
 	 *  - reject bold font if it is not within 10% of normal font width
 	 */
-	normal = VTE_DRAW_NORMAL;
-	bold   = normal | VTE_DRAW_BOLD;
+	normal = BTE_DRAW_NORMAL;
+	bold   = normal | BTE_DRAW_BOLD;
 	ratio = m_fonts[bold]->width() * 100 / m_fonts[normal]->width();
 	if (abs(ratio - 100) > 10) {
-		_bte_debug_print (VTE_DEBUG_DRAW,
+		_bte_debug_print (BTE_DEBUG_DRAW,
 			"Rejecting bold font (%i%%).\n", ratio);
                 m_fonts[bold]->unref();
                 m_fonts[bold] = m_fonts[normal]->ref();
 	}
-	normal = VTE_DRAW_ITALIC;
-	bold   = normal | VTE_DRAW_BOLD;
+	normal = BTE_DRAW_ITALIC;
+	bold   = normal | BTE_DRAW_BOLD;
 	ratio = m_fonts[bold]->width() * 100 / m_fonts[normal]->width();
 	if (abs(ratio - 100) > 10) {
-		_bte_debug_print (VTE_DEBUG_DRAW,
+		_bte_debug_print (BTE_DEBUG_DRAW,
 			"Rejecting italic bold font (%i%%).\n", ratio);
                 m_fonts[bold]->unref();
                 m_fonts[bold] = m_fonts[normal]->ref();
 	}
 
         /* Apply letter spacing and line spacing. */
-        m_cell_width = m_fonts[VTE_DRAW_NORMAL]->width() * cell_width_scale;
-        m_char_spacing.left = (m_cell_width - m_fonts[VTE_DRAW_NORMAL]->width()) / 2;
-        m_char_spacing.right = (m_cell_width - m_fonts[VTE_DRAW_NORMAL]->width() + 1) / 2;
-        m_cell_height = m_fonts[VTE_DRAW_NORMAL]->height() * cell_height_scale;
-        m_char_spacing.top = (m_cell_height - m_fonts[VTE_DRAW_NORMAL]->height() + 1) / 2;
-        m_char_spacing.bottom = (m_cell_height - m_fonts[VTE_DRAW_NORMAL]->height()) / 2;
+        m_cell_width = m_fonts[BTE_DRAW_NORMAL]->width() * cell_width_scale;
+        m_char_spacing.left = (m_cell_width - m_fonts[BTE_DRAW_NORMAL]->width()) / 2;
+        m_char_spacing.right = (m_cell_width - m_fonts[BTE_DRAW_NORMAL]->width() + 1) / 2;
+        m_cell_height = m_fonts[BTE_DRAW_NORMAL]->height() * cell_height_scale;
+        m_char_spacing.top = (m_cell_height - m_fonts[BTE_DRAW_NORMAL]->height() + 1) / 2;
+        m_char_spacing.bottom = (m_cell_height - m_fonts[BTE_DRAW_NORMAL]->height()) / 2;
 
         m_undercurl_surface.reset();
 }
@@ -211,16 +211,16 @@ DrawingContext::get_text_metrics(int* cell_width,
                                  int* char_descent,
                                  CtkBorder* char_spacing)
 {
-	g_return_if_fail (m_fonts[VTE_DRAW_NORMAL] != nullptr);
+	g_return_if_fail (m_fonts[BTE_DRAW_NORMAL] != nullptr);
 
         if (cell_width)
                 *cell_width = m_cell_width;
         if (cell_height)
                 *cell_height = m_cell_height;
         if (char_ascent)
-                *char_ascent = m_fonts[VTE_DRAW_NORMAL]->ascent();
+                *char_ascent = m_fonts[BTE_DRAW_NORMAL]->ascent();
         if (char_descent)
-                *char_descent = m_fonts[VTE_DRAW_NORMAL]->height() - m_fonts[VTE_DRAW_NORMAL]->ascent();
+                *char_descent = m_fonts[BTE_DRAW_NORMAL]->height() - m_fonts[BTE_DRAW_NORMAL]->ascent();
         if (char_spacing)
                 *char_spacing = m_char_spacing;
 }
@@ -241,14 +241,14 @@ DrawingContext::get_char_edges(bteunistr c,
 
         int l, w, normal_width, fits_width;
 
-        if (G_UNLIKELY (m_fonts[VTE_DRAW_NORMAL] == nullptr)) {
+        if (G_UNLIKELY (m_fonts[BTE_DRAW_NORMAL] == nullptr)) {
                 left = 0;
                 right = 0;
                 return;
         }
 
         w = m_fonts[attr_to_style(attr)]->get_unistr_info(c)->width;
-        normal_width = m_fonts[VTE_DRAW_NORMAL]->width() * columns;
+        normal_width = m_fonts[BTE_DRAW_NORMAL]->width() * columns;
         fits_width = m_cell_width * columns;
 
         if (G_LIKELY (w <= normal_width)) {
@@ -312,7 +312,7 @@ DrawingContext::draw_text_internal(TextRequest* requests,
                 x += requests[i].x;
                 /* Bold/italic versions might have different ascents. In order to align their
                  * baselines, we offset by the normal font's ascent here. (Bug 137.) */
-                y = requests[i].y + m_char_spacing.top + m_fonts[VTE_DRAW_NORMAL]->ascent();
+                y = requests[i].y + m_char_spacing.top + m_fonts[BTE_DRAW_NORMAL]->ascent();
 
 		switch (uinfo->coverage()) {
 		default:
@@ -366,7 +366,7 @@ DrawingContext::draw_text(TextRequest* requests,
 {
         g_assert(m_cr);
 
-	if (_bte_debug_on (VTE_DEBUG_DRAW)) {
+	if (_bte_debug_on (BTE_DEBUG_DRAW)) {
 		GString *string = g_string_new ("");
 		gchar *str;
 		gsize n;
@@ -376,8 +376,8 @@ DrawingContext::draw_text(TextRequest* requests,
 		str = g_string_free (string, FALSE);
 		g_printerr ("draw_text (\"%s\", len=%" G_GSIZE_FORMAT ", color=(%d,%d,%d,%.3f), %s - %s)\n",
 				str, n_requests, color->red, color->green, color->blue, alpha,
-				(attr & VTE_ATTR_BOLD)   ? "bold"   : "normal",
-				(attr & VTE_ATTR_ITALIC) ? "italic" : "regular");
+				(attr & BTE_ATTR_BOLD)   ? "bold"   : "normal",
+				(attr & BTE_ATTR_ITALIC) ? "italic" : "regular");
 		g_free (str);
 	}
 
@@ -391,9 +391,9 @@ bool
 DrawingContext::has_char(bteunistr c,
                          uint32_t attr)
 {
-	_bte_debug_print (VTE_DEBUG_DRAW, "draw_has_char ('0x%04X', %s - %s)\n", c,
-				(attr & VTE_ATTR_BOLD)   ? "bold"   : "normal",
-				(attr & VTE_ATTR_ITALIC) ? "italic" : "regular");
+	_bte_debug_print (BTE_DEBUG_DRAW, "draw_has_char ('0x%04X', %s - %s)\n", c,
+				(attr & BTE_ATTR_BOLD)   ? "bold"   : "normal",
+				(attr & BTE_ATTR_ITALIC) ? "italic" : "regular");
 
         auto const style = attr_to_style(attr);
 	g_return_val_if_fail(m_fonts[style], false);
@@ -408,13 +408,13 @@ DrawingContext::draw_char(TextRequest* request,
                           bte::color::rgb const* color,
                           double alpha)
 {
-	_bte_debug_print (VTE_DEBUG_DRAW,
+	_bte_debug_print (BTE_DEBUG_DRAW,
 			"draw_char ('%c', color=(%d,%d,%d,%.3f), %s, %s)\n",
 			request->c,
 			color->red, color->green, color->blue,
 			alpha,
-			(attr & VTE_ATTR_BOLD)   ? "bold"   : "normal",
-			(attr & VTE_ATTR_ITALIC) ? "italic" : "regular");
+			(attr & BTE_ATTR_BOLD)   ? "bold"   : "normal",
+			(attr & BTE_ATTR_ITALIC) ? "italic" : "regular");
 
 	auto const have_char = has_char(request->c, attr);
 	if (have_char)
@@ -433,16 +433,16 @@ DrawingContext::draw_rectangle(int x,
 {
         g_assert(m_cr);
 
-	_bte_debug_print (VTE_DEBUG_DRAW,
+	_bte_debug_print (BTE_DEBUG_DRAW,
 			"draw_rectangle (%d, %d, %d, %d, color=(%d,%d,%d,%.3f))\n",
 			x,y,width,height,
 			color->red, color->green, color->blue,
 			alpha);
 
 	cairo_set_operator(m_cr, CAIRO_OPERATOR_OVER);
-	cairo_rectangle(m_cr, x+VTE_LINE_WIDTH/2., y+VTE_LINE_WIDTH/2., width-VTE_LINE_WIDTH, height-VTE_LINE_WIDTH);
+	cairo_rectangle(m_cr, x+BTE_LINE_WIDTH/2., y+BTE_LINE_WIDTH/2., width-BTE_LINE_WIDTH, height-BTE_LINE_WIDTH);
 	set_source_color_alpha(color, alpha);
-	cairo_set_line_width(m_cr, VTE_LINE_WIDTH);
+	cairo_set_line_width(m_cr, BTE_LINE_WIDTH);
 	cairo_stroke (m_cr);
 }
 
@@ -456,7 +456,7 @@ DrawingContext::fill_rectangle(int x,
 {
         g_assert(m_cr);
 
-	_bte_debug_print (VTE_DEBUG_DRAW,
+	_bte_debug_print (BTE_DEBUG_DRAW,
 			"draw_fill_rectangle (%d, %d, %d, %d, color=(%d,%d,%d,%.3f))\n",
 			x,y,width,height,
 			color->red, color->green, color->blue,
@@ -499,7 +499,7 @@ DrawingContext::draw_undercurl(int x,
 
         g_assert(m_cr);
 
-        _bte_debug_print (VTE_DEBUG_DRAW,
+        _bte_debug_print (BTE_DEBUG_DRAW,
                         "draw_undercurl (x=%d, y=%f, count=%d, color=(%d,%d,%d,%.3f))\n",
                         x, y, count,
                         color->red, color->green, color->blue,
@@ -517,7 +517,7 @@ DrawingContext::draw_undercurl(int x,
                 double y_center = (y + y_bottom) / 2.;
                 gint surface_bottom = y_bottom + 1;  /* ceil, kind of */
 
-                _bte_debug_print (VTE_DEBUG_DRAW,
+                _bte_debug_print (BTE_DEBUG_DRAW,
                                   "caching undercurl shape\n");
 
                 /* Add a line_width of margin horizontally on both sides, for nice antialias overflowing. */

@@ -28,7 +28,7 @@ if get_option('ctk3')
     sources: libbte_ctk3_public_headers + libbte_common_doc_sources,
     includes: libbte_ctk3_gir_includes,
     dependencies: libbte_ctk3_dep,
-    extra_args: '-DVTE_COMPILATION',
+    extra_args: '-DBTE_COMPILATION',
     nsversion: bte_ctk3_api_version,
     namespace: 'Bte',
     export_packages: bte_ctk3_api_name,

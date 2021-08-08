@@ -30,12 +30,12 @@ struct _BteReaperClass {
 };
 typedef struct _BteReaperClass BteReaperClass;
 
-#define VTE_TYPE_REAPER            (bte_reaper_get_type())
-#define VTE_REAPER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), VTE_TYPE_REAPER, BteReaper))
-#define VTE_REAPER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  VTE_TYPE_REAPER, BteReaperClass))
-#define VTE_IS_REAPER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), VTE_TYPE_REAPER))
-#define VTE_IS_REAPER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  VTE_TYPE_REAPER))
-#define VTE_REAPER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  VTE_TYPE_REAPER, BteReaperClass))
+#define BTE_TYPE_REAPER            (bte_reaper_get_type())
+#define BTE_REAPER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), BTE_TYPE_REAPER, BteReaper))
+#define BTE_REAPER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  BTE_TYPE_REAPER, BteReaperClass))
+#define BTE_IS_REAPER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), BTE_TYPE_REAPER))
+#define BTE_IS_REAPER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  BTE_TYPE_REAPER))
+#define BTE_REAPER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  BTE_TYPE_REAPER, BteReaperClass))
 
 static GType bte_reaper_get_type(void);
 
@@ -48,7 +48,7 @@ bte_reaper_child_watch_cb(GPid pid,
                           int status,
                           gpointer data)
 {
-        _bte_debug_print(VTE_DEBUG_SIGNALS,
+        _bte_debug_print(BTE_DEBUG_SIGNALS,
                          "Reaper emitting child-exited signal.\n");
         g_signal_emit_by_name(data, "child-exited", pid, status);
         g_spawn_close_pid (pid);
@@ -85,7 +85,7 @@ bte_reaper_constructor (GType                  type,
   } else {
           GObject *obj;
           obj = G_OBJECT_CLASS (bte_reaper_parent_class)->constructor (type, n_construct_properties, construct_properties);
-          singleton_reaper = VTE_REAPER (obj);
+          singleton_reaper = BTE_REAPER (obj);
           return obj;
   }
 }
@@ -140,7 +140,7 @@ bte_reaper_class_init(BteReaperClass *klass)
 BteReaper *
 bte_reaper_ref(void)
 {
-        return (BteReaper*)g_object_new(VTE_TYPE_REAPER, nullptr);
+        return (BteReaper*)g_object_new(BTE_TYPE_REAPER, nullptr);
 }
 
 #ifdef MAIN

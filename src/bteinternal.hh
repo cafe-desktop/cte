@@ -65,11 +65,11 @@
 #endif
 
 enum {
-        VTE_BIDI_FLAG_IMPLICIT   = 1 << 0,
-        VTE_BIDI_FLAG_RTL        = 1 << 1,
-        VTE_BIDI_FLAG_AUTO       = 1 << 2,
-        VTE_BIDI_FLAG_BOX_MIRROR = 1 << 3,
-        VTE_BIDI_FLAG_ALL        = (1 << 4) - 1,
+        BTE_BIDI_FLAG_IMPLICIT   = 1 << 0,
+        BTE_BIDI_FLAG_RTL        = 1 << 1,
+        BTE_BIDI_FLAG_AUTO       = 1 << 2,
+        BTE_BIDI_FLAG_BOX_MIRROR = 1 << 3,
+        BTE_BIDI_FLAG_ALL        = (1 << 4) - 1,
 };
 
 namespace bte {
@@ -90,8 +90,8 @@ using Cursor = std::variant<std::string,
 } // namespace bte
 
 typedef enum _BteCharacterReplacement {
-        VTE_CHARACTER_REPLACEMENT_NONE,
-        VTE_CHARACTER_REPLACEMENT_LINE_DRAWING
+        BTE_CHARACTER_REPLACEMENT_NONE,
+        BTE_CHARACTER_REPLACEMENT_LINE_DRAWING
 } BteCharacterReplacement;
 
 typedef struct _BtePaletteColor {
@@ -132,7 +132,7 @@ public:
 
 /* Until the selection can be generated on demand, let's not enable this on stable */
 #include "bte/bteversion.h"
-#if (VTE_MINOR_VERSION % 2) == 0
+#if (BTE_MINOR_VERSION % 2) == 0
 #undef HTML_SELECTION
 #else
 #define HTML_SELECTION
@@ -140,17 +140,17 @@ public:
 
 /* For unified handling of PRIMARY and CLIPBOARD selection */
 typedef enum {
-	VTE_SELECTION_PRIMARY,
-	VTE_SELECTION_CLIPBOARD,
-	LAST_VTE_SELECTION
+	BTE_SELECTION_PRIMARY,
+	BTE_SELECTION_CLIPBOARD,
+	LAST_BTE_SELECTION
 } BteSelection;
 
 /* Used in the CtkClipboard API, to distinguish requests for HTML and TEXT
  * contents of a clipboard */
 typedef enum {
-        VTE_TARGET_TEXT,
-        VTE_TARGET_HTML,
-        LAST_VTE_TARGET
+        BTE_TARGET_TEXT,
+        BTE_TARGET_HTML,
+        LAST_BTE_TARGET
 } BteSelectionTarget;
 
 struct bte_scrolling_region {
@@ -559,8 +559,8 @@ public:
         void unset_widget() noexcept;
 
         /* Metric and sizing data: dimensions of the window */
-        bte::grid::row_t m_row_count{VTE_ROWS};
-        bte::grid::column_t m_column_count{VTE_COLUMNS};
+        bte::grid::row_t m_row_count{BTE_ROWS};
+        bte::grid::column_t m_column_count{BTE_COLUMNS};
 
         bte::terminal::Tabstops m_tabstops{};
 
@@ -608,7 +608,7 @@ public:
 
         auto data_syntax() const noexcept { return m_data_syntax; }
 
-        int m_utf8_ambiguous_width{VTE_DEFAULT_UTF8_AMBIGUOUS_WIDTH};
+        int m_utf8_ambiguous_width{BTE_DEFAULT_UTF8_AMBIGUOUS_WIDTH};
         gunichar m_last_graphic_character{0}; /* for REP */
         /* Array of dirty rectangles in view coordinates; need to
          * add allocation origin and padding when passing to ctk.
@@ -621,7 +621,7 @@ public:
         GList *m_active_terminals_link;
         // FIXMEchpe should these two be g[s]size ?
         size_t m_input_bytes;
-        long m_max_input_bytes{VTE_MAX_INPUT_READ};
+        long m_max_input_bytes{BTE_MAX_INPUT_READ};
 
 	/* Output data queue. */
         BteByteArray *m_outgoing; /* pending input characters */
@@ -656,8 +656,8 @@ public:
                                       and the U+0000 character that denotes erased cells. */
 
         /* charsets in the G0 and G1 slots */
-        BteCharacterReplacement m_character_replacements[2] = { VTE_CHARACTER_REPLACEMENT_NONE,
-                                                                VTE_CHARACTER_REPLACEMENT_NONE };
+        BteCharacterReplacement m_character_replacements[2] = { BTE_CHARACTER_REPLACEMENT_NONE,
+                                                                BTE_CHARACTER_REPLACEMENT_NONE };
         /* pointer to the active one */
         BteCharacterReplacement *m_character_replacement{&m_character_replacements[0]};
 
@@ -674,11 +674,11 @@ public:
         bte::grid::span m_selection_resolved;
 
 	/* Clipboard data information. */
-        bool m_selection_owned[LAST_VTE_SELECTION];
-        BteFormat m_selection_format[LAST_VTE_SELECTION];
+        bool m_selection_owned[LAST_BTE_SELECTION];
+        BteFormat m_selection_format[LAST_BTE_SELECTION];
         bool m_changing_selection;
-        GString *m_selection[LAST_VTE_SELECTION];  // FIXMEegmont rename this so that m_selection_resolved can become m_selection?
-        CtkClipboard *m_clipboard[LAST_VTE_SELECTION];
+        GString *m_selection[LAST_BTE_SELECTION];  // FIXMEegmont rename this so that m_selection_resolved can become m_selection?
+        CtkClipboard *m_clipboard[LAST_BTE_SELECTION];
 
         ClipboardTextRequestCtk<Terminal> m_paste_request;
 
@@ -786,7 +786,7 @@ public:
         private:
                 bte::base::RefPtr<bte::base::Regex> m_regex{};
                 uint32_t m_match_flags{0};
-                bte::platform::Cursor m_cursor{VTE_DEFAULT_CURSOR};
+                bte::platform::Cursor m_cursor{BTE_DEFAULT_CURSOR};
                 int m_tag{-1};
         };
 
@@ -893,7 +893,7 @@ public:
         bte::view::DrawingContext m_draw{};
         bool m_clear_background{true};
 
-        BtePaletteColor m_palette[VTE_PALETTE_SIZE];
+        BtePaletteColor m_palette[BTE_PALETTE_SIZE];
 
 	/* Mouse cursors. */
         gboolean m_mouse_cursor_over_widget; /* as per enter and leave events */
@@ -942,19 +942,19 @@ public:
 	/* Font stuff. */
         bool m_has_fonts{false};
         bool m_fontdirty{true};
-        long m_line_thickness{VTE_LINE_WIDTH};
+        long m_line_thickness{BTE_LINE_WIDTH};
         long m_underline_position{0};
-        long m_underline_thickness{VTE_LINE_WIDTH};
+        long m_underline_thickness{BTE_LINE_WIDTH};
         long m_double_underline_position{0};
-        long m_double_underline_thickness{VTE_LINE_WIDTH};
+        long m_double_underline_thickness{BTE_LINE_WIDTH};
         long m_strikethrough_position{0};
-        long m_strikethrough_thickness{VTE_LINE_WIDTH};
+        long m_strikethrough_thickness{BTE_LINE_WIDTH};
         long m_overline_position{0};
-        long m_overline_thickness{VTE_LINE_WIDTH};
+        long m_overline_thickness{BTE_LINE_WIDTH};
         long m_regex_underline_position{0};
-        long m_regex_underline_thickness{VTE_LINE_WIDTH};
+        long m_regex_underline_thickness{BTE_LINE_WIDTH};
         double m_undercurl_position{0.};
-        double m_undercurl_thickness{VTE_LINE_WIDTH};
+        double m_undercurl_thickness{BTE_LINE_WIDTH};
 
         /* Style stuff */
         CtkBorder m_padding{1, 1, 1, 1};
@@ -1663,12 +1663,12 @@ public:
         /* Sequence handlers */
         bool m_line_wrapped; // signals line wrapped from character insertion
         // Note: inlining the handlers seems to worsen the performance, so we don't do that
-#define _VTE_CMD(cmd) \
+#define _BTE_CMD(cmd) \
 	/* inline */ void cmd (bte::parser::Sequence const& seq);
-#define _VTE_NOP(cmd) G_GNUC_UNUSED _VTE_CMD(cmd)
+#define _BTE_NOP(cmd) G_GNUC_UNUSED _BTE_CMD(cmd)
 #include "parser-cmd.hh"
-#undef _VTE_CMD
-#undef _VTE_NOP
+#undef _BTE_CMD
+#undef _BTE_NOP
 };
 
 } // namespace terminal
@@ -1688,6 +1688,6 @@ _bte_double_equal(double a,
 #pragma GCC diagnostic pop
 }
 
-#define VTE_TEST_FLAG_DECRQCRA (G_GUINT64_CONSTANT(1) << 0)
+#define BTE_TEST_FLAG_DECRQCRA (G_GUINT64_CONSTANT(1) << 0)
 
 extern uint64_t g_test_flags;

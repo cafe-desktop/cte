@@ -50,9 +50,9 @@
  * form it.  That's what BteUnistrDecomp is.  That is the decomposition.
  *
  * We start giving new bteunistr's unique numbers starting at
- * %VTE_UNISTR_START+1 and going up.  We keep the decompositions in a GArray,
+ * %BTE_UNISTR_START+1 and going up.  We keep the decompositions in a GArray,
  * called unistr_decomp.  The first entry of the array is unused (that's why
- * we start from %VTE_UNISTR_START plus one).  The decomposition table provides
+ * we start from %BTE_UNISTR_START plus one).  The decomposition table provides
  * enough information to efficiently answer questions like "what's the first
  * gunichar in this bteunistr?", "what's the sequence of gunichar's in this
  * bteunistr?", and "how many gunichar's are there in this bteunistr?".
@@ -76,9 +76,9 @@
  * encoded bteunistr value.
  */
 
-#define VTE_UNISTR_START 0x80000000
+#define BTE_UNISTR_START 0x80000000
 
-static bteunistr unistr_next = VTE_UNISTR_START + 1;
+static bteunistr unistr_next = BTE_UNISTR_START + 1;
 
 struct BteUnistrDecomp {
 	bteunistr prefix;
@@ -89,7 +89,7 @@ GArray     *unistr_decomp;
 GHashTable *unistr_comp;
 
 #define DECOMP_FROM_INDEX(i)	g_array_index (unistr_decomp, struct BteUnistrDecomp, (i))
-#define DECOMP_FROM_UNISTR(s)	DECOMP_FROM_INDEX ((s) - VTE_UNISTR_START)
+#define DECOMP_FROM_UNISTR(s)	DECOMP_FROM_INDEX ((s) - BTE_UNISTR_START)
 
 static guint
 unistr_comp_hash (gconstpointer key)
@@ -127,13 +127,13 @@ _bte_unistr_append_unichar (bteunistr s, gunichar c)
 
 	if (G_UNLIKELY (!ret)) {
 		/* sanity check to avoid OOM */
-		if (G_UNLIKELY (_bte_unistr_strlen (s) > 10 || unistr_next - VTE_UNISTR_START > 100000))
+		if (G_UNLIKELY (_bte_unistr_strlen (s) > 10 || unistr_next - BTE_UNISTR_START > 100000))
 			return s;
 
 		ret = unistr_next++;
 		g_array_append_val (unistr_decomp, decomp);
 		g_hash_table_insert (unistr_comp,
-				     GUINT_TO_POINTER (ret - VTE_UNISTR_START),
+				     GUINT_TO_POINTER (ret - BTE_UNISTR_START),
 				     GUINT_TO_POINTER (ret));
 	}
 
@@ -145,7 +145,7 @@ _bte_unistr_append_unistr (bteunistr s, bteunistr t)
 {
         g_return_val_if_fail (s < unistr_next, s);
         g_return_val_if_fail (t < unistr_next, s);
-        if (G_UNLIKELY (t >= VTE_UNISTR_START)) {
+        if (G_UNLIKELY (t >= BTE_UNISTR_START)) {
                 s = _bte_unistr_append_unistr (s, DECOMP_FROM_UNISTR (t).prefix);
                 return _bte_unistr_append_unichar (s, DECOMP_FROM_UNISTR (t).suffix);
         } else {
@@ -157,7 +157,7 @@ gunichar
 _bte_unistr_get_base (bteunistr s)
 {
 	g_return_val_if_fail (s < unistr_next, s);
-	while (G_UNLIKELY (s >= VTE_UNISTR_START))
+	while (G_UNLIKELY (s >= BTE_UNISTR_START))
 		s = DECOMP_FROM_UNISTR (s).prefix;
 	return (gunichar) s;
 }
@@ -165,7 +165,7 @@ _bte_unistr_get_base (bteunistr s)
 void
 _bte_unistr_append_to_gunichars (bteunistr s, GArray *a)
 {
-        if (G_UNLIKELY (s >= VTE_UNISTR_START)) {
+        if (G_UNLIKELY (s >= BTE_UNISTR_START)) {
                 struct BteUnistrDecomp *decomp;
                 decomp = &DECOMP_FROM_UNISTR (s);
                 _bte_unistr_append_to_gunichars (decomp->prefix, a);
@@ -199,7 +199,7 @@ void
 _bte_unistr_append_to_string (bteunistr s, GString *gs)
 {
 	g_return_if_fail (s < unistr_next);
-	if (G_UNLIKELY (s >= VTE_UNISTR_START)) {
+	if (G_UNLIKELY (s >= BTE_UNISTR_START)) {
 		struct BteUnistrDecomp *decomp;
 		decomp = &DECOMP_FROM_UNISTR (s);
 		_bte_unistr_append_to_string (decomp->prefix, gs);
@@ -213,7 +213,7 @@ _bte_unistr_strlen (bteunistr s)
 {
 	int len = 1;
 	g_return_val_if_fail (s < unistr_next, len);
-	while (G_UNLIKELY (s >= VTE_UNISTR_START)) {
+	while (G_UNLIKELY (s >= BTE_UNISTR_START)) {
 		s = DECOMP_FROM_UNISTR (s).prefix;
 		len++;
 	}

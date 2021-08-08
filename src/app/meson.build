@@ -25,9 +25,9 @@ app_resource_data = files(
 )
 
 app_common_cppflags = [
-  '-DG_LOG_DOMAIN="VTE"',
+  '-DG_LOG_DOMAIN="BTE"',
   '-DLOCALEDIR="@0@"'.format(bte_prefix / bte_localedir),
-  '-DVTE_DISABLE_DEPRECATION_WARNINGS',
+  '-DBTE_DISABLE_DEPRECATION_WARNINGS',
 ]
 
 app_common_deps = [

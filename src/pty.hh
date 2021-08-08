@@ -31,11 +31,11 @@ class Pty {
 private:
         mutable volatile int m_refcount{1};
         bte::libc::FD m_pty_fd{};
-        BtePtyFlags m_flags{VTE_PTY_DEFAULT};
+        BtePtyFlags m_flags{BTE_PTY_DEFAULT};
 
 public:
         constexpr Pty(bte::libc::FD&& fd,
-                      BtePtyFlags flags = VTE_PTY_DEFAULT) noexcept
+                      BtePtyFlags flags = BTE_PTY_DEFAULT) noexcept
                 : m_pty_fd{std::move(fd)},
                   m_flags{flags}
         {

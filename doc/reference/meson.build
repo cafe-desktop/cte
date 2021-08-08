@@ -57,8 +57,8 @@ private_headers = [
 ]
 
 scan_args = [
-  '--deprecated-guards="VTE_DISABLE_DEPRECATED"',
-  '--ignore-decorators=_VTE_GNUC_NONNULL\s*\([^)]*\)|_VTE_CXX_NOEXCEPT',
+  '--deprecated-guards="BTE_DISABLE_DEPRECATED"',
+  '--ignore-decorators=_BTE_GNUC_NONNULL\s*\([^)]*\)|_BTE_CXX_NOEXCEPT',
 ]
 
 glib_prefix = glib_dep.get_pkgconfig_variable('prefix')
@@ -92,7 +92,7 @@ if get_option('ctk3')
     ignore_headers: private_headers,
     include_directories: top_inc,
     dependencies: libbte_ctk3_dep,
-    c_args: '-DVTE_COMPILATION',
+    c_args: '-DBTE_COMPILATION',
     namespace: 'bte',
     scan_args: scan_args,
     mkdb_args: '--source-suffixes=h,hh,c,cc',

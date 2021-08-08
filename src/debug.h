@@ -25,7 +25,7 @@
 #include <stdint.h>
 #include <glib.h>
 
-#ifndef VTE_COMPILATION
+#ifndef BTE_COMPILATION
 #define _bte_debug_flags _bte_external_debug_flags
 #define _bte_debug_init  _bte_external_debug_init
 #define _bte_debug_on    _bte_external_debug_on
@@ -37,37 +37,37 @@
 G_BEGIN_DECLS
 
 typedef enum {
-	VTE_DEBUG_MISC		= 1 << 0,
-	VTE_DEBUG_PARSER	= 1 << 1,
-	VTE_DEBUG_IO		= 1 << 2,
-	VTE_DEBUG_UPDATES	= 1 << 3,
-	VTE_DEBUG_EVENTS	= 1 << 4,
-	VTE_DEBUG_SIGNALS	= 1 << 5,
-	VTE_DEBUG_SELECTION	= 1 << 6,
-	VTE_DEBUG_SUBSTITUTION	= 1 << 7,
-	VTE_DEBUG_RING		= 1 << 8,
-	VTE_DEBUG_PTY		= 1 << 9,
-	VTE_DEBUG_CURSOR	= 1 << 10,
-	VTE_DEBUG_KEYBOARD	= 1 << 11,
-	VTE_DEBUG_LIFECYCLE	= 1 << 12,
-	VTE_DEBUG_WORK		= 1 << 13,
-	VTE_DEBUG_CELLS		= 1 << 14,
-	VTE_DEBUG_TIMEOUT	= 1 << 15,
-	VTE_DEBUG_DRAW		= 1 << 16,
-	VTE_DEBUG_ALLY		= 1 << 17,
-	VTE_DEBUG_ADJ		= 1 << 18,
-	VTE_DEBUG_PANGOCAIRO    = 1 << 19,
-	VTE_DEBUG_WIDGET_SIZE   = 1 << 20,
-        VTE_DEBUG_STYLE         = 1 << 21,
-	VTE_DEBUG_RESIZE        = 1 << 22,
-        VTE_DEBUG_REGEX         = 1 << 23,
-        VTE_DEBUG_HYPERLINK     = 1 << 24,
-        VTE_DEBUG_MODES         = 1 << 25,
-        VTE_DEBUG_EMULATION     = 1 << 26,
-        VTE_DEBUG_RINGVIEW      = 1 << 27,
-        VTE_DEBUG_BIDI          = 1 << 28,
-        VTE_DEBUG_CONVERSION    = 1 << 29,
-        VTE_DEBUG_EXCEPTIONS    = 1 << 30,
+	BTE_DEBUG_MISC		= 1 << 0,
+	BTE_DEBUG_PARSER	= 1 << 1,
+	BTE_DEBUG_IO		= 1 << 2,
+	BTE_DEBUG_UPDATES	= 1 << 3,
+	BTE_DEBUG_EVENTS	= 1 << 4,
+	BTE_DEBUG_SIGNALS	= 1 << 5,
+	BTE_DEBUG_SELECTION	= 1 << 6,
+	BTE_DEBUG_SUBSTITUTION	= 1 << 7,
+	BTE_DEBUG_RING		= 1 << 8,
+	BTE_DEBUG_PTY		= 1 << 9,
+	BTE_DEBUG_CURSOR	= 1 << 10,
+	BTE_DEBUG_KEYBOARD	= 1 << 11,
+	BTE_DEBUG_LIFECYCLE	= 1 << 12,
+	BTE_DEBUG_WORK		= 1 << 13,
+	BTE_DEBUG_CELLS		= 1 << 14,
+	BTE_DEBUG_TIMEOUT	= 1 << 15,
+	BTE_DEBUG_DRAW		= 1 << 16,
+	BTE_DEBUG_ALLY		= 1 << 17,
+	BTE_DEBUG_ADJ		= 1 << 18,
+	BTE_DEBUG_PANGOCAIRO    = 1 << 19,
+	BTE_DEBUG_WIDGET_SIZE   = 1 << 20,
+        BTE_DEBUG_STYLE         = 1 << 21,
+	BTE_DEBUG_RESIZE        = 1 << 22,
+        BTE_DEBUG_REGEX         = 1 << 23,
+        BTE_DEBUG_HYPERLINK     = 1 << 24,
+        BTE_DEBUG_MODES         = 1 << 25,
+        BTE_DEBUG_EMULATION     = 1 << 26,
+        BTE_DEBUG_RINGVIEW      = 1 << 27,
+        BTE_DEBUG_BIDI          = 1 << 28,
+        BTE_DEBUG_CONVERSION    = 1 << 29,
+        BTE_DEBUG_EXCEPTIONS    = 1 << 30,
 } BteDebugFlags;
 
 void _bte_debug_init(void);
@@ -87,21 +87,21 @@ _bte_debug_on(guint flags)
 	return (_bte_debug_flags & flags) != 0;
 }
 
-#ifdef VTE_DEBUG
-#define _VTE_DEBUG_IF(flags) if (G_UNLIKELY (_bte_debug_on (flags)))
+#ifdef BTE_DEBUG
+#define _BTE_DEBUG_IF(flags) if (G_UNLIKELY (_bte_debug_on (flags)))
 #else
-#define _VTE_DEBUG_IF(flags) if (0)
+#define _BTE_DEBUG_IF(flags) if (0)
 #endif
 
-#ifdef VTE_DEBUG
+#ifdef BTE_DEBUG
 #if defined(__GNUC__) && G_HAVE_GNUC_VARARGS
 #define _bte_debug_print(flags, fmt, ...) \
-	G_STMT_START { _VTE_DEBUG_IF(flags) g_printerr(fmt, ##__VA_ARGS__); } G_STMT_END
+	G_STMT_START { _BTE_DEBUG_IF(flags) g_printerr(fmt, ##__VA_ARGS__); } G_STMT_END
 #else
 #include <stdarg.h>
 static void _bte_debug_print(guint flags, const char *fmt, ...)
 {
-	_VTE_DEBUG_IF(flags) {
+	_BTE_DEBUG_IF(flags) {
 		va_list  ap;
 		va_start (ap, fmt);
 		g_vfprintf (stderr, fmt, ap);
@@ -111,7 +111,7 @@ static void _bte_debug_print(guint flags, const char *fmt, ...)
 #endif
 #else
 #define _bte_debug_print(args...) do { } while(0)
-#endif /* VTE_DEBUG */
+#endif /* BTE_DEBUG */
 
 G_END_DECLS
 

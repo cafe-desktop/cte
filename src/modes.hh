@@ -23,7 +23,7 @@ namespace bte {
 namespace terminal {
 namespace modes {
 
-#define VTE_MODES_MASK(shift) (1U << (shift))
+#define BTE_MODES_MASK(shift) (1U << (shift))
 
 #define MODE_ACCESSOR(name) \
         inline void set_##name(bool value) noexcept \
@@ -79,7 +79,7 @@ public:
         constexpr Base(std::initializer_list<int> modes)
         {
                 for (auto i : modes)
-                        m_default_modes |= VTE_MODES_MASK(i);
+                        m_default_modes |= BTE_MODES_MASK(i);
                 m_modes = m_default_modes;
         }
 
@@ -226,7 +226,7 @@ public:
 
         constexpr Private() : Self{eDEC_AUTOWRAP,
                                    eDEC_TEXT_CURSOR,
-                                   eVTE_BIDI_SWAP_ARROW_KEYS,
+                                   eBTE_BIDI_SWAP_ARROW_KEYS,
                                    eXTERM_ALTBUF_SCROLL,
                                    eXTERM_META_SENDS_ESCAPE} { }
 

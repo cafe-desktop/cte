@@ -53,7 +53,7 @@ static gboolean tracking_focus_mode = FALSE;
 static void
 decset(int mode, gboolean value)
 {
-	fprintf(stdout, _VTE_CAP_CSI "?%d%c", mode, value ? 'h' : 'l');
+	fprintf(stdout, _BTE_CAP_CSI "?%d%c", mode, value ? 'h' : 'l');
 }
 
 static void
@@ -80,11 +80,11 @@ static void
 clear(void)
 {
 	fprintf(stdout, "%s",
-		_VTE_CAP_ESC "7"
-		_VTE_CAP_CSI "11;1H"
-		_VTE_CAP_CSI "1J"
-		_VTE_CAP_CSI "2K"
-		_VTE_CAP_CSI "1;1H");
+		_BTE_CAP_ESC "7"
+		_BTE_CAP_CSI "11;1H"
+		_BTE_CAP_CSI "1J"
+		_BTE_CAP_CSI "2K"
+		_BTE_CAP_CSI "1;1H");
 	reset_mouse_tracking_mode();
 	switch (tracking_mode) {
 	case tracking_x10:
@@ -124,7 +124,7 @@ clear(void)
 	fprintf(stdout, "F - Xterm 1006 extension.\r\n");
 	fprintf(stdout, "I - Focus tracking.\r\n");
 	fprintf(stdout, "Q - Quit.\r\n");
-	fprintf(stdout, "%s", _VTE_CAP_ESC "8");
+	fprintf(stdout, "%s", _BTE_CAP_ESC "8");
 	fflush(stdout);
 }
 
@@ -373,9 +373,9 @@ main(int argc, char **argv)
 	flags = fcntl(STDIN_FILENO, F_GETFL);
 	fcntl(STDIN_FILENO, F_SETFL, flags & ~(O_NONBLOCK));
 	fprintf(stdout, "%s",
-		_VTE_CAP_CSI "12;1H"
-		_VTE_CAP_CSI "2K"
-		_VTE_CAP_CSI "2J");
+		_BTE_CAP_CSI "12;1H"
+		_BTE_CAP_CSI "2K"
+		_BTE_CAP_CSI "2J");
 	do {
 		clear();
 		FD_ZERO(&in_fds);

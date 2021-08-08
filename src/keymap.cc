@@ -30,7 +30,7 @@
 #include "debug.h"
 #include "keymap.h"
 
-#ifdef VTE_DEBUG
+#ifdef BTE_DEBUG
 static void
 _bte_keysym_print(guint keyval,
                   guint modifiers)
@@ -39,10 +39,10 @@ _bte_keysym_print(guint keyval,
 	if (modifiers & CDK_CONTROL_MASK) {
 		g_printerr("Control+");
 	}
-	if (modifiers & VTE_ALT_MASK) {
+	if (modifiers & BTE_ALT_MASK) {
 		g_printerr("Alt+");
 	}
-	if (modifiers & VTE_NUMLOCK_MASK) {
+	if (modifiers & BTE_NUMLOCK_MASK) {
 		g_printerr("NumLock+");
 	}
 	if (modifiers & CDK_SHIFT_MASK) {
@@ -89,9 +89,9 @@ enum _bte_modifier_encoding_method {
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_space[] = {
 	/* Control+Alt+space = ESC+NUL */
-        {cursor_all, keypad_all, CDK_CONTROL_MASK | VTE_ALT_MASK, _VTE_CAP_ESC "\0", 2},
+        {cursor_all, keypad_all, CDK_CONTROL_MASK | BTE_ALT_MASK, _BTE_CAP_ESC "\0", 2},
 	/* Alt+space = ESC+" " */
-        {cursor_all, keypad_all, VTE_ALT_MASK, _VTE_CAP_ESC " ", 2},
+        {cursor_all, keypad_all, BTE_ALT_MASK, _BTE_CAP_ESC " ", 2},
 	/* Control+space = NUL */
         {cursor_all, keypad_all, CDK_CONTROL_MASK, "\0", 1},
 	/* Regular space. */
@@ -101,45 +101,45 @@ static const struct _bte_keymap_entry _bte_keymap_CDK_space[] = {
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_Tab[] = {
 	/* Shift+Tab = Back-Tab */
-        {cursor_all, keypad_all, CDK_SHIFT_MASK, _VTE_CAP_CSI "Z", -1},
+        {cursor_all, keypad_all, CDK_SHIFT_MASK, _BTE_CAP_CSI "Z", -1},
 	/* Alt+Tab = Esc+Tab */
-        {cursor_all, keypad_all, VTE_ALT_MASK, _VTE_CAP_ESC "\t", -1},
+        {cursor_all, keypad_all, BTE_ALT_MASK, _BTE_CAP_ESC "\t", -1},
 	/* Regular tab. */
         {cursor_all, keypad_all, 0, "\t", 1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_Return[] = {
-        {cursor_all, keypad_all, VTE_ALT_MASK, _VTE_CAP_ESC "\r", 2},
+        {cursor_all, keypad_all, BTE_ALT_MASK, _BTE_CAP_ESC "\r", 2},
         {cursor_all, keypad_all, 0, "\r", 1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_Escape[] = {
-        {cursor_all, keypad_all, VTE_ALT_MASK, _VTE_CAP_ESC _VTE_CAP_ESC, 2},
-        {cursor_all, keypad_all, 0, _VTE_CAP_ESC, 1},
+        {cursor_all, keypad_all, BTE_ALT_MASK, _BTE_CAP_ESC _BTE_CAP_ESC, 2},
+        {cursor_all, keypad_all, 0, _BTE_CAP_ESC, 1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_Insert[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "2~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "2~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_ISO_Left_Tab[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "Z", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "Z", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_slash[] = {
-        {cursor_all, keypad_all, VTE_ALT_MASK, _VTE_CAP_ESC "/", 2},
+        {cursor_all, keypad_all, BTE_ALT_MASK, _BTE_CAP_ESC "/", 2},
         {cursor_all, keypad_all, CDK_CONTROL_MASK, "\037", 1},
         {cursor_all, keypad_all, 0, "/", 1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_question[] = {
-        {cursor_all, keypad_all, VTE_ALT_MASK, _VTE_CAP_ESC "?", 2},
+        {cursor_all, keypad_all, BTE_ALT_MASK, _BTE_CAP_ESC "?", 2},
         {cursor_all, keypad_all, CDK_CONTROL_MASK, "\177", 1},
         {cursor_all, keypad_all, 0, "?", 1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
@@ -181,128 +181,128 @@ static const struct _bte_keymap_entry _bte_keymap_CDK_Minus[] = {
 
 /* Keys (potentially) affected by the cursor key mode. */
 static const struct _bte_keymap_entry _bte_keymap_CDK_Home[] = {
-        {cursor_default, keypad_all, 0, _VTE_CAP_CSI "H", -1},
-        {cursor_app, keypad_all, 0, _VTE_CAP_SS3 "H", -1},
+        {cursor_default, keypad_all, 0, _BTE_CAP_CSI "H", -1},
+        {cursor_app, keypad_all, 0, _BTE_CAP_SS3 "H", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_End[] = {
-        {cursor_default, keypad_all, 0, _VTE_CAP_CSI "F", -1},
-        {cursor_app, keypad_all, 0, _VTE_CAP_SS3 "F", -1},
+        {cursor_default, keypad_all, 0, _BTE_CAP_CSI "F", -1},
+        {cursor_app, keypad_all, 0, _BTE_CAP_SS3 "F", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_Page_Up[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "5~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "5~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_Page_Down[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "6~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "6~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_Up[] = {
-        {cursor_default, keypad_all, 0, _VTE_CAP_CSI "A", -1},
-        {cursor_app, keypad_all, 0, _VTE_CAP_SS3 "A", -1},
+        {cursor_default, keypad_all, 0, _BTE_CAP_CSI "A", -1},
+        {cursor_app, keypad_all, 0, _BTE_CAP_SS3 "A", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_Down[] = {
-        {cursor_default, keypad_all, 0, _VTE_CAP_CSI "B", -1},
-        {cursor_app, keypad_all, 0, _VTE_CAP_SS3 "B", -1},
+        {cursor_default, keypad_all, 0, _BTE_CAP_CSI "B", -1},
+        {cursor_app, keypad_all, 0, _BTE_CAP_SS3 "B", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_Right[] = {
-        {cursor_default, keypad_all, 0, _VTE_CAP_CSI "C", -1},
-        {cursor_app, keypad_all, 0, _VTE_CAP_SS3 "C", -1},
+        {cursor_default, keypad_all, 0, _BTE_CAP_CSI "C", -1},
+        {cursor_app, keypad_all, 0, _BTE_CAP_SS3 "C", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_Left[] = {
-        {cursor_default, keypad_all, 0, _VTE_CAP_CSI "D", -1},
-        {cursor_app, keypad_all, 0, _VTE_CAP_SS3 "D", -1},
+        {cursor_default, keypad_all, 0, _BTE_CAP_CSI "D", -1},
+        {cursor_app, keypad_all, 0, _BTE_CAP_SS3 "D", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 /* Keys (potentially) affected by the keypad key mode. */
 static const struct _bte_keymap_entry _bte_keymap_CDK_KP_Space[] = {
         {cursor_all, keypad_default, 0, " ", 1},
-        {cursor_all, keypad_app, 0, _VTE_CAP_SS3 " ", -1},
+        {cursor_all, keypad_app, 0, _BTE_CAP_SS3 " ", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_KP_Tab[] = {
         {cursor_all, keypad_default, 0, "\t", 1},
-        {cursor_all, keypad_app, 0, _VTE_CAP_SS3 "I", -1},
+        {cursor_all, keypad_app, 0, _BTE_CAP_SS3 "I", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_KP_Enter[] = {
-        {cursor_all, keypad_app, VTE_NUMLOCK_MASK, "\r", 1},
-        {cursor_all, keypad_app, 0, _VTE_CAP_SS3 "M", -1},
+        {cursor_all, keypad_app, BTE_NUMLOCK_MASK, "\r", 1},
+        {cursor_all, keypad_app, 0, _BTE_CAP_SS3 "M", -1},
         {cursor_all, keypad_all, 0, "\r", 1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_KP_F1[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_SS3 "P", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_SS3 "P", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_KP_F2[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_SS3 "Q", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_SS3 "Q", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_KP_F3[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_SS3 "R", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_SS3 "R", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_KP_F4[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_SS3 "S", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_SS3 "S", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_KP_Multiply[] = {
         {cursor_all, keypad_default, 0, "*", 1},
-        {cursor_all, keypad_app, VTE_NUMLOCK_MASK, "*", 1},
-        {cursor_all, keypad_app, 0, _VTE_CAP_SS3 "j", -1},
+        {cursor_all, keypad_app, BTE_NUMLOCK_MASK, "*", 1},
+        {cursor_all, keypad_app, 0, _BTE_CAP_SS3 "j", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_KP_Add[] = {
         {cursor_all, keypad_default, 0, "+", 1},
-        {cursor_all, keypad_app, VTE_NUMLOCK_MASK, "+", 1},
-        {cursor_all, keypad_app, 0, _VTE_CAP_SS3 "k", -1},
+        {cursor_all, keypad_app, BTE_NUMLOCK_MASK, "+", 1},
+        {cursor_all, keypad_app, 0, _BTE_CAP_SS3 "k", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_KP_Separator[] = {
         {cursor_all, keypad_default, 0, ",", 1},
-        {cursor_all, keypad_app, 0, _VTE_CAP_SS3 "l", -1},
+        {cursor_all, keypad_app, 0, _BTE_CAP_SS3 "l", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_KP_Subtract[] = {
         {cursor_all, keypad_default, 0, "-", 1},
-        {cursor_all, keypad_app, VTE_NUMLOCK_MASK, "-", 1},
-        {cursor_all, keypad_app, 0, _VTE_CAP_SS3 "m", -1},
+        {cursor_all, keypad_app, BTE_NUMLOCK_MASK, "-", 1},
+        {cursor_all, keypad_app, 0, _BTE_CAP_SS3 "m", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_KP_Decimal_Delete[] = {
         {cursor_all, keypad_default, 0, ".", 1},
-        {cursor_all, keypad_app, 0, _VTE_CAP_SS3 "3~", -1},
+        {cursor_all, keypad_app, 0, _BTE_CAP_SS3 "3~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_KP_Divide[] = {
         {cursor_all, keypad_default, 0, "/", 1},
-        {cursor_all, keypad_app, VTE_NUMLOCK_MASK, "/", 1},
-        {cursor_all, keypad_app, 0, _VTE_CAP_SS3 "o", -1},
+        {cursor_all, keypad_app, BTE_NUMLOCK_MASK, "/", 1},
+        {cursor_all, keypad_app, 0, _BTE_CAP_SS3 "o", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
@@ -360,246 +360,246 @@ static const struct _bte_keymap_entry _bte_keymap_CDK_KP_9[] = {
 
 /* These are the same keys as above, but without numlock. */
 static const struct _bte_keymap_entry _bte_keymap_CDK_KP_Insert[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "2~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "2~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_KP_End[] = {
-        {cursor_app, keypad_all, 0, _VTE_CAP_SS3 "F", -1},
-        {cursor_default, keypad_all, 0, _VTE_CAP_CSI "F", -1},
+        {cursor_app, keypad_all, 0, _BTE_CAP_SS3 "F", -1},
+        {cursor_default, keypad_all, 0, _BTE_CAP_CSI "F", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_KP_Down[] = {
-        {cursor_app, keypad_all, 0, _VTE_CAP_SS3 "B", -1},
-        {cursor_default, keypad_all, 0, _VTE_CAP_CSI "B", -1},
+        {cursor_app, keypad_all, 0, _BTE_CAP_SS3 "B", -1},
+        {cursor_default, keypad_all, 0, _BTE_CAP_CSI "B", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_KP_Page_Down[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "6~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "6~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_KP_Left[] = {
-        {cursor_app, keypad_all, 0, _VTE_CAP_SS3 "D", -1},
-        {cursor_default, keypad_all, 0, _VTE_CAP_CSI "D", -1},
+        {cursor_app, keypad_all, 0, _BTE_CAP_SS3 "D", -1},
+        {cursor_default, keypad_all, 0, _BTE_CAP_CSI "D", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_KP_Begin[] = {
-        {cursor_app, keypad_all, 0, _VTE_CAP_SS3 "E", -1},
-        {cursor_default, keypad_all, 0, _VTE_CAP_CSI "E", -1},
+        {cursor_app, keypad_all, 0, _BTE_CAP_SS3 "E", -1},
+        {cursor_default, keypad_all, 0, _BTE_CAP_CSI "E", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_KP_Right[] = {
-        {cursor_app, keypad_all, 0, _VTE_CAP_SS3 "C", -1},
-        {cursor_default, keypad_all, 0, _VTE_CAP_CSI "C", -1},
+        {cursor_app, keypad_all, 0, _BTE_CAP_SS3 "C", -1},
+        {cursor_default, keypad_all, 0, _BTE_CAP_CSI "C", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_KP_Home[] = {
-        {cursor_app, keypad_all, 0, _VTE_CAP_SS3 "H", -1},
-        {cursor_default, keypad_all, 0, _VTE_CAP_CSI "H", -1},
+        {cursor_app, keypad_all, 0, _BTE_CAP_SS3 "H", -1},
+        {cursor_default, keypad_all, 0, _BTE_CAP_CSI "H", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_KP_Up[] = {
-        {cursor_app, keypad_all, 0, _VTE_CAP_SS3 "A", -1},
-        {cursor_default, keypad_all, 0, _VTE_CAP_CSI "A", -1},
+        {cursor_app, keypad_all, 0, _BTE_CAP_SS3 "A", -1},
+        {cursor_default, keypad_all, 0, _BTE_CAP_CSI "A", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_KP_Page_Up[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "5~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "5~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F1[] = {
-        {cursor_all, keypad_all, CDK_CONTROL_MASK, _VTE_CAP_CSI "P", -1},
-        {cursor_all, keypad_all, CDK_SHIFT_MASK, _VTE_CAP_CSI "P", -1},
-        {cursor_all, keypad_all, VTE_ALT_MASK, _VTE_CAP_CSI "P", -1},
-        {cursor_all, keypad_all, 0, _VTE_CAP_SS3 "P", -1},
+        {cursor_all, keypad_all, CDK_CONTROL_MASK, _BTE_CAP_CSI "P", -1},
+        {cursor_all, keypad_all, CDK_SHIFT_MASK, _BTE_CAP_CSI "P", -1},
+        {cursor_all, keypad_all, BTE_ALT_MASK, _BTE_CAP_CSI "P", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_SS3 "P", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F2[] = {
-        {cursor_all, keypad_all, CDK_CONTROL_MASK, _VTE_CAP_CSI "Q", -1},
-        {cursor_all, keypad_all, CDK_SHIFT_MASK, _VTE_CAP_CSI "Q", -1},
-        {cursor_all, keypad_all, VTE_ALT_MASK, _VTE_CAP_CSI "Q", -1},
-        {cursor_all, keypad_all, 0, _VTE_CAP_SS3 "Q", -1},
+        {cursor_all, keypad_all, CDK_CONTROL_MASK, _BTE_CAP_CSI "Q", -1},
+        {cursor_all, keypad_all, CDK_SHIFT_MASK, _BTE_CAP_CSI "Q", -1},
+        {cursor_all, keypad_all, BTE_ALT_MASK, _BTE_CAP_CSI "Q", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_SS3 "Q", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F3[] = {
-        {cursor_all, keypad_all, CDK_CONTROL_MASK, _VTE_CAP_CSI "R", -1},
-        {cursor_all, keypad_all, CDK_SHIFT_MASK, _VTE_CAP_CSI "R", -1},
-        {cursor_all, keypad_all, VTE_ALT_MASK, _VTE_CAP_CSI "R", -1},
-        {cursor_all, keypad_all, 0, _VTE_CAP_SS3 "R", -1},
+        {cursor_all, keypad_all, CDK_CONTROL_MASK, _BTE_CAP_CSI "R", -1},
+        {cursor_all, keypad_all, CDK_SHIFT_MASK, _BTE_CAP_CSI "R", -1},
+        {cursor_all, keypad_all, BTE_ALT_MASK, _BTE_CAP_CSI "R", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_SS3 "R", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F4[] = {
-        {cursor_all, keypad_all, CDK_CONTROL_MASK, _VTE_CAP_CSI "S", -1},
-        {cursor_all, keypad_all, CDK_SHIFT_MASK, _VTE_CAP_CSI "S", -1},
-        {cursor_all, keypad_all, VTE_ALT_MASK, _VTE_CAP_CSI "S", -1},
-        {cursor_all, keypad_all, 0, _VTE_CAP_SS3 "S", -1},
+        {cursor_all, keypad_all, CDK_CONTROL_MASK, _BTE_CAP_CSI "S", -1},
+        {cursor_all, keypad_all, CDK_SHIFT_MASK, _BTE_CAP_CSI "S", -1},
+        {cursor_all, keypad_all, BTE_ALT_MASK, _BTE_CAP_CSI "S", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_SS3 "S", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F5[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "15~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "15~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F6[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "17~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "17~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F7[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "18~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "18~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F8[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "19~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "19~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F9[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "20~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "20~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F10[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "21~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "21~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F11[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "23~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "23~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F12[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "24~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "24~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F13[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "25~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "25~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F14[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "26~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "26~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F15[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "28~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "28~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F16[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "29~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "29~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F17[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "31~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "31~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F18[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "32~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "32~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F19[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "33~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "33~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F20[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "34~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "34~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F21[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "42~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "42~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F22[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "43~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "43~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F23[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "44~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "44~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F24[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "45~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "45~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F25[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "46~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "46~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F26[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "47~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "47~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F27[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "48~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "48~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F28[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "49~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "49~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F29[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "50~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "50~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F30[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "51~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "51~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F31[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "52~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "52~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F32[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "53~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "53~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F33[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "54~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "54~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F34[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "55~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "55~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
 static const struct _bte_keymap_entry _bte_keymap_CDK_F35[] = {
-        {cursor_all, keypad_all, 0, _VTE_CAP_CSI "56~", -1},
+        {cursor_all, keypad_all, 0, _BTE_CAP_CSI "56~", -1},
         {cursor_all, keypad_all, 0, X_NULL, 0},
 };
 
@@ -725,7 +725,7 @@ _bte_keymap_map(guint keyval,
 	g_return_if_fail(normal != NULL);
 	g_return_if_fail(normal_length != NULL);
 
-	_VTE_DEBUG_IF(VTE_DEBUG_KEYBOARD) 
+	_BTE_DEBUG_IF(BTE_DEBUG_KEYBOARD) 
 		_bte_keysym_print(keyval, modifiers);
 
 	/* Start from scratch. */
@@ -742,7 +742,7 @@ _bte_keymap_map(guint keyval,
 		}
 	}
 	if (entries == NULL) {
-		_bte_debug_print(VTE_DEBUG_KEYBOARD,
+		_bte_debug_print(BTE_DEBUG_KEYBOARD,
 				" (ignoring, no map for key).\n");
 		return;
 	}
@@ -750,7 +750,7 @@ _bte_keymap_map(guint keyval,
 	/* Build mode masks. */
 	cursor_mode = app_cursor_keys ? cursor_app : cursor_default;
 	keypad_mode = app_keypad_keys ? keypad_app : keypad_default;
-	modifiers &= CDK_SHIFT_MASK | CDK_CONTROL_MASK | VTE_ALT_MASK | VTE_NUMLOCK_MASK;
+	modifiers &= CDK_SHIFT_MASK | CDK_CONTROL_MASK | BTE_ALT_MASK | BTE_NUMLOCK_MASK;
 
 	/* Search for the conditions. */
 	for (i = 0; entries[i].normal_length; i++)
@@ -771,13 +771,13 @@ _bte_keymap_map(guint keyval,
                                                   cursor_mode & cursor_app,
                                                   normal,
                                                   normal_length);
-                _bte_debug_print(VTE_DEBUG_KEYBOARD,
+                _bte_debug_print(BTE_DEBUG_KEYBOARD,
                                  " to '%s'.\n",
                                  _bte_debug_sequence_to_string(*normal, *normal_length));
                 return;
 	}
 
-	_bte_debug_print(VTE_DEBUG_KEYBOARD,
+	_bte_debug_print(BTE_DEBUG_KEYBOARD,
 			" (ignoring, no match for modifier state).\n");
 }
 
@@ -954,7 +954,7 @@ _bte_keymap_key_add_key_modifiers(guint keyval,
 
 	significant_modifiers = CDK_SHIFT_MASK |
 				CDK_CONTROL_MASK |
-				VTE_ALT_MASK;
+				BTE_ALT_MASK;
 
 	modifier_encoding_method = _bte_keymap_key_get_modifier_encoding_method(keyval);
 	if (modifier_encoding_method == MODIFIER_ENCODING_NONE) {
@@ -968,10 +968,10 @@ _bte_keymap_key_add_key_modifiers(guint keyval,
 	case CDK_SHIFT_MASK:
 		modifier = 2;
 		break;
-	case VTE_ALT_MASK:
+	case BTE_ALT_MASK:
 		modifier = 3;
 		break;
-	case CDK_SHIFT_MASK | VTE_ALT_MASK:
+	case CDK_SHIFT_MASK | BTE_ALT_MASK:
 		modifier = 4;
 		break;
 	case CDK_CONTROL_MASK:
@@ -980,10 +980,10 @@ _bte_keymap_key_add_key_modifiers(guint keyval,
 	case CDK_SHIFT_MASK | CDK_CONTROL_MASK:
 		modifier = 6;
 		break;
-	case VTE_ALT_MASK | CDK_CONTROL_MASK:
+	case BTE_ALT_MASK | CDK_CONTROL_MASK:
 		modifier = 7;
 		break;
-	case CDK_SHIFT_MASK | VTE_ALT_MASK | CDK_CONTROL_MASK:
+	case CDK_SHIFT_MASK | BTE_ALT_MASK | CDK_CONTROL_MASK:
 		modifier = 8;
 		break;
 	default:
@@ -1002,7 +1002,7 @@ _bte_keymap_key_add_key_modifiers(guint keyval,
 		 * http://cvsweb.xfree86.org/cvsweb/xc/programs/xterm/input.c.diff?r1=3.57&r2=3.58
 		 */
 		if (cursor_app_mode &&
-			g_str_has_prefix(nnormal, _VTE_CAP_SS3)
+			g_str_has_prefix(nnormal, _BTE_CAP_SS3)
 			&& is_cursor_key(keyval)) {
 			nnormal[1] = '[';
 		}

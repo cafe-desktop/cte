@@ -1,5 +1,5 @@
 # translation of lv.po to Latvian
-# Latvian translation for VTE.
+# Latvian translation for BTE.
 # Copyright © 2006 Gnome i18n Project for Latvian.
 #
 # Artis Trops <hornet@navigator.lv>, 2002.

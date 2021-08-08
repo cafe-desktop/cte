@@ -16,12 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __VTE_VTE_H__
-#define __VTE_VTE_H__
+#ifndef __BTE_BTE_H__
+#define __BTE_BTE_H__
 
 #include <glib.h>
 
-#define __VTE_VTE_H_INSIDE__ 1
+#define __BTE_BTE_H_INSIDE__ 1
 
 #include "bteenums.h"
 #include "bteglobals.h"
@@ -31,10 +31,10 @@
 #include "btetypebuiltins.h"
 #include "bteversion.h"
 
-#if !defined(VTE_DISABLE_DEPRECATED) || defined(VTE_COMPILATION)
+#if !defined(BTE_DISABLE_DEPRECATED) || defined(BTE_COMPILATION)
 #include "btedeprecated.h"
-#endif /* !VTE_DISABLE_DEPRECATED */
+#endif /* !BTE_DISABLE_DEPRECATED */
 
-#undef __VTE_VTE_H_INSIDE__
+#undef __BTE_BTE_H_INSIDE__
 
-#endif /* __VTE_VTE_H__ */
+#endif /* __BTE_BTE_H__ */

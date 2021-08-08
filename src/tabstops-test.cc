@@ -38,7 +38,7 @@ static void
 assert_tabstops_default(Tabstops const& t,
                         Tabstops::position_t start = 0,
                         Tabstops::position_t end = Tabstops::position_t(-1),
-                        Tabstops::position_t tab_width = VTE_TAB_WIDTH)
+                        Tabstops::position_t tab_width = BTE_TAB_WIDTH)
 {
         if (end == t.npos)
                 end = t.size();
@@ -108,7 +108,7 @@ static void
 test_tabstops_default(void)
 {
         Tabstops t{};
-        g_assert_cmpuint(t.size(), ==, VTE_COLUMNS);
+        g_assert_cmpuint(t.size(), ==, BTE_COLUMNS);
 
         assert_tabstops_default(t);
 }

@@ -227,7 +227,7 @@ merge_environ(char** envp /* consumed */,
         }
 
         /* Make sure the one in envp overrides the default. */
-        g_hash_table_replace(table, g_strdup("TERM"), g_strdup(VTE_TERMINFO_NAME));
+        g_hash_table_replace(table, g_strdup("TERM"), g_strdup(BTE_TERMINFO_NAME));
 
         if (envp) {
                 for (auto i = unsigned{0}; envp[i] != nullptr; ++i) {
@@ -244,7 +244,7 @@ merge_environ(char** envp /* consumed */,
         }
 
         /* Always set this ourself, not allowing replacing from envp */
-        g_hash_table_replace(table, g_strdup("VTE_VERSION"), g_strdup_printf("%u", VTE_VERSION_NUMERIC));
+        g_hash_table_replace(table, g_strdup("BTE_VERSION"), g_strdup_printf("%u", BTE_VERSION_NUMERIC));
         g_hash_table_replace(table, g_strdup("COLORTERM"), g_strdup("truecolor"));
 
         /* We need to put the working directory also in PWD, so that
@@ -308,7 +308,7 @@ SpawnContext::exec(bte::libc::FD& child_report_error_pipe_write,
          * when the exec succeeds!
          */
 
-        _VTE_DEBUG_IF(VTE_DEBUG_MISC) {
+        _BTE_DEBUG_IF(BTE_DEBUG_MISC) {
                 g_printerr ("Spawning command:\n");
                 auto argv = m_argv.get();
                 for (auto i = 0; argv[i] != NULL; i++) {
@@ -329,7 +329,7 @@ SpawnContext::exec(bte::libc::FD& child_report_error_pipe_write,
         sigemptyset(&set);
         if (pthread_sigmask(SIG_SETMASK, &set, nullptr) == -1) {
                 auto errsv = bte::libc::ErrnoSaver{};
-                _bte_debug_print(VTE_DEBUG_PTY, "%s failed: %s\n",
+                _bte_debug_print(BTE_DEBUG_PTY, "%s failed: %s\n",
                                  "pthread_sigmask", g_strerror(errsv));
                 return ExecError::SIGMASK;
         }
@@ -366,14 +366,14 @@ SpawnContext::exec(bte::libc::FD& child_report_error_pipe_write,
         }
 
         /* Session */
-        if (!(pty()->flags() & VTE_PTY_NO_SESSION)) {
+        if (!(pty()->flags() & BTE_PTY_NO_SESSION)) {
                 /* This starts a new session; we become its process-group leader,
                  * and lose our controlling TTY.
                  */
-                _bte_debug_print(VTE_DEBUG_PTY, "Starting new session\n");
+                _bte_debug_print(BTE_DEBUG_PTY, "Starting new session\n");
                 if (setsid() == -1) {
                         auto errsv = bte::libc::ErrnoSaver{};
-                        _bte_debug_print(VTE_DEBUG_PTY, "%s failed: %s\n",
+                        _bte_debug_print(BTE_DEBUG_PTY, "%s failed: %s\n",
                                          "setsid", g_strerror(errsv));
                         return ExecError::SETSID;
                 }
@@ -388,10 +388,10 @@ SpawnContext::exec(bte::libc::FD& child_report_error_pipe_write,
          * previously there was none, after the setsid() call). However, it appears that e.g.
          * on *BSD, that doesn't happen, so we need this explicit ioctl here.
          */
-        if (!(pty()->flags() & VTE_PTY_NO_CTTY)) {
+        if (!(pty()->flags() & BTE_PTY_NO_CTTY)) {
                 if (ioctl(peer_fd, TIOCSCTTY, peer_fd) != 0) {
                         auto errsv = bte::libc::ErrnoSaver{};
-                        _bte_debug_print(VTE_DEBUG_PTY, "%s failed: %s\n",
+                        _bte_debug_print(BTE_DEBUG_PTY, "%s failed: %s\n",
                                          "ioctl(TIOCSCTTY)", g_strerror(errsv));
                         return ExecError::SCTTY;
                 }
@@ -704,7 +704,7 @@ SpawnOperation::run(bte::glib::Error& error) noexcept
                 if (context().require_systemd_scope())
                         return false;
 
-                _bte_debug_print(VTE_DEBUG_PTY,
+                _bte_debug_print(BTE_DEBUG_PTY,
                                  "Failed to create systemd scope: %s",
                                  error.message());
                 error.reset();

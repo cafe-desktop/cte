@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __VTE_VTE_GLOBALS_H__
-#define __VTE_VTE_GLOBALS_H__
+#ifndef __BTE_BTE_GLOBALS_H__
+#define __BTE_BTE_GLOBALS_H__
 
 #include <glib.h>
 
@@ -26,21 +26,21 @@
 
 G_BEGIN_DECLS
 
-_VTE_PUBLIC
-char *bte_get_user_shell(void) _VTE_CXX_NOEXCEPT;
+_BTE_PUBLIC
+char *bte_get_user_shell(void) _BTE_CXX_NOEXCEPT;
 
-_VTE_PUBLIC
-const char *bte_get_features (void) _VTE_CXX_NOEXCEPT;
+_BTE_PUBLIC
+const char *bte_get_features (void) _BTE_CXX_NOEXCEPT;
 
-_VTE_PUBLIC
-BteFeatureFlags bte_get_feature_flags(void) _VTE_CXX_NOEXCEPT;
+_BTE_PUBLIC
+BteFeatureFlags bte_get_feature_flags(void) _BTE_CXX_NOEXCEPT;
 
-#define VTE_TEST_FLAGS_NONE (G_GUINT64_CONSTANT(0))
-#define VTE_TEST_FLAGS_ALL (~G_GUINT64_CONSTANT(0))
+#define BTE_TEST_FLAGS_NONE (G_GUINT64_CONSTANT(0))
+#define BTE_TEST_FLAGS_ALL (~G_GUINT64_CONSTANT(0))
 
-_VTE_PUBLIC
-void bte_set_test_flags(guint64 flags) _VTE_CXX_NOEXCEPT;
+_BTE_PUBLIC
+void bte_set_test_flags(guint64 flags) _BTE_CXX_NOEXCEPT;
 
 G_END_DECLS
 
-#endif /* __VTE_VTE_GLOBALS_H__ */
+#endif /* __BTE_BTE_GLOBALS_H__ */

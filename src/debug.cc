@@ -28,52 +28,52 @@ guint _bte_debug_flags;
 void
 _bte_debug_init(void)
 {
-#ifdef VTE_DEBUG
+#ifdef BTE_DEBUG
   const GDebugKey keys[] = {
-    { "misc",         VTE_DEBUG_MISC         },
-    { "io",           VTE_DEBUG_IO           },
-    { "adj",          VTE_DEBUG_ADJ          },
-    { "updates",      VTE_DEBUG_UPDATES      },
-    { "events",       VTE_DEBUG_EVENTS       },
-    { "parser",       VTE_DEBUG_PARSER       },
-    { "signals",      VTE_DEBUG_SIGNALS      },
-    { "selection",    VTE_DEBUG_SELECTION    },
-    { "substitution", VTE_DEBUG_SUBSTITUTION },
-    { "ring",         VTE_DEBUG_RING         },
-    { "pty",          VTE_DEBUG_PTY          },
-    { "cursor",       VTE_DEBUG_CURSOR       },
-    { "keyboard",     VTE_DEBUG_KEYBOARD     },
-    { "lifecycle",    VTE_DEBUG_LIFECYCLE    },
-    { "work",         VTE_DEBUG_WORK         },
-    { "cells",        VTE_DEBUG_CELLS        },
-    { "timeout",      VTE_DEBUG_TIMEOUT      },
-    { "draw",         VTE_DEBUG_DRAW         },
-    { "ally",         VTE_DEBUG_ALLY         },
-    { "pangocairo",   VTE_DEBUG_PANGOCAIRO   },
-    { "widget-size",  VTE_DEBUG_WIDGET_SIZE  },
-    { "style",        VTE_DEBUG_STYLE        },
-    { "resize",       VTE_DEBUG_RESIZE       },
-    { "regex",        VTE_DEBUG_REGEX        },
-    { "hyperlink",    VTE_DEBUG_HYPERLINK    },
-    { "modes",        VTE_DEBUG_MODES        },
-    { "emulation",    VTE_DEBUG_EMULATION    },
-    { "ringview",     VTE_DEBUG_RINGVIEW     },
-    { "bidi",         VTE_DEBUG_BIDI         },
-    { "conversion",   VTE_DEBUG_CONVERSION   },
-    { "exceptions",   VTE_DEBUG_EXCEPTIONS   },
+    { "misc",         BTE_DEBUG_MISC         },
+    { "io",           BTE_DEBUG_IO           },
+    { "adj",          BTE_DEBUG_ADJ          },
+    { "updates",      BTE_DEBUG_UPDATES      },
+    { "events",       BTE_DEBUG_EVENTS       },
+    { "parser",       BTE_DEBUG_PARSER       },
+    { "signals",      BTE_DEBUG_SIGNALS      },
+    { "selection",    BTE_DEBUG_SELECTION    },
+    { "substitution", BTE_DEBUG_SUBSTITUTION },
+    { "ring",         BTE_DEBUG_RING         },
+    { "pty",          BTE_DEBUG_PTY          },
+    { "cursor",       BTE_DEBUG_CURSOR       },
+    { "keyboard",     BTE_DEBUG_KEYBOARD     },
+    { "lifecycle",    BTE_DEBUG_LIFECYCLE    },
+    { "work",         BTE_DEBUG_WORK         },
+    { "cells",        BTE_DEBUG_CELLS        },
+    { "timeout",      BTE_DEBUG_TIMEOUT      },
+    { "draw",         BTE_DEBUG_DRAW         },
+    { "ally",         BTE_DEBUG_ALLY         },
+    { "pangocairo",   BTE_DEBUG_PANGOCAIRO   },
+    { "widget-size",  BTE_DEBUG_WIDGET_SIZE  },
+    { "style",        BTE_DEBUG_STYLE        },
+    { "resize",       BTE_DEBUG_RESIZE       },
+    { "regex",        BTE_DEBUG_REGEX        },
+    { "hyperlink",    BTE_DEBUG_HYPERLINK    },
+    { "modes",        BTE_DEBUG_MODES        },
+    { "emulation",    BTE_DEBUG_EMULATION    },
+    { "ringview",     BTE_DEBUG_RINGVIEW     },
+    { "bidi",         BTE_DEBUG_BIDI         },
+    { "conversion",   BTE_DEBUG_CONVERSION   },
+    { "exceptions",   BTE_DEBUG_EXCEPTIONS   },
   };
 
-  _bte_debug_flags = g_parse_debug_string (g_getenv("VTE_DEBUG"),
+  _bte_debug_flags = g_parse_debug_string (g_getenv("BTE_DEBUG"),
                                            keys, G_N_ELEMENTS (keys));
-  _bte_debug_print(0xFFFFFFFF, "VTE debug flags = %x\n", _bte_debug_flags);
-#endif /* VTE_DEBUG */
+  _bte_debug_print(0xFFFFFFFF, "BTE debug flags = %x\n", _bte_debug_flags);
+#endif /* BTE_DEBUG */
 }
 
 const char *
 _bte_debug_sequence_to_string(const char *str,
                               gssize length)
 {
-#if defined(VTE_DEBUG)
+#if defined(BTE_DEBUG)
         static const char codes[][6] = {
                 "NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "BEL",
                 "BS", "HT", "LF", "VT", "FF", "CR", "SO", "SI",
@@ -123,10 +123,10 @@ _bte_debug_sequence_to_string(const char *str,
         return buf->str;
 #else
         return NULL;
-#endif /* VTE_DEBUG */
+#endif /* BTE_DEBUG */
 }
 
-#ifdef VTE_DEBUG
+#ifdef BTE_DEBUG
 static bool
 hexdump_line(GString* str,
              size_t ofs,
@@ -150,14 +150,14 @@ hexdump_line(GString* str,
         g_string_append(str, "|\n");
         return len >= 16;
 }
-#endif /* VTE_DEBUG */
+#endif /* BTE_DEBUG */
 
 void
 _bte_debug_hexdump(char const* str,
                    uint8_t const* buf,
                    size_t len)
 {
-#ifdef VTE_DEBUG
+#ifdef BTE_DEBUG
         GString* s = g_string_new(str);
         g_string_append_printf(s, " len = 0x%x = %u\n", (unsigned int)len, (unsigned int)len);
 
@@ -167,5 +167,5 @@ _bte_debug_hexdump(char const* str,
 
         g_printerr("%s", s->str);
         g_string_free(s, true);
-#endif /* VTE_DEBUG */
+#endif /* BTE_DEBUG */
 }

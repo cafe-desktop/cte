@@ -38,11 +38,11 @@
 #include "utf8.hh"
 
 enum {
-#define _VTE_SGR(...)
-#define _VTE_NGR(name, value) VTE_SGR_##name = value,
+#define _BTE_SGR(...)
+#define _BTE_NGR(name, value) BTE_SGR_##name = value,
 #include "parser-sgr.hh"
-#undef _VTE_SGR
-#undef _VTE_NGR
+#undef _BTE_SGR
+#undef _BTE_NGR
 };
 
 using namespace std::literals;
@@ -58,18 +58,18 @@ static constexpr char const*
 seq_to_str(unsigned int type) noexcept
 {
         switch (type) {
-        case VTE_SEQ_NONE: return "NONE";
-        case VTE_SEQ_IGNORE: return "IGNORE";
-        case VTE_SEQ_GRAPHIC: return "GRAPHIC";
-        case VTE_SEQ_CONTROL: return "CONTROL";
-        case VTE_SEQ_ESCAPE: return "ESCAPE";
-        case VTE_SEQ_CSI: return "CSI";
-        case VTE_SEQ_DCS: return "DCS";
-        case VTE_SEQ_OSC: return "OSC";
-        case VTE_SEQ_SCI: return "SCI";
-        case VTE_SEQ_APC: return "APC";
-        case VTE_SEQ_PM: return "PM";
-        case VTE_SEQ_SOS: return "SOS";
+        case BTE_SEQ_NONE: return "NONE";
+        case BTE_SEQ_IGNORE: return "IGNORE";
+        case BTE_SEQ_GRAPHIC: return "GRAPHIC";
+        case BTE_SEQ_CONTROL: return "CONTROL";
+        case BTE_SEQ_ESCAPE: return "ESCAPE";
+        case BTE_SEQ_CSI: return "CSI";
+        case BTE_SEQ_DCS: return "DCS";
+        case BTE_SEQ_OSC: return "OSC";
+        case BTE_SEQ_SCI: return "SCI";
+        case BTE_SEQ_APC: return "APC";
+        case BTE_SEQ_PM: return "PM";
+        case BTE_SEQ_SOS: return "SOS";
         default:
                 assert(false);
         }
@@ -79,11 +79,11 @@ static constexpr char const*
 cmd_to_str(unsigned int command) noexcept
 {
         switch (command) {
-#define _VTE_CMD(cmd) case VTE_CMD_##cmd: return #cmd;
-#define _VTE_NOP(cmd) _VTE_CMD(cmd)
+#define _BTE_CMD(cmd) case BTE_CMD_##cmd: return #cmd;
+#define _BTE_NOP(cmd) _BTE_CMD(cmd)
 #include "parser-cmd.hh"
-#undef _VTE_CMD
-#undef _VTE_NOP
+#undef _BTE_CMD
+#undef _BTE_NOP
         default:
                 return nullptr;
         }
@@ -94,15 +94,15 @@ static constexepr char const*
 charset_alias_to_str(unsigned int cs) noexcept
 {
         switch (cs) {
-#define _VTE_CHARSET_PASTE(name)
-#define _VTE_CHARSET(name) _VTE_CHARSET_PASTE(name)
-#define _VTE_CHARSET_ALIAS_PASTE(name1,name2) case VTE_CHARSET_##name1: return #name1 "(" ## #name2 ## ")";
-#define _VTE_CHARSET_ALIAS(name1,name2)
+#define _BTE_CHARSET_PASTE(name)
+#define _BTE_CHARSET(name) _BTE_CHARSET_PASTE(name)
+#define _BTE_CHARSET_ALIAS_PASTE(name1,name2) case BTE_CHARSET_##name1: return #name1 "(" ## #name2 ## ")";
+#define _BTE_CHARSET_ALIAS(name1,name2)
 #include "parser-charset.hh"
-#undef _VTE_CHARSET_PASTE
-#undef _VTE_CHARSET
-#undef _VTE_CHARSET_ALIAS_PASTE
-#undef _VTE_CHARSET_ALIAS
+#undef _BTE_CHARSET_PASTE
+#undef _BTE_CHARSET
+#undef _BTE_CHARSET_ALIAS_PASTE
+#undef _BTE_CHARSET_ALIAS
         default:
                 return nullptr; /* not an alias */
         }
@@ -116,15 +116,15 @@ charset_to_str(unsigned int cs) noexcept
                 return alias;
 
         switch (cs) {
-#define _VTE_CHARSET_PASTE(name) case VTE_CHARSET_##name: return #name;
-#define _VTE_CHARSET(name) _VTE_CHARSET_PASTE(name)
-#define _VTE_CHARSET_ALIAS_PASTE(name1,name2)
-#define _VTE_CHARSET_ALIAS(name1,name2)
+#define _BTE_CHARSET_PASTE(name) case BTE_CHARSET_##name: return #name;
+#define _BTE_CHARSET(name) _BTE_CHARSET_PASTE(name)
+#define _BTE_CHARSET_ALIAS_PASTE(name1,name2)
+#define _BTE_CHARSET_ALIAS(name1,name2)
 #include "parser-charset.hh"
-#undef _VTE_CHARSET_PASTE
-#undef _VTE_CHARSET
-#undef _VTE_CHARSET_ALIAS_PASTE
-#undef _VTE_CHARSET_ALIAS
+#undef _BTE_CHARSET_PASTE
+#undef _BTE_CHARSET
+#undef _BTE_CHARSET_ALIAS_PASTE
+#undef _BTE_CHARSET_ALIAS
         default:
                 static char buf[32];
                 snprintf(buf, sizeof(buf), "UNKOWN(%u)", cs);
@@ -196,8 +196,8 @@ private:
         print_pintro(bte::parser::Sequence const& seq) noexcept
         {
                 auto const type = seq.type();
-                if (type != VTE_SEQ_CSI &&
-                    type != VTE_SEQ_DCS)
+                if (type != BTE_SEQ_CSI &&
+                    type != BTE_SEQ_DCS)
                         return;
 
                 auto const p = seq.intermediates() & 0x7;
@@ -213,8 +213,8 @@ private:
         {
                 auto const type = seq.type();
                 auto intermediates = seq.intermediates();
-                if (type == VTE_SEQ_CSI ||
-                    type == VTE_SEQ_DCS)
+                if (type == BTE_SEQ_CSI ||
+                    type == BTE_SEQ_DCS)
                         intermediates = intermediates >> 3; /* remove pintro */
 
                 while (intermediates != 0) {
@@ -270,7 +270,7 @@ private:
         {
                 ReverseAttr attr(this);
 
-                if (seq.command() != VTE_CMD_NONE) {
+                if (seq.command() != BTE_CMD_NONE) {
                         m_str.push_back('{');
                         m_str.append(cmd_to_str(seq.command()));
                         print_params(seq);
@@ -291,19 +291,19 @@ private:
         print_seq(bte::parser::Sequence const& seq) noexcept
         {
                 switch (seq.type()) {
-                case VTE_SEQ_NONE: {
+                case BTE_SEQ_NONE: {
                         RedAttr attr(this);
                         m_str.append("{NONE}"s);
                         break;
                 }
 
-                case VTE_SEQ_IGNORE: {
+                case BTE_SEQ_IGNORE: {
                         RedAttr attr(this);
                         m_str.append("{IGNORE}"s);
                         break;
                 }
 
-                case VTE_SEQ_GRAPHIC: {
+                case BTE_SEQ_GRAPHIC: {
                         auto const terminator = seq.terminator();
                         bool const printable = g_unichar_isprint(terminator);
                         if (m_codepoints || !printable) {
@@ -320,20 +320,20 @@ private:
                         break;
                 }
 
-                case VTE_SEQ_CONTROL:
-                case VTE_SEQ_ESCAPE: {
+                case BTE_SEQ_CONTROL:
+                case BTE_SEQ_ESCAPE: {
                         ReverseAttr attr(this);
                         print_format("{%s}", cmd_to_str(seq.command()));
                         break;
                 }
 
-                case VTE_SEQ_CSI:
-                case VTE_SEQ_DCS: {
+                case BTE_SEQ_CSI:
+                case BTE_SEQ_DCS: {
                         print_seq_and_params(seq);
                         break;
                 }
 
-                case VTE_SEQ_OSC: {
+                case BTE_SEQ_OSC: {
                         ReverseAttr attr(this);
                         m_str.append("{OSC "s);
                         print_string(seq);
@@ -341,7 +341,7 @@ private:
                         break;
                 }
 
-                case VTE_SEQ_SCI: {
+                case BTE_SEQ_SCI: {
                         auto const terminator = seq.terminator();
                         if (terminator <= 0x20)
                                 print_format("{SCI %d/%d}",
@@ -385,7 +385,7 @@ public:
         void operator()(bte::parser::Sequence const& seq) noexcept
         {
                 print_seq(seq);
-                if (seq.command() == VTE_CMD_LF)
+                if (seq.command() == BTE_CMD_LF)
                         printout();
         }
 
@@ -420,23 +420,23 @@ private:
         {
                 switch (sgr) {
                 case -1:
-#define _VTE_SGR(name, value) case value:
-#define _VTE_NGR(...)
+#define _BTE_SGR(name, value) case value:
+#define _BTE_NGR(...)
 #include "parser-sgr.hh"
-#undef _VTE_SGR
-#undef _VTE_NGR
-                case VTE_SGR_SET_FORE_LEGACY_START+1 ... VTE_SGR_SET_FORE_LEGACY_END-1:
-                case VTE_SGR_SET_FORE_LEGACY_BRIGHT_START+1 ... VTE_SGR_SET_FORE_LEGACY_BRIGHT_END-1:
-                case VTE_SGR_SET_BACK_LEGACY_START+1 ... VTE_SGR_SET_BACK_LEGACY_END-1:
-                case VTE_SGR_SET_BACK_LEGACY_BRIGHT_START+1 ... VTE_SGR_SET_BACK_LEGACY_BRIGHT_END-1:
+#undef _BTE_SGR
+#undef _BTE_NGR
+                case BTE_SGR_SET_FORE_LEGACY_START+1 ... BTE_SGR_SET_FORE_LEGACY_END-1:
+                case BTE_SGR_SET_FORE_LEGACY_BRIGHT_START+1 ... BTE_SGR_SET_FORE_LEGACY_BRIGHT_END-1:
+                case BTE_SGR_SET_BACK_LEGACY_START+1 ... BTE_SGR_SET_BACK_LEGACY_END-1:
+                case BTE_SGR_SET_BACK_LEGACY_BRIGHT_START+1 ... BTE_SGR_SET_BACK_LEGACY_BRIGHT_END-1:
                         break;
 
-#define _VTE_SGR(...)
-#define _VTE_NGR(name, value) case value:
+#define _BTE_SGR(...)
+#define _BTE_NGR(name, value) case value:
 #include "parser-sgr.hh"
-#undef _VTE_SGR
-#undef _VTE_NGR
-                case VTE_SGR_SET_FONT_FIRST+1 ... VTE_SGR_SET_FONT_LAST-1:
+#undef _BTE_SGR
+#undef _BTE_NGR
+                case BTE_SGR_SET_FONT_FIRST+1 ... BTE_SGR_SET_FONT_LAST-1:
                         warn("SGR %d is unsupported", sgr);
                         break;
 
@@ -558,13 +558,13 @@ private:
                         check_sgr_number(param);
 
                         switch (param) {
-                        case VTE_SGR_SET_UNDERLINE:
+                        case BTE_SGR_SET_UNDERLINE:
                                 check_sgr_underline(seq, i);
                                 break;
 
-                        case VTE_SGR_SET_FORE_SPEC:
-                        case VTE_SGR_SET_BACK_SPEC:
-                        case VTE_SGR_SET_DECO_SPEC:
+                        case BTE_SGR_SET_FORE_SPEC:
+                        case BTE_SGR_SET_BACK_SPEC:
+                        case BTE_SGR_SET_DECO_SPEC:
                                 check_sgr_color(seq, i);
                                 break;
 
@@ -584,28 +584,28 @@ public:
         {
                 auto cmd = seq.command();
                 switch (cmd) {
-                case VTE_CMD_OSC:
+                case BTE_CMD_OSC:
                         if (seq.terminator() == 7 /* BEL */)
                                 warn("OSC terminated by BEL may be ignored; use ST (ESC \\) instead.");
                         break;
 
-                case VTE_CMD_DECSLRM_OR_SCOSC:
-                        cmd = VTE_CMD_SCOSC;
+                case BTE_CMD_DECSLRM_OR_SCOSC:
+                        cmd = BTE_CMD_SCOSC;
                         [[fallthrough]];
-                case VTE_CMD_SCOSC:
-                        warn_deprecated(cmd, VTE_CMD_DECSC);
+                case BTE_CMD_SCOSC:
+                        warn_deprecated(cmd, BTE_CMD_DECSC);
                         break;
 
-                case VTE_CMD_SCORC:
-                        warn_deprecated(cmd, VTE_CMD_DECRC);
+                case BTE_CMD_SCORC:
+                        warn_deprecated(cmd, BTE_CMD_DECRC);
                         break;
 
-                case VTE_CMD_SGR:
+                case BTE_CMD_SGR:
                         check_sgr(seq);
                         break;
 
                 default:
-                        if (cmd >= VTE_CMD_NOP_FIRST)
+                        if (cmd >= BTE_CMD_NOP_FIRST)
                                 warn("%s is unimplemented", cmd_to_str(cmd));
                         break;
                 }
@@ -621,8 +621,8 @@ public:
 
 class Processor {
 private:
-        gsize m_seq_stats[VTE_SEQ_N];
-        gsize m_cmd_stats[VTE_CMD_N];
+        gsize m_seq_stats[BTE_SEQ_N];
+        gsize m_cmd_stats[BTE_CMD_N];
         GArray* m_bench_times;
 
         template<class Functor>
@@ -673,7 +673,7 @@ private:
                                         }
 
                                         m_seq_stats[ret]++;
-                                        if (ret != VTE_SEQ_NONE) {
+                                        if (ret != BTE_SEQ_NONE) {
                                                 m_cmd_stats[seq.command()]++;
                                                 func(seq);
                                         }
@@ -771,17 +771,17 @@ public:
 
         void print_statistics() const noexcept
         {
-                for (unsigned int s = VTE_SEQ_NONE + 1; s < VTE_SEQ_N; s++) {
+                for (unsigned int s = BTE_SEQ_NONE + 1; s < BTE_SEQ_N; s++) {
                         g_printerr("%\'16" G_GSIZE_FORMAT " %s\n",  m_seq_stats[s], seq_to_str(s));
                 }
 
                 g_printerr("\n");
-                for (unsigned int s = 0; s < VTE_CMD_N; s++) {
+                for (unsigned int s = 0; s < BTE_CMD_N; s++) {
                         if (m_cmd_stats[s] > 0) {
                                 g_printerr("%\'16" G_GSIZE_FORMAT " %s%s\n",
                                            m_cmd_stats[s],
                                            cmd_to_str(s),
-                                           s >= VTE_CMD_NOP_FIRST ? " [NOP]" : "");
+                                           s >= BTE_CMD_NOP_FIRST ? " [NOP]" : "");
                         }
                 }
         }

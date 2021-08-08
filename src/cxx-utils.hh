@@ -35,7 +35,7 @@ clamp(T const& v,
         return std::max(std::min(v, max_v), min_v);
 }
 
-#ifdef VTE_DEBUG
+#ifdef BTE_DEBUG
 void log_exception(char const* func = __builtin_FUNCTION(),
                    char const* filename = __builtin_FILE(),
                    int const line = __builtin_LINE()) noexcept;

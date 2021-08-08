@@ -15,12 +15,12 @@
  * along with this program.  If not) see <https://www.gnu.org/licenses/>.
  */
 
-#if !defined(_VTE_SGR) || !defined(_VTE_NGR)
-#error "Must define _VTE_SGR and _VTE_NGR before including this file"
+#if !defined(_BTE_SGR) || !defined(_BTE_NGR)
+#error "Must define _BTE_SGR and _BTE_NGR before including this file"
 #endif
 
-#define SGR(set, name, value) _VTE_SGR(set##_##name, value)
-#define NGR(set, name, value) _VTE_NGR(set##_##name, value)
+#define SGR(set, name, value) _BTE_SGR(set##_##name, value)
+#define NGR(set, name, value) _BTE_NGR(set##_##name, value)
 
 SGR(SET, BOLD, 1)
 SGR(SET, DIM, 2)

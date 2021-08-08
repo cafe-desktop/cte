@@ -23,9 +23,9 @@
     -->
 
   <bookinfo>
-    <title>VTE Reference Manual</title>
+    <title>BTE Reference Manual</title>
     <releaseinfo>
-      Documentation for VTE version &version;.
+      Documentation for BTE version &version;.
       The latest version of this documentation can be found on-line at the
       <ulink role="online-location" url="http://library.gnome.org/devel/bte/">GNOME Library</ulink>.
     </releaseinfo>

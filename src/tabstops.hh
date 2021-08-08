@@ -110,9 +110,9 @@ private:
         }
 
 public:
-        Tabstops(position_t size = VTE_COLUMNS,
+        Tabstops(position_t size = BTE_COLUMNS,
                  bool set_default = true,
-                 position_t tab_width = VTE_TAB_WIDTH) noexcept
+                 position_t tab_width = BTE_TAB_WIDTH) noexcept
         {
                 resize(size, set_default, tab_width);
         }
@@ -135,7 +135,7 @@ public:
 
         void resize(position_t size,
                     bool set_default = true,
-                    position_t tab_width = VTE_TAB_WIDTH) noexcept
+                    position_t tab_width = BTE_TAB_WIDTH) noexcept
         {
                 /* We want an even number of blocks */
                 auto const new_capacity = ((size + 8 * sizeof(storage_t) - 1) / (8 * sizeof(storage_t)) + 1) & ~1;
@@ -172,7 +172,7 @@ public:
                 memset(m_storage, 0, m_capacity * sizeof(m_storage[0]));
         }
 
-        inline void reset(position_t tab_width = VTE_TAB_WIDTH) noexcept
+        inline void reset(position_t tab_width = BTE_TAB_WIDTH) noexcept
         {
                 clear();
                 for (position_t i = 0; i < m_size; i += tab_width)

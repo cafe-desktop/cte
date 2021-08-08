@@ -43,9 +43,9 @@ libbte_common_public_headers = files(
 )
 
 bteversion_conf = configuration_data()
-bteversion_conf.set('VTE_MAJOR_VERSION', bte_major_version)
-bteversion_conf.set('VTE_MINOR_VERSION', bte_minor_version)
-bteversion_conf.set('VTE_MICRO_VERSION', bte_micro_version)
+bteversion_conf.set('BTE_MAJOR_VERSION', bte_major_version)
+bteversion_conf.set('BTE_MINOR_VERSION', bte_minor_version)
+bteversion_conf.set('BTE_MICRO_VERSION', bte_micro_version)
 
 libbte_version_headers = configure_file(
   input: 'bteversion.h.in',

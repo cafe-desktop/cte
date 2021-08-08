@@ -33,7 +33,7 @@
 
 namespace bte::base {
 
-/* VTE cannot use the converters for ECMA-35 (ISO-2022-*), since they
+/* BTE cannot use the converters for ECMA-35 (ISO-2022-*), since they
  * interpret escape sequences (for charset designation), and do not
  * (and *cannot*, without having a complete escape sequence parser)
  * let through the non-designation sequences.

@@ -70,9 +70,9 @@
 #endif
 
 #define I_(string) (g_intern_static_string(string))
-#define _VTE_PARAM_DEPRECATED (_bte_debug_on(VTE_DEBUG_SIGNALS) ? G_PARAM_DEPRECATED : 0)
+#define _BTE_PARAM_DEPRECATED (_bte_debug_on(BTE_DEBUG_SIGNALS) ? G_PARAM_DEPRECATED : 0)
 
-#define VTE_TERMINAL_CSS_NAME "bte-terminal"
+#define BTE_TERMINAL_CSS_NAME "bte-terminal"
 
 struct _BteTerminalClassPrivate {
         CtkStyleProvider *fallback_style_provider;
@@ -81,7 +81,7 @@ struct _BteTerminalClassPrivate {
 
 static void bte_terminal_scrollable_iface_init(CtkScrollableInterface* iface) noexcept;
 
-#ifdef VTE_DEBUG
+#ifdef BTE_DEBUG
 G_DEFINE_TYPE_WITH_CODE(BteTerminal, bte_terminal, CTK_TYPE_WIDGET,
                         {
                                 BteTerminal_private_offset =
@@ -89,7 +89,7 @@ G_DEFINE_TYPE_WITH_CODE(BteTerminal, bte_terminal, CTK_TYPE_WIDGET,
                         }
                         g_type_add_class_private (g_define_type_id, sizeof (BteTerminalClassPrivate));
                         G_IMPLEMENT_INTERFACE(CTK_TYPE_SCROLLABLE, bte_terminal_scrollable_iface_init)
-                        if (_bte_debug_on(VTE_DEBUG_LIFECYCLE)) {
+                        if (_bte_debug_on(BTE_DEBUG_LIFECYCLE)) {
                                 g_printerr("bte_terminal_get_type()\n");
                         })
 #else
@@ -188,7 +188,7 @@ static void
 bte_terminal_real_copy_clipboard(BteTerminal *terminal) noexcept
 try
 {
-	WIDGET(terminal)->copy(VTE_SELECTION_CLIPBOARD, VTE_FORMAT_TEXT);
+	WIDGET(terminal)->copy(BTE_SELECTION_CLIPBOARD, BTE_FORMAT_TEXT);
 }
 catch (...)
 {
@@ -210,7 +210,7 @@ static void
 bte_terminal_style_updated (CtkWidget *widget) noexcept
 try
 {
-	BteTerminal *terminal = VTE_TERMINAL(widget);
+	BteTerminal *terminal = BTE_TERMINAL(widget);
 
         CTK_WIDGET_CLASS (bte_terminal_parent_class)->style_updated (widget);
 
@@ -226,7 +226,7 @@ bte_terminal_key_press(CtkWidget *widget,
                        CdkEventKey *event) noexcept
 try
 {
-	BteTerminal *terminal = VTE_TERMINAL(widget);
+	BteTerminal *terminal = BTE_TERMINAL(widget);
 
         /* We do NOT want chain up to CtkWidget::key-press-event, since that would
          * cause CtkWidget's keybindings to be handled and consumed. However we'll
@@ -257,7 +257,7 @@ bte_terminal_key_release(CtkWidget *widget,
                          CdkEventKey *event) noexcept
 try
 {
-	BteTerminal *terminal = VTE_TERMINAL(widget);
+	BteTerminal *terminal = BTE_TERMINAL(widget);
         return WIDGET(terminal)->key_release(event);
 }
 catch (...)
@@ -271,7 +271,7 @@ bte_terminal_motion_notify(CtkWidget *widget,
                            CdkEventMotion *event) noexcept
 try
 {
-        BteTerminal *terminal = VTE_TERMINAL(widget);
+        BteTerminal *terminal = BTE_TERMINAL(widget);
         return WIDGET(terminal)->motion_notify(event);
 }
 catch (...)
@@ -285,7 +285,7 @@ bte_terminal_button_press(CtkWidget *widget,
                           CdkEventButton *event) noexcept
 try
 {
-	BteTerminal *terminal = VTE_TERMINAL(widget);
+	BteTerminal *terminal = BTE_TERMINAL(widget);
         return WIDGET(terminal)->button_press(event);
 }
 catch (...)
@@ -299,7 +299,7 @@ bte_terminal_button_release(CtkWidget *widget,
                             CdkEventButton *event) noexcept
 try
 {
-	BteTerminal *terminal = VTE_TERMINAL(widget);
+	BteTerminal *terminal = BTE_TERMINAL(widget);
         return WIDGET(terminal)->button_release(event);
 }
 catch (...)
@@ -313,7 +313,7 @@ bte_terminal_scroll(CtkWidget *widget,
                     CdkEventScroll *event) noexcept
 try
 {
-	BteTerminal *terminal = VTE_TERMINAL(widget);
+	BteTerminal *terminal = BTE_TERMINAL(widget);
         WIDGET(terminal)->scroll(event);
         return TRUE;
 }
@@ -328,7 +328,7 @@ bte_terminal_focus_in(CtkWidget *widget,
                       CdkEventFocus *event) noexcept
 try
 {
-	BteTerminal *terminal = VTE_TERMINAL(widget);
+	BteTerminal *terminal = BTE_TERMINAL(widget);
         WIDGET(terminal)->focus_in(event);
         return FALSE;
 }
@@ -343,7 +343,7 @@ bte_terminal_focus_out(CtkWidget *widget,
                        CdkEventFocus *event) noexcept
 try
 {
-	BteTerminal *terminal = VTE_TERMINAL(widget);
+	BteTerminal *terminal = BTE_TERMINAL(widget);
         WIDGET(terminal)->focus_out(event);
         return FALSE;
 }
@@ -358,7 +358,7 @@ bte_terminal_enter(CtkWidget *widget,
                    CdkEventCrossing *event) noexcept
 try
 {
-	BteTerminal *terminal = VTE_TERMINAL(widget);
+	BteTerminal *terminal = BTE_TERMINAL(widget);
         gboolean ret = FALSE;
 
 	if (CTK_WIDGET_CLASS (bte_terminal_parent_class)->enter_notify_event) {
@@ -380,7 +380,7 @@ bte_terminal_leave(CtkWidget *widget,
                    CdkEventCrossing *event) noexcept
 try
 {
-	BteTerminal *terminal = VTE_TERMINAL(widget);
+	BteTerminal *terminal = BTE_TERMINAL(widget);
 	gboolean ret = FALSE;
 
 	if (CTK_WIDGET_CLASS (bte_terminal_parent_class)->leave_notify_event) {
@@ -403,7 +403,7 @@ bte_terminal_get_preferred_width(CtkWidget *widget,
 				 int       *natural_width) noexcept
 try
 {
-	BteTerminal *terminal = VTE_TERMINAL(widget);
+	BteTerminal *terminal = BTE_TERMINAL(widget);
         WIDGET(terminal)->get_preferred_width(minimum_width, natural_width);
 }
 catch (...)
@@ -417,7 +417,7 @@ bte_terminal_get_preferred_height(CtkWidget *widget,
 				  int       *natural_height) noexcept
 try
 {
-	BteTerminal *terminal = VTE_TERMINAL(widget);
+	BteTerminal *terminal = BTE_TERMINAL(widget);
         WIDGET(terminal)->get_preferred_height(minimum_height, natural_height);
 }
 catch (...)
@@ -430,7 +430,7 @@ bte_terminal_size_allocate(CtkWidget *widget,
                            CtkAllocation *allocation) noexcept
 try
 {
-	BteTerminal *terminal = VTE_TERMINAL(widget);
+	BteTerminal *terminal = BTE_TERMINAL(widget);
         WIDGET(terminal)->size_allocate(allocation);
 }
 catch (...)
@@ -443,7 +443,7 @@ bte_terminal_draw(CtkWidget *widget,
                   cairo_t *cr) noexcept
 try
 {
-        BteTerminal *terminal = VTE_TERMINAL (widget);
+        BteTerminal *terminal = BTE_TERMINAL (widget);
         WIDGET(terminal)->draw(cr);
         return FALSE;
 }
@@ -457,11 +457,11 @@ static void
 bte_terminal_realize(CtkWidget *widget) noexcept
 try
 {
-	_bte_debug_print(VTE_DEBUG_LIFECYCLE, "bte_terminal_realize()\n");
+	_bte_debug_print(BTE_DEBUG_LIFECYCLE, "bte_terminal_realize()\n");
 
         CTK_WIDGET_CLASS(bte_terminal_parent_class)->realize(widget);
 
-        BteTerminal *terminal= VTE_TERMINAL(widget);
+        BteTerminal *terminal= BTE_TERMINAL(widget);
         WIDGET(terminal)->realize();
 }
 catch (...)
@@ -472,10 +472,10 @@ catch (...)
 static void
 bte_terminal_unrealize(CtkWidget *widget) noexcept
 {
-	_bte_debug_print(VTE_DEBUG_LIFECYCLE, "bte_terminal_unrealize()\n");
+	_bte_debug_print(BTE_DEBUG_LIFECYCLE, "bte_terminal_unrealize()\n");
 
         try {
-                BteTerminal *terminal = VTE_TERMINAL (widget);
+                BteTerminal *terminal = BTE_TERMINAL (widget);
                 WIDGET(terminal)->unrealize();
         } catch (...) {
                 bte::log_exception();
@@ -488,9 +488,9 @@ static void
 bte_terminal_map(CtkWidget *widget) noexcept
 try
 {
-        _bte_debug_print(VTE_DEBUG_LIFECYCLE, "bte_terminal_map()\n");
+        _bte_debug_print(BTE_DEBUG_LIFECYCLE, "bte_terminal_map()\n");
 
-        BteTerminal *terminal = VTE_TERMINAL(widget);
+        BteTerminal *terminal = BTE_TERMINAL(widget);
         CTK_WIDGET_CLASS(bte_terminal_parent_class)->map(widget);
 
         WIDGET(terminal)->map();
@@ -503,10 +503,10 @@ catch (...)
 static void
 bte_terminal_unmap(CtkWidget *widget) noexcept
 {
-        _bte_debug_print(VTE_DEBUG_LIFECYCLE, "bte_terminal_unmap()\n");
+        _bte_debug_print(BTE_DEBUG_LIFECYCLE, "bte_terminal_unmap()\n");
 
         try {
-                BteTerminal *terminal = VTE_TERMINAL(widget);
+                BteTerminal *terminal = BTE_TERMINAL(widget);
                 WIDGET(terminal)->unmap();
         } catch (...) {
                 bte::log_exception();
@@ -520,7 +520,7 @@ bte_terminal_screen_changed (CtkWidget *widget,
                              CdkScreen *previous_screen) noexcept
 try
 {
-        BteTerminal *terminal = VTE_TERMINAL (widget);
+        BteTerminal *terminal = BTE_TERMINAL (widget);
 
         if (CTK_WIDGET_CLASS (bte_terminal_parent_class)->screen_changed) {
                 CTK_WIDGET_CLASS (bte_terminal_parent_class)->screen_changed (widget, previous_screen);
@@ -537,7 +537,7 @@ static void
 bte_terminal_constructed (GObject *object) noexcept
 try
 {
-        BteTerminal *terminal = VTE_TERMINAL (object);
+        BteTerminal *terminal = BTE_TERMINAL (object);
 
         G_OBJECT_CLASS (bte_terminal_parent_class)->constructed (object);
 
@@ -555,14 +555,14 @@ try
         void *place;
 	CtkStyleContext *context;
 
-	_bte_debug_print(VTE_DEBUG_LIFECYCLE, "bte_terminal_init()\n");
+	_bte_debug_print(BTE_DEBUG_LIFECYCLE, "bte_terminal_init()\n");
 
         context = ctk_widget_get_style_context(&terminal->widget);
         ctk_style_context_add_provider (context,
-                                        VTE_TERMINAL_GET_CLASS (terminal)->priv->fallback_style_provider,
+                                        BTE_TERMINAL_GET_CLASS (terminal)->priv->fallback_style_provider,
                                         CTK_STYLE_PROVIDER_PRIORITY_FALLBACK);
         ctk_style_context_add_provider (context,
-                                        VTE_TERMINAL_GET_CLASS (terminal)->priv->style_provider,
+                                        BTE_TERMINAL_GET_CLASS (terminal)->priv->style_provider,
                                         CTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
         ctk_widget_set_has_window(&terminal->widget, FALSE);
@@ -583,10 +583,10 @@ catch (...)
 static void
 bte_terminal_dispose(GObject *object) noexcept
 {
-	_bte_debug_print(VTE_DEBUG_LIFECYCLE, "bte_terminal_dispose()\n");
+	_bte_debug_print(BTE_DEBUG_LIFECYCLE, "bte_terminal_dispose()\n");
 
         try {
-                BteTerminal *terminal = VTE_TERMINAL (object);
+                BteTerminal *terminal = BTE_TERMINAL (object);
                 WIDGET(terminal)->dispose();
         } catch (...) {
                 bte::log_exception();
@@ -599,10 +599,10 @@ bte_terminal_dispose(GObject *object) noexcept
 static void
 bte_terminal_finalize(GObject *object) noexcept
 {
-	_bte_debug_print(VTE_DEBUG_LIFECYCLE, "bte_terminal_finalize()\n");
+	_bte_debug_print(BTE_DEBUG_LIFECYCLE, "bte_terminal_finalize()\n");
 
         try {
-                BteTerminal *terminal = VTE_TERMINAL (object);
+                BteTerminal *terminal = BTE_TERMINAL (object);
                 WIDGET(terminal)->~Widget();
         } catch (...) {
                 bte::log_exception();
@@ -619,7 +619,7 @@ bte_terminal_get_property (GObject *object,
                            GParamSpec *pspec) noexcept
 try
 {
-        BteTerminal *terminal = VTE_TERMINAL (object);
+        BteTerminal *terminal = BTE_TERMINAL (object);
         auto widget = WIDGET(terminal);
         auto impl = IMPL(terminal);
 
@@ -748,7 +748,7 @@ bte_terminal_set_property (GObject *object,
                            GParamSpec *pspec) noexcept
 try
 {
-        BteTerminal *terminal = VTE_TERMINAL (object);
+        BteTerminal *terminal = BTE_TERMINAL (object);
 
 	switch (prop_id)
                 {
@@ -869,13 +869,13 @@ bte_terminal_class_init(BteTerminalClass *klass)
 	CtkWidgetClass *widget_class;
 	CtkBindingSet  *binding_set;
 
-#ifdef VTE_DEBUG
+#ifdef BTE_DEBUG
 	{
                 _bte_debug_init();
-		_bte_debug_print(VTE_DEBUG_LIFECYCLE,
+		_bte_debug_print(BTE_DEBUG_LIFECYCLE,
                                  "bte_terminal_class_init()\n");
 		/* print out the legend */
-		_bte_debug_print(VTE_DEBUG_WORK,
+		_bte_debug_print(BTE_DEBUG_WORK,
                                  "Debugging work flow (top input to bottom output):\n"
                                  "  .  _bte_terminal_process_incoming\n"
                                  "  <  start process_timeout\n"
@@ -892,7 +892,7 @@ bte_terminal_class_init(BteTerminalClass *klass)
 	}
 #endif
 
-	_VTE_DEBUG_IF (VTE_DEBUG_UPDATES) cdk_window_set_debug_updates(TRUE);
+	_BTE_DEBUG_IF (BTE_DEBUG_UPDATES) cdk_window_set_debug_updates(TRUE);
 
 	bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR);
 	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
@@ -927,7 +927,7 @@ bte_terminal_class_init(BteTerminalClass *klass)
 	widget_class->size_allocate = bte_terminal_size_allocate;
         widget_class->screen_changed = bte_terminal_screen_changed;
 
-        ctk_widget_class_set_css_name(widget_class, VTE_TERMINAL_CSS_NAME);
+        ctk_widget_class_set_css_name(widget_class, BTE_TERMINAL_CSS_NAME);
 
 	/* Initialize default handlers. */
 	klass->eof = NULL;
@@ -1099,11 +1099,11 @@ bte_terminal_class_init(BteTerminalClass *klass)
          *
          * Emitted when the hovered hyperlink changes.
          *
-         * @uri and @bbox are owned by VTE, must not be modified, and might
+         * @uri and @bbox are owned by BTE, must not be modified, and might
          * change after the signal handlers returns.
          *
          * The signal is not re-emitted when the bounding box changes for the
-         * same hyperlink. This might change in a future VTE version without notice.
+         * same hyperlink. This might change in a future BTE version without notice.
          *
          * Since: 0.50
          */
@@ -1663,8 +1663,8 @@ bte_terminal_class_init(BteTerminalClass *klass)
          */
         pspecs[PROP_BACKSPACE_BINDING] =
                 g_param_spec_enum ("backspace-binding", NULL, NULL,
-                                   VTE_TYPE_ERASE_BINDING,
-                                   VTE_ERASE_AUTO,
+                                   BTE_TYPE_ERASE_BINDING,
+                                   BTE_ERASE_AUTO,
                                    (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY));
 
         /**
@@ -1690,8 +1690,8 @@ bte_terminal_class_init(BteTerminalClass *klass)
          */
         pspecs[PROP_CELL_HEIGHT_SCALE] =
                 g_param_spec_double ("cell-height-scale", NULL, NULL,
-                                     VTE_CELL_SCALE_MIN,
-                                     VTE_CELL_SCALE_MAX,
+                                     BTE_CELL_SCALE_MIN,
+                                     BTE_CELL_SCALE_MAX,
                                      1.,
                                      (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY));
 
@@ -1704,8 +1704,8 @@ bte_terminal_class_init(BteTerminalClass *klass)
          */
         pspecs[PROP_CELL_WIDTH_SCALE] =
                 g_param_spec_double ("cell-width-scale", NULL, NULL,
-                                     VTE_CELL_SCALE_MIN,
-                                     VTE_CELL_SCALE_MAX,
+                                     BTE_CELL_SCALE_MIN,
+                                     BTE_CELL_SCALE_MAX,
                                      1.,
                                      (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY));
 
@@ -1722,19 +1722,19 @@ bte_terminal_class_init(BteTerminalClass *klass)
          */
         pspecs[PROP_CJK_AMBIGUOUS_WIDTH] =
                 g_param_spec_int ("cjk-ambiguous-width", NULL, NULL,
-                                  1, 2, VTE_DEFAULT_UTF8_AMBIGUOUS_WIDTH,
+                                  1, 2, BTE_DEFAULT_UTF8_AMBIGUOUS_WIDTH,
                                   (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY));
 
         /**
          * BteTerminal:cursor-blink-mode:
          *
-         * Sets whether or not the cursor will blink. Using %VTE_CURSOR_BLINK_SYSTEM
+         * Sets whether or not the cursor will blink. Using %BTE_CURSOR_BLINK_SYSTEM
          * will use the #CtkSettings::ctk-cursor-blink setting.
          */
         pspecs[PROP_CURSOR_BLINK_MODE] =
                 g_param_spec_enum ("cursor-blink-mode", NULL, NULL,
-                                   VTE_TYPE_CURSOR_BLINK_MODE,
-                                   VTE_CURSOR_BLINK_SYSTEM,
+                                   BTE_TYPE_CURSOR_BLINK_MODE,
+                                   BTE_CURSOR_BLINK_SYSTEM,
                                    (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY));
 
         /**
@@ -1744,8 +1744,8 @@ bte_terminal_class_init(BteTerminalClass *klass)
          */
         pspecs[PROP_CURSOR_SHAPE] =
                 g_param_spec_enum ("cursor-shape", NULL, NULL,
-                                   VTE_TYPE_CURSOR_SHAPE,
-                                   VTE_CURSOR_SHAPE_BLOCK,
+                                   BTE_TYPE_CURSOR_SHAPE,
+                                   BTE_CURSOR_SHAPE_BLOCK,
                                    (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY));
 
         /**
@@ -1756,8 +1756,8 @@ bte_terminal_class_init(BteTerminalClass *klass)
          */
         pspecs[PROP_DELETE_BINDING] =
                 g_param_spec_enum ("delete-binding", NULL, NULL,
-                                   VTE_TYPE_ERASE_BINDING,
-                                   VTE_ERASE_AUTO,
+                                   BTE_TYPE_ERASE_BINDING,
+                                   BTE_ERASE_AUTO,
                                    (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY));
 
         /**
@@ -1804,8 +1804,8 @@ bte_terminal_class_init(BteTerminalClass *klass)
          */
         pspecs[PROP_FONT_SCALE] =
                 g_param_spec_double ("font-scale", NULL, NULL,
-                                     VTE_FONT_SCALE_MIN,
-                                     VTE_FONT_SCALE_MAX,
+                                     BTE_FONT_SCALE_MIN,
+                                     BTE_FONT_SCALE_MAX,
                                      1.,
                                      (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY));
 
@@ -1823,7 +1823,7 @@ bte_terminal_class_init(BteTerminalClass *klass)
         pspecs[PROP_ENCODING] =
                 g_param_spec_string ("encoding", NULL, NULL,
                                      NULL,
-                                     (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY | _VTE_PARAM_DEPRECATED));
+                                     (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY | _BTE_PARAM_DEPRECATED));
 
         /**
          * BteTerminal:font-desc:
@@ -1880,7 +1880,7 @@ bte_terminal_class_init(BteTerminalClass *klass)
          */
         pspecs[PROP_PTY] =
                 g_param_spec_object ("pty", NULL, NULL,
-                                     VTE_TYPE_PTY,
+                                     BTE_TYPE_PTY,
                                      (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY));
 
         /**
@@ -1909,7 +1909,7 @@ bte_terminal_class_init(BteTerminalClass *klass)
         pspecs[PROP_SCROLLBACK_LINES] =
                 g_param_spec_uint ("scrollback-lines", NULL, NULL,
                                    0, G_MAXUINT,
-                                   VTE_SCROLLBACK_INIT,
+                                   BTE_SCROLLBACK_INIT,
                                    (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY));
 
         /**
@@ -1944,8 +1944,8 @@ bte_terminal_class_init(BteTerminalClass *klass)
          */
         pspecs[PROP_TEXT_BLINK_MODE] =
                 g_param_spec_enum ("text-blink-mode", NULL, NULL,
-                                   VTE_TYPE_TEXT_BLINK_MODE,
-                                   VTE_TEXT_BLINK_ALWAYS,
+                                   BTE_TYPE_TEXT_BLINK_MODE,
+                                   BTE_TEXT_BLINK_ALWAYS,
                                    (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY));
 
         /**
@@ -2019,27 +2019,27 @@ bte_terminal_class_init(BteTerminalClass *klass)
 
         process_timer = g_timer_new();
 
-        klass->priv = G_TYPE_CLASS_GET_PRIVATE (klass, VTE_TYPE_TERMINAL, BteTerminalClassPrivate);
+        klass->priv = G_TYPE_CLASS_GET_PRIVATE (klass, BTE_TYPE_TERMINAL, BteTerminalClassPrivate);
 
         klass->priv->fallback_style_provider = CTK_STYLE_PROVIDER (ctk_css_provider_new ());
         /* Some themes don't define text_view_bg */
         ctk_css_provider_load_from_data (CTK_CSS_PROVIDER (klass->priv->fallback_style_provider),
                                          "@define-color text_view_bg @theme_base_color;\n"
-                                         "BteTerminal, " VTE_TERMINAL_CSS_NAME " {\n"
+                                         "BteTerminal, " BTE_TERMINAL_CSS_NAME " {\n"
                                          "background-color: @text_view_bg;\n"
                                          "color: @theme_text_color;\n"
                                          "}\n",
                                          -1, NULL);
         klass->priv->style_provider = CTK_STYLE_PROVIDER (ctk_css_provider_new ());
         ctk_css_provider_load_from_data (CTK_CSS_PROVIDER (klass->priv->style_provider),
-                                         "BteTerminal, " VTE_TERMINAL_CSS_NAME " {\n"
+                                         "BteTerminal, " BTE_TERMINAL_CSS_NAME " {\n"
                                          "padding: 1px 1px 1px 1px;\n"
                                          "}\n",
                                          -1, NULL);
 
 #ifdef WITH_A11Y
         /* a11y */
-        ctk_widget_class_set_accessible_type(widget_class, VTE_TYPE_TERMINAL_ACCESSIBLE);
+        ctk_widget_class_set_accessible_type(widget_class, BTE_TYPE_TERMINAL_ACCESSIBLE);
 #endif
 }
 
@@ -2048,7 +2048,7 @@ bte_terminal_scrollable_get_border(CtkScrollable* scrollable,
                                    CtkBorder* border) noexcept
 try
 {
-        *border = *WIDGET(VTE_TERMINAL(scrollable))->padding();
+        *border = *WIDGET(BTE_TERMINAL(scrollable))->padding();
         return true;
 }
 catch (...)
@@ -2109,7 +2109,7 @@ bte_get_features (void) noexcept
 /**
  * bte_get_feature_flags:
  *
- * Gets features VTE was compiled with.
+ * Gets features BTE was compiled with.
  *
  * Returns: (transfer none): flags from #BteFeatureFlags
  *
@@ -2120,14 +2120,14 @@ bte_get_feature_flags(void) noexcept
 {
         return BteFeatureFlags(0ULL |
 #ifdef WITH_FRIBIDI
-                               VTE_FEATURE_FLAG_BIDI |
+                               BTE_FEATURE_FLAG_BIDI |
 #endif
 #ifdef WITH_ICU
-                               VTE_FEATURE_FLAG_ICU |
+                               BTE_FEATURE_FLAG_ICU |
 #endif
 #ifdef __linux__
 #ifdef WITH_SYSTEMD
-                               VTE_FEATURE_FLAG_SYSTEMD |
+                               BTE_FEATURE_FLAG_SYSTEMD |
 #endif
 #endif // __linux__
                                0ULL);
@@ -2136,9 +2136,9 @@ bte_get_feature_flags(void) noexcept
 /**
  * bte_get_major_version:
  *
- * Returns the major version of the VTE library at runtime.
- * Contrast this with %VTE_MAJOR_VERSION which represents
- * the version of the VTE library that the code was compiled
+ * Returns the major version of the BTE library at runtime.
+ * Contrast this with %BTE_MAJOR_VERSION which represents
+ * the version of the BTE library that the code was compiled
  * with.
  *
  * Returns: the major version
@@ -2148,15 +2148,15 @@ bte_get_feature_flags(void) noexcept
 guint
 bte_get_major_version (void) noexcept
 {
-        return VTE_MAJOR_VERSION;
+        return BTE_MAJOR_VERSION;
 }
 
 /**
  * bte_get_minor_version:
  *
- * Returns the minor version of the VTE library at runtime.
- * Contrast this with %VTE_MINOR_VERSION which represents
- * the version of the VTE library that the code was compiled
+ * Returns the minor version of the BTE library at runtime.
+ * Contrast this with %BTE_MINOR_VERSION which represents
+ * the version of the BTE library that the code was compiled
  * with.
  *
  * Returns: the minor version
@@ -2166,15 +2166,15 @@ bte_get_major_version (void) noexcept
 guint
 bte_get_minor_version (void) noexcept
 {
-        return VTE_MINOR_VERSION;
+        return BTE_MINOR_VERSION;
 }
 
 /**
  * bte_get_micro_version:
  *
- * Returns the micro version of the VTE library at runtime.
- * Contrast this with %VTE_MICRO_VERSION which represents
- * the version of the VTE library that the code was compiled
+ * Returns the micro version of the BTE library at runtime.
+ * Contrast this with %BTE_MICRO_VERSION which represents
+ * the version of the BTE library that the code was compiled
  * with.
  *
  * Returns: the micro version
@@ -2184,7 +2184,7 @@ bte_get_minor_version (void) noexcept
 guint
 bte_get_micro_version (void) noexcept
 {
-        return VTE_MICRO_VERSION;
+        return BTE_MICRO_VERSION;
 }
 
 /**
@@ -2220,7 +2220,7 @@ bte_get_user_shell (void) noexcept
 void
 bte_set_test_flags(guint64 flags) noexcept
 {
-#ifdef VTE_DEBUG
+#ifdef BTE_DEBUG
         g_test_flags = flags;
 #endif
 }
@@ -2306,7 +2306,7 @@ catch (...)
 CtkWidget *
 bte_terminal_new(void) noexcept
 {
-	return (CtkWidget *)g_object_new(VTE_TYPE_TERMINAL, nullptr);
+	return (CtkWidget *)g_object_new(BTE_TYPE_TERMINAL, nullptr);
 }
 
 /**
@@ -2316,14 +2316,14 @@ bte_terminal_new(void) noexcept
  * Places the selected text in the terminal in the #CDK_SELECTION_CLIPBOARD
  * selection.
  *
- * Deprecated: 0.50: Use bte_terminal_copy_clipboard_format() with %VTE_FORMAT_TEXT
+ * Deprecated: 0.50: Use bte_terminal_copy_clipboard_format() with %BTE_FORMAT_TEXT
  *   instead.
  */
 void
 bte_terminal_copy_clipboard(BteTerminal *terminal) noexcept
 try
 {
-	g_return_if_fail(VTE_IS_TERMINAL(terminal));
+	g_return_if_fail(BTE_IS_TERMINAL(terminal));
 
         IMPL(terminal)->emit_copy_clipboard();
 }
@@ -2342,7 +2342,7 @@ catch (...)
  *
  * For all formats, the selection data (see #CtkSelectionData) will include the
  * text targets (see ctk_target_list_add_text_targets() and
- * ctk_selection_data_targets_includes_text()). For %VTE_FORMAT_HTML,
+ * ctk_selection_data_targets_includes_text()). For %BTE_FORMAT_HTML,
  * the selection will also include the "text/html" target, which when requested,
  * returns the HTML data in UTF-16 with a U+FEFF BYTE ORDER MARK character at
  * the start.
@@ -2354,10 +2354,10 @@ bte_terminal_copy_clipboard_format(BteTerminal *terminal,
                                    BteFormat format) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
-        g_return_if_fail(format == VTE_FORMAT_TEXT || format == VTE_FORMAT_HTML);
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
+        g_return_if_fail(format == BTE_FORMAT_TEXT || format == BTE_FORMAT_HTML);
 
-        WIDGET(terminal)->copy(VTE_SELECTION_CLIPBOARD, format);
+        WIDGET(terminal)->copy(BTE_SELECTION_CLIPBOARD, format);
 }
 catch (...)
 {
@@ -2375,9 +2375,9 @@ void
 bte_terminal_copy_primary(BteTerminal *terminal) noexcept
 try
 {
-	g_return_if_fail(VTE_IS_TERMINAL(terminal));
-	_bte_debug_print(VTE_DEBUG_SELECTION, "Copying to PRIMARY.\n");
-	WIDGET(terminal)->copy(VTE_SELECTION_PRIMARY, VTE_FORMAT_TEXT);
+	g_return_if_fail(BTE_IS_TERMINAL(terminal));
+	_bte_debug_print(BTE_DEBUG_SELECTION, "Copying to PRIMARY.\n");
+	WIDGET(terminal)->copy(BTE_SELECTION_PRIMARY, BTE_FORMAT_TEXT);
 }
 catch (...)
 {
@@ -2396,7 +2396,7 @@ void
 bte_terminal_paste_clipboard(BteTerminal *terminal) noexcept
 try
 {
-	g_return_if_fail(VTE_IS_TERMINAL(terminal));
+	g_return_if_fail(BTE_IS_TERMINAL(terminal));
 
         IMPL(terminal)->emit_paste_clipboard();
 }
@@ -2418,8 +2418,8 @@ void
 bte_terminal_paste_primary(BteTerminal *terminal) noexcept
 try
 {
-	g_return_if_fail(VTE_IS_TERMINAL(terminal));
-	_bte_debug_print(VTE_DEBUG_SELECTION, "Pasting PRIMARY.\n");
+	g_return_if_fail(BTE_IS_TERMINAL(terminal));
+	_bte_debug_print(BTE_DEBUG_SELECTION, "Pasting PRIMARY.\n");
 	WIDGET(terminal)->paste(CDK_SELECTION_PRIMARY);
 }
 catch (...)
@@ -2469,7 +2469,7 @@ bte_terminal_match_add_regex(BteTerminal *terminal,
                              guint32      flags) noexcept
 try
 {
-	g_return_val_if_fail(VTE_IS_TERMINAL(terminal), -1);
+	g_return_val_if_fail(BTE_IS_TERMINAL(terminal), -1);
 	g_return_val_if_fail(regex != NULL, -1);
         g_return_val_if_fail(_bte_regex_has_purpose(regex, bte::base::Regex::Purpose::eMatch), -1);
         g_warn_if_fail(_bte_regex_has_multiline_compile_flag(regex));
@@ -2477,7 +2477,7 @@ try
         auto impl = IMPL(terminal);
         return impl->regex_match_add(bte::base::make_ref(regex_from_wrapper(regex)),
                                      flags,
-                                     VTE_DEFAULT_CURSOR,
+                                     BTE_DEFAULT_CURSOR,
                                      impl->regex_match_next_tag()).tag();
 }
 catch (...)
@@ -2514,7 +2514,7 @@ bte_terminal_match_check(BteTerminal *terminal,
 			 int *tag) noexcept
 try
 {
-        g_return_val_if_fail(VTE_IS_TERMINAL(terminal), NULL);
+        g_return_val_if_fail(BTE_IS_TERMINAL(terminal), NULL);
         return WIDGET(terminal)->regex_match_check(column, row, tag);
 }
 catch (...)
@@ -2547,7 +2547,7 @@ bte_terminal_match_check_event(BteTerminal *terminal,
                                int *tag) noexcept
 try
 {
-        g_return_val_if_fail(VTE_IS_TERMINAL(terminal), FALSE);
+        g_return_val_if_fail(BTE_IS_TERMINAL(terminal), FALSE);
         return WIDGET(terminal)->regex_match_check(event, tag);
 }
 catch (...)
@@ -2565,7 +2565,7 @@ catch (...)
  * escape sequence) at the position of the event, or %NULL.
  *
  * Proper use of the escape sequence should result in URI-encoded URIs with a proper scheme
- * like "http://", "https://", "file://", "mailto:" etc. This is, however, not enforced by VTE.
+ * like "http://", "https://", "file://", "mailto:" etc. This is, however, not enforced by BTE.
  * The caller must tolerate the returned string potentially not being a valid URI.
  *
  * Returns: (transfer full) (nullable): a newly allocated string containing the target of the hyperlink,
@@ -2578,7 +2578,7 @@ bte_terminal_hyperlink_check_event(BteTerminal *terminal,
                                    CdkEvent *event) noexcept
 try
 {
-        g_return_val_if_fail(VTE_IS_TERMINAL(terminal), nullptr);
+        g_return_val_if_fail(BTE_IS_TERMINAL(terminal), nullptr);
         return WIDGET(terminal)->hyperlink_check(event);
 }
 catch (...)
@@ -2670,7 +2670,7 @@ bte_terminal_event_check_regex_simple(BteTerminal *terminal,
                                       char **matches) noexcept
 try
 {
-        g_return_val_if_fail(VTE_IS_TERMINAL(terminal), FALSE);
+        g_return_val_if_fail(BTE_IS_TERMINAL(terminal), FALSE);
         g_return_val_if_fail(event != NULL, FALSE);
         g_return_val_if_fail(regexes != NULL || n_regexes == 0, FALSE);
         for (gsize i = 0; i < n_regexes; i++) {
@@ -2736,7 +2736,7 @@ bte_terminal_match_set_cursor(BteTerminal *terminal,
                               CdkCursor *cursor) noexcept
 try
 {
-	g_return_if_fail(VTE_IS_TERMINAL(terminal));
+	g_return_if_fail(BTE_IS_TERMINAL(terminal));
         g_return_if_fail(tag >= 0);
         if (auto rem = IMPL(terminal)->regex_match_get(tag))
                 rem->set_cursor(bte::glib::make_ref<CdkCursor>(cursor));
@@ -2763,7 +2763,7 @@ bte_terminal_match_set_cursor_type(BteTerminal *terminal,
                                    CdkCursorType cursor_type) noexcept
 try
 {
-	g_return_if_fail(VTE_IS_TERMINAL(terminal));
+	g_return_if_fail(BTE_IS_TERMINAL(terminal));
         g_return_if_fail(tag >= 0);
         if (auto rem = IMPL(terminal)->regex_match_get(tag))
                 rem->set_cursor(cursor_type);
@@ -2788,7 +2788,7 @@ bte_terminal_match_set_cursor_name(BteTerminal *terminal,
                                    const char *cursor_name) noexcept
 try
 {
-	g_return_if_fail(VTE_IS_TERMINAL(terminal));
+	g_return_if_fail(BTE_IS_TERMINAL(terminal));
         g_return_if_fail(tag >= 0);
         if (auto rem = IMPL(terminal)->regex_match_get(tag))
                 rem->set_cursor(cursor_name);
@@ -2812,7 +2812,7 @@ bte_terminal_match_remove(BteTerminal *terminal,
                           int tag) noexcept
 try
 {
-	g_return_if_fail(VTE_IS_TERMINAL(terminal));
+	g_return_if_fail(BTE_IS_TERMINAL(terminal));
         IMPL(terminal)->regex_match_remove(tag);
 }
 catch (...)
@@ -2831,7 +2831,7 @@ void
 bte_terminal_match_remove_all(BteTerminal *terminal) noexcept
 try
 {
-	g_return_if_fail(VTE_IS_TERMINAL(terminal));
+	g_return_if_fail(BTE_IS_TERMINAL(terminal));
         IMPL(terminal)->regex_match_remove_all();
 }
 catch (...)
@@ -2852,7 +2852,7 @@ gboolean
 bte_terminal_search_find_previous (BteTerminal *terminal) noexcept
 try
 {
-        g_return_val_if_fail(VTE_IS_TERMINAL(terminal), false);
+        g_return_val_if_fail(BTE_IS_TERMINAL(terminal), false);
 	return IMPL(terminal)->search_find(true);
 }
 catch (...)
@@ -2874,7 +2874,7 @@ gboolean
 bte_terminal_search_find_next (BteTerminal *terminal) noexcept
 try
 {
-        g_return_val_if_fail(VTE_IS_TERMINAL(terminal), false);
+        g_return_val_if_fail(BTE_IS_TERMINAL(terminal), false);
 	return IMPL(terminal)->search_find(false);
 }
 catch (...)
@@ -2901,7 +2901,7 @@ bte_terminal_search_set_regex (BteTerminal *terminal,
                                guint32      flags) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
         g_return_if_fail(regex == nullptr || _bte_regex_has_purpose(regex, bte::base::Regex::Purpose::eSearch));
         g_warn_if_fail(regex == nullptr || _bte_regex_has_multiline_compile_flag(regex));
 
@@ -2924,7 +2924,7 @@ BteRegex *
 bte_terminal_search_get_regex(BteTerminal *terminal) noexcept
 try
 {
-        g_return_val_if_fail(VTE_IS_TERMINAL(terminal), nullptr);
+        g_return_val_if_fail(BTE_IS_TERMINAL(terminal), nullptr);
 
         return wrapper_from_regex(IMPL(terminal)->search_regex());
 }
@@ -2962,7 +2962,7 @@ bte_terminal_search_set_gregex (BteTerminal *terminal,
 GRegex *
 bte_terminal_search_get_gregex (BteTerminal *terminal) noexcept
 {
-	g_return_val_if_fail(VTE_IS_TERMINAL(terminal), nullptr);
+	g_return_val_if_fail(BTE_IS_TERMINAL(terminal), nullptr);
 
         return nullptr;
 }
@@ -2980,7 +2980,7 @@ bte_terminal_search_set_wrap_around (BteTerminal *terminal,
 				     gboolean     wrap_around) noexcept
 try
 {
-	g_return_if_fail(VTE_IS_TERMINAL(terminal));
+	g_return_if_fail(BTE_IS_TERMINAL(terminal));
 
         IMPL(terminal)->search_set_wrap_around(wrap_around != FALSE);
 }
@@ -2999,7 +2999,7 @@ gboolean
 bte_terminal_search_get_wrap_around (BteTerminal *terminal) noexcept
 try
 {
-	g_return_val_if_fail(VTE_IS_TERMINAL(terminal), false);
+	g_return_val_if_fail(BTE_IS_TERMINAL(terminal), false);
 	return IMPL(terminal)->m_search_wrap_around;
 }
 catch (...)
@@ -3018,7 +3018,7 @@ void
 bte_terminal_select_all (BteTerminal *terminal) noexcept
 try
 {
-	g_return_if_fail (VTE_IS_TERMINAL (terminal));
+	g_return_if_fail (BTE_IS_TERMINAL (terminal));
 
         IMPL(terminal)->select_all();
 }
@@ -3037,7 +3037,7 @@ void
 bte_terminal_unselect_all(BteTerminal *terminal) noexcept
 try
 {
-	g_return_if_fail (VTE_IS_TERMINAL (terminal));
+	g_return_if_fail (BTE_IS_TERMINAL (terminal));
 
         IMPL(terminal)->deselect_all();
 }
@@ -3063,7 +3063,7 @@ bte_terminal_get_cursor_position(BteTerminal *terminal,
                                  long *row) noexcept
 try
 {
-	g_return_if_fail(VTE_IS_TERMINAL(terminal));
+	g_return_if_fail(BTE_IS_TERMINAL(terminal));
 
         auto impl = IMPL(terminal);
 	if (column) {
@@ -3100,7 +3100,7 @@ bte_terminal_pty_new_sync(BteTerminal *terminal,
                           GError **error) noexcept
 try
 {
-        g_return_val_if_fail(VTE_IS_TERMINAL(terminal), NULL);
+        g_return_val_if_fail(BTE_IS_TERMINAL(terminal), NULL);
 
         auto pty = bte::glib::take_ref(bte_pty_new_sync(flags, cancellable, error));
         if (!pty)
@@ -3146,7 +3146,7 @@ bte_terminal_watch_child (BteTerminal *terminal,
                           GPid child_pid) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
         g_return_if_fail(child_pid != -1);
 
         g_return_if_fail(WIDGET(terminal)->pty() != nullptr);
@@ -3216,11 +3216,11 @@ bte_terminal_spawn_sync(BteTerminal *terminal,
                         GError **error) noexcept
 try
 {
-        g_return_val_if_fail(VTE_IS_TERMINAL(terminal), FALSE);
+        g_return_val_if_fail(BTE_IS_TERMINAL(terminal), FALSE);
         g_return_val_if_fail(argv != NULL, FALSE);
         g_return_val_if_fail(argv[0] != nullptr, FALSE);
         g_return_val_if_fail(envv == nullptr ||_bte_pty_check_envv(envv), false);
-        g_return_val_if_fail((spawn_flags & (VTE_SPAWN_NO_SYSTEMD_SCOPE | VTE_SPAWN_REQUIRE_SYSTEMD_SCOPE)) == 0, FALSE);
+        g_return_val_if_fail((spawn_flags & (BTE_SPAWN_NO_SYSTEMD_SCOPE | BTE_SPAWN_REQUIRE_SYSTEMD_SCOPE)) == 0, FALSE);
         g_return_val_if_fail(child_setup_data == NULL || child_setup, FALSE);
         g_return_val_if_fail(error == NULL || *error == NULL, FALSE);
 
@@ -3287,7 +3287,7 @@ spawn_async_cb(GObject *source,
                gpointer user_data) noexcept
 {
         SpawnAsyncCallbackData *data = reinterpret_cast<SpawnAsyncCallbackData*>(user_data);
-        BtePty *pty = VTE_PTY(source);
+        BtePty *pty = BTE_PTY(source);
 
         auto pid = pid_t{-1};
         auto error = bte::glib::Error{};
@@ -3398,9 +3398,9 @@ spawn_async_cb(GObject *source,
  * open for use in the child process, you need to use a child setup function
  * that unsets the FD_CLOEXEC flag on that file descriptor manually.)
  *
- * Beginning with 0.60, and on linux only, and unless %VTE_SPAWN_NO_SYSTEMD_SCOPE is
+ * Beginning with 0.60, and on linux only, and unless %BTE_SPAWN_NO_SYSTEMD_SCOPE is
  * passed in @spawn_flags, the newly created child process will be moved to its own
- * systemd user scope; and if %VTE_SPAWN_REQUIRE_SYSTEMD_SCOPE is passed, and creation
+ * systemd user scope; and if %BTE_SPAWN_REQUIRE_SYSTEMD_SCOPE is passed, and creation
  * of the systemd user scope fails, the whole spawn will fail.
  * You can override the options used for the systemd user scope by
  * providing a systemd override file for 'bte-spawn-.scope' unit. See man:systemd.unit(5)
@@ -3439,7 +3439,7 @@ bte_terminal_spawn_with_fds_async(BteTerminal *terminal,
                                   gpointer user_data) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
         g_return_if_fail(cancellable == nullptr || G_IS_CANCELLABLE (cancellable));
 
         auto error = bte::glib::Error{};
@@ -3532,7 +3532,7 @@ bte_terminal_feed(BteTerminal *terminal,
                   gssize length) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
         g_return_if_fail(length == 0 || data != NULL);
 
         if (length == 0)
@@ -3561,7 +3561,7 @@ bte_terminal_feed_child(BteTerminal *terminal,
                         gssize length) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
         g_return_if_fail(length == 0 || text != NULL);
 
         if (length == 0)
@@ -3592,7 +3592,7 @@ bte_terminal_feed_child_binary(BteTerminal *terminal,
                                gsize length) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
         g_return_if_fail(length == 0 || data != NULL);
 
         if (length == 0)
@@ -3624,7 +3624,7 @@ warn_if_callback(BteSelectionFunc func) noexcept
         if (!func)
                 return;
 
-#ifndef VTE_DEBUG
+#ifndef BTE_DEBUG
         static gboolean warned = FALSE;
         if (warned)
                 return;
@@ -3658,7 +3658,7 @@ bte_terminal_get_text(BteTerminal *terminal,
 		      GArray *attributes) noexcept
 try
 {
-	g_return_val_if_fail(VTE_IS_TERMINAL(terminal), NULL);
+	g_return_val_if_fail(BTE_IS_TERMINAL(terminal), NULL);
         warn_if_callback(is_selected);
         auto text = IMPL(terminal)->get_text_displayed(true /* wrap */,
                                                        attributes);
@@ -3736,7 +3736,7 @@ bte_terminal_get_text_range(BteTerminal *terminal,
 			    GArray *attributes) noexcept
 try
 {
-	g_return_val_if_fail(VTE_IS_TERMINAL(terminal), NULL);
+	g_return_val_if_fail(BTE_IS_TERMINAL(terminal), NULL);
         warn_if_callback(is_selected);
         auto text = IMPL(terminal)->get_text(start_row, start_col,
                                              end_row, end_col,
@@ -3771,7 +3771,7 @@ bte_terminal_reset(BteTerminal *terminal,
                    gboolean clear_history) noexcept
 try
 {
-	g_return_if_fail(VTE_IS_TERMINAL(terminal));
+	g_return_if_fail(BTE_IS_TERMINAL(terminal));
         IMPL(terminal)->reset(clear_tabstops, clear_history, true);
 }
 catch (...)
@@ -3818,13 +3818,13 @@ BteTextBlinkMode
 bte_terminal_get_text_blink_mode(BteTerminal *terminal) noexcept
 try
 {
-        g_return_val_if_fail(VTE_IS_TERMINAL(terminal), VTE_TEXT_BLINK_ALWAYS);
+        g_return_val_if_fail(BTE_IS_TERMINAL(terminal), BTE_TEXT_BLINK_ALWAYS);
         return WIDGET(terminal)->text_blink_mode();
 }
 catch (...)
 {
         bte::log_exception();
-        return VTE_TEXT_BLINK_ALWAYS;
+        return BTE_TEXT_BLINK_ALWAYS;
 }
 
 /**
@@ -3841,7 +3841,7 @@ bte_terminal_set_text_blink_mode(BteTerminal *terminal,
                                  BteTextBlinkMode text_blink_mode) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
 
         if (WIDGET(terminal)->set_text_blink_mode(text_blink_mode))
                 g_object_notify_by_pspec(G_OBJECT(terminal), pspecs[PROP_TEXT_BLINK_MODE]);
@@ -3866,7 +3866,7 @@ gboolean
 bte_terminal_get_allow_bold(BteTerminal *terminal) noexcept
 try
 {
-	g_return_val_if_fail(VTE_IS_TERMINAL(terminal), false);
+	g_return_val_if_fail(BTE_IS_TERMINAL(terminal), false);
 	return IMPL(terminal)->m_allow_bold;
 }
 catch (...)
@@ -3890,7 +3890,7 @@ bte_terminal_set_allow_bold(BteTerminal *terminal,
                             gboolean allow_bold) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
 
         if (IMPL(terminal)->set_allow_bold(allow_bold != FALSE))
                 g_object_notify_by_pspec(G_OBJECT(terminal), pspecs[PROP_ALLOW_BOLD]);
@@ -3914,7 +3914,7 @@ gboolean
 bte_terminal_get_allow_hyperlink(BteTerminal *terminal) noexcept
 try
 {
-        g_return_val_if_fail(VTE_IS_TERMINAL(terminal), FALSE);
+        g_return_val_if_fail(BTE_IS_TERMINAL(terminal), FALSE);
         return IMPL(terminal)->m_allow_hyperlink;
 }
 catch (...)
@@ -3937,7 +3937,7 @@ bte_terminal_set_allow_hyperlink(BteTerminal *terminal,
                                  gboolean allow_hyperlink) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
 
         if (IMPL(terminal)->set_allow_hyperlink(allow_hyperlink != FALSE))
                 g_object_notify_by_pspec(G_OBJECT(terminal), pspecs[PROP_ALLOW_HYPERLINK]);
@@ -3960,7 +3960,7 @@ gboolean
 bte_terminal_get_audible_bell(BteTerminal *terminal) noexcept
 try
 {
-	g_return_val_if_fail(VTE_IS_TERMINAL(terminal), false);
+	g_return_val_if_fail(BTE_IS_TERMINAL(terminal), false);
 	return IMPL(terminal)->m_audible_bell;
 }
 catch (...)
@@ -3982,7 +3982,7 @@ bte_terminal_set_audible_bell(BteTerminal *terminal,
                               gboolean is_audible) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
 
         if (IMPL(terminal)->set_audible_bell(is_audible != FALSE))
                 g_object_notify_by_pspec(G_OBJECT(terminal), pspecs[PROP_AUDIBLE_BELL]);
@@ -4006,8 +4006,8 @@ bte_terminal_set_backspace_binding(BteTerminal *terminal,
                                    BteEraseBinding binding) noexcept
 try
 {
-	g_return_if_fail(VTE_IS_TERMINAL(terminal));
-        g_return_if_fail(binding >= VTE_ERASE_AUTO && binding <= VTE_ERASE_TTY);
+	g_return_if_fail(BTE_IS_TERMINAL(terminal));
+        g_return_if_fail(binding >= BTE_ERASE_AUTO && binding <= BTE_ERASE_TTY);
 
         if (WIDGET(terminal)->set_backspace_binding(binding))
                 g_object_notify_by_pspec(G_OBJECT(terminal), pspecs[PROP_BACKSPACE_BINDING]);
@@ -4033,7 +4033,7 @@ gboolean
 bte_terminal_get_bold_is_bright(BteTerminal *terminal) noexcept
 try
 {
-	g_return_val_if_fail(VTE_IS_TERMINAL(terminal), false);
+	g_return_val_if_fail(BTE_IS_TERMINAL(terminal), false);
 	return IMPL(terminal)->m_bold_is_bright;
 }
 catch (...)
@@ -4058,7 +4058,7 @@ bte_terminal_set_bold_is_bright(BteTerminal *terminal,
                                 gboolean bold_is_bright) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
 
         if (IMPL(terminal)->set_bold_is_bright(bold_is_bright != FALSE))
                 g_object_notify_by_pspec(G_OBJECT(terminal), pspecs[PROP_BOLD_IS_BRIGHT]);
@@ -4081,7 +4081,7 @@ glong
 bte_terminal_get_char_height(BteTerminal *terminal) noexcept
 try
 {
-	g_return_val_if_fail(VTE_IS_TERMINAL(terminal), -1);
+	g_return_val_if_fail(BTE_IS_TERMINAL(terminal), -1);
 	return IMPL(terminal)->get_cell_height();
 }
 catch (...)
@@ -4103,7 +4103,7 @@ glong
 bte_terminal_get_char_width(BteTerminal *terminal) noexcept
 try
 {
-	g_return_val_if_fail(VTE_IS_TERMINAL(terminal), -1);
+	g_return_val_if_fail(BTE_IS_TERMINAL(terminal), -1);
 	return IMPL(terminal)->get_cell_width();
 }
 catch (...)
@@ -4127,7 +4127,7 @@ int
 bte_terminal_get_cjk_ambiguous_width(BteTerminal *terminal) noexcept
 try
 {
-        g_return_val_if_fail(VTE_IS_TERMINAL(terminal), 1);
+        g_return_val_if_fail(BTE_IS_TERMINAL(terminal), 1);
         return IMPL(terminal)->m_utf8_ambiguous_width;
 }
 catch (...)
@@ -4150,7 +4150,7 @@ void
 bte_terminal_set_cjk_ambiguous_width(BteTerminal *terminal, int width) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
         g_return_if_fail(width == 1 || width == 2);
 
         if (IMPL(terminal)->set_cjk_ambiguous_width(width))
@@ -4175,7 +4175,7 @@ bte_terminal_set_color_background(BteTerminal *terminal,
                                   const CdkRGBA *background) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
         g_return_if_fail(background != NULL);
         g_return_if_fail(valid_color(background));
 
@@ -4201,7 +4201,7 @@ bte_terminal_set_color_bold(BteTerminal *terminal,
                             const CdkRGBA *bold) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
         g_return_if_fail(bold == nullptr || valid_color(bold));
 
         auto impl = IMPL(terminal);
@@ -4229,7 +4229,7 @@ bte_terminal_set_color_cursor(BteTerminal *terminal,
                               const CdkRGBA *cursor_background) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
         g_return_if_fail(cursor_background == nullptr || valid_color(cursor_background));
 
         auto impl = IMPL(terminal);
@@ -4259,7 +4259,7 @@ bte_terminal_set_color_cursor_foreground(BteTerminal *terminal,
                                          const CdkRGBA *cursor_foreground) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
         g_return_if_fail(cursor_foreground == nullptr || valid_color(cursor_foreground));
 
         auto impl = IMPL(terminal);
@@ -4285,7 +4285,7 @@ bte_terminal_set_color_foreground(BteTerminal *terminal,
                                   const CdkRGBA *foreground) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
         g_return_if_fail(foreground != nullptr);
         g_return_if_fail(valid_color(foreground));
 
@@ -4311,7 +4311,7 @@ bte_terminal_set_color_highlight(BteTerminal *terminal,
                                  const CdkRGBA *highlight_background) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
         g_return_if_fail(highlight_background == nullptr || valid_color(highlight_background));
 
         auto impl = IMPL(terminal);
@@ -4340,7 +4340,7 @@ bte_terminal_set_color_highlight_foreground(BteTerminal *terminal,
                                             const CdkRGBA *highlight_foreground) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
         g_return_if_fail(highlight_foreground == nullptr || valid_color(highlight_foreground));
 
         auto impl = IMPL(terminal);
@@ -4380,7 +4380,7 @@ bte_terminal_set_colors(BteTerminal *terminal,
                         gsize palette_size) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
 	g_return_if_fail((palette_size == 0) ||
 			 (palette_size == 8) ||
 			 (palette_size == 16) ||
@@ -4427,7 +4427,7 @@ void
 bte_terminal_set_default_colors(BteTerminal *terminal) noexcept
 try
 {
-	g_return_if_fail(VTE_IS_TERMINAL(terminal));
+	g_return_if_fail(BTE_IS_TERMINAL(terminal));
         IMPL(terminal)->set_colors_default();
 }
 catch (...)
@@ -4445,7 +4445,7 @@ glong
 bte_terminal_get_column_count(BteTerminal *terminal) noexcept
 try
 {
-	g_return_val_if_fail(VTE_IS_TERMINAL(terminal), -1);
+	g_return_val_if_fail(BTE_IS_TERMINAL(terminal), -1);
 	return IMPL(terminal)->m_column_count;
 }
 catch (...)
@@ -4465,7 +4465,7 @@ const char *
 bte_terminal_get_current_directory_uri(BteTerminal *terminal) noexcept
 try
 {
-        g_return_val_if_fail(VTE_IS_TERMINAL(terminal), NULL);
+        g_return_val_if_fail(BTE_IS_TERMINAL(terminal), NULL);
         auto impl = IMPL(terminal);
         return impl->m_current_directory_uri.size() ? impl->m_current_directory_uri.data() : nullptr;
 }
@@ -4487,7 +4487,7 @@ const char *
 bte_terminal_get_current_file_uri(BteTerminal *terminal) noexcept
 try
 {
-        g_return_val_if_fail(VTE_IS_TERMINAL(terminal), NULL);
+        g_return_val_if_fail(BTE_IS_TERMINAL(terminal), NULL);
         auto impl = IMPL(terminal);
         return impl->m_current_file_uri.size() ? impl->m_current_file_uri.data() : nullptr;
 }
@@ -4509,14 +4509,14 @@ BteCursorBlinkMode
 bte_terminal_get_cursor_blink_mode(BteTerminal *terminal) noexcept
 try
 {
-        g_return_val_if_fail(VTE_IS_TERMINAL(terminal), VTE_CURSOR_BLINK_SYSTEM);
+        g_return_val_if_fail(BTE_IS_TERMINAL(terminal), BTE_CURSOR_BLINK_SYSTEM);
 
         return WIDGET(terminal)->cursor_blink_mode();
 }
 catch (...)
 {
         bte::log_exception();
-        return VTE_CURSOR_BLINK_SYSTEM;
+        return BTE_CURSOR_BLINK_SYSTEM;
 }
 
 /**
@@ -4524,7 +4524,7 @@ catch (...)
  * @terminal: a #BteTerminal
  * @mode: the #BteCursorBlinkMode to use
  *
- * Sets whether or not the cursor will blink. Using %VTE_CURSOR_BLINK_SYSTEM
+ * Sets whether or not the cursor will blink. Using %BTE_CURSOR_BLINK_SYSTEM
  * will use the #CtkSettings::ctk-cursor-blink setting.
  */
 void
@@ -4532,8 +4532,8 @@ bte_terminal_set_cursor_blink_mode(BteTerminal *terminal,
                                    BteCursorBlinkMode mode) noexcept
 try
 {
-	g_return_if_fail(VTE_IS_TERMINAL(terminal));
-        g_return_if_fail(mode >= VTE_CURSOR_BLINK_SYSTEM && mode <= VTE_CURSOR_BLINK_OFF);
+	g_return_if_fail(BTE_IS_TERMINAL(terminal));
+        g_return_if_fail(mode >= BTE_CURSOR_BLINK_SYSTEM && mode <= BTE_CURSOR_BLINK_OFF);
 
         if (WIDGET(terminal)->set_cursor_blink_mode(mode))
                 g_object_notify_by_pspec(G_OBJECT(terminal), pspecs[PROP_CURSOR_BLINK_MODE]);
@@ -4555,14 +4555,14 @@ BteCursorShape
 bte_terminal_get_cursor_shape(BteTerminal *terminal) noexcept
 try
 {
-        g_return_val_if_fail(VTE_IS_TERMINAL(terminal), VTE_CURSOR_SHAPE_BLOCK);
+        g_return_val_if_fail(BTE_IS_TERMINAL(terminal), BTE_CURSOR_SHAPE_BLOCK);
 
         return WIDGET(terminal)->cursor_shape();
 }
 catch (...)
 {
         bte::log_exception();
-        return VTE_CURSOR_SHAPE_BLOCK;
+        return BTE_CURSOR_SHAPE_BLOCK;
 }
 
 /**
@@ -4577,8 +4577,8 @@ bte_terminal_set_cursor_shape(BteTerminal *terminal,
                               BteCursorShape shape) noexcept
 try
 {
-	g_return_if_fail(VTE_IS_TERMINAL(terminal));
-        g_return_if_fail(shape >= VTE_CURSOR_SHAPE_BLOCK && shape <= VTE_CURSOR_SHAPE_UNDERLINE);
+	g_return_if_fail(BTE_IS_TERMINAL(terminal));
+        g_return_if_fail(shape >= BTE_CURSOR_SHAPE_BLOCK && shape <= BTE_CURSOR_SHAPE_UNDERLINE);
 
         if (WIDGET(terminal)->set_cursor_shape(shape))
                 g_object_notify_by_pspec(G_OBJECT(terminal), pspecs[PROP_CURSOR_SHAPE]);
@@ -4602,8 +4602,8 @@ bte_terminal_set_delete_binding(BteTerminal *terminal,
                                 BteEraseBinding binding) noexcept
 try
 {
-	g_return_if_fail(VTE_IS_TERMINAL(terminal));
-        g_return_if_fail(binding >= VTE_ERASE_AUTO && binding <= VTE_ERASE_TTY);
+	g_return_if_fail(BTE_IS_TERMINAL(terminal));
+        g_return_if_fail(binding >= BTE_ERASE_AUTO && binding <= BTE_ERASE_TTY);
 
         if (WIDGET(terminal)->set_delete_binding(binding))
                 g_object_notify_by_pspec(G_OBJECT(terminal), pspecs[PROP_DELETE_BINDING]);
@@ -4627,7 +4627,7 @@ gboolean
 bte_terminal_get_enable_bidi(BteTerminal *terminal) noexcept
 try
 {
-        g_return_val_if_fail(VTE_IS_TERMINAL(terminal), false);
+        g_return_val_if_fail(BTE_IS_TERMINAL(terminal), false);
         return IMPL(terminal)->m_enable_bidi;
 }
 catch (...)
@@ -4650,7 +4650,7 @@ bte_terminal_set_enable_bidi(BteTerminal *terminal,
                              gboolean enable_bidi) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
 
         if (IMPL(terminal)->set_enable_bidi(enable_bidi != FALSE))
                 g_object_notify_by_pspec(G_OBJECT(terminal), pspecs[PROP_ENABLE_BIDI]);
@@ -4674,7 +4674,7 @@ gboolean
 bte_terminal_get_enable_shaping(BteTerminal *terminal) noexcept
 try
 {
-        g_return_val_if_fail(VTE_IS_TERMINAL(terminal), false);
+        g_return_val_if_fail(BTE_IS_TERMINAL(terminal), false);
         return IMPL(terminal)->m_enable_shaping;
 }
 catch (...)
@@ -4697,7 +4697,7 @@ bte_terminal_set_enable_shaping(BteTerminal *terminal,
                                 gboolean enable_shaping) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
 
         if (IMPL(terminal)->set_enable_shaping(enable_shaping != FALSE))
                 g_object_notify_by_pspec(G_OBJECT(terminal), pspecs[PROP_ENABLE_SHAPING]);
@@ -4722,7 +4722,7 @@ const char *
 bte_terminal_get_encoding(BteTerminal *terminal) noexcept
 try
 {
-	g_return_val_if_fail(VTE_IS_TERMINAL(terminal), NULL);
+	g_return_val_if_fail(BTE_IS_TERMINAL(terminal), NULL);
 	return WIDGET(terminal)->encoding();
 }
 catch (...)
@@ -4756,7 +4756,7 @@ bte_terminal_set_encoding(BteTerminal *terminal,
                           GError **error) noexcept
 try
 {
-	g_return_val_if_fail(VTE_IS_TERMINAL(terminal), FALSE);
+	g_return_val_if_fail(BTE_IS_TERMINAL(terminal), FALSE);
         g_return_val_if_fail(error == NULL || *error == NULL, FALSE);
 
         auto const freezer = bte::glib::FreezeObjectNotify{terminal};
@@ -4790,7 +4790,7 @@ const PangoFontDescription *
 bte_terminal_get_font(BteTerminal *terminal) noexcept
 try
 {
-        g_return_val_if_fail(VTE_IS_TERMINAL(terminal), nullptr);
+        g_return_val_if_fail(BTE_IS_TERMINAL(terminal), nullptr);
 
         return IMPL(terminal)->unscaled_font_description();
 }
@@ -4816,7 +4816,7 @@ bte_terminal_set_font(BteTerminal *terminal,
                       const PangoFontDescription* font_desc) noexcept
 try
 {
-	g_return_if_fail(VTE_IS_TERMINAL(terminal));
+	g_return_if_fail(BTE_IS_TERMINAL(terminal));
 
         if (IMPL(terminal)->set_font_desc(font_desc))
                 g_object_notify_by_pspec(G_OBJECT(terminal), pspecs[PROP_FONT_DESC]);
@@ -4836,7 +4836,7 @@ gdouble
 bte_terminal_get_font_scale(BteTerminal *terminal) noexcept
 try
 {
-        g_return_val_if_fail(VTE_IS_TERMINAL(terminal), 1.);
+        g_return_val_if_fail(BTE_IS_TERMINAL(terminal), 1.);
 
         return IMPL(terminal)->m_font_scale;
 }
@@ -4858,9 +4858,9 @@ bte_terminal_set_font_scale(BteTerminal *terminal,
                             double scale) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
 
-        scale = CLAMP(scale, VTE_FONT_SCALE_MIN, VTE_FONT_SCALE_MAX);
+        scale = CLAMP(scale, BTE_FONT_SCALE_MIN, BTE_FONT_SCALE_MAX);
         if (IMPL(terminal)->set_font_scale(scale))
                 g_object_notify_by_pspec(G_OBJECT(terminal), pspecs[PROP_FONT_SCALE]);
 }
@@ -4881,7 +4881,7 @@ double
 bte_terminal_get_cell_height_scale(BteTerminal *terminal) noexcept
 try
 {
-        g_return_val_if_fail(VTE_IS_TERMINAL(terminal), 1.);
+        g_return_val_if_fail(BTE_IS_TERMINAL(terminal), 1.);
 
         return IMPL(terminal)->m_cell_height_scale;
 }
@@ -4908,9 +4908,9 @@ bte_terminal_set_cell_height_scale(BteTerminal *terminal,
                                    double scale) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
 
-        scale = CLAMP(scale, VTE_CELL_SCALE_MIN, VTE_CELL_SCALE_MAX);
+        scale = CLAMP(scale, BTE_CELL_SCALE_MIN, BTE_CELL_SCALE_MAX);
         if (IMPL(terminal)->set_cell_height_scale(scale))
                 g_object_notify_by_pspec(G_OBJECT(terminal), pspecs[PROP_CELL_HEIGHT_SCALE]);
 }
@@ -4931,7 +4931,7 @@ double
 bte_terminal_get_cell_width_scale(BteTerminal *terminal) noexcept
 try
 {
-        g_return_val_if_fail(VTE_IS_TERMINAL(terminal), 1.);
+        g_return_val_if_fail(BTE_IS_TERMINAL(terminal), 1.);
 
         return IMPL(terminal)->m_cell_width_scale;
 }
@@ -4958,9 +4958,9 @@ bte_terminal_set_cell_width_scale(BteTerminal *terminal,
                                   double scale) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
 
-        scale = CLAMP(scale, VTE_CELL_SCALE_MIN, VTE_CELL_SCALE_MAX);
+        scale = CLAMP(scale, BTE_CELL_SCALE_MIN, BTE_CELL_SCALE_MAX);
         if (IMPL(terminal)->set_cell_width_scale(scale))
                 g_object_notify_by_pspec(G_OBJECT(terminal), pspecs[PROP_CELL_WIDTH_SCALE]);
 }
@@ -4999,7 +4999,7 @@ bte_terminal_get_geometry_hints(BteTerminal *terminal,
         CtkWidget *widget;
         CtkBorder padding;
 
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
         g_return_if_fail(hints != NULL);
         widget = &terminal->widget;
         g_return_if_fail(ctk_widget_get_realized(widget));
@@ -5017,7 +5017,7 @@ bte_terminal_get_geometry_hints(BteTerminal *terminal,
         hints->min_width   = hints->base_width  + hints->width_inc  * min_columns;
         hints->min_height  = hints->base_height + hints->height_inc * min_rows;
 
-	_bte_debug_print(VTE_DEBUG_WIDGET_SIZE,
+	_bte_debug_print(BTE_DEBUG_WIDGET_SIZE,
                          "[Terminal %p] Geometry cell       width %ld height %ld\n"
                          "                       base       width %d height %d\n"
                          "                       increments width %d height %d\n"
@@ -5047,7 +5047,7 @@ bte_terminal_set_geometry_hints_for_window(BteTerminal *terminal,
 {
         CdkGeometry hints;
 
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
         g_return_if_fail(ctk_widget_get_realized(&terminal->widget));
 
         bte_terminal_get_geometry_hints(terminal, &hints, MIN_ROWS, MIN_COLUMNS);
@@ -5073,7 +5073,7 @@ gboolean
 bte_terminal_get_has_selection(BteTerminal *terminal) noexcept
 try
 {
-	g_return_val_if_fail(VTE_IS_TERMINAL(terminal), false);
+	g_return_val_if_fail(BTE_IS_TERMINAL(terminal), false);
         return !IMPL(terminal)->m_selection_resolved.empty();
 }
 catch (...)
@@ -5106,7 +5106,7 @@ gboolean
 bte_terminal_get_input_enabled (BteTerminal *terminal) noexcept
 try
 {
-        g_return_val_if_fail(VTE_IS_TERMINAL(terminal), false);
+        g_return_val_if_fail(BTE_IS_TERMINAL(terminal), false);
 
         return IMPL(terminal)->m_input_enabled;
 }
@@ -5130,7 +5130,7 @@ bte_terminal_set_input_enabled (BteTerminal *terminal,
                                 gboolean enabled) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
 
         if (IMPL(terminal)->set_input_enabled(enabled != FALSE))
                 g_object_notify_by_pspec(G_OBJECT(terminal), pspecs[PROP_INPUT_ENABLED]);
@@ -5155,7 +5155,7 @@ gboolean
 bte_terminal_get_mouse_autohide(BteTerminal *terminal) noexcept
 try
 {
-	g_return_val_if_fail(VTE_IS_TERMINAL(terminal), false);
+	g_return_val_if_fail(BTE_IS_TERMINAL(terminal), false);
 	return IMPL(terminal)->m_mouse_autohide;
 }
 catch (...)
@@ -5179,7 +5179,7 @@ bte_terminal_set_mouse_autohide(BteTerminal *terminal,
                                 gboolean setting) noexcept
 try
 {
-	g_return_if_fail(VTE_IS_TERMINAL(terminal));
+	g_return_if_fail(BTE_IS_TERMINAL(terminal));
 
         if (IMPL(terminal)->set_mouse_autohide(setting != FALSE))
                 g_object_notify_by_pspec(G_OBJECT(terminal), pspecs[PROP_MOUSE_POINTER_AUTOHIDE]);
@@ -5202,8 +5202,8 @@ bte_terminal_set_pty(BteTerminal *terminal,
                      BtePty *pty) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
-        g_return_if_fail(pty == NULL || VTE_IS_PTY(pty));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
+        g_return_if_fail(pty == NULL || BTE_IS_PTY(pty));
 
         auto const freezer = bte::glib::FreezeObjectNotify{terminal};
 
@@ -5227,7 +5227,7 @@ BtePty *
 bte_terminal_get_pty(BteTerminal *terminal) noexcept
 try
 {
-        g_return_val_if_fail (VTE_IS_TERMINAL (terminal), nullptr);
+        g_return_val_if_fail (BTE_IS_TERMINAL (terminal), nullptr);
         return WIDGET(terminal)->pty();
 }
 catch (...)
@@ -5250,7 +5250,7 @@ gboolean
 bte_terminal_get_rewrap_on_resize(BteTerminal *terminal) noexcept
 try
 {
-	g_return_val_if_fail(VTE_IS_TERMINAL(terminal), false);
+	g_return_val_if_fail(BTE_IS_TERMINAL(terminal), false);
 	return IMPL(terminal)->m_rewrap_on_resize;
 }
 catch (...)
@@ -5274,7 +5274,7 @@ bte_terminal_set_rewrap_on_resize(BteTerminal *terminal,
                                   gboolean rewrap) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
 
         if (IMPL(terminal)->set_rewrap_on_resize(rewrap != FALSE))
                 g_object_notify_by_pspec(G_OBJECT(terminal), pspecs[PROP_REWRAP_ON_RESIZE]);
@@ -5295,7 +5295,7 @@ glong
 bte_terminal_get_row_count(BteTerminal *terminal) noexcept
 try
 {
-	g_return_val_if_fail(VTE_IS_TERMINAL(terminal), -1);
+	g_return_val_if_fail(BTE_IS_TERMINAL(terminal), -1);
 	return IMPL(terminal)->m_row_count;
 }
 catch (...)
@@ -5324,7 +5324,7 @@ bte_terminal_set_scrollback_lines(BteTerminal *terminal,
                                   glong lines) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
         g_return_if_fail(lines >= -1);
 
         auto const freezer = bte::glib::FreezeObjectNotify{terminal};
@@ -5350,7 +5350,7 @@ glong
 bte_terminal_get_scrollback_lines(BteTerminal *terminal) noexcept
 try
 {
-        g_return_val_if_fail(VTE_IS_TERMINAL(terminal), 0);
+        g_return_val_if_fail(BTE_IS_TERMINAL(terminal), 0);
         return IMPL(terminal)->m_scrollback_lines;
 }
 catch (...)
@@ -5373,7 +5373,7 @@ bte_terminal_set_scroll_on_keystroke(BteTerminal *terminal,
                                      gboolean scroll) noexcept
 try
 {
-	g_return_if_fail(VTE_IS_TERMINAL(terminal));
+	g_return_if_fail(BTE_IS_TERMINAL(terminal));
 
         if (IMPL(terminal)->set_scroll_on_keystroke(scroll != FALSE))
                 g_object_notify_by_pspec(G_OBJECT(terminal), pspecs[PROP_SCROLL_ON_KEYSTROKE]);
@@ -5397,7 +5397,7 @@ gboolean
 bte_terminal_get_scroll_on_keystroke(BteTerminal *terminal) noexcept
 try
 {
-    g_return_val_if_fail(VTE_IS_TERMINAL(terminal), false);
+    g_return_val_if_fail(BTE_IS_TERMINAL(terminal), false);
     return IMPL(terminal)->m_scroll_on_keystroke;
 }
 catch (...)
@@ -5419,7 +5419,7 @@ bte_terminal_set_scroll_on_output(BteTerminal *terminal,
                                   gboolean scroll) noexcept
 try
 {
-	g_return_if_fail(VTE_IS_TERMINAL(terminal));
+	g_return_if_fail(BTE_IS_TERMINAL(terminal));
 
         if (IMPL(terminal)->set_scroll_on_output(scroll != FALSE))
                 g_object_notify_by_pspec(G_OBJECT(terminal), pspecs[PROP_SCROLL_ON_OUTPUT]);
@@ -5442,7 +5442,7 @@ gboolean
 bte_terminal_get_scroll_on_output(BteTerminal *terminal) noexcept
 try
 {
-    g_return_val_if_fail(VTE_IS_TERMINAL(terminal), false);
+    g_return_val_if_fail(BTE_IS_TERMINAL(terminal), false);
     return IMPL(terminal)->m_scroll_on_output;
 }
 catch (...)
@@ -5461,7 +5461,7 @@ const char *
 bte_terminal_get_window_title(BteTerminal *terminal) noexcept
 try
 {
-	g_return_val_if_fail(VTE_IS_TERMINAL(terminal), nullptr);
+	g_return_val_if_fail(BTE_IS_TERMINAL(terminal), nullptr);
 	return IMPL(terminal)->m_window_title.data();
 }
 catch (...)
@@ -5488,7 +5488,7 @@ const char *
 bte_terminal_get_word_char_exceptions(BteTerminal *terminal) noexcept
 try
 {
-        g_return_val_if_fail(VTE_IS_TERMINAL(terminal), NULL);
+        g_return_val_if_fail(BTE_IS_TERMINAL(terminal), NULL);
 
         return WIDGET(terminal)->word_char_exceptions();
 }
@@ -5521,7 +5521,7 @@ bte_terminal_set_word_char_exceptions(BteTerminal *terminal,
                                       const char *exceptions) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
 
         auto stropt = exceptions ? std::make_optional<std::string_view>(exceptions) : std::nullopt;
         if (WIDGET(terminal)->set_word_char_exceptions(stropt))
@@ -5561,7 +5561,7 @@ bte_terminal_write_contents_sync (BteTerminal *terminal,
                                   GError **error) noexcept
 try
 {
-        g_return_val_if_fail(VTE_IS_TERMINAL(terminal), false);
+        g_return_val_if_fail(BTE_IS_TERMINAL(terminal), false);
         g_return_val_if_fail(G_IS_OUTPUT_STREAM(stream), false);
 
         return IMPL(terminal)->write_contents_sync(stream, flags, cancellable, error);
@@ -5589,7 +5589,7 @@ bte_terminal_set_clear_background(BteTerminal* terminal,
                                   gboolean setting) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
 
         IMPL(terminal)->set_clear_background(setting != FALSE);
 }
@@ -5621,11 +5621,11 @@ bte_terminal_get_color_background_for_draw(BteTerminal* terminal,
                                            CdkRGBA* color) noexcept
 try
 {
-        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+        g_return_if_fail(BTE_IS_TERMINAL(terminal));
         g_return_if_fail(color != nullptr);
 
         auto impl = IMPL(terminal);
-        auto const c = impl->get_color(VTE_DEFAULT_BG);
+        auto const c = impl->get_color(BTE_DEFAULT_BG);
         color->red = c->red / 65535.;
         color->green = c->green / 65535.;
         color->blue = c->blue / 65535.;
@@ -5699,7 +5699,7 @@ exception_append_to_string(std::exception const& e,
         }
 }
 
-#ifdef VTE_DEBUG
+#ifdef BTE_DEBUG
 void log_exception(char const* func,
                    char const* filename,
                    int const line) noexcept
@@ -5717,22 +5717,22 @@ try
                 what = "Unknown exception"sv;
         }
 
-        _bte_debug_print(VTE_DEBUG_EXCEPTIONS,
+        _bte_debug_print(BTE_DEBUG_EXCEPTIONS,
                          "Caught exception in %s [%s:%d]: %s\n",
                          func, filename, line, what.c_str());
 }
 catch (...)
 {
-        _bte_debug_print(VTE_DEBUG_EXCEPTIONS,
+        _bte_debug_print(BTE_DEBUG_EXCEPTIONS,
                          "Caught exception while logging an exception in %s [%s:%d]\n",
                          func, filename, line);
 }
-#endif /* VTE_DEBUG */
+#endif /* BTE_DEBUG */
 
 namespace glib {
 
 bool set_error_from_exception(GError** error
-#ifdef VTE_DEBUG
+#ifdef BTE_DEBUG
                               , char const* func
                               , char const* filename
                               , int const line
@@ -5752,7 +5752,7 @@ try
                 what = "Unknown exception"sv;
         }
 
-#ifdef VTE_DEBUG
+#ifdef BTE_DEBUG
         auto msg = bte::glib::take_string(g_strdup_printf("Caught exception in %s [%s:%d]: %s",
                                                           func, filename, line,
                                                           what.c_str()));
@@ -5765,14 +5765,14 @@ try
                             G_IO_ERROR,
                             G_IO_ERROR_FAILED,
                             msg_str.get());
-        _bte_debug_print(VTE_DEBUG_EXCEPTIONS, "%s", msg_str.get());
+        _bte_debug_print(BTE_DEBUG_EXCEPTIONS, "%s", msg_str.get());
 
         return false;
 }
 catch (...)
 {
         bte::log_exception();
-#ifdef VTE_DEBUG
+#ifdef BTE_DEBUG
         g_set_error(error, G_IO_ERROR, G_IO_ERROR_FAILED,
                     "Caught exception while logging an exception in %s [%s:%d]\n",
                     func, filename, line);

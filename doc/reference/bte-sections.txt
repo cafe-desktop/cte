@@ -114,25 +114,25 @@ bte_terminal_set_clear_background
 bte_terminal_get_color_background_for_draw
 
 <SUBSECTION Standard>
-VTE_TYPE_CURSOR_BLINK_MODE
+BTE_TYPE_CURSOR_BLINK_MODE
 bte_cursor_blink_mode_get_type
-VTE_TYPE_CURSOR_SHAPE
+BTE_TYPE_CURSOR_SHAPE
 bte_cursor_shape_get_type
-VTE_TYPE_ERASE_BINDING
+BTE_TYPE_ERASE_BINDING
 bte_erase_binding_get_type
-VTE_TYPE_TEXT_BLINK_MODE
+BTE_TYPE_TEXT_BLINK_MODE
 bte_text_blink_mode_get_type
-VTE_TYPE_FORMAT
+BTE_TYPE_FORMAT
 bte_format_get_type
-VTE_TYPE_WRITE_FLAGS
+BTE_TYPE_WRITE_FLAGS
 bte_write_flags_get_type
-VTE_TYPE_TERMINAL
+BTE_TYPE_TERMINAL
 bte_terminal_get_type
-VTE_IS_TERMINAL
-VTE_TERMINAL
-VTE_TERMINAL_GET_CLASS
-VTE_IS_TERMINAL_CLASS
-VTE_TERMINAL_CLASS
+BTE_IS_TERMINAL
+BTE_TERMINAL
+BTE_TERMINAL_GET_CLASS
+BTE_IS_TERMINAL_CLASS
+BTE_TERMINAL_CLASS
 
 <SUBSECTION Binding Accessors>
 bte_terminal_get_char_height
@@ -179,9 +179,9 @@ bte_regex_jit
 bte_regex_substitute
 
 <SUBSECTION Standard>
-VTE_TYPE_REGEX
+BTE_TYPE_REGEX
 bte_regex_get_type
-VTE_REGEX_ERROR
+BTE_REGEX_ERROR
 bte_regex_error_quark
 </SECTION>
 
@@ -201,27 +201,27 @@ bte_pty_set_term
 bte_pty_set_utf8
 
 <SUBSECTION>
-VTE_SPAWN_NO_PARENT_ENVV
-VTE_SPAWN_NO_SYSTEMD_SCOPE
-VTE_SPAWN_REQUIRE_SYSTEMD_SCOPE
+BTE_SPAWN_NO_PARENT_ENVV
+BTE_SPAWN_NO_SYSTEMD_SCOPE
+BTE_SPAWN_REQUIRE_SYSTEMD_SCOPE
 bte_pty_spawn_async
 bte_pty_spawn_with_fds_async
 bte_pty_spawn_finish
 
 <SUBSECTION Standard>
 bte_pty_flags_get_type
-VTE_TYPE_PTY_FLAGS
+BTE_TYPE_PTY_FLAGS
 bte_pty_error_get_type
-VTE_TYPE_PTY_ERROR
+BTE_TYPE_PTY_ERROR
 bte_pty_error_quark
-VTE_PTY_ERROR
+BTE_PTY_ERROR
 bte_pty_get_type
-VTE_TYPE_PTY
-VTE_PTY
-VTE_PTY_CLASS
-VTE_IS_PTY
-VTE_IS_PTY_CLASS
-VTE_PTY_GET_CLASS
+BTE_TYPE_PTY
+BTE_PTY
+BTE_PTY_CLASS
+BTE_IS_PTY
+BTE_IS_PTY_CLASS
+BTE_PTY_GET_CLASS
 BtePtyClass
 
 <SUBSECTION Deprecated>
@@ -232,14 +232,14 @@ bte_pty_close
 <FILE>bte-version</FILE>
 <TITLE>Version Information</TITLE>
 
-VTE_MAJOR_VERSION
+BTE_MAJOR_VERSION
 bte_get_major_version
-VTE_MINOR_VERSION
+BTE_MINOR_VERSION
 bte_get_minor_version
-VTE_MICRO_VERSION
+BTE_MICRO_VERSION
 bte_get_micro_version
 
 <SUBSECTION>
-VTE_CHECK_VERSION
+BTE_CHECK_VERSION
 
 </SECTION>

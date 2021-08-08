@@ -1,4 +1,4 @@
-# BiDi support in VTE is implemented according to
+# BiDi support in BTE is implemented according to
 # https://terminal-wg.pages.freedesktop.org/bidi/
 #
 # The following aliases allow you to quickly change the BiDi mode.

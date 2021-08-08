@@ -71,7 +71,7 @@ ICUConverter::convert(std::string_view const& data)
                                       data.data(), data.size(),
                                       err);
         if (err.isFailure() && (err.get() != U_BUFFER_OVERFLOW_ERROR)) {
-                _bte_debug_print(VTE_DEBUG_CONVERSION,
+                _bte_debug_print(BTE_DEBUG_CONVERSION,
                                  "Error converting from UTF-8 to UTF-16 in preflight: %s\n",
                                  err.errorName());
                 return {};
@@ -90,7 +90,7 @@ ICUConverter::convert(std::string_view const& data)
                                  data.size(),
                                  err);
         if (err.isFailure()) {
-                _bte_debug_print(VTE_DEBUG_CONVERSION,
+                _bte_debug_print(BTE_DEBUG_CONVERSION,
                                  "Error converting from UTF-8 to UTF-16: %s\n",
                                  err.errorName());
                 return {};
@@ -105,7 +105,7 @@ ICUConverter::convert(std::string_view const& data)
                                            u16_size,
                                            err);
         if (err.isFailure() && (err.get() != U_BUFFER_OVERFLOW_ERROR)) {
-                _bte_debug_print(VTE_DEBUG_CONVERSION,
+                _bte_debug_print(BTE_DEBUG_CONVERSION,
                                  "Error converting from UTF-8 to %s in preflight: %s\n",
                                  m_charset.c_str(),
                                  err.errorName());
@@ -125,7 +125,7 @@ ICUConverter::convert(std::string_view const& data)
                                       u16_size,
                                       err);
         if (err.isFailure()) {
-                _bte_debug_print(VTE_DEBUG_CONVERSION,
+                _bte_debug_print(BTE_DEBUG_CONVERSION,
                                  "Error converting from UTF-16 to %s: %s\n",
                                  m_charset.c_str(),
                                  err.errorName());
