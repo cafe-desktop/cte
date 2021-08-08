@@ -25,7 +25,7 @@
 #include <ctk/ctk.h>
 #include <atk/atk.h>
 #ifdef USE_VTE
-#include <vte/vte.h>
+#include <bte/bte.h>
 #endif
 
 static GArray *contents = NULL;
@@ -56,22 +56,22 @@ terminal_adjustment_text_view(CtkWidget *terminal)
  * Implementation for a VteTerminal widget.
  */
 static void
-terminal_init_vte(CtkWidget **terminal)
+terminal_init_bte(CtkWidget **terminal)
 {
-	*terminal = vte_terminal_new();
+	*terminal = bte_terminal_new();
 	g_signal_connect(G_OBJECT(*terminal), "eof",
 			 G_CALLBACK(ctk_main_quit), NULL);
 	g_signal_connect(G_OBJECT(*terminal), "child-exited",
 			 G_CALLBACK(ctk_main_quit), NULL);
 }
 static void
-terminal_shell_vte(CtkWidget *terminal)
+terminal_shell_bte(CtkWidget *terminal)
 {
         char *argv[2];
 
-        argv[0] = vte_get_user_shell ();
+        argv[0] = bte_get_user_shell ();
         argv[1] = NULL;
-	vte_terminal_spawn_sync(VTE_TERMINAL(terminal),
+	bte_terminal_spawn_sync(VTE_TERMINAL(terminal),
                                        VTE_PTY_DEFAULT,
                                        g_get_home_dir() ? g_get_home_dir() : NULL,
                                        argv,
@@ -208,7 +208,7 @@ terminal_init(CtkWidget **terminal)
 	return;
 #endif
 #ifdef USE_VTE
-	terminal_init_vte(terminal);
+	terminal_init_bte(terminal);
 	return;
 #endif
 	g_assert_not_reached();
@@ -221,7 +221,7 @@ terminal_shell(CtkWidget *terminal)
 	return;
 #endif
 #ifdef USE_VTE
-	terminal_shell_vte(terminal);
+	terminal_shell_bte(terminal);
 	return;
 #endif
 	g_assert_not_reached();

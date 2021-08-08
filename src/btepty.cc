@@ -18,7 +18,7 @@
  */
 
 /**
- * SECTION: vte-pty
+ * SECTION: bte-pty
  * @short_description: Functions for starting a new process on a new pseudo-terminal and for
  * manipulating pseudo-terminals
  *
@@ -30,7 +30,7 @@
 
 #include <exception>
 
-#include <vte/vte.h>
+#include <bte/bte.h>
 
 #include <errno.h>
 #include <glib.h>
@@ -45,7 +45,7 @@
 #include "refptr.hh"
 #include "spawn.hh"
 
-#include "vteptyinternal.hh"
+#include "bteptyinternal.hh"
 
 #if !GLIB_CHECK_VERSION(2, 42, 0)
 #define G_PARAM_EXPLICIT_NOTIFY 0
@@ -71,7 +71,7 @@ struct _VtePty {
 };
 
 struct _VtePtyPrivate {
-        vte::base::Pty* pty; /* owned */
+        bte::base::Pty* pty; /* owned */
         int foreign_fd; /* foreign FD if  != -1 */
         VtePtyFlags flags;
 };
@@ -80,32 +80,32 @@ struct _VtePtyClass {
         GObjectClass parent_class;
 };
 
-vte::base::Pty*
-_vte_pty_get_impl(VtePty* pty)
+bte::base::Pty*
+_bte_pty_get_impl(VtePty* pty)
 {
         return pty->priv->pty;
 }
 
-#define IMPL(wrapper) (_vte_pty_get_impl(wrapper))
+#define IMPL(wrapper) (_bte_pty_get_impl(wrapper))
 
 /**
  * VTE_SPAWN_NO_PARENT_ENVV:
  *
  * Use this as a spawn flag (together with flags from #GSpawnFlags) in
- * vte_pty_spawn_async().
+ * bte_pty_spawn_async().
  *
  * Normally, the spawned process inherits the environment from the parent
  * process; when this flag is used, only the environment variables passed
- * to vte_pty_spawn_async() etc. are passed to the child process.
+ * to bte_pty_spawn_async() etc. are passed to the child process.
  */
 
 /**
  * VTE_SPAWN_NO_SYSTEMD_SCOPE:
  *
  * Use this as a spawn flag (together with flags from #GSpawnFlags) in
- * vte_pty_spawn_async().
+ * bte_pty_spawn_async().
  *
- * Prevents vte_pty_spawn_async() etc. from moving the newly created child
+ * Prevents bte_pty_spawn_async() etc. from moving the newly created child
  * process to a systemd user scope.
  *
  * Since: 0.60
@@ -115,9 +115,9 @@ _vte_pty_get_impl(VtePty* pty)
  * VTE_SPAWN_REQUIRE_SYSTEMD_SCOPE
  *
  * Use this as a spawn flag (together with flags from #GSpawnFlags) in
- * vte_pty_spawn_async().
+ * bte_pty_spawn_async().
  *
- * Requires vte_pty_spawn_async() etc. to move the newly created child
+ * Requires bte_pty_spawn_async() etc. to move the newly created child
  * process to a systemd user scope; if that fails, the whole spawn fails.
  *
  * This is supported on Linux only.
@@ -126,11 +126,11 @@ _vte_pty_get_impl(VtePty* pty)
  */
 
 /**
- * vte_pty_child_setup:
+ * bte_pty_child_setup:
  * @pty: a #VtePty
  */
 void
-vte_pty_child_setup (VtePty *pty) noexcept
+bte_pty_child_setup (VtePty *pty) noexcept
 try
 {
         g_return_if_fail(pty != nullptr);
@@ -141,11 +141,11 @@ try
 }
 catch (...)
 {
-        vte::log_exception();
+        bte::log_exception();
 }
 
 /**
- * vte_pty_set_size:
+ * bte_pty_set_size:
  * @pty: a #VtePty
  * @rows: the desired number of rows
  * @columns: the desired number of columns
@@ -159,7 +159,7 @@ catch (...)
  * Returns: %TRUE on success, %FALSE on failure with @error filled in
  */
 gboolean
-vte_pty_set_size(VtePty *pty,
+bte_pty_set_size(VtePty *pty,
                  int rows,
                  int columns,
                  GError **error) noexcept
@@ -167,11 +167,11 @@ vte_pty_set_size(VtePty *pty,
         /* No way to determine the pixel size; set it to (0, 0), meaning
          * "undefined".
          */
-        return _vte_pty_set_size(pty, rows, columns, 0, 0, error);
+        return _bte_pty_set_size(pty, rows, columns, 0, 0, error);
 }
 
 bool
-_vte_pty_set_size(VtePty *pty,
+_bte_pty_set_size(VtePty *pty,
                   int rows,
                   int columns,
                   int cell_height_px,
@@ -186,7 +186,7 @@ try
         if (impl->set_size(rows, columns, cell_height_px, cell_width_px))
                 return true;
 
-        auto errsv = vte::libc::ErrnoSaver{};
+        auto errsv = bte::libc::ErrnoSaver{};
         g_set_error(error, G_IO_ERROR,
                     g_io_error_from_errno(errsv),
                     "Failed to set window size: %s",
@@ -196,12 +196,12 @@ try
 }
 catch (...)
 {
-        return vte::glib::set_error_from_exception(error);
+        return bte::glib::set_error_from_exception(error);
 }
 
 
 /**
- * vte_pty_get_size:
+ * bte_pty_get_size:
  * @pty: a #VtePty
  * @rows: (out) (allow-none): a location to store the number of rows, or %NULL
  * @columns: (out) (allow-none): a location to store the number of columns, or %NULL
@@ -214,7 +214,7 @@ catch (...)
  * Returns: %TRUE on success, %FALSE on failure with @error filled in
  */
 gboolean
-vte_pty_get_size(VtePty *pty,
+bte_pty_get_size(VtePty *pty,
                  int *rows,
                  int *columns,
                  GError **error) noexcept
@@ -227,7 +227,7 @@ try
         if (impl->get_size(rows, columns))
                 return true;
 
-        auto errsv = vte::libc::ErrnoSaver{};
+        auto errsv = bte::libc::ErrnoSaver{};
         g_set_error(error, G_IO_ERROR,
                     g_io_error_from_errno(errsv),
                     "Failed to get window size: %s",
@@ -236,11 +236,11 @@ try
 }
 catch (...)
 {
-        return vte::glib::set_error_from_exception(error);
+        return bte::glib::set_error_from_exception(error);
 }
 
 /**
- * vte_pty_set_utf8:
+ * bte_pty_set_utf8:
  * @pty: a #VtePty
  * @utf8: whether or not the pty is in UTF-8 mode
  * @error: (allow-none): return location to store a #GError, or %NULL
@@ -252,7 +252,7 @@ catch (...)
  * Returns: %TRUE on success, %FALSE on failure with @error filled in
  */
 gboolean
-vte_pty_set_utf8(VtePty *pty,
+bte_pty_set_utf8(VtePty *pty,
                  gboolean utf8,
                  GError **error) noexcept
 try
@@ -264,18 +264,18 @@ try
         if (impl->set_utf8(utf8))
                 return true;
 
-        auto errsv = vte::libc::ErrnoSaver{};
+        auto errsv = bte::libc::ErrnoSaver{};
         g_set_error(error, G_IO_ERROR, g_io_error_from_errno(errsv),
                     "%s failed: %s", "tc[sg]etattr", g_strerror(errsv));
         return false;
 }
 catch (...)
 {
-        return vte::glib::set_error_from_exception(error);
+        return bte::glib::set_error_from_exception(error);
 }
 
 /**
- * vte_pty_close:
+ * bte_pty_close:
  * @pty: a #VtePty
  *
  * Since 0.42 this is a no-op.
@@ -283,7 +283,7 @@ catch (...)
  * Deprecated: 0.42
  */
 void
-vte_pty_close (VtePty *pty) noexcept
+bte_pty_close (VtePty *pty) noexcept
 {
         /* impl->close(); */
 }
@@ -299,7 +299,7 @@ enum {
 /* GInitable impl */
 
 static gboolean
-vte_pty_initable_init (GInitable *initable,
+bte_pty_initable_init (GInitable *initable,
                        GCancellable *cancellable,
                        GError **error) noexcept
 try
@@ -308,14 +308,14 @@ try
         VtePtyPrivate *priv = pty->priv;
 
         if (priv->foreign_fd != -1) {
-                priv->pty = vte::base::Pty::create_foreign(priv->foreign_fd, priv->flags);
+                priv->pty = bte::base::Pty::create_foreign(priv->foreign_fd, priv->flags);
                 priv->foreign_fd = -1;
         } else {
-                priv->pty = vte::base::Pty::create(priv->flags);
+                priv->pty = bte::base::Pty::create(priv->flags);
         }
 
         if (priv->pty == nullptr) {
-                auto errsv = vte::libc::ErrnoSaver{};
+                auto errsv = bte::libc::ErrnoSaver{};
                 g_set_error(error, G_IO_ERROR, g_io_error_from_errno(errsv),
                             "Failed to open PTY: %s", g_strerror(errsv));
                 return FALSE;
@@ -325,27 +325,27 @@ try
 }
 catch (...)
 {
-        return vte::glib::set_error_from_exception(error);
+        return bte::glib::set_error_from_exception(error);
 }
 
 static void
-vte_pty_initable_iface_init (GInitableIface  *iface)
+bte_pty_initable_iface_init (GInitableIface  *iface)
 {
-        iface->init = vte_pty_initable_init;
+        iface->init = bte_pty_initable_init;
 }
 
 /* GObjectClass impl */
 
-G_DEFINE_TYPE_WITH_CODE (VtePty, vte_pty, G_TYPE_OBJECT,
+G_DEFINE_TYPE_WITH_CODE (VtePty, bte_pty, G_TYPE_OBJECT,
                          G_ADD_PRIVATE (VtePty)
-                         G_IMPLEMENT_INTERFACE (G_TYPE_INITABLE, vte_pty_initable_iface_init))
+                         G_IMPLEMENT_INTERFACE (G_TYPE_INITABLE, bte_pty_initable_iface_init))
 
 static void
-vte_pty_init (VtePty *pty)
+bte_pty_init (VtePty *pty)
 {
         VtePtyPrivate *priv;
 
-        priv = pty->priv = (VtePtyPrivate *)vte_pty_get_instance_private (pty);
+        priv = pty->priv = (VtePtyPrivate *)bte_pty_get_instance_private (pty);
 
         priv->pty = nullptr;
         priv->foreign_fd = -1;
@@ -353,23 +353,23 @@ vte_pty_init (VtePty *pty)
 }
 
 static void
-vte_pty_finalize (GObject *object) noexcept
+bte_pty_finalize (GObject *object) noexcept
 try
 {
         VtePty *pty = VTE_PTY (object);
         VtePtyPrivate *priv = pty->priv;
 
-        auto implptr = vte::base::RefPtr<vte::base::Pty>{priv->pty}; // moved
+        auto implptr = bte::base::RefPtr<bte::base::Pty>{priv->pty}; // moved
 
-        G_OBJECT_CLASS (vte_pty_parent_class)->finalize (object);
+        G_OBJECT_CLASS (bte_pty_parent_class)->finalize (object);
 }
 catch (...)
 {
-        vte::log_exception();
+        bte::log_exception();
 }
 
 static void
-vte_pty_get_property (GObject    *object,
+bte_pty_get_property (GObject    *object,
                        guint       property_id,
                        GValue     *value,
                        GParamSpec *pspec)
@@ -383,7 +383,7 @@ vte_pty_get_property (GObject    *object,
                 break;
 
         case PROP_FD:
-                g_value_set_int(value, vte_pty_get_fd(pty));
+                g_value_set_int(value, bte_pty_get_fd(pty));
                 break;
 
         default:
@@ -392,7 +392,7 @@ vte_pty_get_property (GObject    *object,
 }
 
 static void
-vte_pty_set_property (GObject      *object,
+bte_pty_set_property (GObject      *object,
                        guint         property_id,
                        const GValue *value,
                        GParamSpec   *pspec)
@@ -415,13 +415,13 @@ vte_pty_set_property (GObject      *object,
 }
 
 static void
-vte_pty_class_init (VtePtyClass *klass)
+bte_pty_class_init (VtePtyClass *klass)
 {
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-        object_class->set_property = vte_pty_set_property;
-        object_class->get_property = vte_pty_get_property;
-        object_class->finalize     = vte_pty_finalize;
+        object_class->set_property = bte_pty_set_property;
+        object_class->get_property = bte_pty_get_property;
+        object_class->finalize     = bte_pty_finalize;
 
         /**
          * VtePty:flags:
@@ -456,7 +456,7 @@ vte_pty_class_init (VtePtyClass *klass)
 /* public API */
 
 /**
- * vte_pty_error_quark:
+ * bte_pty_error_quark:
  *
  * Error domain for VTE PTY errors. Errors in this domain will be from the #VtePtyError
  * enumeration. See #GError for more information on error domains.
@@ -464,18 +464,18 @@ vte_pty_class_init (VtePtyClass *klass)
  * Returns: the error domain for VTE PTY errors
  */
 GQuark
-vte_pty_error_quark(void) noexcept
+bte_pty_error_quark(void) noexcept
 {
   static GQuark quark = 0;
 
   if (G_UNLIKELY (quark == 0))
-    quark = g_quark_from_static_string("vte-pty-error");
+    quark = g_quark_from_static_string("bte-pty-error");
 
   return quark;
 }
 
 /**
- * vte_pty_new_sync: (constructor)
+ * bte_pty_new_sync: (constructor)
  * @flags: flags from #VtePtyFlags
  * @cancellable: (allow-none): a #GCancellable, or %NULL
  * @error: (allow-none): return location for a #GError, or %NULL
@@ -485,14 +485,14 @@ vte_pty_error_quark(void) noexcept
  * You can later use fork() or the g_spawn_async() family of functions
  * to start a process on the PTY.
  *
- * If using fork(), you MUST call vte_pty_child_setup() in the child.
+ * If using fork(), you MUST call bte_pty_child_setup() in the child.
  *
  * If using g_spawn_async() and friends, you MUST either use
- * vte_pty_child_setup() directly as the child setup function, or call
- * vte_pty_child_setup() from your own child setup function supplied.
+ * bte_pty_child_setup() directly as the child setup function, or call
+ * bte_pty_child_setup() from your own child setup function supplied.
  *
- * When using vte_terminal_spawn_sync() with a custom child setup
- * function, vte_pty_child_setup() will be called before the supplied
+ * When using bte_terminal_spawn_sync() with a custom child setup
+ * function, bte_pty_child_setup() will be called before the supplied
  * function; you must not call it again.
  *
  * Also, you MUST pass the %G_SPAWN_DO_NOT_REAP_CHILD flag.
@@ -501,16 +501,16 @@ vte_pty_error_quark(void) noexcept
  * and %G_SPAWN_CHILD_INHERITS_STDIN are not supported, since stdin, stdout
  * and stderr of the child process will always be connected to the PTY.
  *
- * Note that you should set the PTY's size using vte_pty_set_size() before
+ * Note that you should set the PTY's size using bte_pty_set_size() before
  * spawning the child process, so that the child process has the correct
  * size from the start instead of starting with a default size and then
  * shortly afterwards receiving a SIGWINCH signal. You should prefer
- * using vte_terminal_pty_new_sync() which does this automatically.
+ * using bte_terminal_pty_new_sync() which does this automatically.
  *
  * Returns: (transfer full): a new #VtePty, or %NULL on error with @error filled in
  */
 VtePty *
-vte_pty_new_sync (VtePtyFlags flags,
+bte_pty_new_sync (VtePtyFlags flags,
                   GCancellable *cancellable,
                   GError **error) noexcept
 {
@@ -522,7 +522,7 @@ vte_pty_new_sync (VtePtyFlags flags,
 }
 
 /**
- * vte_pty_new_foreign_sync: (constructor)
+ * bte_pty_new_foreign_sync: (constructor)
  * @fd: a file descriptor to the PTY
  * @cancellable: (allow-none): a #GCancellable, or %NULL
  * @error: (allow-none): return location for a #GError, or %NULL
@@ -537,7 +537,7 @@ vte_pty_new_sync (VtePtyFlags flags,
  * Returns: (transfer full): a new #VtePty for @fd, or %NULL on error with @error filled in
  */
 VtePty *
-vte_pty_new_foreign_sync (int fd,
+bte_pty_new_foreign_sync (int fd,
                           GCancellable *cancellable,
                           GError **error) noexcept
 {
@@ -551,7 +551,7 @@ vte_pty_new_foreign_sync (int fd,
 }
 
 /**
- * vte_pty_get_fd:
+ * bte_pty_get_fd:
  * @pty: a #VtePty
  *
  * Returns: the file descriptor of the PTY master in @pty. The
@@ -559,7 +559,7 @@ vte_pty_new_foreign_sync (int fd,
  *   its flags changed
  */
 int
-vte_pty_get_fd (VtePty *pty) noexcept
+bte_pty_get_fd (VtePty *pty) noexcept
 try
 {
         g_return_val_if_fail(VTE_IS_PTY(pty), FALSE);
@@ -567,7 +567,7 @@ try
 }
 catch (...)
 {
-        vte::log_exception();
+        bte::log_exception();
         return -1;
 }
 
@@ -604,7 +604,7 @@ ignored_spawn_flags() noexcept
                            G_SPAWN_DO_NOT_REAP_CHILD);
 }
 
-static vte::base::SpawnContext
+static bte::base::SpawnContext
 spawn_context_from_args(VtePty* pty,
                         char const* working_directory,
                         char const* const* argv,
@@ -618,8 +618,8 @@ spawn_context_from_args(VtePty* pty,
                         void* child_setup_data,
                         GDestroyNotify child_setup_data_destroy)
 {
-        auto context = vte::base::SpawnContext{};
-        context.set_pty(vte::glib::make_ref(pty));
+        auto context = bte::base::SpawnContext{};
+        context.set_pty(bte::glib::make_ref(pty));
         context.set_cwd(working_directory);
         context.set_fallback_cwd(g_get_home_dir());
         context.set_child_setup(child_setup, child_setup_data, child_setup_data_destroy);
@@ -649,7 +649,7 @@ spawn_context_from_args(VtePty* pty,
 }
 
 bool
-_vte_pty_spawn_sync(VtePty* pty,
+_bte_pty_spawn_sync(VtePty* pty,
                     char const* working_directory,
                     char const* const* argv,
                     char const* const* envv,
@@ -670,7 +670,7 @@ try
         g_warn_if_fail((spawn_flags & forbidden_spawn_flags()) == 0);
         spawn_flags = GSpawnFlags(spawn_flags & ~forbidden_spawn_flags());
 
-        auto op = vte::base::SpawnOperation{spawn_context_from_args(pty,
+        auto op = bte::base::SpawnOperation{spawn_context_from_args(pty,
                                                                     working_directory,
                                                                     argv,
                                                                     envv,
@@ -683,7 +683,7 @@ try
                                             timeout,
                                             cancellable};
 
-        auto err = vte::glib::Error{};
+        auto err = bte::glib::Error{};
         auto rv = op.run_sync(child_pid, err);
         if (!rv)
                 err.propagate(error);
@@ -692,17 +692,17 @@ try
 }
 catch (...)
 {
-        return vte::glib::set_error_from_exception(error);
+        return bte::glib::set_error_from_exception(error);
 }
 
 /*
- * _vte_pty_check_envv:
+ * _bte_pty_check_envv:
  * @strv:
  *
  * Validates that each element is of the form 'KEY=VALUE'.
  */
 bool
-_vte_pty_check_envv(char const* const* strv) noexcept
+_bte_pty_check_envv(char const* const* strv) noexcept
 {
   if (!strv)
     return true;
@@ -718,7 +718,7 @@ _vte_pty_check_envv(char const* const* strv) noexcept
 }
 
 /**
- * vte_pty_spawn_with_fds_async:
+ * bte_pty_spawn_with_fds_async:
  * @pty: a #VtePty
  * @working_directory: (allow-none): the name of a directory the command should start
  *   in, or %NULL to use the current working directory
@@ -767,15 +767,15 @@ _vte_pty_check_envv(char const* const* strv) noexcept
  * systemd user scope; and if %VTE_SPAWN_REQUIRE_SYSTEMD_SCOPE is passed, and creation
  * of the systemd user scope fails, the whole spawn will fail.
  * You can override the options used for the systemd user scope by
- * providing a systemd override file for 'vte-spawn-.scope' unit. See man:systemd.unit(5)
+ * providing a systemd override file for 'bte-spawn-.scope' unit. See man:systemd.unit(5)
  * for further information.
  *
- * See vte_pty_new(), and vte_terminal_watch_child() for more information.
+ * See bte_pty_new(), and bte_terminal_watch_child() for more information.
  *
  * Since: 0.62
  */
 void
-vte_pty_spawn_with_fds_async(VtePty *pty,
+bte_pty_spawn_with_fds_async(VtePty *pty,
                              char const* working_directory,
                              char const* const* argv,
                              char const* const* envv,
@@ -795,10 +795,10 @@ try
 {
         g_return_if_fail(argv != nullptr);
         g_return_if_fail(argv[0] != nullptr);
-        g_return_if_fail(envv == nullptr || _vte_pty_check_envv(envv));
+        g_return_if_fail(envv == nullptr || _bte_pty_check_envv(envv));
         g_return_if_fail(n_fds == 0 || fds != nullptr);
         for (auto i = int{0}; i < n_fds; ++i)
-                g_return_if_fail(vte::libc::fd_get_cloexec(fds[i]));
+                g_return_if_fail(bte::libc::fd_get_cloexec(fds[i]));
         g_return_if_fail(n_fd_map_to == 0 || fd_map_to != nullptr);
         g_return_if_fail(n_fds >= n_fd_map_to);
         g_return_if_fail((spawn_flags & ~all_spawn_flags()) == 0);
@@ -814,7 +814,7 @@ try
         g_warn_if_fail((spawn_flags & forbidden_spawn_flags()) == 0);
         spawn_flags = GSpawnFlags(spawn_flags & ~forbidden_spawn_flags());
 
-        auto op = new vte::base::SpawnOperation{spawn_context_from_args(pty,
+        auto op = new bte::base::SpawnOperation{spawn_context_from_args(pty,
                                                                         working_directory,
                                                                         argv,
                                                                         envv,
@@ -828,7 +828,7 @@ try
                                                 cancellable};
 
         /* takes ownership of @op */
-        op->run_async((void*)vte_pty_spawn_async, /* tag */
+        op->run_async((void*)bte_pty_spawn_async, /* tag */
                       callback,
                       user_data);
 }
@@ -837,11 +837,11 @@ catch (...)
         // FIXME: make the function above exception safe. It needs to guarantee
         // that the callback will be invoked regardless of when the throw occurred.
 
-        vte::log_exception();
+        bte::log_exception();
 }
 
 /**
- * vte_pty_spawn_async:
+ * bte_pty_spawn_async:
  * @pty: a #VtePty
  * @working_directory: (allow-none): the name of a directory the command should start
  *   in, or %NULL to use the current working directory
@@ -857,14 +857,14 @@ catch (...)
  * @callback: (nullable) (scope async): a #GAsyncReadyCallback, or %NULL
  * @user_data: (closure callback): user data for @callback
  *
- * Like vte_pty_spawn_with_fds_async(), except that this function does not
- * allow passing file descriptors to the child process. See vte_pty_spawn_with_fds_async()
+ * Like bte_pty_spawn_with_fds_async(), except that this function does not
+ * allow passing file descriptors to the child process. See bte_pty_spawn_with_fds_async()
  * for more information.
  *
  * Since: 0.48
  */
 void
-vte_pty_spawn_async(VtePty *pty,
+bte_pty_spawn_async(VtePty *pty,
                     const char *working_directory,
                     char **argv,
                     char **envv,
@@ -877,7 +877,7 @@ vte_pty_spawn_async(VtePty *pty,
                     GAsyncReadyCallback callback,
                     gpointer user_data) noexcept
 {
-        vte_pty_spawn_with_fds_async(pty, working_directory, argv, envv,
+        bte_pty_spawn_with_fds_async(pty, working_directory, argv, envv,
                                      nullptr, 0, nullptr, 0,
                                      spawn_flags,
                                      child_setup, child_setup_data, child_setup_data_destroy,
@@ -886,7 +886,7 @@ vte_pty_spawn_async(VtePty *pty,
 }
 
 /**
- * vte_pty_spawn_finish:
+ * bte_pty_spawn_finish:
  * @pty: a #VtePty
  * @result: a #GAsyncResult
  * @child_pid: (out) (allow-none) (transfer full): a location to store the child PID, or %NULL
@@ -897,14 +897,14 @@ vte_pty_spawn_async(VtePty *pty,
  * Since: 0.48
  */
 gboolean
-vte_pty_spawn_finish(VtePty* pty,
+bte_pty_spawn_finish(VtePty* pty,
                      GAsyncResult* result,
                      GPid* child_pid /* out */,
                      GError** error) noexcept
 {
         g_return_val_if_fail (VTE_IS_PTY(pty), false);
         g_return_val_if_fail (G_IS_TASK(result), false);
-        g_return_val_if_fail (g_task_get_source_tag(G_TASK (result)) == vte_pty_spawn_async, false);
+        g_return_val_if_fail (g_task_get_source_tag(G_TASK (result)) == bte_pty_spawn_async, false);
         g_return_val_if_fail(error == nullptr || *error == nullptr, false);
 
         auto pid = g_task_propagate_int(G_TASK(result), error);

@@ -1,12 +1,12 @@
-# Friulian translation for vte.
-# Copyright (C) 2012 vte's COPYRIGHT HOLDER
-# This file is distributed under the same license as the vte package.
+# Friulian translation for bte.
+# Copyright (C) 2012 bte's COPYRIGHT HOLDER
+# This file is distributed under the same license as the bte package.
 # TmTFx <f.t.public@gmail.com>, 2012.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: vte vte-0-34\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Project-Id-Version: bte bte-0-34\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2020-05-27 19:17+0000\n"
 "PO-Revision-Date: 2020-07-11 21:33+0200\n"
 "Last-Translator: Fabio Tomat <f.t.public@gmail.com>\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.3.1\n"
 
-#: src/vte.cc:7763
+#: src/bte.cc:7763
 msgid "WARNING"
 msgstr "AVERTIMENT"
 
-#: src/vte.cc:7765
+#: src/bte.cc:7765
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr "GnuTLS no abilitât; i dâts a vignaran scrits tal disc cence jessi cifrâts!"
 
@@ -97,5 +97,5 @@ msgstr "No si è rivâts a eseguî il procès fi “%s”: "
 #~ msgid "Error compiling regular expression \"%s\"."
 #~ msgstr "Erôr compilant l'espresion regolâr \"%s\"."
 
-#~ msgid "_vte_conv_open() failed setting word characters"
-#~ msgstr "_vte_conv_open() al a falît tal impuestâ i caratars de peraule"
+#~ msgid "_bte_conv_open() failed setting word characters"
+#~ msgstr "_bte_conv_open() al a falît tal impuestâ i caratars de peraule"

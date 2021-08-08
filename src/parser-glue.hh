@@ -23,7 +23,7 @@
 
 #include "parser.hh"
 
-namespace vte {
+namespace bte {
 
 namespace parser {
 
@@ -35,14 +35,14 @@ public:
 
         Parser() noexcept
         {
-                vte_parser_init(&m_parser);
+                bte_parser_init(&m_parser);
         }
         Parser(Parser const&) = delete;
         Parser(Parser&&) = delete;
 
         ~Parser() noexcept
         {
-                vte_parser_deinit(&m_parser);
+                bte_parser_deinit(&m_parser);
         }
 
         Parser& operator=(Parser const&) = delete;
@@ -50,16 +50,16 @@ public:
 
         inline int feed(uint32_t raw) noexcept
         {
-                return vte_parser_feed(&m_parser, raw);
+                return bte_parser_feed(&m_parser, raw);
         }
 
         inline void reset() noexcept
         {
-                vte_parser_reset(&m_parser);
+                bte_parser_reset(&m_parser);
         }
 
 protected:
-        vte_parser_t m_parser;
+        bte_parser_t m_parser;
 }; // class Parser
 
 class Sequence {
@@ -184,7 +184,7 @@ public:
         inline std::u32string string() const noexcept
         {
                 size_t len;
-                auto buf = vte_seq_string_get(&m_seq->arg_str, &len);
+                auto buf = bte_seq_string_get(&m_seq->arg_str, &len);
                 return std::u32string(reinterpret_cast<char32_t*>(buf), len);
         }
 
@@ -199,7 +199,7 @@ public:
         inline constexpr std::u32string_view string() const noexcept
         {
                 size_t len = 0;
-                auto buf = vte_seq_string_get(&m_seq->arg_str, &len);
+                auto buf = bte_seq_string_get(&m_seq->arg_str, &len);
                 return std::u32string_view(buf, len);
         }
         #endif
@@ -216,7 +216,7 @@ public:
         inline char* string_param() const noexcept
         {
                 size_t len = 0;
-                auto buf = vte_seq_string_get(&m_seq->arg_str, &len);
+                auto buf = bte_seq_string_get(&m_seq->arg_str, &len);
                 return ucs4_to_utf8(buf, len);
         }
 
@@ -261,7 +261,7 @@ public:
         inline constexpr int param(unsigned int idx,
                                    int default_v = -1) const noexcept
         {
-                return __builtin_expect(idx < size(), 1) ? vte_seq_arg_value(m_seq->args[idx], default_v) : default_v;
+                return __builtin_expect(idx < size(), 1) ? bte_seq_arg_value(m_seq->args[idx], default_v) : default_v;
         }
 
         /* param:
@@ -293,7 +293,7 @@ public:
          */
         inline constexpr bool param_nonfinal(unsigned int idx) const noexcept
         {
-                return __builtin_expect(idx < size(), 1) ? vte_seq_arg_nonfinal(m_seq->args[idx]) : false;
+                return __builtin_expect(idx < size(), 1) ? bte_seq_arg_nonfinal(m_seq->args[idx]) : false;
         }
 
         /* param_default:
@@ -303,7 +303,7 @@ public:
          */
         inline constexpr bool param_default(unsigned int idx) const noexcept
         {
-                return __builtin_expect(idx < size(), 1) ? vte_seq_arg_default(m_seq->args[idx]) : true;
+                return __builtin_expect(idx < size(), 1) ? bte_seq_arg_default(m_seq->args[idx]) : true;
         }
 
         /* next:
@@ -362,7 +362,7 @@ public:
         inline constexpr int collect1(unsigned int idx,
                                       int default_v = -1) const noexcept
         {
-                return __builtin_expect(idx < size(), 1) ? vte_seq_arg_value_final(m_seq->args[idx], default_v) : default_v;
+                return __builtin_expect(idx < size(), 1) ? bte_seq_arg_value_final(m_seq->args[idx], default_v) : default_v;
         }
 
         /* collect1:
@@ -382,7 +382,7 @@ public:
                                       int min_v,
                                       int max_v) const noexcept
         {
-                int v = __builtin_expect(idx < size(), 1) ? vte_seq_arg_value_final(m_seq->args[idx], default_v) : default_v;
+                int v = __builtin_expect(idx < size(), 1) ? bte_seq_arg_value_final(m_seq->args[idx], default_v) : default_v;
                 // not using std::clamp() since it's not guaranteed that min_v <= max_v
                 return std::max(std::min(v, max_v), min_v);
         }
@@ -409,10 +409,10 @@ public:
         inline explicit operator bool() const { return m_seq != nullptr; }
 
         /* This is only used in the test suite */
-        vte_seq_t** seq_ptr() { return &m_seq; }
+        bte_seq_t** seq_ptr() { return &m_seq; }
 
 private:
-        vte_seq_t* m_seq{nullptr};
+        bte_seq_t* m_seq{nullptr};
 
         char const* type_string() const;
         char const* command_string() const;
@@ -449,7 +449,7 @@ public:
         using encoder_type = E;
 
 private:
-        vte_seq_t m_seq;
+        bte_seq_t m_seq;
         string_type m_arg_str;
         unsigned char m_intermediates[4];
         unsigned char m_n_intermediates{0};
@@ -527,14 +527,14 @@ public:
         inline void append_param(int p) noexcept
         {
                 assert(m_seq.n_args + 1 <= (sizeof(m_seq.args) / sizeof(m_seq.args[0])));
-                m_seq.args[m_seq.n_args++] = vte_seq_arg_init(std::min(p, 0xffff));
+                m_seq.args[m_seq.n_args++] = bte_seq_arg_init(std::min(p, 0xffff));
         }
 
         inline void append_params(std::initializer_list<int> params) noexcept
         {
                 assert(m_seq.n_args + params.size() <= (sizeof(m_seq.args) / sizeof(m_seq.args[0])));
                 for (int p : params)
-                        m_seq.args[m_seq.n_args++] = vte_seq_arg_init(std::min(p, 0xffff));
+                        m_seq.args[m_seq.n_args++] = bte_seq_arg_init(std::min(p, 0xffff));
         }
 
         inline void append_subparams(std::initializer_list<int> subparams) noexcept
@@ -542,10 +542,10 @@ public:
                 assert(m_seq.n_args + subparams.size() <= (sizeof(m_seq.args) / sizeof(m_seq.args[0])));
                 for (int p : subparams) {
                         int* arg = &m_seq.args[m_seq.n_args++];
-                        *arg = vte_seq_arg_init(std::min(p, 0xffff));
-                        vte_seq_arg_finish(arg, false);
+                        *arg = bte_seq_arg_init(std::min(p, 0xffff));
+                        bte_seq_arg_finish(arg, false);
                 }
-                vte_seq_arg_refinish(&m_seq.args[m_seq.n_args - 1], true);
+                bte_seq_arg_refinish(&m_seq.args[m_seq.n_args - 1], true);
         }
 
         inline void set_string(string_type const& str) noexcept
@@ -636,9 +636,9 @@ private:
                                 s.push_back(m_param_intro);
                         auto n_args = m_seq.n_args;
                         for (unsigned int n = 0; n < n_args; n++) {
-                                auto arg = vte_seq_arg_value(m_seq.args[n]);
+                                auto arg = bte_seq_arg_value(m_seq.args[n]);
                                 if (n > 0) {
-                                        s.push_back(";:"[vte_seq_arg_nonfinal(m_seq.args[n])]);
+                                        s.push_back(";:"[bte_seq_arg_nonfinal(m_seq.args[n])]);
                                 }
                                 if (arg >= 0) {
                                         char buf[16];
@@ -751,10 +751,10 @@ public:
                         /* We may get one arg less back, if it's at default */
                         if (m_seq.n_args != seq.size()) {
                                 g_assert_cmpuint(m_seq.n_args, ==, seq.size() + 1);
-                                g_assert_true(vte_seq_arg_default(m_seq.args[m_seq.n_args - 1]));
+                                g_assert_true(bte_seq_arg_default(m_seq.args[m_seq.n_args - 1]));
                         }
                         for (unsigned int n = 0; n < seq.size(); n++)
-                                g_assert_cmpint(vte_seq_arg_value(m_seq.args[n]), ==, seq.param(n));
+                                g_assert_cmpint(bte_seq_arg_value(m_seq.args[n]), ==, seq.param(n));
                 }
         }
 }; // class SequenceBuilder
@@ -1010,4 +1010,4 @@ public:
 
 } // namespace parser
 
-} // namespace vte
+} // namespace bte

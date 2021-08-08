@@ -141,15 +141,15 @@ pattern(cairo_t* cr,
 
 #include "box_drawing.h"
 
-namespace vte::view {
+namespace bte::view {
 
 /* Draw the graphic representation of a line-drawing or special graphics
  * character. */
 void
 Minifont::draw_graphic(DrawingContext const& context,
-                       vteunistr c,
+                       bteunistr c,
                        uint32_t const attr,
-                       vte::color::rgb const* fg,
+                       bte::color::rgb const* fg,
                        int x,
                        int y,
                        int font_width,
@@ -302,7 +302,7 @@ Minifont::draw_graphic(DrawingContext const& context,
         case 0x257e: /* box drawings heavy left and light right */
         case 0x257f: /* box drawings heavy up and light down */
         {
-                guint32 bitmap = _vte_draw_box_drawing_bitmaps[c - 0x2500];
+                guint32 bitmap = _bte_draw_box_drawing_bitmaps[c - 0x2500];
                 int xboundaries[6] = { 0,
                                        left_half - heavy_line_width / 2,
                                        left_half - light_line_width / 2,
@@ -1110,4 +1110,4 @@ Minifont::draw_graphic(DrawingContext const& context,
         cairo_restore(cr);
 }
 
-} // namespace vte::view
+} // namespace bte::view

@@ -1,14 +1,14 @@
 # English (British) translation.
 # Copyright (C) 2004 THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the vte package.
+# This file is distributed under the same license as the bte package.
 # Gareth Owen <gowen72@yahoo.com>, 2004.
 # Philip Withnall <philip@tecnocode.co.uk>, 2010.
 # Zander Brown <zbrown@gnome.org>, 2019-2020.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: vte\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Project-Id-Version: bte\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2020-04-27 18:50+0000\n"
 "PO-Revision-Date: 2020-05-18 13:01+0100\n"
 "Last-Translator: Zander Brown <zbrown@gnome.org>\n"
@@ -20,11 +20,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Gtranslator 3.36.0\n"
 
-#: src/vte.cc:7843
+#: src/bte.cc:7843
 msgid "WARNING"
 msgstr "WARNING"
 
-#: src/vte.cc:7845
+#: src/bte.cc:7845
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr "GnuTLS not enabled; data will be written to disk unencrypted!"
 
@@ -95,8 +95,8 @@ msgstr "Failed to execute child process “%s”: "
 #~ msgid "Error reading PTY size, using defaults: %s\n"
 #~ msgstr "Error reading PTY size; using defaults: %s\n"
 
-#~ msgid "_vte_conv_open() failed setting word characters"
-#~ msgstr "_vte_conv_open() failed setting word characters"
+#~ msgid "_bte_conv_open() failed setting word characters"
+#~ msgstr "_bte_conv_open() failed setting word characters"
 
 #~ msgid "can not run %s"
 #~ msgstr "can not run %s"

@@ -22,7 +22,7 @@
 #include <type_traits>
 #include <memory>
 
-namespace vte {
+namespace bte {
 
 // This is like std::clamp, except that it doesn't throw when
 // max_v<min_v, but instead returns min_v in that case.
@@ -56,4 +56,4 @@ public:
 template <typename T, typename D, D func>
 using FreeablePtr = std::unique_ptr<T, FreeableDeleter<T, D, func>>;
 
-} // namespace vte
+} // namespace bte

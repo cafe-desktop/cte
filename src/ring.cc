@@ -22,7 +22,7 @@
 
 #include "debug.h"
 #include "ring.hh"
-#include "vterowdata.hh"
+#include "bterowdata.hh"
 
 #include <string.h>
 
@@ -35,7 +35,7 @@ _attrcpy (void *dst, void *src)
         memcpy(dst, src, VTE_CELL_ATTR_COMMON_BYTES);
 }
 
-using namespace vte::base;
+using namespace bte::base;
 
 /*
  * VteRing: A buffer ring
@@ -45,7 +45,7 @@ using namespace vte::base;
 void
 Ring::validate() const
 {
-	_vte_debug_print(VTE_DEBUG_RING,
+	_bte_debug_print(VTE_DEBUG_RING,
 			" Delta = %lu, Length = %lu, Next = %lu, Max = %lu, Writable = %lu.\n",
 			m_start, m_end - m_start, m_end,
 			m_max, m_end - m_writable);
@@ -66,21 +66,21 @@ Ring::Ring(row_t max_rows,
           m_has_streams{has_streams},
           m_last_attr{basic_cell.attr}
 {
-	_vte_debug_print(VTE_DEBUG_RING, "New ring %p.\n", this);
+	_bte_debug_print(VTE_DEBUG_RING, "New ring %p.\n", this);
 
 	m_array = (VteRowData* ) g_malloc0 (sizeof (m_array[0]) * (m_mask + 1));
 
 	if (has_streams) {
-		m_attr_stream = _vte_file_stream_new ();
-		m_text_stream = _vte_file_stream_new ();
-		m_row_stream = _vte_file_stream_new ();
+		m_attr_stream = _bte_file_stream_new ();
+		m_text_stream = _bte_file_stream_new ();
+		m_row_stream = _bte_file_stream_new ();
 	} else {
 		m_attr_stream = m_text_stream = m_row_stream = nullptr;
 	}
 
 	m_utf8_buffer = g_string_sized_new (128);
 
-	_vte_row_data_init (&m_cached_row);
+	_bte_row_data_init (&m_cached_row);
 
         m_hyperlinks = g_ptr_array_new();
         auto empty_str = g_string_new_len("", 0);
@@ -92,7 +92,7 @@ Ring::Ring(row_t max_rows,
 Ring::~Ring()
 {
 	for (size_t i = 0; i <= m_mask; i++)
-		_vte_row_data_fini (&m_array[i]);
+		_bte_row_data_fini (&m_array[i]);
 
 	g_free (m_array);
 
@@ -108,7 +108,7 @@ Ring::~Ring()
                 g_string_free (hyperlink_get(i), TRUE);
         g_ptr_array_free (m_hyperlinks, TRUE);
 
-	_vte_row_data_fini(&m_cached_row);
+	_bte_row_data_fini(&m_cached_row);
 }
 
 #define SET_BIT(buf, n) buf[(n) / 8] |= (1 << ((n) % 8))
@@ -125,14 +125,14 @@ Ring::hyperlink_gc()
         VteRowData* row;
         char *used;
 
-        _vte_debug_print (VTE_DEBUG_HYPERLINK,
+        _bte_debug_print (VTE_DEBUG_HYPERLINK,
                           "hyperlink: GC starting (highest used idx is %d)\n",
                           m_hyperlink_highest_used_idx);
 
         m_hyperlink_maybe_gc_counter = 0;
 
         if (m_hyperlink_highest_used_idx == 0) {
-                _vte_debug_print (VTE_DEBUG_HYPERLINK,
+                _bte_debug_print (VTE_DEBUG_HYPERLINK,
                                   "hyperlink: GC done (no links at all, nothing to do)\n");
                 return;
         }
@@ -155,7 +155,7 @@ Ring::hyperlink_gc()
 
         for (idx = 1; idx <= m_hyperlink_highest_used_idx; idx++) {
                 if (!GET_BIT(used, idx) && hyperlink_get(idx)->len != 0) {
-                        _vte_debug_print (VTE_DEBUG_HYPERLINK,
+                        _bte_debug_print (VTE_DEBUG_HYPERLINK,
                                           "hyperlink: GC purging link %d to id;uri=\"%s\"\n",
                                           idx, hyperlink_get(idx)->str);
                         /* Wipe out the ID and URI itself so it doesn't linger on in the memory for a long time */
@@ -168,7 +168,7 @@ Ring::hyperlink_gc()
                m_hyperlink_highest_used_idx--;
         }
 
-        _vte_debug_print (VTE_DEBUG_HYPERLINK,
+        _bte_debug_print (VTE_DEBUG_HYPERLINK,
                           "hyperlink: GC done (highest used idx is now %d)\n",
                           m_hyperlink_highest_used_idx);
 
@@ -183,7 +183,7 @@ Ring::hyperlink_maybe_gc(row_t increment)
 {
         m_hyperlink_maybe_gc_counter += increment;
 
-        _vte_debug_print (VTE_DEBUG_HYPERLINK,
+        _bte_debug_print (VTE_DEBUG_HYPERLINK,
                           "hyperlink: maybe GC, counter at %ld\n",
                           m_hyperlink_maybe_gc_counter);
 
@@ -216,7 +216,7 @@ Ring::get_hyperlink_idx_no_update_current(char const* hyperlink)
         auto const last_idx = m_hyperlink_highest_used_idx + 1;
         for (idx = 1; idx < last_idx; ++idx) {
                 if (strcmp(hyperlink_get(idx)->str, hyperlink) == 0) {
-                        _vte_debug_print (VTE_DEBUG_HYPERLINK,
+                        _bte_debug_print (VTE_DEBUG_HYPERLINK,
                                           "get_hyperlink_idx: already existing idx %d for id;uri=\"%s\"\n",
                                           idx, hyperlink);
                         return idx;
@@ -229,7 +229,7 @@ Ring::get_hyperlink_idx_no_update_current(char const* hyperlink)
         /* Another linear search for an empty slot where a GString is already allocated */
         for (idx = 1; idx < m_hyperlinks->len; idx++) {
                 if (hyperlink_get(idx)->len == 0) {
-                        _vte_debug_print (VTE_DEBUG_HYPERLINK,
+                        _bte_debug_print (VTE_DEBUG_HYPERLINK,
                                           "get_hyperlink_idx: reassigning old idx %d for id;uri=\"%s\"\n",
                                           idx, hyperlink);
                         /* Grow size if required, however, never shrink to avoid long-term memory fragmentation. */
@@ -245,14 +245,14 @@ Ring::get_hyperlink_idx_no_update_current(char const* hyperlink)
         /* VTE_HYPERLINK_COUNT_MAX should be big enough for this not to happen under
            normal circumstances. Anyway, it's cheap to protect against extreme ones. */
         if (m_hyperlink_highest_used_idx == VTE_HYPERLINK_COUNT_MAX) {
-                _vte_debug_print (VTE_DEBUG_HYPERLINK,
+                _bte_debug_print (VTE_DEBUG_HYPERLINK,
                                   "get_hyperlink_idx: idx 0 (ran out of available idxs) for id;uri=\"%s\"\n",
                                   hyperlink);
                 return 0;
         }
 
         idx = ++m_hyperlink_highest_used_idx;
-        _vte_debug_print (VTE_DEBUG_HYPERLINK,
+        _bte_debug_print (VTE_DEBUG_HYPERLINK,
                           "get_hyperlink_idx: brand new idx %d for id;uri=\"%s\"\n",
                           idx, hyperlink);
         str = g_string_new_len (hyperlink, len);
@@ -294,14 +294,14 @@ Ring::freeze_row(row_t position,
 	int i;
         gboolean froze_hyperlink = FALSE;
 
-	_vte_debug_print (VTE_DEBUG_RING, "Freezing row %lu.\n", position);
+	_bte_debug_print (VTE_DEBUG_RING, "Freezing row %lu.\n", position);
 
         g_assert(m_has_streams);
 
 	RowRecord record;
 	memset(&record, 0, sizeof(record));
-	record.text_start_offset = _vte_stream_head(m_text_stream);
-	record.attr_start_offset = _vte_stream_head(m_attr_stream);
+	record.text_start_offset = _bte_stream_head(m_text_stream);
+	record.attr_start_offset = _bte_stream_head(m_attr_stream);
 	record.is_ascii = 1;
 
 	g_string_set_size (buffer, 0);
@@ -314,7 +314,7 @@ Ring::freeze_row(row_t position,
 		 * 1. We don't store attrs for fragments.  They can be
 		 * reconstructed using the columns of their start cell.
 		 *
-		 * 2. We store one attr per vteunistr character starting
+		 * 2. We store one attr per bteunistr character starting
 		 * from the second character, with columns=0.
 		 *
 		 * That's enough to reconstruct the attrs, and to store
@@ -332,42 +332,42 @@ Ring::freeze_row(row_t position,
                                 _attrcpy(&attr_change.attr, &m_last_attr);
                                 hyperlink = hyperlink_get(m_last_attr.hyperlink_idx);
                                 attr_change.attr.hyperlink_length = hyperlink->len;
-				_vte_stream_append (m_attr_stream, (char const* ) &attr_change, sizeof (attr_change));
+				_bte_stream_append (m_attr_stream, (char const* ) &attr_change, sizeof (attr_change));
                                 if (G_UNLIKELY (hyperlink->len != 0)) {
-                                        _vte_stream_append (m_attr_stream, hyperlink->str, hyperlink->len);
+                                        _bte_stream_append (m_attr_stream, hyperlink->str, hyperlink->len);
                                         froze_hyperlink = TRUE;
                                 }
                                 hyperlink_length = attr_change.attr.hyperlink_length;
-                                _vte_stream_append (m_attr_stream, (char const* ) &hyperlink_length, 2);
+                                _bte_stream_append (m_attr_stream, (char const* ) &hyperlink_length, 2);
 				if (!buffer->len)
 					/* This row doesn't use last_attr, adjust */
                                         record.attr_start_offset += sizeof (attr_change) + hyperlink_length + 2;
 				m_last_attr = attr;
 			}
 
-			num_chars = _vte_unistr_strlen (cell->c);
+			num_chars = _bte_unistr_strlen (cell->c);
 			if (num_chars > 1) {
                                 /* Combining chars */
 				attr.set_columns(0);
 				m_last_attr_text_start_offset = record.text_start_offset + buffer->len
-								  + g_unichar_to_utf8 (_vte_unistr_get_base (cell->c), nullptr);
+								  + g_unichar_to_utf8 (_bte_unistr_get_base (cell->c), nullptr);
 				memset(&attr_change, 0, sizeof (attr_change));
 				attr_change.text_end_offset = m_last_attr_text_start_offset;
                                 _attrcpy(&attr_change.attr, &m_last_attr);
                                 hyperlink = hyperlink_get(m_last_attr.hyperlink_idx);
                                 attr_change.attr.hyperlink_length = hyperlink->len;
-				_vte_stream_append (m_attr_stream, (char const* ) &attr_change, sizeof (attr_change));
+				_bte_stream_append (m_attr_stream, (char const* ) &attr_change, sizeof (attr_change));
                                 if (G_UNLIKELY (hyperlink->len != 0)) {
-                                        _vte_stream_append (m_attr_stream, hyperlink->str, hyperlink->len);
+                                        _bte_stream_append (m_attr_stream, hyperlink->str, hyperlink->len);
                                         froze_hyperlink = TRUE;
                                 }
                                 hyperlink_length = attr_change.attr.hyperlink_length;
-                                _vte_stream_append (m_attr_stream, (char const* ) &hyperlink_length, 2);
+                                _bte_stream_append (m_attr_stream, (char const* ) &hyperlink_length, 2);
 				m_last_attr = attr;
 			}
 
 			if (cell->c < 32 || cell->c > 126) record.is_ascii = 0;
-			_vte_unistr_append_to_string (cell->c, buffer);
+			_bte_unistr_append_to_string (cell->c, buffer);
 		}
 	}
 	if (!row->attr.soft_wrapped)
@@ -375,7 +375,7 @@ Ring::freeze_row(row_t position,
 	record.soft_wrapped = row->attr.soft_wrapped;
         record.bidi_flags = row->attr.bidi_flags;
 
-	_vte_stream_append(m_text_stream, buffer->str, buffer->len);
+	_bte_stream_append(m_text_stream, buffer->str, buffer->len);
 	append_row_record(&record, position);
 
         /* After freezing some hyperlinks, do a hyperlink GC. The constant is totally arbitrary, feel free to fine tune. */
@@ -410,24 +410,24 @@ Ring::thaw_row(row_t position,
                 *hyperlink = m_hyperlink_buf;
         }
 
-	_vte_debug_print (VTE_DEBUG_RING, "Thawing row %lu.\n", position);
+	_bte_debug_print (VTE_DEBUG_RING, "Thawing row %lu.\n", position);
 
         g_assert(m_has_streams);
 
-	_vte_row_data_clear (row);
+	_bte_row_data_clear (row);
 
 	attr_change.text_end_offset = 0;
 
 	if (!read_row_record(&records[0], position))
 		return;
-	if ((position + 1) * sizeof (records[0]) < _vte_stream_head (m_row_stream)) {
+	if ((position + 1) * sizeof (records[0]) < _bte_stream_head (m_row_stream)) {
 		if (!read_row_record(&records[1], position + 1))
 			return;
 	} else
-		records[1].text_start_offset = _vte_stream_head (m_text_stream);
+		records[1].text_start_offset = _bte_stream_head (m_text_stream);
 
 	g_string_set_size (buffer, records[1].text_start_offset - records[0].text_start_offset);
-	if (!_vte_stream_read (m_text_stream, records[0].text_start_offset, buffer->str, buffer->len))
+	if (!_bte_stream_read (m_text_stream, records[0].text_start_offset, buffer->str, buffer->len))
 		return;
 
 	record = records[0];
@@ -446,11 +446,11 @@ Ring::thaw_row(row_t position,
                         strcpy(hyperlink_readbuf, hyperlink_get(attr.hyperlink_idx)->str);
 		} else {
 			if (record.text_start_offset >= attr_change.text_end_offset) {
-				if (!_vte_stream_read (m_attr_stream, record.attr_start_offset, (char *) &attr_change, sizeof (attr_change)))
+				if (!_bte_stream_read (m_attr_stream, record.attr_start_offset, (char *) &attr_change, sizeof (attr_change)))
 					return;
 				record.attr_start_offset += sizeof (attr_change);
                                 g_assert_cmpuint (attr_change.attr.hyperlink_length, <=, VTE_HYPERLINK_TOTAL_LENGTH_MAX);
-                                if (attr_change.attr.hyperlink_length && !_vte_stream_read (m_attr_stream, record.attr_start_offset, hyperlink_readbuf, attr_change.attr.hyperlink_length))
+                                if (attr_change.attr.hyperlink_length && !_bte_stream_read (m_attr_stream, record.attr_start_offset, hyperlink_readbuf, attr_change.attr.hyperlink_length))
                                         return;
                                 hyperlink_readbuf[attr_change.attr.hyperlink_length] = '\0';
                                 record.attr_start_offset += attr_change.attr.hyperlink_length + 2;
@@ -490,7 +490,7 @@ Ring::thaw_row(row_t position,
 		if (G_UNLIKELY (cell.attr.columns() == 0)) {
 			if (G_LIKELY (row->len)) {
 				/* Combine it */
-				row->cells[row->len - 1].c = _vte_unistr_append_unichar (row->cells[row->len - 1].c, cell.c);
+				row->cells[row->len - 1].c = _bte_unistr_append_unichar (row->cells[row->len - 1].c, cell.c);
                                 /* Spread it to all the previous cells of a potentially multicell character */
                                 for (int i = row->len - 1; i >= 1 && row->cells[i].attr.fragment(); i--) {
                                         row->cells[i - 1].c = row->cells[i].c;
@@ -499,12 +499,12 @@ Ring::thaw_row(row_t position,
 				cell.attr.set_columns(1);
                                 if (row->len == hyperlink_column && hyperlink != nullptr)
                                         *hyperlink = strcpy(m_hyperlink_buf, hyperlink_readbuf);
-				_vte_row_data_append (row, &cell);
+				_bte_row_data_append (row, &cell);
 			}
 		} else {
                         if (row->len == hyperlink_column && hyperlink != nullptr)
                                 *hyperlink = strcpy(m_hyperlink_buf, hyperlink_readbuf);
-			_vte_row_data_append (row, &cell);
+			_bte_row_data_append (row, &cell);
 			if (cell.attr.columns() > 1) {
 				/* Add the fragments */
 				int i, columns = cell.attr.columns();
@@ -513,7 +513,7 @@ Ring::thaw_row(row_t position,
                                 for (i = 1; i < columns; i++) {
                                         if (row->len == hyperlink_column && hyperlink != nullptr)
                                                 *hyperlink = strcpy(m_hyperlink_buf, hyperlink_readbuf);
-					_vte_row_data_append (row, &cell);
+					_bte_row_data_append (row, &cell);
                                 }
 			}
 		}
@@ -524,31 +524,31 @@ Ring::thaw_row(row_t position,
            which is the reason for the hyperlink's length being repeated after the hyperlink itself. */
 	if (do_truncate) {
 		gsize attr_stream_truncate_at = records[0].attr_start_offset;
-		_vte_debug_print (VTE_DEBUG_RING, "Truncating\n");
+		_bte_debug_print (VTE_DEBUG_RING, "Truncating\n");
 		if (records[0].text_start_offset <= m_last_attr_text_start_offset) {
 			/* Check the previous attr record. If its text ends where truncating, this attr record also needs to be removed. */
                         guint16 hyperlink_length;
-                        if (_vte_stream_read (m_attr_stream, attr_stream_truncate_at - 2, (char *) &hyperlink_length, 2)) {
+                        if (_bte_stream_read (m_attr_stream, attr_stream_truncate_at - 2, (char *) &hyperlink_length, 2)) {
                                 g_assert_cmpuint (hyperlink_length, <=, VTE_HYPERLINK_TOTAL_LENGTH_MAX);
-                                if (_vte_stream_read (m_attr_stream, attr_stream_truncate_at - 2 - hyperlink_length - sizeof (attr_change), (char *) &attr_change, sizeof (attr_change))) {
+                                if (_bte_stream_read (m_attr_stream, attr_stream_truncate_at - 2 - hyperlink_length - sizeof (attr_change), (char *) &attr_change, sizeof (attr_change))) {
                                         if (records[0].text_start_offset == attr_change.text_end_offset) {
-                                                _vte_debug_print (VTE_DEBUG_RING, "... at attribute change\n");
+                                                _bte_debug_print (VTE_DEBUG_RING, "... at attribute change\n");
                                                 attr_stream_truncate_at -= sizeof (attr_change) + hyperlink_length + 2;
                                         }
 				}
 			}
 			/* Reconstruct last_attr from the first record of attr_stream that we cut off,
 			   last_attr_text_start_offset from the last record that we keep. */
-			if (_vte_stream_read (m_attr_stream, attr_stream_truncate_at, (char *) &attr_change, sizeof (attr_change))) {
+			if (_bte_stream_read (m_attr_stream, attr_stream_truncate_at, (char *) &attr_change, sizeof (attr_change))) {
                                 _attrcpy(&m_last_attr, &attr_change.attr);
                                 m_last_attr.hyperlink_idx = 0;
-                                if (attr_change.attr.hyperlink_length && _vte_stream_read (m_attr_stream, attr_stream_truncate_at + sizeof (attr_change), (char *) &hyperlink_readbuf, attr_change.attr.hyperlink_length)) {
+                                if (attr_change.attr.hyperlink_length && _bte_stream_read (m_attr_stream, attr_stream_truncate_at + sizeof (attr_change), (char *) &hyperlink_readbuf, attr_change.attr.hyperlink_length)) {
                                         hyperlink_readbuf[attr_change.attr.hyperlink_length] = '\0';
                                         m_last_attr.hyperlink_idx = get_hyperlink_idx(hyperlink_readbuf);
                                 }
-                                if (_vte_stream_read (m_attr_stream, attr_stream_truncate_at - 2, (char *) &hyperlink_length, 2)) {
+                                if (_bte_stream_read (m_attr_stream, attr_stream_truncate_at - 2, (char *) &hyperlink_length, 2)) {
                                         g_assert_cmpuint (hyperlink_length, <=, VTE_HYPERLINK_TOTAL_LENGTH_MAX);
-                                        if (_vte_stream_read (m_attr_stream, attr_stream_truncate_at - 2 - hyperlink_length - sizeof (attr_change), (char *) &attr_change, sizeof (attr_change))) {
+                                        if (_bte_stream_read (m_attr_stream, attr_stream_truncate_at - 2 - hyperlink_length - sizeof (attr_change), (char *) &attr_change, sizeof (attr_change))) {
                                                 m_last_attr_text_start_offset = attr_change.text_end_offset;
                                         } else {
                                                 m_last_attr_text_start_offset = 0;
@@ -561,21 +561,21 @@ Ring::thaw_row(row_t position,
 				m_last_attr = basic_cell.attr;
 			}
 		}
-		_vte_stream_truncate (m_row_stream, position * sizeof (record));
-		_vte_stream_truncate (m_attr_stream, attr_stream_truncate_at);
-		_vte_stream_truncate (m_text_stream, records[0].text_start_offset);
+		_bte_stream_truncate (m_row_stream, position * sizeof (record));
+		_bte_stream_truncate (m_attr_stream, attr_stream_truncate_at);
+		_bte_stream_truncate (m_text_stream, records[0].text_start_offset);
 	}
 }
 
 void
 Ring::reset_streams(row_t position)
 {
-	_vte_debug_print (VTE_DEBUG_RING, "Reseting streams to %lu.\n", position);
+	_bte_debug_print (VTE_DEBUG_RING, "Reseting streams to %lu.\n", position);
 
 	if (m_has_streams) {
-		_vte_stream_reset(m_row_stream, position * sizeof(RowRecord));
-                _vte_stream_reset(m_text_stream, _vte_stream_head(m_text_stream));
-                _vte_stream_reset(m_attr_stream, _vte_stream_head(m_attr_stream));
+		_bte_stream_reset(m_row_stream, position * sizeof(RowRecord));
+                _bte_stream_reset(m_text_stream, _bte_stream_head(m_text_stream));
+                _bte_stream_reset(m_attr_stream, _bte_stream_head(m_attr_stream));
 	}
 
 	m_last_attr_text_start_offset = 0;
@@ -585,7 +585,7 @@ Ring::reset_streams(row_t position)
 Ring::row_t
 Ring::reset()
 {
-        _vte_debug_print (VTE_DEBUG_RING, "Reseting the ring at %lu.\n", m_end);
+        _bte_debug_print (VTE_DEBUG_RING, "Reseting the ring at %lu.\n", m_end);
 
         reset_streams(m_end);
         m_start = m_writable = m_end;
@@ -601,7 +601,7 @@ Ring::index(row_t position)
 		return get_writable_index(position);
 
 	if (m_cached_row_num != position) {
-		_vte_debug_print(VTE_DEBUG_RING, "Caching row %lu.\n", position);
+		_bte_debug_print(VTE_DEBUG_RING, "Caching row %lu.\n", position);
                 thaw_row(position, &m_cached_row, false, -1, nullptr);
 		m_cached_row_num = position;
 	}
@@ -669,7 +669,7 @@ Ring::get_hyperlink_at_position(row_t position,
 
         if (G_LIKELY (position >= m_writable)) {
                 VteRowData* row = get_writable_index(position);
-                if (col >= _vte_row_data_length(row)) {
+                if (col >= _bte_row_data_length(row)) {
                         if (update_hover_idx)
                                 m_hyperlink_hover_idx = 0;
                         return 0;
@@ -736,10 +736,10 @@ Ring::discard_one_row()
 		reset_streams(m_writable);
 	} else if (m_start < m_writable) {
 		RowRecord record;
-		_vte_stream_advance_tail(m_row_stream, m_start * sizeof (record));
+		_bte_stream_advance_tail(m_row_stream, m_start * sizeof (record));
 		if (G_LIKELY(read_row_record(&record, m_start))) {
-			_vte_stream_advance_tail(m_text_stream, record.text_start_offset);
-			_vte_stream_advance_tail(m_attr_stream, record.attr_start_offset);
+			_bte_stream_advance_tail(m_text_stream, record.text_start_offset);
+			_bte_stream_advance_tail(m_attr_stream, record.attr_start_offset);
 		}
 	} else {
 		m_writable = m_start;
@@ -786,7 +786,7 @@ Ring::ensure_writable_room()
 		m_mask = (m_mask << 1) + 1;
         } while (m_mask < m_visible_rows + 1 || m_writable + m_mask + 1 <= m_end);
 
-	_vte_debug_print(VTE_DEBUG_RING, "Enlarging writable array from %lu to %lu\n", old_mask, m_mask);
+	_bte_debug_print(VTE_DEBUG_RING, "Enlarging writable array from %lu to %lu\n", old_mask, m_mask);
 
 	m_array = (VteRowData* ) g_malloc0(sizeof (m_array[0]) * (m_mask + 1));
 
@@ -806,7 +806,7 @@ Ring::ensure_writable(row_t position)
 	if (G_LIKELY(position >= m_writable))
 		return;
 
-	_vte_debug_print(VTE_DEBUG_RING, "Ensure writable %lu.\n", position);
+	_bte_debug_print(VTE_DEBUG_RING, "Ensure writable %lu.\n", position);
 
         //FIXMEchpe surely this can be optimised
 	while (position < m_writable)
@@ -822,7 +822,7 @@ Ring::ensure_writable(row_t position)
 void
 Ring::resize(row_t max_rows)
 {
-	_vte_debug_print(VTE_DEBUG_RING, "Resizing to %lu.\n", max_rows);
+	_bte_debug_print(VTE_DEBUG_RING, "Resizing to %lu.\n", max_rows);
 
 	validate();
 
@@ -844,7 +844,7 @@ Ring::shrink(row_t max_len)
 	if (length() <= max_len)
 		return;
 
-	_vte_debug_print(VTE_DEBUG_RING, "Shrinking to %lu.\n", max_len);
+	_bte_debug_print(VTE_DEBUG_RING, "Shrinking to %lu.\n", max_len);
 
 	validate();
 
@@ -877,7 +877,7 @@ Ring::insert(row_t position, guint8 bidi_flags)
 	row_t i;
 	VteRowData* row, tmp;
 
-	_vte_debug_print(VTE_DEBUG_RING, "Inserting at position %lu.\n", position);
+	_bte_debug_print(VTE_DEBUG_RING, "Inserting at position %lu.\n", position);
 	validate();
 
 	maybe_discard_one_row();
@@ -894,7 +894,7 @@ Ring::insert(row_t position, guint8 bidi_flags)
 	*get_writable_index(position) = tmp;
 
 	row = get_writable_index(position);
-	_vte_row_data_clear (row);
+	_bte_row_data_clear (row);
         row->attr.bidi_flags = bidi_flags;
 	m_end++;
 
@@ -915,7 +915,7 @@ Ring::remove(row_t position)
 	row_t i;
 	VteRowData tmp;
 
-	_vte_debug_print(VTE_DEBUG_RING, "Removing item at position %lu.\n", position);
+	_bte_debug_print(VTE_DEBUG_RING, "Removing item at position %lu.\n", position);
         validate();
 
 	if (G_UNLIKELY(!contains(position)))
@@ -998,7 +998,7 @@ Ring::frozen_row_column_to_text_offset(row_t position,
 	unsigned int i, num_chars, off;
 
 	if (position >= m_end) {
-		offset->text_offset = _vte_stream_head(m_text_stream) + position - m_end;
+		offset->text_offset = _bte_stream_head(m_text_stream) + position - m_end;
 		offset->fragment_cells = 0;
 		offset->eol_cells = column;
 		return true;
@@ -1015,14 +1015,14 @@ Ring::frozen_row_column_to_text_offset(row_t position,
 	g_assert_cmpuint(position, <, m_writable);
 	if (!read_row_record(&records[0], position))
 		return false;
-	if ((position + 1) * sizeof (records[0]) < _vte_stream_head(m_row_stream)) {
+	if ((position + 1) * sizeof (records[0]) < _bte_stream_head(m_row_stream)) {
 		if (!read_row_record(&records[1], position + 1))
 			return false;
 	} else
-		records[1].text_start_offset = _vte_stream_head(m_text_stream);
+		records[1].text_start_offset = _bte_stream_head(m_text_stream);
 
 	g_string_set_size (buffer, records[1].text_start_offset - records[0].text_start_offset);
-	if (!_vte_stream_read(m_text_stream, records[0].text_start_offset, buffer->str, buffer->len))
+	if (!_bte_stream_read(m_text_stream, records[0].text_start_offset, buffer->str, buffer->len))
 		return false;
 
 	if (G_LIKELY (buffer->len && buffer->str[buffer->len - 1] == '\n'))
@@ -1042,7 +1042,7 @@ Ring::frozen_row_column_to_text_offset(row_t position,
 				offset->fragment_cells = column - i;
 				break;
 			}
-			num_chars += _vte_unistr_strlen(cell->c);
+			num_chars += _bte_unistr_strlen(cell->c);
 		}
 	}
 	if (i >= row->len) {
@@ -1090,14 +1090,14 @@ Ring::frozen_row_text_offset_to_column(row_t position,
 	g_assert_cmpuint(position, <, m_writable);
 	if (!read_row_record(&records[0], position))
 		return false;
-	if ((position + 1) * sizeof (records[0]) < _vte_stream_head(m_row_stream)) {
+	if ((position + 1) * sizeof (records[0]) < _bte_stream_head(m_row_stream)) {
 		if (!read_row_record(&records[1], position + 1))
 			return false;
 	} else
-		records[1].text_start_offset = _vte_stream_head (m_text_stream);
+		records[1].text_start_offset = _bte_stream_head (m_text_stream);
 
 	g_string_set_size (buffer, records[1].text_start_offset - records[0].text_start_offset);
-	if (!_vte_stream_read(m_text_stream, records[0].text_start_offset, buffer->str, buffer->len))
+	if (!_bte_stream_read(m_text_stream, records[0].text_start_offset, buffer->str, buffer->len))
 		return false;
 
 	if (G_LIKELY (buffer->len && buffer->str[buffer->len - 1] == '\n'))
@@ -1125,7 +1125,7 @@ Ring::frozen_row_text_offset_to_column(row_t position,
 	for (i = 0, cell = row->cells; i < row->len; i++, cell++) {
 		if (G_LIKELY (!cell->attr.fragment())) {
 			if (num_chars == 0) break;
-			nc = _vte_unistr_strlen(cell->c);
+			nc = _bte_unistr_strlen(cell->c);
 			if (nc > num_chars) break;
 			num_chars -= nc;
 		}
@@ -1170,9 +1170,9 @@ Ring::rewrap(column_t columns,
 
 	if (G_UNLIKELY(length() == 0))
 		return;
-	_vte_debug_print(VTE_DEBUG_RING, "Ring before rewrapping:\n");
+	_bte_debug_print(VTE_DEBUG_RING, "Ring before rewrapping:\n");
         validate();
-	new_row_stream = _vte_file_stream_new();
+	new_row_stream = _bte_file_stream_new();
 
 	/* Freeze everything, because rewrapping is really complicated and we don't want to
 	   duplicate the code for frozen and thawed rows. */
@@ -1190,7 +1190,7 @@ Ring::rewrap(column_t columns,
 		if (!frozen_row_column_to_text_offset(markers[i]->row, markers[i]->col, &marker_text_offsets[i]))
 			goto err;
 		new_markers[i].row = new_markers[i].col = -1;
-		_vte_debug_print(VTE_DEBUG_RING,
+		_bte_debug_print(VTE_DEBUG_RING,
 				"Marker #%d old coords:  row %ld  col %ld  ->  text_offset %" G_GSIZE_FORMAT " fragment_cells %d  eol_cells %d\n",
 				i, markers[i]->row, markers[i]->col, marker_text_offsets[i].text_offset,
 				marker_text_offsets[i].fragment_cells, marker_text_offsets[i].eol_cells);
@@ -1200,18 +1200,18 @@ Ring::rewrap(column_t columns,
 	if (!read_row_record(&old_record, m_start))
 		goto err;
 	paragraph_start_text_offset = old_record.text_start_offset;
-	paragraph_end_text_offset = _vte_stream_head(m_text_stream);  /* initialized to silence gcc */
+	paragraph_end_text_offset = _bte_stream_head(m_text_stream);  /* initialized to silence gcc */
 	new_row_index = 0;
 
 	attr_offset = old_record.attr_start_offset;
-	if (!_vte_stream_read(m_attr_stream, attr_offset, (char *) &attr_change, sizeof (attr_change))) {
+	if (!_bte_stream_read(m_attr_stream, attr_offset, (char *) &attr_change, sizeof (attr_change))) {
                 _attrcpy(&attr_change.attr, &m_last_attr);
                 attr_change.attr.hyperlink_length = hyperlink_get(m_last_attr.hyperlink_idx)->len;
-		attr_change.text_end_offset = _vte_stream_head(m_text_stream);
+		attr_change.text_end_offset = _bte_stream_head(m_text_stream);
 	}
 
 	old_row_index = m_start + 1;
-	while (paragraph_start_text_offset < _vte_stream_head(m_text_stream)) {
+	while (paragraph_start_text_offset < _bte_stream_head(m_text_stream)) {
 		/* Find the boundaries of the next paragraph */
 		gboolean prev_record_was_soft_wrapped = FALSE;
 		gboolean paragraph_is_ascii = TRUE;
@@ -1220,7 +1220,7 @@ Ring::rewrap(column_t columns,
 		RowRecord new_record;
 		column_t col = 0;
 
-		_vte_debug_print(VTE_DEBUG_RING,
+		_bte_debug_print(VTE_DEBUG_RING,
 				"  Old paragraph:  row %lu  (text_offset %" G_GSIZE_FORMAT ")  up to (exclusive)  ",  /* no '\n' */
                                  old_row_index - 1,
                                  paragraph_start_text_offset);
@@ -1232,7 +1232,7 @@ Ring::rewrap(column_t columns,
 					goto err;
 				paragraph_end_text_offset = old_record.text_start_offset;
 			} else {
-				paragraph_end_text_offset = _vte_stream_head (m_text_stream);
+				paragraph_end_text_offset = _bte_stream_head (m_text_stream);
 			}
 			old_row_index++;
 			if (!prev_record_was_soft_wrapped)
@@ -1242,7 +1242,7 @@ Ring::rewrap(column_t columns,
 		paragraph_len = paragraph_end_text_offset - paragraph_start_text_offset;
 		if (!prev_record_was_soft_wrapped)  /* The last paragraph can be soft wrapped! */
 			paragraph_len--;  /* Strip trailing '\n' */
-		_vte_debug_print(VTE_DEBUG_RING,
+		_bte_debug_print(VTE_DEBUG_RING,
 				"row %lu  (text_offset %" G_GSIZE_FORMAT ")%s  len %" G_GSIZE_FORMAT "  is_ascii %d\n",
                                  old_row_index - 1,
                                  paragraph_end_text_offset,
@@ -1253,10 +1253,10 @@ Ring::rewrap(column_t columns,
 		if (attr_change.text_end_offset <= text_offset) {
 			/* Attr change at paragraph boundary, advance to next attr. */
                         attr_offset += sizeof (attr_change) + attr_change.attr.hyperlink_length + 2;
-			if (!_vte_stream_read(m_attr_stream, attr_offset, (char *) &attr_change, sizeof (attr_change))) {
+			if (!_bte_stream_read(m_attr_stream, attr_offset, (char *) &attr_change, sizeof (attr_change))) {
                                 _attrcpy(&attr_change.attr, &m_last_attr);
                                 attr_change.attr.hyperlink_length = hyperlink_get(m_last_attr.hyperlink_idx)->len;
-				attr_change.text_end_offset = _vte_stream_head(m_text_stream);
+				attr_change.text_end_offset = _bte_stream_head(m_text_stream);
 			}
 		}
 		memset(&new_record, 0, sizeof (new_record));
@@ -1271,10 +1271,10 @@ Ring::rewrap(column_t columns,
 			if (attr_change.text_end_offset <= text_offset) {
 				/* Attr change at line boundary, advance to next attr. */
                                 attr_offset += sizeof (attr_change) + attr_change.attr.hyperlink_length + 2;
-				if (!_vte_stream_read(m_attr_stream, attr_offset, (char *) &attr_change, sizeof (attr_change))) {
+				if (!_bte_stream_read(m_attr_stream, attr_offset, (char *) &attr_change, sizeof (attr_change))) {
                                         _attrcpy(&attr_change.attr, &m_last_attr);
                                         attr_change.attr.hyperlink_length = hyperlink_get(m_last_attr.hyperlink_idx)->len;
-					attr_change.text_end_offset = _vte_stream_head(m_text_stream);
+					attr_change.text_end_offset = _bte_stream_head(m_text_stream);
 				}
 			}
 			runlength = MIN(paragraph_len, attr_change.text_end_offset - text_offset);
@@ -1288,8 +1288,8 @@ Ring::rewrap(column_t columns,
 					if (col >= columns - attr_change.attr.columns() + 1) {
 						/* Wrap now, write the soft wrapped row's record */
 						new_record.soft_wrapped = 1;
-						_vte_stream_append(new_row_stream, (char const* ) &new_record, sizeof (new_record));
-						_vte_debug_print(VTE_DEBUG_RING,
+						_bte_stream_append(new_row_stream, (char const* ) &new_record, sizeof (new_record));
+						_bte_debug_print(VTE_DEBUG_RING,
 								"    New row %ld  text_offset %" G_GSIZE_FORMAT "  attr_offset %" G_GSIZE_FORMAT "  soft_wrapped\n",
 								new_row_index,
 								new_record.text_start_offset, new_record.attr_start_offset);
@@ -1297,7 +1297,7 @@ Ring::rewrap(column_t columns,
 							if (G_UNLIKELY (marker_text_offsets[i].text_offset >= new_record.text_start_offset &&
 									marker_text_offsets[i].text_offset < text_offset)) {
 								new_markers[i].row = new_row_index;
-								_vte_debug_print(VTE_DEBUG_RING,
+								_bte_debug_print(VTE_DEBUG_RING,
 										"      Marker #%d will be here in row %lu\n", i, new_row_index);
 							}
 						}
@@ -1322,7 +1322,7 @@ Ring::rewrap(column_t columns,
 						/* Find beginning of next UTF-8 character */
 						text_offset++; paragraph_len--; runlength--;
 						textbuf_len = MIN(runlength, sizeof (textbuf));
-						if (!_vte_stream_read(m_text_stream, text_offset, textbuf, textbuf_len))
+						if (!_bte_stream_read(m_text_stream, text_offset, textbuf, textbuf_len))
 							goto err;
 						for (i = 0; i < textbuf_len && (textbuf[i] & 0xC0) == 0x80; i++) {
 							text_offset++; paragraph_len--; runlength--;
@@ -1335,8 +1335,8 @@ Ring::rewrap(column_t columns,
 		/* Write the record of the paragraph's last row. */
 		/* Hard wrapped, except maybe at the end of the very last paragraph */
 		new_record.soft_wrapped = prev_record_was_soft_wrapped;
-		_vte_stream_append(new_row_stream, (char const* ) &new_record, sizeof (new_record));
-		_vte_debug_print(VTE_DEBUG_RING,
+		_bte_stream_append(new_row_stream, (char const* ) &new_record, sizeof (new_record));
+		_bte_debug_print(VTE_DEBUG_RING,
 				"    New row %ld  text_offset %" G_GSIZE_FORMAT "  attr_offset %" G_GSIZE_FORMAT "\n",
 				new_row_index,
 				new_record.text_start_offset, new_record.attr_start_offset);
@@ -1344,7 +1344,7 @@ Ring::rewrap(column_t columns,
 			if (G_UNLIKELY (marker_text_offsets[i].text_offset >= new_record.text_start_offset &&
 					marker_text_offsets[i].text_offset < paragraph_end_text_offset)) {
 				new_markers[i].row = new_row_index;
-				_vte_debug_print(VTE_DEBUG_RING,
+				_bte_debug_print(VTE_DEBUG_RING,
 						"      Marker #%d will be here in row %lu\n", i, new_row_index);
 			}
 		}
@@ -1370,7 +1370,7 @@ Ring::rewrap(column_t columns,
 		/* Convert byte offset into visual column */
 		if (!frozen_row_text_offset_to_column(new_markers[i].row, &marker_text_offsets[i], &new_markers[i].col))
 			goto err;
-		_vte_debug_print(VTE_DEBUG_RING,
+		_bte_debug_print(VTE_DEBUG_RING,
 				"Marker #%d new coords:  text_offset %" G_GSIZE_FORMAT "  fragment_cells %d  eol_cells %d  ->  row %ld  col %ld\n",
 				i, marker_text_offsets[i].text_offset, marker_text_offsets[i].fragment_cells,
 				marker_text_offsets[i].eol_cells, new_markers[i].row, new_markers[i].col);
@@ -1380,13 +1380,13 @@ Ring::rewrap(column_t columns,
 	g_free(marker_text_offsets);
 	g_free(new_markers);
 
-	_vte_debug_print(VTE_DEBUG_RING, "Ring after rewrapping:\n");
+	_bte_debug_print(VTE_DEBUG_RING, "Ring after rewrapping:\n");
         validate();
 	return;
 
 err:
 #ifdef VTE_DEBUG
-	_vte_debug_print(VTE_DEBUG_RING,
+	_bte_debug_print(VTE_DEBUG_RING,
 			"Error while rewrapping\n");
 	g_assert_not_reached();
 #endif
@@ -1413,7 +1413,7 @@ Ring::write_row(GOutputStream* stream,
 	g_string_set_size (buffer, 0);
 	for (i = 0, cell = row->cells; i < row->len; i++, cell++) {
 		if (G_LIKELY (!cell->attr.fragment()))
-			_vte_unistr_append_to_string (cell->c, buffer);
+			_bte_unistr_append_to_string (cell->c, buffer);
 	}
 	if (!row->attr.soft_wrapped)
 		g_string_append_c (buffer, '\n');
@@ -1440,7 +1440,7 @@ Ring::write_contents(GOutputStream* stream,
 {
 	row_t i;
 
-	_vte_debug_print(VTE_DEBUG_RING, "Writing contents to GOutputStream.\n");
+	_bte_debug_print(VTE_DEBUG_RING, "Writing contents to GOutputStream.\n");
 
 	if (m_start < m_writable)
 	{
@@ -1449,7 +1449,7 @@ Ring::write_contents(GOutputStream* stream,
 		if (read_row_record(&record, m_start))
 		{
 			gsize start_offset = record.text_start_offset;
-			gsize end_offset = _vte_stream_head(m_text_stream);
+			gsize end_offset = _bte_stream_head(m_text_stream);
 			char buf[4096];
 			while (start_offset < end_offset)
 			{
@@ -1457,7 +1457,7 @@ Ring::write_contents(GOutputStream* stream,
 
 				len = MIN (G_N_ELEMENTS (buf), end_offset - start_offset);
 
-				if (!_vte_stream_read (m_text_stream, start_offset,
+				if (!_bte_stream_read (m_text_stream, start_offset,
 						       buf, len))
 					return false;
 

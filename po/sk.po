@@ -1,14 +1,14 @@
-# Slovak translation for vte.
+# Slovak translation for bte.
 # Copyright (C) 2003, 2008, 2011 Free Software Foundation, Inc.
-# This file is distributed under the same license as the vte package.
+# This file is distributed under the same license as the bte package.
 # Stanislav Visnovsky <visnovsky@nenya.ms.mff.cuni.cz>, 2003.
 # Stanislav Visnovsky <visnovsky@kde.org>, 2003.
 # Marcel Telka <marcel@telka.sk>, 2008, 2011.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: vte\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Project-Id-Version: bte\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2020-09-12 19:27+0000\n"
 "PO-Revision-Date: 2020-09-17 09:37+0200\n"
 "Last-Translator: Dušan Kazik <prescott66@gmail.com>\n"
@@ -19,11 +19,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.4.1\n"
 
-#: src/vte.cc:7764
+#: src/bte.cc:7764
 msgid "WARNING"
 msgstr "UPOZORNENIE"
 
-#: src/vte.cc:7766
+#: src/bte.cc:7766
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr "Šifrovanie GnuTLS nie je povolené. Údaje budú zapísané na disk nešifrované!"
 
@@ -115,8 +115,8 @@ msgstr "Zlyhalo spustenie dcérskeho procesu „%s“: "
 #~ msgid "Error compiling regular expression \"%s\"."
 #~ msgstr "Chyba pri spracovaní regulárneho výrazu \"%s\"."
 
-#~ msgid "_vte_conv_open() failed setting word characters"
-#~ msgstr "_vte_conv_open() zlyhal pri nastavení znakov slov"
+#~ msgid "_bte_conv_open() failed setting word characters"
+#~ msgstr "_bte_conv_open() zlyhal pri nastavení znakov slov"
 
 #~ msgid "can not run %s"
 #~ msgstr "nemôže spustiť %s"

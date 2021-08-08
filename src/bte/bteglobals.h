@@ -21,25 +21,25 @@
 
 #include <glib.h>
 
-#include "vtemacros.h"
-#include "vteenums.h"
+#include "btemacros.h"
+#include "bteenums.h"
 
 G_BEGIN_DECLS
 
 _VTE_PUBLIC
-char *vte_get_user_shell(void) _VTE_CXX_NOEXCEPT;
+char *bte_get_user_shell(void) _VTE_CXX_NOEXCEPT;
 
 _VTE_PUBLIC
-const char *vte_get_features (void) _VTE_CXX_NOEXCEPT;
+const char *bte_get_features (void) _VTE_CXX_NOEXCEPT;
 
 _VTE_PUBLIC
-VteFeatureFlags vte_get_feature_flags(void) _VTE_CXX_NOEXCEPT;
+VteFeatureFlags bte_get_feature_flags(void) _VTE_CXX_NOEXCEPT;
 
 #define VTE_TEST_FLAGS_NONE (G_GUINT64_CONSTANT(0))
 #define VTE_TEST_FLAGS_ALL (~G_GUINT64_CONSTANT(0))
 
 _VTE_PUBLIC
-void vte_set_test_flags(guint64 flags) _VTE_CXX_NOEXCEPT;
+void bte_set_test_flags(guint64 flags) _VTE_CXX_NOEXCEPT;
 
 G_END_DECLS
 

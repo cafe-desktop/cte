@@ -35,7 +35,7 @@
 #include <glib-unix.h>
 #include <gio/gio.h>
 
-#include "vtespawn.hh"
+#include "btespawn.hh"
 #include "reaper.hh"
 
 #include "missing.hh"
@@ -72,7 +72,7 @@ write_all (int fd,
  * async-signal-safe; see man:signal-safety(7).
  */
 void
-_vte_write_err (int fd,
+_bte_write_err (int fd,
                 int msg) noexcept
 {
         int data[2] = {msg, errno};
@@ -127,7 +127,7 @@ script_execute (char const* file,
  * async-signal-safe; see man:signal-safety(7).
  */
 int
-_vte_execute (const char *file,
+_bte_execute (const char *file,
               char      **argv,
               char      **envp,
               char const* search_path,

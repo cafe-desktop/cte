@@ -31,7 +31,7 @@
 #define IFDEF_DEBUG(str)
 #endif
 
-namespace vte {
+namespace bte {
 
 namespace grid {
 
@@ -199,4 +199,4 @@ namespace color {
 
 } /* namespace color */
 
-} /* namespace vte */
+} /* namespace bte */

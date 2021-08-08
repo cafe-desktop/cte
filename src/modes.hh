@@ -19,7 +19,7 @@
 
 #include <cstdint>
 
-namespace vte {
+namespace bte {
 namespace terminal {
 namespace modes {
 
@@ -43,7 +43,7 @@ namespace modes {
         }
 
 template <typename T>
-static inline void vte_modes_set_bool(T* modes,
+static inline void bte_modes_set_bool(T* modes,
                                       unsigned int shift,
                                       bool value)
 {
@@ -54,18 +54,18 @@ static inline void vte_modes_set_bool(T* modes,
 }
 
 template <typename T>
-static constexpr inline bool vte_modes_get_bool(T modes,
+static constexpr inline bool bte_modes_get_bool(T modes,
                                                 unsigned int shift)
 {
         return (modes >> shift) & 1U;
 }
 
 template <typename T>
-static constexpr inline bool vte_modes_unset_bool(T* modes,
+static constexpr inline bool bte_modes_unset_bool(T* modes,
                                                   unsigned int shift)
 {
-        bool set = vte_modes_get_bool<T>(*modes, shift);
-        vte_modes_set_bool<T>(modes, shift, false);
+        bool set = bte_modes_get_bool<T>(*modes, shift);
+        bte_modes_set_bool<T>(modes, shift, false);
         return set;
 }
 
@@ -92,12 +92,12 @@ public:
         inline void set(int bit,
                         bool value) noexcept
         {
-                vte_modes_set_bool<Storage>(&m_modes, bit, value);
+                bte_modes_set_bool<Storage>(&m_modes, bit, value);
         }
 
         constexpr inline bool get(int bit) const noexcept
         {
-                return vte_modes_get_bool<Storage>(m_modes, bit);
+                return bte_modes_get_bool<Storage>(m_modes, bit);
         }
 
         inline void set_modes(Storage value) noexcept
@@ -232,12 +232,12 @@ public:
 
         inline void push_saved(int mode)
         {
-                vte_modes_set_bool<Storage>(&m_saved_modes, mode, get(mode));
+                bte_modes_set_bool<Storage>(&m_saved_modes, mode, get(mode));
         }
 
         constexpr inline bool pop_saved(int mode)
         {
-                return vte_modes_unset_bool<Storage>(&m_saved_modes, mode);
+                return bte_modes_unset_bool<Storage>(&m_saved_modes, mode);
         }
 
         inline void clear_saved()
@@ -255,4 +255,4 @@ private:
 
 } // namespace modes
 } // namespace terminal
-} // namespace vte
+} // namespace bte

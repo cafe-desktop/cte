@@ -114,7 +114,7 @@
  * This is just a safety cap because the number of URIs is bound by the number of cells in the ring
  * (excluding the stream) which should be way lower than this at sane window sizes.
  * Make sure there are enough bits to store them in VteCellAttr.hyperlink_idx.
- * Also make sure _vte_ring_hyperlink_gc() can allocate a large enough bitmap. */
+ * Also make sure _bte_ring_hyperlink_gc() can allocate a large enough bitmap. */
 #define VTE_HYPERLINK_COUNT_MAX         ((1 << 20) - 2)
 
 /* Used when thawing a row from the stream in order to display it, to denote

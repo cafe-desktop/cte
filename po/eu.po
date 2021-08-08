@@ -1,4 +1,4 @@
-# Basque translation of vte.
+# Basque translation of bte.
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
 #
@@ -7,8 +7,8 @@
 # Asier Sarasua Garmendia <asiersarasua@ni.eus>, 2019, 2020.
 #
 msgid ""
-msgstr "Project-Id-Version: vte master\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+msgstr "Project-Id-Version: bte master\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2020-05-27 19:17+0000\n"
 "PO-Revision-Date: 2020-05-30 10:00+0100\n"
 "Last-Translator: Asier Sarasua Garmendia <asiersarasua@ni.eus>\n"
@@ -19,11 +19,11 @@ msgstr "Project-Id-Version: vte master\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/vte.cc:7763
+#: src/bte.cc:7763
 msgid "WARNING"
 msgstr "ABISUA"
 
-#: src/vte.cc:7765
+#: src/bte.cc:7765
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr "GNUTLS ez dago gaituta, datuak zifratu gabe idatziko dira diskoan!"
 
@@ -112,8 +112,8 @@ msgstr "Ezin izan da “%s” prozesu haurra exekutatu: "
 #~ msgid "Error compiling regular expression \"%s\"."
 #~ msgstr "Errorea \"%s\" adierazpen erregularra konpilatzean."
 
-#~ msgid "_vte_conv_open() failed setting word characters"
-#~ msgstr "_vte_conv_open()-ek ezin izan du hitzaren karaktereak ezarri"
+#~ msgid "_bte_conv_open() failed setting word characters"
+#~ msgstr "_bte_conv_open()-ek ezin izan du hitzaren karaktereak ezarri"
 
 #~ msgid "can not run %s"
 #~ msgstr "ezin da %s exekutatu"

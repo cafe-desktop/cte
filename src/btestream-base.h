@@ -43,60 +43,60 @@ typedef struct _VteStreamClass {
 	gsize (*head) (VteStream *stream);
 } VteStreamClass;
 
-static GType _vte_stream_get_type (void);
-#define VTE_TYPE_STREAM _vte_stream_get_type ()
+static GType _bte_stream_get_type (void);
+#define VTE_TYPE_STREAM _bte_stream_get_type ()
 #define VTE_STREAM_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), VTE_TYPE_STREAM, VteStreamClass))
 
-G_DEFINE_ABSTRACT_TYPE (VteStream, _vte_stream, G_TYPE_OBJECT)
+G_DEFINE_ABSTRACT_TYPE (VteStream, _bte_stream, G_TYPE_OBJECT)
 
 static void
-_vte_stream_class_init (VteStreamClass *klass G_GNUC_UNUSED)
+_bte_stream_class_init (VteStreamClass *klass G_GNUC_UNUSED)
 {
 }
 
 static void
-_vte_stream_init (VteStream *stream G_GNUC_UNUSED)
+_bte_stream_init (VteStream *stream G_GNUC_UNUSED)
 {
 }
 
 void
-_vte_stream_reset (VteStream *stream, gsize offset)
+_bte_stream_reset (VteStream *stream, gsize offset)
 {
 	VTE_STREAM_GET_CLASS (stream)->reset (stream, offset);
 }
 
 gboolean
-_vte_stream_read (VteStream *stream, gsize offset, char *data, gsize len)
+_bte_stream_read (VteStream *stream, gsize offset, char *data, gsize len)
 {
 	return VTE_STREAM_GET_CLASS (stream)->read (stream, offset, data, len);
 }
 
 void
-_vte_stream_append (VteStream *stream, const char *data, gsize len)
+_bte_stream_append (VteStream *stream, const char *data, gsize len)
 {
 	VTE_STREAM_GET_CLASS (stream)->append (stream, data, len);
 }
 
 void
-_vte_stream_truncate (VteStream *stream, gsize offset)
+_bte_stream_truncate (VteStream *stream, gsize offset)
 {
 	VTE_STREAM_GET_CLASS (stream)->truncate (stream, offset);
 }
 
 void
-_vte_stream_advance_tail (VteStream *stream, gsize offset)
+_bte_stream_advance_tail (VteStream *stream, gsize offset)
 {
 	VTE_STREAM_GET_CLASS (stream)->advance_tail (stream, offset);
 }
 
 gsize
-_vte_stream_tail (VteStream *stream)
+_bte_stream_tail (VteStream *stream)
 {
 	return VTE_STREAM_GET_CLASS (stream)->tail (stream);
 }
 
 gsize
-_vte_stream_head (VteStream *stream)
+_bte_stream_head (VteStream *stream)
 {
 	return VTE_STREAM_GET_CLASS (stream)->head (stream);
 }

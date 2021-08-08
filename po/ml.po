@@ -1,6 +1,6 @@
-# translation of vte.HEAD.ml.po to Malayalam
-# This file is distributed under the same license as the vte package.
-# Copyright (C) 2003-2008 vte'S COPYRIGHT HOLDER.
+# translation of bte.HEAD.ml.po to Malayalam
+# This file is distributed under the same license as the bte package.
+# Copyright (C) 2003-2008 bte'S COPYRIGHT HOLDER.
 # FSF-India <locale@gnu.org.in>, 2003.
 # Suresh Valiya Parambil <mvpsuresh@yahoo.com>, 2003.
 # Ani Peter <apeter@redhat.com>, 2006.
@@ -8,8 +8,8 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: vte.HEAD.ml\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Project-Id-Version: bte.HEAD.ml\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2018-06-20 20:20+0000\n"
 "PO-Revision-Date: 2018-10-15 22:28+0800\n"
 "Last-Translator: Santhosh Thottingal <santhosh.thottingal@gmail.com>\n"
@@ -23,25 +23,25 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. Translators: %s is replaced with error message returned by strerror().
-#: ../src/vte.cc:3966
+#: ../src/bte.cc:3966
 #, c-format
 msgid "Error reading from child: %s."
 msgstr "ചൈള്‍ഡില്‍ നിന്നും വായിക്കുന്നതില്‍ പിശകു്: %s."
 
-#: ../src/vte.cc:4122
+#: ../src/bte.cc:4122
 #, c-format
 msgid "Error (%s) converting data for child, dropping."
 msgstr "ചൈള്‍ഡിനു് ഡേറ്റാ മാറ്റുന്നതില്‍ പിഴവു് (%s), ഉപേക്ഷിയ്ക്കുന്നു."
 
-#: ../src/vte.cc:8179
+#: ../src/bte.cc:8179
 msgid "WARNING"
 msgstr "മുന്നറിയിപ്പ്"
 
-#: ../src/vte.cc:8180
+#: ../src/bte.cc:8180
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr "GnuTLS സജ്ജമല്ല; ഡിസ്കിലോട്ട് ഡാറ്റ എന്‍ക്രിപ്റ്റ് ചെയ്യാതെ എഴുതും!"
 
-#: ../src/vtectk.cc:3618
+#: ../src/btectk.cc:3618
 #, c-format
 msgid "Unable to convert characters from %s to %s."
 msgstr "%s-ല്‍ നിന്നും %s-ലേക്ക് അക്ഷരങ്ങളെ മാറ്റാന്‍ സാധിക്കുന്നില്ല."
@@ -79,8 +79,8 @@ msgstr "%s-ല്‍ നിന്നും %s-ലേക്ക് അക്ഷര
 #~ msgid "Error setting PTY size: %s."
 #~ msgstr "PTY വലിപ്പം സജ്ജീകരിയ്ക്കുന്നതില്‍ തകരാര്‍: %s."
 
-#~ msgid "_vte_conv_open() failed setting word characters"
-#~ msgstr "_vte_conv_open() failed setting word characters"
+#~ msgid "_bte_conv_open() failed setting word characters"
+#~ msgstr "_bte_conv_open() failed setting word characters"
 
 #~ msgid "Got unexpected (key?) sequence `%s'."
 #~ msgstr "Got unexpected (key?) sequence `%s'."

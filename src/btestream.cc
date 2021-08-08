@@ -21,7 +21,7 @@
 #include <config.h>
 
 #include "debug.h"
-#include "vtestream.h"
+#include "btestream.h"
 
 
 /*
@@ -29,5 +29,5 @@
  * the overhead though.
  */
 
-#include "vtestream-base.h"
-#include "vtestream-file.h"
+#include "btestream-base.h"
+#include "btestream-file.h"

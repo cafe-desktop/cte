@@ -1,6 +1,6 @@
-# Turkish translation of vte.
-# Copyright (C) 2003 vte's COPYRIGHT HOLDER
-# This file is distributed under the same license as the vte package.
+# Turkish translation of bte.
+# Copyright (C) 2003 bte's COPYRIGHT HOLDER
+# This file is distributed under the same license as the bte package.
 #
 # Görkem Çetin <gorkem@gelecek.com.tr>, 2003.
 # Arman Aksoy <armish@linux-sevenler.de>, 2003.
@@ -12,8 +12,8 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: vte master\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Project-Id-Version: bte master\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2020-04-27 18:50+0000\n"
 "PO-Revision-Date: 2020-04-28 15:36+0300\n"
 "Last-Translator: Emin Tufan Çetin <etcetin@gmail.com>\n"
@@ -25,11 +25,11 @@ msgstr ""
 "X-Generator: Poedit 2.3\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: src/vte.cc:7843
+#: src/bte.cc:7843
 msgid "WARNING"
 msgstr "UYARI"
 
-#: src/vte.cc:7845
+#: src/bte.cc:7845
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr "GnuTLS etkin değil; veriler diske şifrelenmemiş olarak yazılacak!"
 
@@ -117,8 +117,8 @@ msgstr "“%s” çocuk süreci çalıştırılamadı:  "
 #~ msgid "Error compiling regular expression \"%s\"."
 #~ msgstr "Düzenli ifade derlenirken hata: \"%s\"."
 
-#~ msgid "_vte_conv_open() failed setting word characters"
-#~ msgstr "_vte_iconv_open() kelime karakterlerini ayarlarken başarısız oldu"
+#~ msgid "_bte_conv_open() failed setting word characters"
+#~ msgstr "_bte_iconv_open() kelime karakterlerini ayarlarken başarısız oldu"
 
 #~ msgid "can not run %s"
 #~ msgstr "%s çalıştırılamadı"

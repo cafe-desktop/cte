@@ -50,24 +50,24 @@ attr_to_style(uint32_t attr)
 }
 
 static inline constexpr double
-_vte_draw_get_undercurl_rad(gint width)
+_bte_draw_get_undercurl_rad(gint width)
 {
         return width / 2. / M_SQRT2;
 }
 
 static inline constexpr double
-_vte_draw_get_undercurl_arc_height(gint width)
+_bte_draw_get_undercurl_arc_height(gint width)
 {
-        return _vte_draw_get_undercurl_rad(width) * (1. - M_SQRT2 / 2.);
+        return _bte_draw_get_undercurl_rad(width) * (1. - M_SQRT2 / 2.);
 }
 
 double
-_vte_draw_get_undercurl_height(gint width, double line_width)
+_bte_draw_get_undercurl_height(gint width, double line_width)
 {
-        return 2. * _vte_draw_get_undercurl_arc_height(width) + line_width;
+        return 2. * _bte_draw_get_undercurl_arc_height(width) + line_width;
 }
 
-namespace vte {
+namespace bte {
 namespace view {
 
 DrawingContext::~DrawingContext()
@@ -109,7 +109,7 @@ DrawingContext::unclip()
 }
 
 void
-DrawingContext::set_source_color_alpha(vte::color::rgb const* color,
+DrawingContext::set_source_color_alpha(bte::color::rgb const* color,
                                        double alpha)
 {
         g_assert(m_cr);
@@ -125,7 +125,7 @@ DrawingContext::clear(int x,
                       int y,
                       int width,
                       int height,
-                      vte::color::rgb const* color,
+                      bte::color::rgb const* color,
                       double alpha)
 {
         g_assert(m_cr);
@@ -146,7 +146,7 @@ DrawingContext::set_text_font(CtkWidget* widget,
 	PangoFontDescription *bolditalicdesc = nullptr;
 	gint normal, bold, ratio;
 
-	_vte_debug_print (VTE_DEBUG_DRAW, "draw_set_text_font\n");
+	_bte_debug_print (VTE_DEBUG_DRAW, "draw_set_text_font\n");
 
         clear_font_cache();
 
@@ -178,7 +178,7 @@ DrawingContext::set_text_font(CtkWidget* widget,
 	bold   = normal | VTE_DRAW_BOLD;
 	ratio = m_fonts[bold]->width() * 100 / m_fonts[normal]->width();
 	if (abs(ratio - 100) > 10) {
-		_vte_debug_print (VTE_DEBUG_DRAW,
+		_bte_debug_print (VTE_DEBUG_DRAW,
 			"Rejecting bold font (%i%%).\n", ratio);
                 m_fonts[bold]->unref();
                 m_fonts[bold] = m_fonts[normal]->ref();
@@ -187,7 +187,7 @@ DrawingContext::set_text_font(CtkWidget* widget,
 	bold   = normal | VTE_DRAW_BOLD;
 	ratio = m_fonts[bold]->width() * 100 / m_fonts[normal]->width();
 	if (abs(ratio - 100) > 10) {
-		_vte_debug_print (VTE_DEBUG_DRAW,
+		_bte_debug_print (VTE_DEBUG_DRAW,
 			"Rejecting italic bold font (%i%%).\n", ratio);
                 m_fonts[bold]->unref();
                 m_fonts[bold] = m_fonts[normal]->ref();
@@ -227,7 +227,7 @@ DrawingContext::get_text_metrics(int* cell_width,
 
 /* Stores the left and right edges of the given glyph, relative to the cell's left edge. */
 void
-DrawingContext::get_char_edges(vteunistr c,
+DrawingContext::get_char_edges(bteunistr c,
                                int columns,
                                uint32_t attr,
                                int& left,
@@ -272,7 +272,7 @@ void
 DrawingContext::draw_text_internal(TextRequest* requests,
                                    gsize n_requests,
                                    uint32_t attr,
-                                   vte::color::rgb const* color,
+                                   bte::color::rgb const* color,
                                    double alpha)
 {
 	gsize i;
@@ -288,10 +288,10 @@ DrawingContext::draw_text_internal(TextRequest* requests,
 	cairo_set_operator(m_cr, CAIRO_OPERATOR_OVER);
 
 	for (i = 0; i < n_requests; i++) {
-		vteunistr c = requests[i].c;
+		bteunistr c = requests[i].c;
 
                 if (G_UNLIKELY (requests[i].mirror)) {
-                        vte_bidi_get_mirror_char (c, requests[i].box_mirror, &c);
+                        bte_bidi_get_mirror_char (c, requests[i].box_mirror, &c);
                 }
 
                 if (m_minifont.unistr_is_local_graphic(c)) {
@@ -361,12 +361,12 @@ void
 DrawingContext::draw_text(TextRequest* requests,
                           gsize n_requests,
                           uint32_t attr,
-                          vte::color::rgb const* color,
+                          bte::color::rgb const* color,
                           double alpha)
 {
         g_assert(m_cr);
 
-	if (_vte_debug_on (VTE_DEBUG_DRAW)) {
+	if (_bte_debug_on (VTE_DEBUG_DRAW)) {
 		GString *string = g_string_new ("");
 		gchar *str;
 		gsize n;
@@ -388,10 +388,10 @@ DrawingContext::draw_text(TextRequest* requests,
  * but let's keep them for now since they may become used again.
  */
 bool
-DrawingContext::has_char(vteunistr c,
+DrawingContext::has_char(bteunistr c,
                          uint32_t attr)
 {
-	_vte_debug_print (VTE_DEBUG_DRAW, "draw_has_char ('0x%04X', %s - %s)\n", c,
+	_bte_debug_print (VTE_DEBUG_DRAW, "draw_has_char ('0x%04X', %s - %s)\n", c,
 				(attr & VTE_ATTR_BOLD)   ? "bold"   : "normal",
 				(attr & VTE_ATTR_ITALIC) ? "italic" : "regular");
 
@@ -405,10 +405,10 @@ DrawingContext::has_char(vteunistr c,
 bool
 DrawingContext::draw_char(TextRequest* request,
                           uint32_t attr,
-                          vte::color::rgb const* color,
+                          bte::color::rgb const* color,
                           double alpha)
 {
-	_vte_debug_print (VTE_DEBUG_DRAW,
+	_bte_debug_print (VTE_DEBUG_DRAW,
 			"draw_char ('%c', color=(%d,%d,%d,%.3f), %s, %s)\n",
 			request->c,
 			color->red, color->green, color->blue,
@@ -428,12 +428,12 @@ DrawingContext::draw_rectangle(int x,
                                int y,
                                int width,
                                int height,
-                               vte::color::rgb const* color,
+                               bte::color::rgb const* color,
                                double alpha)
 {
         g_assert(m_cr);
 
-	_vte_debug_print (VTE_DEBUG_DRAW,
+	_bte_debug_print (VTE_DEBUG_DRAW,
 			"draw_rectangle (%d, %d, %d, %d, color=(%d,%d,%d,%.3f))\n",
 			x,y,width,height,
 			color->red, color->green, color->blue,
@@ -451,12 +451,12 @@ DrawingContext::fill_rectangle(int x,
                                int y,
                                int width,
                                int height,
-                               vte::color::rgb const* color,
+                               bte::color::rgb const* color,
                                double alpha)
 {
         g_assert(m_cr);
 
-	_vte_debug_print (VTE_DEBUG_DRAW,
+	_bte_debug_print (VTE_DEBUG_DRAW,
 			"draw_fill_rectangle (%d, %d, %d, %d, color=(%d,%d,%d,%.3f))\n",
 			x,y,width,height,
 			color->red, color->green, color->blue,
@@ -474,7 +474,7 @@ DrawingContext::draw_line(int x,
                           int xp,
                           int yp,
                           int line_width,
-                          vte::color::rgb const *color,
+                          bte::color::rgb const *color,
                           double alpha)
 {
 	fill_rectangle(
@@ -488,7 +488,7 @@ DrawingContext::draw_undercurl(int x,
                                double y,
                                double line_width,
                                int count,
-                               vte::color::rgb const *color,
+                               bte::color::rgb const *color,
                                double alpha)
 {
         /* The end of the curly line slightly overflows to the next cell, so the canvas
@@ -499,7 +499,7 @@ DrawingContext::draw_undercurl(int x,
 
         g_assert(m_cr);
 
-        _vte_debug_print (VTE_DEBUG_DRAW,
+        _bte_debug_print (VTE_DEBUG_DRAW,
                         "draw_undercurl (x=%d, y=%f, count=%d, color=(%d,%d,%d,%.3f))\n",
                         x, y, count,
                         color->red, color->green, color->blue,
@@ -512,12 +512,12 @@ DrawingContext::draw_undercurl(int x,
                  * For caching, only the fractional part of "y" is used. */
                 cairo_t *undercurl_cr;
 
-                double rad = _vte_draw_get_undercurl_rad(m_cell_width);
-                double y_bottom = y + _vte_draw_get_undercurl_height(m_cell_width, line_width);
+                double rad = _bte_draw_get_undercurl_rad(m_cell_width);
+                double y_bottom = y + _bte_draw_get_undercurl_height(m_cell_width, line_width);
                 double y_center = (y + y_bottom) / 2.;
                 gint surface_bottom = y_bottom + 1;  /* ceil, kind of */
 
-                _vte_debug_print (VTE_DEBUG_DRAW,
+                _bte_debug_print (VTE_DEBUG_DRAW,
                                   "caching undercurl shape\n");
 
                 /* Add a line_width of margin horizontally on both sides, for nice antialias overflowing. */
@@ -549,4 +549,4 @@ DrawingContext::draw_undercurl(int x,
 }
 
 } // namespace view
-} // namespace vte
+} // namespace bte

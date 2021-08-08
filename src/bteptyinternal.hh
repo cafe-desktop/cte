@@ -17,12 +17,12 @@
 
 #pragma once
 
-#include "vte/vtepty.h"
+#include "bte/btepty.h"
 #include "pty.hh"
 
-vte::base::Pty* _vte_pty_get_impl(VtePty* pty);
+bte::base::Pty* _bte_pty_get_impl(VtePty* pty);
 
-bool _vte_pty_spawn_sync(VtePty* pty,
+bool _bte_pty_spawn_sync(VtePty* pty,
                          char const* working_directory,
                          char const* const* argv,
                          char const* const* envv,
@@ -35,9 +35,9 @@ bool _vte_pty_spawn_sync(VtePty* pty,
                          GCancellable* cancellable,
                          GError** error) noexcept;
 
-bool _vte_pty_check_envv(char const* const* envv) noexcept;
+bool _bte_pty_check_envv(char const* const* envv) noexcept;
 
-bool _vte_pty_set_size(VtePty *pty,
+bool _bte_pty_set_size(VtePty *pty,
                        int rows,
                        int columns,
                        int cell_height_px,

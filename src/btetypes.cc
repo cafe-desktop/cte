@@ -19,24 +19,24 @@
 
 #include <glib.h>
 
-#include "vtetypes.hh"
+#include "btetypes.hh"
 #include "libc-glue.hh"
 
 #include <type_traits>
 
-static_assert(sizeof(vte::grid::coords) == 2 * sizeof(long), "vte::grid::coords size wrong");
+static_assert(sizeof(bte::grid::coords) == 2 * sizeof(long), "bte::grid::coords size wrong");
 
-static_assert(sizeof(vte::grid::span) == 4 * sizeof(long), "vte::grid::span size wrong");
+static_assert(sizeof(bte::grid::span) == 4 * sizeof(long), "bte::grid::span size wrong");
 
-static_assert(std::is_pod<vte::view::coords>::value, "vte::view::coords not POD");
-static_assert(sizeof(vte::view::coords) == 2 * sizeof(vte::view::coord_t), "vte::view::coords size wrong");
+static_assert(std::is_pod<bte::view::coords>::value, "bte::view::coords not POD");
+static_assert(sizeof(bte::view::coords) == 2 * sizeof(bte::view::coord_t), "bte::view::coords size wrong");
 
-static_assert(std::is_pod<vte::color::rgb>::value, "vte::color::rgb not POD");
-static_assert(sizeof(vte::color::rgb) == sizeof(PangoColor), "vte::color::rgb size wrong");
+static_assert(std::is_pod<bte::color::rgb>::value, "bte::color::rgb not POD");
+static_assert(sizeof(bte::color::rgb) == sizeof(PangoColor), "bte::color::rgb size wrong");
 
-static_assert(sizeof(vte::libc::FD) == sizeof(int), "vte::libc::FD size wrong");
+static_assert(sizeof(bte::libc::FD) == sizeof(int), "bte::libc::FD size wrong");
 
-vte::color::rgb::rgb(CdkRGBA const* rgba) {
+bte::color::rgb::rgb(CdkRGBA const* rgba) {
         g_assert(rgba);
         /* FIXME: equal distribution! */
         red   = rgba->red   * 65535.;
@@ -45,7 +45,7 @@ vte::color::rgb::rgb(CdkRGBA const* rgba) {
 }
 
 bool
-vte::color::rgb::parse(char const* spec)
+bte::color::rgb::parse(char const* spec)
 {
 	char *spec_copy = (char *)spec;
 	bool retval = false;
@@ -96,7 +96,7 @@ debug_get_buf(void)
 }
 
 char const*
-vte::grid::coords::to_string() const
+bte::grid::coords::to_string() const
 {
         char *buf = debug_get_buf();
         g_snprintf(buf, DEBUG_STRING_SIZE, "grid[%ld,%ld]", row(), column());
@@ -104,7 +104,7 @@ vte::grid::coords::to_string() const
 }
 
 char const*
-vte::grid::halfcoords::to_string() const
+bte::grid::halfcoords::to_string() const
 {
         char *buf = debug_get_buf();
         g_snprintf(buf, DEBUG_STRING_SIZE, "halfgrid[%ld,%ld%c]", row(), halfcolumn().column(), halfcolumn().half() ? 'R' : 'L');
@@ -112,7 +112,7 @@ vte::grid::halfcoords::to_string() const
 }
 
 char const*
-vte::grid::span::to_string() const
+bte::grid::span::to_string() const
 {
         if (empty())
                 return "grid[empty]";
@@ -124,7 +124,7 @@ vte::grid::span::to_string() const
 }
 
 char const*
-vte::view::coords::to_string() const
+bte::view::coords::to_string() const
 {
         char *buf = debug_get_buf();
         g_snprintf(buf, DEBUG_STRING_SIZE, "view[%ld,%ld]", x, y);
@@ -132,7 +132,7 @@ vte::view::coords::to_string() const
 }
 
 char const*
-vte::view::extents::to_string() const
+bte::view::extents::to_string() const
 {
         char *buf = debug_get_buf();
         g_snprintf(buf, DEBUG_STRING_SIZE, "view::extents[%ld x %ld]", width(), height());
@@ -140,7 +140,7 @@ vte::view::extents::to_string() const
 }
 
 char const*
-vte::color::rgb::to_string() const
+bte::color::rgb::to_string() const
 {
         char *buf = debug_get_buf();
         g_snprintf(buf, DEBUG_STRING_SIZE, "rgb(%04x,%04x,%04x)", red, green, blue);
@@ -155,7 +155,7 @@ vte::color::rgb::to_string() const
 
 #include <glib.h>
 
-using namespace vte::grid;
+using namespace bte::grid;
 
 static void
 test_grid_coords (void)
@@ -206,7 +206,7 @@ test_grid_coords (void)
 
 #ifdef VTE_DEBUG
         /* to_string() */
-        g_assert_cmpstr(vte::grid::coords(17, 42).to_string(), ==, "grid[17,42]");
+        g_assert_cmpstr(bte::grid::coords(17, 42).to_string(), ==, "grid[17,42]");
 #endif
 }
 
@@ -365,7 +365,7 @@ test_grid_span (void)
 
 #ifdef VTE_DEBUG
         /* to_string() */
-        g_assert_cmpstr(vte::grid::span(17, 42, 18, 3).to_string(), ==, "grid[(17,42), (18,3))");
+        g_assert_cmpstr(bte::grid::span(17, 42, 18, 3).to_string(), ==, "grid[(17,42), (18,3))");
 #endif
 }
 
@@ -373,16 +373,16 @@ static void
 test_view_coords (void)
 {
         /* Default constructor */
-        vte::view::coords p1;
+        bte::view::coords p1;
 
         /* Construction and assignment */
-        vte::view::coords p2(256, 512);
+        bte::view::coords p2(256, 512);
 
         /* Comparision operators */
 
-        vte::view::coords p3 = p2;
-        vte::view::coords p4(1024, 2048);
-        vte::view::coords p5 = p4;
+        bte::view::coords p3 = p2;
+        bte::view::coords p4(1024, 2048);
+        bte::view::coords p5 = p4;
 
         g_assert_true(p3 == p2);
         g_assert_false(p3 != p2);
@@ -397,7 +397,7 @@ test_view_coords (void)
 
 #ifdef VTE_DEBUG
         /* to_string() */
-        g_assert_cmpstr(vte::view::coords(256, 512).to_string(), ==, "view[256,512]");
+        g_assert_cmpstr(bte::view::coords(256, 512).to_string(), ==, "view[256,512]");
 #endif
 }
 
@@ -412,7 +412,7 @@ test_util_restore_errno(void)
 {
         errno = -42;
         {
-                vte::libc::ErrnoSaver errsv;
+                bte::libc::ErrnoSaver errsv;
                 errno = 36;
         }
         g_assert_cmpint(errno, ==, -42);
@@ -423,12 +423,12 @@ main(int argc, char *argv[])
 {
         g_test_init (&argc, &argv, nullptr);
 
-        g_test_add_func("/vte/c++/grid/coords", test_grid_coords);
-        g_test_add_func("/vte/c++/grid/halfcoords", test_grid_halfcoords);
-        g_test_add_func("/vte/c++/grid/span", test_grid_span);
-        g_test_add_func("/vte/c++/color/rgb", test_color_rgb);
-        g_test_add_func("/vte/c++/view/coords", test_view_coords);
-        g_test_add_func("/vte/c++/util/restore-errno", test_util_restore_errno);
+        g_test_add_func("/bte/c++/grid/coords", test_grid_coords);
+        g_test_add_func("/bte/c++/grid/halfcoords", test_grid_halfcoords);
+        g_test_add_func("/bte/c++/grid/span", test_grid_span);
+        g_test_add_func("/bte/c++/color/rgb", test_color_rgb);
+        g_test_add_func("/bte/c++/view/coords", test_view_coords);
+        g_test_add_func("/bte/c++/util/restore-errno", test_util_restore_errno);
 
         return g_test_run();
 }

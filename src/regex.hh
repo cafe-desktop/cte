@@ -23,11 +23,11 @@
 
 #include <glib.h>
 
-#include "vtepcre2.h"
+#include "btepcre2.h"
 
 #include "cxx-utils.hh"
 
-namespace vte {
+namespace bte {
 
 namespace base {
 
@@ -48,7 +48,7 @@ public:
 private:
         mutable volatile int m_refcount{1};
 
-        using code_type = vte::FreeablePtr<pcre2_code_8, decltype(&pcre2_code_free_8), &pcre2_code_free_8>;
+        using code_type = bte::FreeablePtr<pcre2_code_8, decltype(&pcre2_code_free_8), &pcre2_code_free_8>;
         code_type m_code{};
 
         Purpose m_purpose;
@@ -86,4 +86,4 @@ public:
 
 } // namespace base
 
-} // namespace vte
+} // namespace bte

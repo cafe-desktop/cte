@@ -1,6 +1,6 @@
-# Czech translation of vte.
+# Czech translation of bte.
 # Copyright (C) 2002, 2008 Free Software Foundation.
-# This file is distributed under the same license as the vte package.
+# This file is distributed under the same license as the bte package.
 #
 # Miloslav Trmac <mitr@volny.cz>, 2002, 2003, 2004.
 # Pavel Šefránek <ps@pjoul.cz>, 2008.
@@ -8,8 +8,8 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: vte\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Project-Id-Version: bte\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2020-05-27 19:17+0000\n"
 "PO-Revision-Date: 2020-08-25 11:22+0200\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
@@ -21,11 +21,11 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 "X-Generator: Gtranslator 2.91.7\n"
 
-#: src/vte.cc:7763
+#: src/bte.cc:7763
 msgid "WARNING"
 msgstr "VAROVÁNÍ"
 
-#: src/vte.cc:7765
+#: src/bte.cc:7765
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr "Není povoleno GnuTLS – data budou na disku uložena nezašifrovaná!"
 

@@ -1,12 +1,12 @@
-# Canadian English translation of vte
+# Canadian English translation of bte
 # Copyright (C) Adam Weinberger and the GNOME Foundation
-# This file is distributed under the same licence as the vte package.
+# This file is distributed under the same licence as the bte package.
 # Alexander Winston <alexander.winston@comcast.net>, 2004.
 # Adam Weinberger <adamw@gnome.org>, 2004.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: vte 0.11.10\n"
+"Project-Id-Version: bte 0.11.10\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-08-15 18:02-0400\n"
 "PO-Revision-Date: 2004-09-08 22:54-0400\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ../src/iso2022.c:791 ../src/iso2022.c:799 ../src/iso2022.c:830
-#: ../src/vte.c:1814
+#: ../src/bte.c:1814
 #, c-format
 msgid "Unable to convert characters from %s to %s."
 msgstr "Unable to convert characters from %s to %s."
@@ -55,61 +55,61 @@ msgstr "Error creating signal pipe."
 msgid "Duplicate (%s/%s)!"
 msgstr "Duplicate (%s/%s)!"
 
-#: ../src/vte.c:1204
+#: ../src/bte.c:1204
 #, c-format
 msgid "Error compiling regular expression \"%s\"."
 msgstr "Error compiling regular expression \"%s\"."
 
-#: ../src/vte.c:2675 ../src/vte.c:2680
+#: ../src/bte.c:2675 ../src/bte.c:2680
 #, c-format
 msgid "No handler for control sequence `%s' defined."
 msgstr "No handler for control sequence `%s' defined."
 
 #. Translators: %s is replaced with error message returned by strerror().
-#: ../src/vte.c:3645
+#: ../src/bte.c:3645
 #, c-format
 msgid "Error reading from child: %s."
 msgstr "Error reading from child: %s."
 
-#: ../src/vte.c:3761
+#: ../src/bte.c:3761
 msgid "Unable to send data to child, invalid charset convertor"
 msgstr "Unable to send data to child: invalid charset convertor"
 
-#: ../src/vte.c:3772 ../src/vte.c:4679
+#: ../src/bte.c:3772 ../src/bte.c:4679
 #, c-format
 msgid "Error (%s) converting data for child, dropping."
 msgstr "Error (%s) converting data for child: dropping."
 
-#: ../src/vte.c:6914
+#: ../src/bte.c:6914
 #, c-format
 msgid "Error reading PTY size, using defaults: %s."
 msgstr "Error reading PTY size: using defaults: %s."
 
-#: ../src/vte.c:6950
+#: ../src/bte.c:6950
 #, c-format
 msgid "Error setting PTY size: %s."
 msgstr "Error setting PTY size: %s."
 
 #. Aaargh.  We're screwed.
-#: ../src/vte.c:11415
-msgid "_vte_conv_open() failed setting word characters"
-msgstr "_vte_conv_open() failed setting word characters"
+#: ../src/bte.c:11415
+msgid "_bte_conv_open() failed setting word characters"
+msgstr "_bte_conv_open() failed setting word characters"
 
-#: ../src/vteseq.c:3926
+#: ../src/bteseq.c:3926
 #, c-format
 msgid "Got unexpected (key?) sequence `%s'."
 msgstr "Got unexpected (key?) sequence `%s'."
 
 #. Bail back to normal mode.
-#: ../src/vteapp.c:774
+#: ../src/bteapp.c:774
 msgid "Could not open console.\n"
 msgstr "Could not open console.\n"
 
-#: ../src/vteapp.c:838
+#: ../src/bteapp.c:838
 msgid "Could not parse the geometry spec passed to --geometry"
 msgstr "Could not parse the geometry spec passed to --geometry"
 
-#: ../src/vteglyph.c:562
+#: ../src/bteglyph.c:562
 #, c-format
 msgid "Unknown pixel mode %d.\n"
 msgstr "Unknown pixel mode %d.\n"

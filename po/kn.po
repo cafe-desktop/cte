@@ -1,5 +1,5 @@
 # translation of kn.po to Kannada
-# Kannada translation of vte.
+# Kannada translation of bte.
 # Copyright (C) 2003 THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 #
@@ -21,7 +21,7 @@ msgstr ""
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
 
 #: ../src/iso2022.c:791 ../src/iso2022.c:799 ../src/iso2022.c:830
-#: ../src/vte.c:1797
+#: ../src/bte.c:1797
 #, c-format
 msgid "Unable to convert characters from %s to %s."
 msgstr "ಅಕ್ಷರಗಳನ್ನು %s ಯಿಂದ %s ಗೆ ಪರಿವರ್ತಿಸಲಾಗದು"
@@ -58,61 +58,61 @@ msgstr "ಸೂಚನಾ ಕೊಳವೆ ರಚನೆಯಲ್ಲಿ ದೋಷ"
 msgid "Duplicate (%s/%s)!"
 msgstr "ದ್ವಿಪ್ರತಿ (%s/%s)"
 
-#: ../src/vte.c:1187
+#: ../src/bte.c:1187
 #, c-format
 msgid "Error compiling regular expression \"%s\"."
 msgstr "ಸಾಮಾನ್ಯ ಎಕ್ಸ್‍ಪ್ರೆಶನ್ \"%s\" ಅನ್ನು ಸಂಕಲಿಸುವಲ್ಲಿ ದೋಷ ಉಂಟಾಗಿದೆ."
 
-#: ../src/vte.c:2657 ../src/vte.c:2662
+#: ../src/bte.c:2657 ../src/bte.c:2662
 #, c-format
 msgid "No handler for control sequence `%s' defined."
 msgstr "`%s' ಅನುಕ್ರಮದ ನಿಯಂತ್ರಣ ಹಿಡಿಕೆಯನ್ನು ನಿರ್ಧಿಷ್ಟಪಡಿಸಿಲ್ಲ"
 
 #. Translators: %s is replaced with error message returned by strerror().
-#: ../src/vte.c:3627
+#: ../src/bte.c:3627
 #, c-format
 msgid "Error reading from child: %s."
 msgstr "child %s: ನಿಂದ ಓದುವಾಗ ದೋಷ"
 
-#: ../src/vte.c:3743
+#: ../src/bte.c:3743
 msgid "Unable to send data to child, invalid charset convertor"
 msgstr "ಉಪ ಪ್ರಕ್ರಿಯೆಗೆ ಮಾಹಿತಿಯನ್ನು ಕಳುಹಿಸಲು ಸಾಧ್ಯವಾಗುತ್ತಿಲ್ಲ, ಅಮಾನ್ಯವಾದ ಕ್ಯಾರ್ಸೆಟ್ ಪರಿವರ್ತನೆಗಾರ"
 
-#: ../src/vte.c:3754 ../src/vte.c:4631
+#: ../src/bte.c:3754 ../src/bte.c:4631
 #, c-format
 msgid "Error (%s) converting data for child, dropping."
 msgstr "ಉಪ ಪ್ರಕ್ರಿಯೆಗಾಗಿ ಮಾಹಿತಿಯನ್ನು ಪರಿವರ್ತಿಸುವಲ್ಲಿ ದೋಷ (%s), ಕೈಬಿಡಲಾಗುತ್ತಿದೆ."
 
-#: ../src/vte.c:6866
+#: ../src/bte.c:6866
 #, c-format
 msgid "Error reading PTY size, using defaults: %s."
 msgstr "ಪಿಟಿವೈ ಗಾತ್ರವನ್ನು ಓದುವಲ್ಲಿ ದೋಷ, ಡಿಫಾಲ್ಟುಗಳನ್ನು ಬಳಸಲಾಗುತ್ತಿದೆ: %s."
 
-#: ../src/vte.c:6895
+#: ../src/bte.c:6895
 #, c-format
 msgid "Error setting PTY size: %s."
 msgstr "%s: PTY ಅಳತೆ ತಿಳಿಯಪಡಿಸುವಾಗ ದೋಷ"
 
 #. Aaargh.  We're screwed.
-#: ../src/vte.c:11348
-msgid "_vte_conv_open() failed setting word characters"
-msgstr "_vte_conv_open() ವರ್ಡಿನ ಅಕ್ಷರಗಳನ್ನು ಹೊಂದಿಸುವಲ್ಲಿ ವಿಫಲತೆ"
+#: ../src/bte.c:11348
+msgid "_bte_conv_open() failed setting word characters"
+msgstr "_bte_conv_open() ವರ್ಡಿನ ಅಕ್ಷರಗಳನ್ನು ಹೊಂದಿಸುವಲ್ಲಿ ವಿಫಲತೆ"
 
-#: ../src/vteseq.c:3926
+#: ../src/bteseq.c:3926
 #, c-format
 msgid "Got unexpected (key?) sequence `%s'."
 msgstr "ಅನಿರೀಕ್ಷಿತವಾದ (ಕೀ?) ಅನುಕ್ರಮ`%s' ಸಿಕ್ಕಿದೆ"
 
 #. Bail back to normal mode.
-#: ../src/vteapp.c:774
+#: ../src/bteapp.c:774
 msgid "Could not open console.\n"
 msgstr "ತೋರುಪರದೆಯನ್ನು ತೆಗೆಯಲಾಗುತ್ತಿಲ್ಲ \n"
 
-#: ../src/vteapp.c:838
+#: ../src/bteapp.c:838
 msgid "Could not parse the geometry spec passed to --geometry"
 msgstr "--geometry ಗೆ ರವಾನಿಸಲಾದ ಜ್ಯಾಮಿಟ್ರಿ ಸ್ಪೆಕ್‌ಗಳನ್ನು ಪಾರ್ಸ್ ಮಾಡಲಾಗಿಲ್ಲ"
 
-#: ../src/vteglyph.c:562
+#: ../src/bteglyph.c:562
 #, c-format
 msgid "Unknown pixel mode %d.\n"
 msgstr "ಅಪರಿಚಿತ ಪಿಕ್ಸೆಲ್ ಮೋಡ್ %d.\n"

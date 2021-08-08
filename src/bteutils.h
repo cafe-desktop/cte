@@ -23,7 +23,7 @@
 
 G_BEGIN_DECLS
 
-int _vte_mkstemp (void);
+int _bte_mkstemp (void);
 
 G_END_DECLS
 

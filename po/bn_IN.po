@@ -1,15 +1,15 @@
-# Bengali India Translation of vte.
+# Bengali India Translation of bte.
 # Copyright (C) 2002 Free Software Foundation
-# This file is distributed under the same license as the vte package.
+# This file is distributed under the same license as the bte package.
 #
 # Jamil Ahmed <jamil@bengalinux.org>, 2003.
 # Samia Niamatullah <mailsamia2001@yahoo.com>, 2005.
 # Runa Bhattacharjee <runab@redhat.com>, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version: vte.HEAD\n"
+"Project-Id-Version: bte.HEAD\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug."
-"cgi?product=vte&component=general\n"
+"cgi?product=bte&component=general\n"
 "POT-Creation-Date: 2010-03-17 17:23+0000\n"
 "PO-Revision-Date: 2011-03-24 20:00+0530\n"
 "Last-Translator: Runa Bhattacharjee <runab@redhat.com>\n"
@@ -24,7 +24,7 @@ msgstr ""
 "\n"
 
 #: ../src/iso2022.c:771 ../src/iso2022.c:779 ../src/iso2022.c:810
-#: ../src/vte.c:2232
+#: ../src/bte.c:2232
 #, c-format
 msgid "Unable to convert characters from %s to %s."
 msgstr "%s থেকে %s'এ অক্ষর রূপান্তর করতে ব্যর্থ।"
@@ -58,44 +58,44 @@ msgid "Duplicate (%s/%s)!"
 msgstr "প্রতিলিপি (%s/%s)!"
 
 #. Bail back to normal mode.
-#: ../src/vteapp.c:876
+#: ../src/bteapp.c:876
 msgid "Could not open console.\n"
 msgstr "কনসোল খুলতে ব্যর্থ।\n"
 
-#: ../src/vteapp.c:967
+#: ../src/bteapp.c:967
 msgid "Could not parse the geometry spec passed to --geometry"
 msgstr "--geometry বিকল্পের সাথে প্রেরিত geometry spec পার্স করতে বিফল"
 
-#: ../src/vte.c:1279
+#: ../src/bte.c:1279
 #, c-format
 msgid "Error compiling regular expression \"%s\"."
 msgstr "রেগুলার এক্সপ্রেশন \"%s\" কম্পাইল করতে সমস্যা।"
 
 #. Translators: %s is replaced with error message returned by strerror().
-#: ../src/vte.c:4344
+#: ../src/bte.c:4344
 #, c-format
 msgid "Error reading from child: %s."
 msgstr "চাইল্ড থেকে পড়তে সমস্যা: %s।"
 
-#: ../src/vte.c:4472
+#: ../src/bte.c:4472
 msgid "Unable to send data to child, invalid charset convertor"
 msgstr "অবৈধ charset রূপান্তরের ফলে চাইল্ডে তথ্য প্রেরণ করতে ব্যর্থ"
 
-#: ../src/vte.c:4483 ../src/vte.c:5505
+#: ../src/bte.c:4483 ../src/bte.c:5505
 #, c-format
 msgid "Error (%s) converting data for child, dropping."
 msgstr "চাইল্ডের জন্য তথ্য রূপান্তর করতে সমস্যা (%s), বর্জন করা হচ্ছে।"
 
-#: ../src/vte.c:7726
+#: ../src/bte.c:7726
 #, c-format
 #| msgid "Error reading PTY size, using defaults: %s."
 msgid "Error reading PTY size, using defaults: %s\n"
 msgstr "PTY'র মাপ পড়তে সমস্যা, ডিফল্ট মান ব্যবহার করা হবে: %s\n"
 
 #. Aaargh.  We're screwed.
-#: ../src/vte.c:13281
-msgid "_vte_conv_open() failed setting word characters"
-msgstr "_vte_conv_open() দ্বারা শব্দের অক্ষর নির্ধারণ করতে ব্যর্থ"
+#: ../src/bte.c:13281
+msgid "_bte_conv_open() failed setting word characters"
+msgstr "_bte_conv_open() দ্বারা শব্দের অক্ষর নির্ধারণ করতে ব্যর্থ"
 
 #~ msgid "Error creating signal pipe."
 #~ msgstr "সিগন্যাল-পাইপ নির্মাণ করতে ব্যর্থ।"

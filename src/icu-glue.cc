@@ -31,7 +31,7 @@
 
 #include "icu-glue.hh"
 
-namespace vte::base {
+namespace bte::base {
 
 /* VTE cannot use the converters for ECMA-35 (ISO-2022-*), since they
  * interpret escape sequences (for charset designation), and do not
@@ -143,4 +143,4 @@ make_icu_converter(char const* charset,
         return converter;
 }
 
-} // namespace vte::base
+} // namespace bte::base

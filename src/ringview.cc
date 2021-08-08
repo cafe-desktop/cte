@@ -20,10 +20,10 @@
 
 #include "bidi.hh"
 #include "debug.h"
-#include "vtedefines.hh"
-#include "vteinternal.hh"
+#include "btedefines.hh"
+#include "bteinternal.hh"
 
-using namespace vte::base;
+using namespace bte::base;
 
 RingView::RingView()
 {
@@ -51,11 +51,11 @@ RingView::pause()
         if (m_paused)
                 return;
 
-        _vte_debug_print (VTE_DEBUG_RINGVIEW, "Ringview: pause, freeing %d rows, %d bidirows.\n",
+        _bte_debug_print (VTE_DEBUG_RINGVIEW, "Ringview: pause, freeing %d rows, %d bidirows.\n",
                                               m_rows_alloc_len, m_bidirows_alloc_len);
 
         for (i = 0; i < m_rows_alloc_len; i++) {
-                _vte_row_data_fini(m_rows[i]);
+                _bte_row_data_fini(m_rows[i]);
                 g_free (m_rows[i]);
         }
         g_free (m_rows);
@@ -83,7 +83,7 @@ RingView::resume()
         m_rows = (VteRowData **) g_malloc (sizeof (VteRowData *) * m_rows_alloc_len);
         for (int i = 0; i < m_rows_alloc_len; i++) {
                 m_rows[i] = (VteRowData *) g_malloc (sizeof (VteRowData));
-                _vte_row_data_init (m_rows[i]);
+                _bte_row_data_init (m_rows[i]);
         }
 
         /* +2: Likely prevent a quickly following realloc.
@@ -97,7 +97,7 @@ RingView::resume()
                 m_bidirows[i] = new BidiRow();
         }
 
-        _vte_debug_print (VTE_DEBUG_RINGVIEW, "Ringview: resume, allocating %d rows, %d bidirows\n",
+        _bte_debug_print (VTE_DEBUG_RINGVIEW, "Ringview: resume, allocating %d rows, %d bidirows\n",
                                               m_rows_alloc_len, m_bidirows_alloc_len);
 
         m_paused = false;
@@ -114,7 +114,7 @@ RingView::set_ring(Ring *ring)
 }
 
 void
-RingView::set_width(vte::grid::column_t width)
+RingView::set_width(bte::grid::column_t width)
 {
         if (G_LIKELY (width == m_width))
                 return;
@@ -124,7 +124,7 @@ RingView::set_width(vte::grid::column_t width)
 }
 
 void
-RingView::set_rows(vte::grid::row_t start, vte::grid::row_t len)
+RingView::set_rows(bte::grid::row_t start, bte::grid::row_t len)
 {
         /* Force at least 1 row, see bug 134. */
         len = MAX(len, 1);
@@ -147,7 +147,7 @@ RingView::set_rows(vte::grid::row_t start, vte::grid::row_t len)
                         /* Don't realloc too aggressively. */
                         m_bidirows_alloc_len = std::max(m_bidirows_alloc_len + 1, m_bidirows_alloc_len * 5 / 4 /* whatever */);
                 }
-                _vte_debug_print (VTE_DEBUG_RINGVIEW, "Ringview: reallocate to %d bidirows\n",
+                _bte_debug_print (VTE_DEBUG_RINGVIEW, "Ringview: reallocate to %d bidirows\n",
                                                       m_bidirows_alloc_len);
                 m_bidirows = (BidiRow **) g_realloc (m_bidirows, sizeof (BidiRow *) * m_bidirows_alloc_len);
                 for (; i < m_bidirows_alloc_len; i++) {
@@ -161,7 +161,7 @@ RingView::set_rows(vte::grid::row_t start, vte::grid::row_t len)
 }
 
 VteRowData const*
-RingView::get_row(vte::grid::row_t row) const
+RingView::get_row(bte::grid::row_t row) const
 {
         g_assert_cmpint(row, >=, m_top);
         g_assert_cmpint(row, <, m_top + m_rows_len);
@@ -204,10 +204,10 @@ RingView::update()
          * non-context row this paragraph fragment is already longer
          * than VTE_RINGVIEW_PARAGRAPH_LENGTH_MAX lines, and thus the
          * BiDi code will skip it. */
-        vte::grid::row_t row = m_start;
+        bte::grid::row_t row = m_start;
         const VteRowData *row_data;
 
-        _vte_debug_print (VTE_DEBUG_RINGVIEW, "Ringview: updating for [%ld..%ld] (%ld rows).\n",
+        _bte_debug_print (VTE_DEBUG_RINGVIEW, "Ringview: updating for [%ld..%ld] (%ld rows).\n",
                                               m_start, m_start + m_len - 1, m_len);
 
         int i = VTE_RINGVIEW_PARAGRAPH_LENGTH_MAX;
@@ -231,34 +231,34 @@ RingView::update()
                 if (G_UNLIKELY (m_rows_len == m_rows_alloc_len)) {
                         /* Don't realloc too aggressively. */
                         m_rows_alloc_len = std::max(m_rows_alloc_len + 1, m_rows_alloc_len * 5 / 4 /* whatever */);
-                        _vte_debug_print (VTE_DEBUG_RINGVIEW, "Ringview: reallocate to %d rows\n",
+                        _bte_debug_print (VTE_DEBUG_RINGVIEW, "Ringview: reallocate to %d rows\n",
                                                               m_rows_alloc_len);
                         m_rows = (VteRowData **) g_realloc (m_rows, sizeof (VteRowData *) * m_rows_alloc_len);
                         for (int j = m_rows_len; j < m_rows_alloc_len; j++) {
                                 m_rows[j] = (VteRowData *) g_malloc (sizeof (VteRowData));
-                                _vte_row_data_init (m_rows[j]);
+                                _bte_row_data_init (m_rows[j]);
                         }
                 }
 
-                row_data = _vte_ring_contains(m_ring, row) ? m_ring->index(row) : nullptr;
+                row_data = _bte_ring_contains(m_ring, row) ? m_ring->index(row) : nullptr;
                 if (G_LIKELY (row_data != nullptr)) {
-                        _vte_row_data_copy (row_data, m_rows[m_rows_len]);
+                        _bte_row_data_copy (row_data, m_rows[m_rows_len]);
                         /* Make sure that the extracted data is not wider than the screen,
                          * something that can happen if the window was narrowed with rewrapping disabled.
                          * Also make sure that we won't end up with unfinished characters.
                          * FIXME remove this once bug 135 is addressed. */
-                        if (G_UNLIKELY (_vte_row_data_length(m_rows[m_rows_len]) > m_width)) {
+                        if (G_UNLIKELY (_bte_row_data_length(m_rows[m_rows_len]) > m_width)) {
                                 int j = m_width;
                                 while (j > 0) {
-                                        VteCell const* cell = _vte_row_data_get(m_rows[m_rows_len], j);
+                                        VteCell const* cell = _bte_row_data_get(m_rows[m_rows_len], j);
                                         if (!cell->attr.fragment())
                                                 break;
                                         j--;
                                 }
-                                _vte_row_data_shrink(m_rows[m_rows_len], j);
+                                _bte_row_data_shrink(m_rows[m_rows_len], j);
                         }
                 } else {
-                        _vte_row_data_clear (m_rows[m_rows_len]);
+                        _bte_row_data_clear (m_rows[m_rows_len]);
                 }
                 m_rows_len++;
                 row++;
@@ -268,7 +268,7 @@ RingView::update()
                         break;
         }
 
-        _vte_debug_print (VTE_DEBUG_RINGVIEW, "Ringview: extracted %ld+%ld context lines: [%ld..%ld] (%d rows).\n",
+        _bte_debug_print (VTE_DEBUG_RINGVIEW, "Ringview: extracted %ld+%ld context lines: [%ld..%ld] (%d rows).\n",
                                               m_start - m_top, (m_top + m_rows_len) - (m_start + m_len),
                                               m_top, m_top + m_rows_len - 1, m_rows_len);
 
@@ -294,7 +294,7 @@ RingView::update()
         m_invalid = false;
 }
 
-BidiRow const* RingView::get_bidirow(vte::grid::row_t row) const
+BidiRow const* RingView::get_bidirow(bte::grid::row_t row) const
 {
         g_assert_cmpint (row, >=, m_start);
         g_assert_cmpint (row, <, m_start + m_len);
@@ -306,7 +306,7 @@ BidiRow const* RingView::get_bidirow(vte::grid::row_t row) const
 
 /* For internal use by BidiRunner. Get where the BiDi mapping for the given row
  * needs to be stored, of nullptr if it's a context row. */
-BidiRow* RingView::get_bidirow_writable(vte::grid::row_t row) const
+BidiRow* RingView::get_bidirow_writable(bte::grid::row_t row) const
 {
         if (row < m_start || row >= m_start + m_len)
                 return nullptr;

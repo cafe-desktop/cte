@@ -30,53 +30,53 @@ struct _VteReaperClass {
 };
 typedef struct _VteReaperClass VteReaperClass;
 
-#define VTE_TYPE_REAPER            (vte_reaper_get_type())
+#define VTE_TYPE_REAPER            (bte_reaper_get_type())
 #define VTE_REAPER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), VTE_TYPE_REAPER, VteReaper))
 #define VTE_REAPER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  VTE_TYPE_REAPER, VteReaperClass))
 #define VTE_IS_REAPER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), VTE_TYPE_REAPER))
 #define VTE_IS_REAPER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  VTE_TYPE_REAPER))
 #define VTE_REAPER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  VTE_TYPE_REAPER, VteReaperClass))
 
-static GType vte_reaper_get_type(void);
+static GType bte_reaper_get_type(void);
 
-G_DEFINE_TYPE(VteReaper, vte_reaper, G_TYPE_OBJECT)
+G_DEFINE_TYPE(VteReaper, bte_reaper, G_TYPE_OBJECT)
 
 static VteReaper *singleton_reaper = nullptr;
 
 static void
-vte_reaper_child_watch_cb(GPid pid,
+bte_reaper_child_watch_cb(GPid pid,
                           int status,
                           gpointer data)
 {
-        _vte_debug_print(VTE_DEBUG_SIGNALS,
+        _bte_debug_print(VTE_DEBUG_SIGNALS,
                          "Reaper emitting child-exited signal.\n");
         g_signal_emit_by_name(data, "child-exited", pid, status);
         g_spawn_close_pid (pid);
 }
 
 /*
- * vte_reaper_add_child:
+ * bte_reaper_add_child:
  * @pid: the ID of a child process which will be monitored
  *
  * Ensures that child-exited signals will be emitted when @pid exits.
  */
 void
-vte_reaper_add_child(GPid pid)
+bte_reaper_add_child(GPid pid)
 {
         g_child_watch_add_full(G_PRIORITY_LOW,
                                pid,
-                               vte_reaper_child_watch_cb,
-                               vte_reaper_ref(),
+                               bte_reaper_child_watch_cb,
+                               bte_reaper_ref(),
                                (GDestroyNotify)g_object_unref);
 }
 
 static void
-vte_reaper_init(VteReaper *reaper)
+bte_reaper_init(VteReaper *reaper)
 {
 }
 
 static GObject*
-vte_reaper_constructor (GType                  type,
+bte_reaper_constructor (GType                  type,
                         guint                  n_construct_properties,
                         GObjectConstructParam *construct_properties)
 {
@@ -84,7 +84,7 @@ vte_reaper_constructor (GType                  type,
           return (GObject*)g_object_ref (singleton_reaper);
   } else {
           GObject *obj;
-          obj = G_OBJECT_CLASS (vte_reaper_parent_class)->constructor (type, n_construct_properties, construct_properties);
+          obj = G_OBJECT_CLASS (bte_reaper_parent_class)->constructor (type, n_construct_properties, construct_properties);
           singleton_reaper = VTE_REAPER (obj);
           return obj;
   }
@@ -92,20 +92,20 @@ vte_reaper_constructor (GType                  type,
 
 
 static void
-vte_reaper_finalize(GObject *reaper)
+bte_reaper_finalize(GObject *reaper)
 {
-        G_OBJECT_CLASS(vte_reaper_parent_class)->finalize(reaper);
+        G_OBJECT_CLASS(bte_reaper_parent_class)->finalize(reaper);
         singleton_reaper = nullptr;
 }
 
 static void
-vte_reaper_class_init(VteReaperClass *klass)
+bte_reaper_class_init(VteReaperClass *klass)
 {
         GObjectClass *gobject_class;
 
         /*
          * VteReaper::child-exited:
-         * @vtereaper: the object which received the signal
+         * @btereaper: the object which received the signal
          * @arg1: the process ID of the exited child
          * @arg2: the status of the exited child, as returned by waitpid()
          *
@@ -124,12 +124,12 @@ vte_reaper_class_init(VteReaperClass *klass)
                      G_TYPE_INT, G_TYPE_INT);
         
         gobject_class = G_OBJECT_CLASS(klass);
-        gobject_class->constructor = vte_reaper_constructor;
-        gobject_class->finalize = vte_reaper_finalize;
+        gobject_class->constructor = bte_reaper_constructor;
+        gobject_class->finalize = bte_reaper_finalize;
 }
 
 /*
- * vte_reaper_ref:
+ * bte_reaper_ref:
  *
  * Finds the address of the global #VteReaper object, creating the object if
  * necessary.
@@ -138,7 +138,7 @@ vte_reaper_class_init(VteReaperClass *klass)
  *  must be unreffed when done with it
  */
 VteReaper *
-vte_reaper_ref(void)
+bte_reaper_ref(void)
 {
         return (VteReaper*)g_object_new(VTE_TYPE_REAPER, nullptr);
 }
@@ -168,11 +168,11 @@ main(int argc, char **argv)
         VteReaper *reaper;
         pid_t p, q;
 
-        _vte_debug_init();
+        _bte_debug_init();
 
         context = g_main_context_default();
         loop = g_main_loop_new(context, FALSE);
-        reaper = vte_reaper_ref();
+        reaper = bte_reaper_ref();
 
         g_print("[parent] Forking1.\n");
         p = fork();
@@ -189,7 +189,7 @@ main(int argc, char **argv)
                         break;
                 default:
                         g_print("[parent] Starting to wait for %d.\n", p);
-                        vte_reaper_add_child(p);
+                        bte_reaper_add_child(p);
                         child = p;
                         g_signal_connect(reaper,
                                          "child-exited",

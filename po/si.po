@@ -1,11 +1,11 @@
-# translation of vte.HEAD.si.po to Sinhala
+# translation of bte.HEAD.si.po to Sinhala
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Danishka Navin <snavin@redhat.com>, 2007.
 msgid ""
 msgstr ""
-"Project-Id-Version: vte.HEAD.si\n"
+"Project-Id-Version: bte.HEAD.si\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-04-27 03:15+0100\n"
 "PO-Revision-Date: 2007-05-10 14:22+0530\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../src/iso2022.c:791 ../src/iso2022.c:799 ../src/iso2022.c:830
-#: ../src/vte.c:1797
+#: ../src/bte.c:1797
 #, c-format
 msgid "Unable to convert characters from %s to %s."
 msgstr "%s සිට %s දක්වා අකුරු පරිවර්තනය කලනොහැක."
@@ -56,61 +56,61 @@ msgstr "සංඥා නළය නිර්මාණය කිරිම දෝ�
 msgid "Duplicate (%s/%s)!"
 msgstr "අනුරුප අංග (%s/%s)!"
 
-#: ../src/vte.c:1187
+#: ../src/bte.c:1187
 #, c-format
 msgid "Error compiling regular expression \"%s\"."
 msgstr "ක්‍රමික ප්‍රකාශය \"%s\" සම්පාදනය දෝෂ සහිතයි."
 
-#: ../src/vte.c:2657 ../src/vte.c:2662
+#: ../src/bte.c:2657 ../src/bte.c:2662
 #, c-format
 msgid "No handler for control sequence `%s' defined."
 msgstr "පාලන පිලිවෙල `%s' සඳහා මෙහෙයවන්නකු නිර්වචනය කරනැත."
 
 #. Translators: %s is replaced with error message returned by strerror().
-#: ../src/vte.c:3627
+#: ../src/bte.c:3627
 #, c-format
 msgid "Error reading from child: %s."
 msgstr "අනුගාමිකයෙන් කියවිම දෝෂ සහිතයි: %s."
 
-#: ../src/vte.c:3743
+#: ../src/bte.c:3743
 msgid "Unable to send data to child, invalid charset convertor"
 msgstr "සාවද්‍ය අක්‍ෂරමාලා පරිවර්තකය, අනුගාමිකය වෙත දත්ත යැවිමට අපහසුයි"
 
-#: ../src/vte.c:3754 ../src/vte.c:4631
+#: ../src/bte.c:3754 ../src/bte.c:4631
 #, c-format
 msgid "Error (%s) converting data for child, dropping."
 msgstr "අනුගාමිකයා හැරදැමිම, සඳහා දත්ත පරිවර්තනය  (%s) දෝෂය සහිතයි"
 
-#: ../src/vte.c:6866
+#: ../src/bte.c:6866
 #, c-format
 msgid "Error reading PTY size, using defaults: %s."
 msgstr "සාමාන්‍ය මගින් PTY විශාලත්වය කියවිම දෝෂ සහිතයි: %s."
 
-#: ../src/vte.c:6895
+#: ../src/bte.c:6895
 #, c-format
 msgid "Error setting PTY size: %s."
 msgstr "PTY විශාලත්වය සැකසිම දෝෂ සහිතයි: %s."
 
 #. Aaargh.  We're screwed.
-#: ../src/vte.c:11348
-msgid "_vte_conv_open() failed setting word characters"
-msgstr "_vte_conv_open() වදන් අකුරු සැකසිම අසමත්විය"
+#: ../src/bte.c:11348
+msgid "_bte_conv_open() failed setting word characters"
+msgstr "_bte_conv_open() වදන් අකුරු සැකසිම අසමත්විය"
 
-#: ../src/vteseq.c:3926
+#: ../src/bteseq.c:3926
 #, c-format
 msgid "Got unexpected (key?) sequence `%s'."
 msgstr "අනපේක්‍ෂිත (යතුර?) පිලිවෙලක් ලැබුනි `%s'."
 
 #. Bail back to normal mode.
-#: ../src/vteapp.c:774
+#: ../src/bteapp.c:774
 msgid "Could not open console.\n"
 msgstr "පාලක පුවරුව විවෘත කල නොහැක.\n"
 
-#: ../src/vteapp.c:838
+#: ../src/bteapp.c:838
 msgid "Could not parse the geometry spec passed to --geometry"
 msgstr "ජ්‍යාමිතික නිදර්ශකය --geometry වෙත යොමුකිරිම විස්තර කරදිම සිදුකල නොහැක"
 
-#: ../src/vteglyph.c:562
+#: ../src/bteglyph.c:562
 #, c-format
 msgid "Unknown pixel mode %d.\n"
 msgstr "නුහුරු පික්සෙල ආකෘතිය %d.\n"

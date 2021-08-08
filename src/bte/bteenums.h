@@ -20,7 +20,7 @@
 #define __VTE_VTE_ENUMS_H__
 
 #if !defined (__VTE_VTE_H_INSIDE__) && !defined (VTE_COMPILATION)
-#error "Only <vte/vte.h> can be included directly."
+#error "Only <bte/bte.h> can be included directly."
 #endif
 
 #include <glib.h>
@@ -115,9 +115,9 @@ typedef enum {
  * @VTE_PTY_NO_HELPER: Unused. Deprecated: 0.38
  * @VTE_PTY_NO_FALLBACK: Unused. Deprecated: 0.38
  * @VTE_PTY_NO_SESSION: Do not start a new session for the child in
- *   vte_pty_child_setup(). See man:setsid(2) for more information. Since: 0.58
+ *   bte_pty_child_setup(). See man:setsid(2) for more information. Since: 0.58
  * @VTE_PTY_NO_CTTY: Do not set the PTY as the controlling TTY for the child
- *   in vte_pty_child_setup(). See man:tty_ioctl(4) for more information. Since: 0.58
+ *   in bte_pty_child_setup(). See man:tty_ioctl(4) for more information. Since: 0.58
  * @VTE_PTY_DEFAULT: the default flags
  */
 typedef enum {

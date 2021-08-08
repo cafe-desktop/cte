@@ -25,6 +25,6 @@
 
 typedef struct _VteReaper VteReaper;
 
-VteReaper *vte_reaper_ref(void);
+VteReaper *bte_reaper_ref(void);
 
-void vte_reaper_add_child(GPid pid);
+void bte_reaper_add_child(GPid pid);

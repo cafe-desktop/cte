@@ -22,11 +22,11 @@
 
 #include "ring.hh"
 #include "ringview.hh"
-#include "vterowdata.hh"
-#include "vtetypes.hh"
-#include "vteunistr.h"
+#include "bterowdata.hh"
+#include "btetypes.hh"
+#include "bteunistr.h"
 
-namespace vte {
+namespace bte {
 
 namespace base {
 
@@ -48,11 +48,11 @@ public:
         BidiRow& operator= (BidiRow const& o) = delete;
         BidiRow& operator= (BidiRow&& o) = delete;
 
-        vte::grid::column_t log2vis(vte::grid::column_t col) const;
-        vte::grid::column_t vis2log(vte::grid::column_t col) const;
-        bool log_is_rtl(vte::grid::column_t col) const;
-        bool vis_is_rtl(vte::grid::column_t col) const;
-        vteunistr vis_get_shaped_char(vte::grid::column_t col, vteunistr s) const;
+        bte::grid::column_t log2vis(bte::grid::column_t col) const;
+        bte::grid::column_t vis2log(bte::grid::column_t col) const;
+        bool log_is_rtl(bte::grid::column_t col) const;
+        bool vis_is_rtl(bte::grid::column_t col) const;
+        bteunistr vis_get_shaped_char(bte::grid::column_t col, bteunistr s) const;
 
         /* Whether the line's base direction is RTL. */
         inline constexpr bool base_is_rtl() const noexcept { return m_base_rtl; }
@@ -62,7 +62,7 @@ public:
         inline constexpr bool has_foreign() const noexcept { return m_has_foreign; }
 
 private:
-        void set_width(vte::grid::column_t width);
+        void set_width(bte::grid::column_t width);
 
         /* The value of m_width == 0 is a valid representation of the trivial LTR mapping. */
         uint16_t m_width{0};
@@ -93,26 +93,26 @@ public:
         BidiRunner& operator= (BidiRunner const& o) = delete;
         BidiRunner& operator= (BidiRunner&& o) = delete;
 
-        void paragraph(vte::grid::row_t start, vte::grid::row_t end,
+        void paragraph(bte::grid::row_t start, bte::grid::row_t end,
                        bool do_bidi, bool do_shaping);
 
 private:
         RingView *m_ringview;
 
 #ifdef WITH_FRIBIDI
-        void explicit_line_shape(vte::grid::row_t row);
+        void explicit_line_shape(bte::grid::row_t row);
 #endif
 
-        void explicit_line(vte::grid::row_t row, bool rtl, bool do_shaping);
-        void explicit_paragraph(vte::grid::row_t start, vte::grid::row_t end, bool rtl, bool do_shaping);
+        void explicit_line(bte::grid::row_t row, bool rtl, bool do_shaping);
+        void explicit_paragraph(bte::grid::row_t start, bte::grid::row_t end, bool rtl, bool do_shaping);
 #ifdef WITH_FRIBIDI
-        bool implicit_paragraph(vte::grid::row_t start, vte::grid::row_t end, bool do_shaping);
+        bool implicit_paragraph(bte::grid::row_t start, bte::grid::row_t end, bool do_shaping);
 #endif
 };
 
 }; /* namespace base */
 
-}; /* namespace vte */
+}; /* namespace bte */
 
 
-gboolean vte_bidi_get_mirror_char (vteunistr unistr, gboolean mirror_box_drawing, vteunistr *unistr_mirrored);
+gboolean bte_bidi_get_mirror_char (bteunistr unistr, gboolean mirror_box_drawing, bteunistr *unistr_mirrored);

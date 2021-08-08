@@ -1,6 +1,6 @@
-# Hungarian translation for vte.
+# Hungarian translation for bte.
 # Copyright (C) 2003, 2004, 2005, 2007, 2008, 2010, 2014, 2016, 2020 Free Software Foundation, Inc.
-# This file is distributed under the same license as the vte package.
+# This file is distributed under the same license as the bte package.
 #
 # Andras Timar <timar at gnome dot hu>, 2003.
 # Laszlo Dvornik <dvornik at gnome dot hu>, 2004.
@@ -9,8 +9,8 @@
 # Balázs Meskó <mesko.balazs at fsf dot hu>, 2020.
 msgid ""
 msgstr ""
-"Project-Id-Version: vte master\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Project-Id-Version: bte master\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2020-05-27 19:17+0000\n"
 "PO-Revision-Date: 2020-09-07 01:36+0200\n"
 "Last-Translator: Balázs Meskó <mesko.balazs at fsf dot hu>\n"
@@ -22,11 +22,11 @@ msgstr ""
 "X-Generator: Lokalize 19.12.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/vte.cc:7763
+#: src/bte.cc:7763
 msgid "WARNING"
 msgstr "FIGYELMEZTETÉS"
 
-#: src/vte.cc:7765
+#: src/bte.cc:7765
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr ""
 "A GnuTLS nincs engedélyezve. Az adatok titkosítatlanul lesznek a lemezre "

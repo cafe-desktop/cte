@@ -10,7 +10,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gl\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2020-05-27 19:17+0000\n"
 "PO-Revision-Date: 2020-08-04 09:31+0200\n"
 "Last-Translator: Fran Dieguez <frandieguez@gnome.gl>\n"
@@ -22,11 +22,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Gtranslator 3.36.0\n"
 
-#: src/vte.cc:7763
+#: src/bte.cc:7763
 msgid "WARNING"
 msgstr "AVISO"
 
-#: src/vte.cc:7765
+#: src/bte.cc:7765
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr "GnuTLS non está activado; os datos escribiranse no disco sen cifrar!"
 
@@ -120,7 +120,7 @@ msgstr "Produciuse un fallo ao executar o proceso fillo «%s»: "
 #~ msgid "Error compiling regular expression \"%s\"."
 #~ msgstr "Produciuse un erro ao compilar a expresión regular «%s»."
 
-#~ msgid "_vte_conv_open() failed setting word characters"
+#~ msgid "_bte_conv_open() failed setting word characters"
 #~ msgstr ""
-#~ "Produciuse un fallo en _vte_conv_open() ao definir os caracteres da "
+#~ "Produciuse un fallo en _bte_conv_open() ao definir os caracteres da "
 #~ "palabra"

@@ -22,9 +22,9 @@
 #include <glib.h>
 
 #include "tabstops.hh"
-#include "vtedefines.hh"
+#include "btedefines.hh"
 
-using namespace vte::terminal;
+using namespace bte::terminal;
 
 static void
 tabstops_set(Tabstops& t,
@@ -222,13 +222,13 @@ main(int argc,
 {
         g_test_init(&argc, &argv, nullptr);
 
-        g_test_add_func("/vte/tabstops/default", test_tabstops_default);
-        g_test_add_func("/vte/tabstops/get-set", test_tabstops_get_set);
-        g_test_add_func("/vte/tabstops/clear", test_tabstops_clear);
-        g_test_add_func("/vte/tabstops/reset", test_tabstops_reset);
-        g_test_add_func("/vte/tabstops/resize", test_tabstops_resize);
-        g_test_add_func("/vte/tabstops/previous", test_tabstops_previous);
-        g_test_add_func("/vte/tabstops/next", test_tabstops_next);
+        g_test_add_func("/bte/tabstops/default", test_tabstops_default);
+        g_test_add_func("/bte/tabstops/get-set", test_tabstops_get_set);
+        g_test_add_func("/bte/tabstops/clear", test_tabstops_clear);
+        g_test_add_func("/bte/tabstops/reset", test_tabstops_reset);
+        g_test_add_func("/bte/tabstops/resize", test_tabstops_resize);
+        g_test_add_func("/bte/tabstops/previous", test_tabstops_previous);
+        g_test_add_func("/bte/tabstops/next", test_tabstops_next);
 
         return g_test_run();
 }

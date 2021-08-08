@@ -1,6 +1,6 @@
-# vte ja.po.
+# bte ja.po.
 # Copyright (C) 2003, 2007, 2010, 2019-2020 Free Software Foundation, Inc.
-# This file is distributed under the same license as the vte package.
+# This file is distributed under the same license as the bte package.
 # Takeshi AIHANA <takeshi.aihana@gmail.com>, 2003, 2007.
 # KAMAGASAKO Masatoshi <emerald@gnome.gr.jp>, 2003.
 # Takayuki KUSANO <AE5T-KNS@asahi-net.or.jp>< 2010.
@@ -8,8 +8,8 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: vte master\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Project-Id-Version: bte master\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2020-06-08 23:16+0000\n"
 "PO-Revision-Date: 2020-06-10 18:45+0900\n"
 "Last-Translator: sicklylife <translation@sicklylife.jp>\n"
@@ -19,11 +19,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/vte.cc:7761
+#: src/bte.cc:7761
 msgid "WARNING"
 msgstr "警告"
 
-#: src/vte.cc:7763
+#: src/bte.cc:7763
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr ""
 "GnuTLS が有効になっていないため、データを暗号化せずにディスクへ書き込みます!"
@@ -98,8 +98,8 @@ msgstr "子プロセス“%s”の起動に失敗しました: "
 #~ "PTY サイズの読み込みに失敗しました。デフォルトのサイズ: %s を利用しま"
 #~ "す。\n"
 
-#~ msgid "_vte_conv_open() failed setting word characters"
-#~ msgstr "_vte_conv_open() は文字の設定に失敗しました"
+#~ msgid "_bte_conv_open() failed setting word characters"
+#~ msgstr "_bte_conv_open() は文字の設定に失敗しました"
 
 #~ msgid "can not run %s"
 #~ msgstr "%s を実行できません。"

@@ -234,7 +234,7 @@ public:
 
 #ifdef WITH_ICU
 
-static std::unique_ptr<vte::base::ICUDecoder>
+static std::unique_ptr<bte::base::ICUDecoder>
 make_decoder(Options const& options)
 {
         auto err = icu::ErrorCode{};
@@ -264,7 +264,7 @@ make_decoder(Options const& options)
                 return {};
         }
 
-        return std::make_unique<vte::base::ICUDecoder>(converter, u32_converter);
+        return std::make_unique<bte::base::ICUDecoder>(converter, u32_converter);
 }
 
 #endif /* WITH_ICU */
@@ -281,7 +281,7 @@ private:
         process_file_utf8(int fd,
                           Functor& func)
         {
-                auto decoder = vte::base::UTF8Decoder{};
+                auto decoder = bte::base::UTF8Decoder{};
 
                 auto const buf_size = size_t{16384};
                 auto buf = g_new0(uint8_t, buf_size);
@@ -304,18 +304,18 @@ private:
                         auto const bufend = buf + len;
                         for (auto sptr = buf; sptr < bufend; ++sptr) {
                                 switch (decoder.decode(*sptr)) {
-                                case vte::base::UTF8Decoder::REJECT_REWIND:
+                                case bte::base::UTF8Decoder::REJECT_REWIND:
                                         /* Rewind the stream.
                                          * Note that this will never lead to a loop, since in the
                                          * next round this byte *will* be consumed.
                                          */
                                         --sptr;
                                         [[fallthrough]];
-                                case vte::base::UTF8Decoder::REJECT:
+                                case bte::base::UTF8Decoder::REJECT:
                                         decoder.reset();
                                         /* Fall through to insert the U+FFFD replacement character. */
                                         [[fallthrough]];
-                                case vte::base::UTF8Decoder::ACCEPT:
+                                case bte::base::UTF8Decoder::ACCEPT:
                                         func(decoder.codepoint());
                                         m_output_chars++;
 
@@ -341,7 +341,7 @@ private:
         template<class Functor>
         void
         process_file_icu(int fd,
-                         vte::base::ICUDecoder* decoder,
+                         bte::base::ICUDecoder* decoder,
                          Functor& func)
         {
                 decoder->reset();
@@ -372,15 +372,15 @@ private:
                                  * *will* be consumed.
                                  */
                                 switch (decoder->decode(&sptr)) {
-                                case vte::base::ICUDecoder::Result::eSomething:
+                                case bte::base::ICUDecoder::Result::eSomething:
                                         func(decoder->codepoint());
                                         m_output_chars++;
                                         break;
 
-                                case vte::base::ICUDecoder::Result::eNothing:
+                                case bte::base::ICUDecoder::Result::eNothing:
                                         break;
 
-                                case vte::base::ICUDecoder::Result::eError:
+                                case bte::base::ICUDecoder::Result::eError:
                                         // FIXMEchpe need do ++sptr here?
                                         m_errors++;
                                         decoder->reset();
@@ -391,8 +391,8 @@ private:
 
                 /* Flush remaining output */
                 auto sptr = reinterpret_cast<uint8_t const*>(buf + buf_size);
-                auto result = vte::base::ICUDecoder::Result{};
-                while ((result = decoder->decode(&sptr, true)) == vte::base::ICUDecoder::Result::eSomething) {
+                auto result = bte::base::ICUDecoder::Result{};
+                while ((result = decoder->decode(&sptr, true)) == bte::base::ICUDecoder::Result::eSomething) {
                         func(decoder->codepoint());
                         m_output_chars++;
                 }
@@ -411,7 +411,7 @@ private:
                      Functor& func)
         {
 #ifdef WITH_ICU
-                auto decoder = std::unique_ptr<vte::base::ICUDecoder>{};
+                auto decoder = std::unique_ptr<bte::base::ICUDecoder>{};
                 if (options.charset()) {
                         decoder = make_decoder(options);
                         if (!decoder)
@@ -423,7 +423,7 @@ private:
 
                 for (auto i = 0; i < options.repeat(); ++i) {
                         if (i > 0 && lseek(fd, 0, SEEK_SET) != 0) {
-                                auto errsv = vte::libc::ErrnoSaver{};
+                                auto errsv = bte::libc::ErrnoSaver{};
                                 g_printerr("Failed to seek: %s\n", g_strerror(errsv));
                                 return false;
                         }
@@ -474,7 +474,7 @@ public:
                                 } else {
                                         fd = ::open(filename, O_RDONLY);
                                         if (fd == -1) {
-                                                auto errsv = vte::libc::ErrnoSaver{};
+                                                auto errsv = bte::libc::ErrnoSaver{};
                                                 g_printerr("Error opening file %s: %s\n",
                                                            filename, g_strerror(errsv));
                                         }
@@ -534,10 +534,10 @@ main(int argc,
      char *argv[])
 {
         setlocale(LC_ALL, "");
-        _vte_debug_init();
+        _bte_debug_init();
 
         auto options = Options{};
-        auto error = vte::glib::Error{};
+        auto error = bte::glib::Error{};
         if (!options.parse(argc, argv, error)) {
                 g_printerr("Failed to parse arguments: %s\n", error.message());
                 return EXIT_FAILURE;
@@ -545,7 +545,7 @@ main(int argc,
 
         if (options.list()) {
 #ifdef WITH_ICU
-                auto charsets = vte::base::get_icu_charsets(true);
+                auto charsets = bte::base::get_icu_charsets(true);
                 for (auto i = 0; charsets[i]; ++i)
                         g_print("%s\n", charsets[i]);
                 g_strfreev(charsets);

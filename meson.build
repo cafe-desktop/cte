@@ -15,7 +15,7 @@
 # along with this library.  If not, see <https://www.gnu.org/licenses/>.
 
 project(
-  'vte',
+  'bte',
   ['c', 'cpp'],
   version: '0.62.3',
   license: ['LGPL-3.0-or-later', 'GPL-3.0-or-later'],
@@ -49,53 +49,53 @@ systemd_req_version       = '220'
 
 # API
 
-vte_api_major_version = 2
-vte_api_minor_version = 91
-vte_api_version = '@0@.@1@'.format(vte_api_major_version, vte_api_minor_version)
-vte_api_name = 'vte-@0@.@1@'.format(vte_api_major_version, vte_api_minor_version)
+bte_api_major_version = 2
+bte_api_minor_version = 91
+bte_api_version = '@0@.@1@'.format(bte_api_major_version, bte_api_minor_version)
+bte_api_name = 'bte-@0@.@1@'.format(bte_api_major_version, bte_api_minor_version)
 
-vte_ctk3_api_version = '@0@.@1@'.format(vte_api_major_version, vte_api_minor_version)
-vte_ctk4_api_version = '@0@.@1@'.format(vte_api_major_version + 1, vte_api_minor_version)
+bte_ctk3_api_version = '@0@.@1@'.format(bte_api_major_version, bte_api_minor_version)
+bte_ctk4_api_version = '@0@.@1@'.format(bte_api_major_version + 1, bte_api_minor_version)
 
-vte_ctk3_api_name = 'vte-' + vte_ctk3_api_version
-vte_ctk4_api_name = 'vte-' + vte_ctk4_api_version
+bte_ctk3_api_name = 'bte-' + bte_ctk3_api_version
+bte_ctk4_api_name = 'bte-' + bte_ctk4_api_version
 
-vte_ctk3_api_path = vte_ctk3_api_name / 'vte'
-vte_ctk4_api_path = vte_ctk4_api_name / 'vte'
+bte_ctk3_api_path = bte_ctk3_api_name / 'bte'
+bte_ctk4_api_path = bte_ctk4_api_name / 'bte'
 
 # Library versioning
 
-vte_version = meson.project_version()
-version_array = vte_version.split('.')
-vte_major_version = version_array[0].to_int()
-vte_minor_version = version_array[1].to_int()
-vte_micro_version = version_array[2].to_int()
+bte_version = meson.project_version()
+version_array = bte_version.split('.')
+bte_major_version = version_array[0].to_int()
+bte_minor_version = version_array[1].to_int()
+bte_micro_version = version_array[2].to_int()
 
-libvte_soversion = 0
+libbte_soversion = 0
 
-lt_revision = (vte_minor_version.is_odd() ? 0 : vte_micro_version)
-lt_age = vte_minor_version * 100 + vte_micro_version - lt_revision
-lt_current = vte_major_version + lt_age
+lt_revision = (bte_minor_version.is_odd() ? 0 : bte_micro_version)
+lt_age = bte_minor_version * 100 + bte_micro_version - lt_revision
+lt_current = bte_major_version + lt_age
 
-libvte_ctk3_soversion = '@0@.@1@.@2@'.format(libvte_soversion, lt_current, lt_revision)
-libvte_ctk4_soversion = libvte_soversion.to_string()
+libbte_ctk3_soversion = '@0@.@1@.@2@'.format(libbte_soversion, lt_current, lt_revision)
+libbte_ctk4_soversion = libbte_soversion.to_string()
 
 # i18n
 
-vte_gettext_domain = vte_api_name
+bte_gettext_domain = bte_api_name
 
 # Directories
 
-vte_datadir = get_option('datadir')
-vte_includedir = get_option('includedir')
-vte_libexecdir = get_option('libexecdir')
-vte_localedir = get_option('localedir')
-vte_prefix = get_option('prefix')
-vte_sysconfdir = get_option('sysconfdir')
+bte_datadir = get_option('datadir')
+bte_includedir = get_option('includedir')
+bte_libexecdir = get_option('libexecdir')
+bte_localedir = get_option('localedir')
+bte_prefix = get_option('prefix')
+bte_sysconfdir = get_option('sysconfdir')
 
 # It is correct for this to be in ${prefix}/lib, even on systems where that
 # does not match ${libdir}. This is what systemd uses on such platforms.
-vte_systemduserunitdir = vte_prefix / 'lib' / 'systemd' / 'user'
+bte_systemduserunitdir = bte_prefix / 'lib' / 'systemd' / 'user'
 
 # Debug
 
@@ -117,8 +117,8 @@ top_inc = include_directories('.')
 
 config_h = configuration_data()
 
-config_h.set_quoted('GETTEXT_PACKAGE', vte_gettext_domain)
-config_h.set_quoted('VERSION', vte_version)
+config_h.set_quoted('GETTEXT_PACKAGE', bte_gettext_domain)
+config_h.set_quoted('VERSION', bte_version)
 config_h.set('VTE_DEBUG', enable_debug)
 config_h.set('WITH_A11Y', get_option('a11y'))
 config_h.set('WITH_FRIBIDI', get_option('fribidi'))
@@ -466,8 +466,8 @@ endif
 makefile_conf = configuration_data()
 makefile_conf.set('srcdir', meson.current_source_dir())
 makefile_conf.set('builddir', meson.current_build_dir())
-makefile_conf.set('vte_ctk3_api_version', vte_ctk3_api_version)
-makefile_conf.set('vte_ctk4_api_version', vte_ctk4_api_version)
+makefile_conf.set('bte_ctk3_api_version', bte_ctk3_api_version)
+makefile_conf.set('bte_ctk4_api_version', bte_ctk4_api_version)
 
 configure_file(
   input: 'Makefile.meson',
@@ -488,7 +488,7 @@ configure_file(
 
 output = '\n'
 output += 'Configuration for VTE:\n\n'
-output += '  Version:      ' + vte_version + '\n'
+output += '  Version:      ' + bte_version + '\n'
 output += '\n'
 output += '  C compiler:   ' + cc.get_id() + ' (version ' + cc.version() + ')\n'
 output += '  C++ compiler: ' + cxx.get_id() + ' (version ' + cxx.version() + ')\n'

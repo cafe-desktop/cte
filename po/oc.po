@@ -1,13 +1,13 @@
-# Occitan translation of vte.
+# Occitan translation of bte.
 # Copyright (C) 2002-2014 Free Software Foundation, Inc.
-# This file is under the same license as the vte package.
+# This file is under the same license as the bte package.
 # Cédric Valmary <cvalmary@yahoo.fr>, 2015.
 # Cédric Valmary (Tot en òc) <cvalmary@yahoo.fr>, 2015.
 # Cédric Valmary (totenoc.eu) <cvalmary@yahoo.fr>, 2016, 2017, 2018.
 msgid ""
 msgstr ""
-"Project-Id-Version: vte 0.14.1\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Project-Id-Version: bte 0.14.1\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2018-06-20 20:20+0000\n"
 "PO-Revision-Date: 2018-06-22 08:58+0200\n"
 "Last-Translator: Cédric Valmary (totenoc.eu) <cvalmary@yahoo.fr>\n"
@@ -21,28 +21,28 @@ msgstr ""
 "X-Project-Style: gnome\n"
 
 #. Translators: %s is replaced with error message returned by strerror().
-#: ../src/vte.cc:3966
+#: ../src/bte.cc:3966
 #, c-format
 msgid "Error reading from child: %s."
 msgstr "Error al moment de la lectura del filh : « %s »."
 
-#: ../src/vte.cc:4122
+#: ../src/bte.cc:4122
 #, c-format
 msgid "Error (%s) converting data for child, dropping."
 msgstr "Error (%s) al moment de la conversion de donadas pel filh, abandon."
 
-#: ../src/vte.cc:8179
+#: ../src/bte.cc:8179
 msgid "WARNING"
 msgstr "AVERTIMENT"
 
-#: ../src/vte.cc:8180
+#: ../src/bte.cc:8180
 #| msgid "GNUTLS not enabled; data will be written to disk unencrypted!"
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr ""
 "GnuTLS es pas activat ; las donadas seràn escritas sul disc sens èsser "
 "chifradas !"
 
-#: ../src/vtectk.cc:3618
+#: ../src/btectk.cc:3618
 #, c-format
 msgid "Unable to convert characters from %s to %s."
 msgstr "Impossible de convertir los caractèrs %s en %s."

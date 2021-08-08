@@ -25,10 +25,10 @@
 
 #include "utf8.hh"
 
-#define RJ vte::base::UTF8Decoder::REJECT
-#define RW vte::base::UTF8Decoder::REJECT_REWIND
+#define RJ bte::base::UTF8Decoder::REJECT
+#define RW bte::base::UTF8Decoder::REJECT_REWIND
 
-uint8_t const vte::base::UTF8Decoder::kTable[] = {
+uint8_t const bte::base::UTF8Decoder::kTable[] = {
         // The first part of the table maps bytes to character classes that
         // to reduce the size of the transition table and create bitmasks.
         // The classes are as follows:

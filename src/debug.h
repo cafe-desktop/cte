@@ -18,19 +18,19 @@
 
 /* The interfaces in this file are subject to change at any time. */
 
-#ifndef vte_debug_h_included
-#define vte_debug_h_included
+#ifndef bte_debug_h_included
+#define bte_debug_h_included
 
 #include <config.h>
 #include <stdint.h>
 #include <glib.h>
 
 #ifndef VTE_COMPILATION
-#define _vte_debug_flags _vte_external_debug_flags
-#define _vte_debug_init  _vte_external_debug_init
-#define _vte_debug_on    _vte_external_debug_on
+#define _bte_debug_flags _bte_external_debug_flags
+#define _bte_debug_init  _bte_external_debug_init
+#define _bte_debug_on    _bte_external_debug_on
 #if !defined(__GNUC__) || !G_HAVE_GNUC_VARARGS
-#define _vte_debug_print _vte_external_debug_print
+#define _bte_debug_print _bte_external_debug_print
 #endif
 #endif
 
@@ -70,36 +70,36 @@ typedef enum {
         VTE_DEBUG_EXCEPTIONS    = 1 << 30,
 } VteDebugFlags;
 
-void _vte_debug_init(void);
-const char *_vte_debug_sequence_to_string(const char *str,
+void _bte_debug_init(void);
+const char *_bte_debug_sequence_to_string(const char *str,
                                           gssize length);
 
-void _vte_debug_hexdump(char const* str,
+void _bte_debug_hexdump(char const* str,
                         uint8_t const* buf,
                         size_t len);
 
-extern guint _vte_debug_flags;
-static inline gboolean _vte_debug_on(guint flags) G_GNUC_CONST G_GNUC_UNUSED;
+extern guint _bte_debug_flags;
+static inline gboolean _bte_debug_on(guint flags) G_GNUC_CONST G_GNUC_UNUSED;
 
 static inline gboolean
-_vte_debug_on(guint flags)
+_bte_debug_on(guint flags)
 {
-	return (_vte_debug_flags & flags) != 0;
+	return (_bte_debug_flags & flags) != 0;
 }
 
 #ifdef VTE_DEBUG
-#define _VTE_DEBUG_IF(flags) if (G_UNLIKELY (_vte_debug_on (flags)))
+#define _VTE_DEBUG_IF(flags) if (G_UNLIKELY (_bte_debug_on (flags)))
 #else
 #define _VTE_DEBUG_IF(flags) if (0)
 #endif
 
 #ifdef VTE_DEBUG
 #if defined(__GNUC__) && G_HAVE_GNUC_VARARGS
-#define _vte_debug_print(flags, fmt, ...) \
+#define _bte_debug_print(flags, fmt, ...) \
 	G_STMT_START { _VTE_DEBUG_IF(flags) g_printerr(fmt, ##__VA_ARGS__); } G_STMT_END
 #else
 #include <stdarg.h>
-static void _vte_debug_print(guint flags, const char *fmt, ...)
+static void _bte_debug_print(guint flags, const char *fmt, ...)
 {
 	_VTE_DEBUG_IF(flags) {
 		va_list  ap;
@@ -110,7 +110,7 @@ static void _vte_debug_print(guint flags, const char *fmt, ...)
 }
 #endif
 #else
-#define _vte_debug_print(args...) do { } while(0)
+#define _bte_debug_print(args...) do { } while(0)
 #endif /* VTE_DEBUG */
 
 G_END_DECLS

@@ -22,15 +22,15 @@
 #include <string>
 #include <variant>
 
-#include "vteterminal.h"
-#include "vtepty.h"
+#include "bteterminal.h"
+#include "btepty.h"
 
-#include "vteinternal.hh"
+#include "bteinternal.hh"
 
 #include "fwd.hh"
 #include "refptr.hh"
 
-namespace vte {
+namespace bte {
 
 namespace terminal {
 
@@ -42,7 +42,7 @@ namespace platform {
 
 class Widget {
 public:
-        friend class vte::terminal::Terminal;
+        friend class bte::terminal::Terminal;
 
         Widget(VteTerminal* t);
         ~Widget() noexcept;
@@ -54,9 +54,9 @@ public:
 
         GObject* object() const noexcept { return reinterpret_cast<GObject*>(m_widget); }
         CtkWidget* ctk() const noexcept { return m_widget; }
-        VteTerminal* vte() const noexcept { return reinterpret_cast<VteTerminal*>(m_widget); }
+        VteTerminal* bte() const noexcept { return reinterpret_cast<VteTerminal*>(m_widget); }
 
-        inline constexpr vte::terminal::Terminal* terminal() const noexcept { return m_terminal; }
+        inline constexpr bte::terminal::Terminal* terminal() const noexcept { return m_terminal; }
 
         void constructed() noexcept;
         void dispose() noexcept;
@@ -100,8 +100,8 @@ public:
 
         void beep() noexcept;
 
-        void set_hadjustment(vte::glib::RefPtr<CtkAdjustment>&& adjustment) noexcept { m_hadjustment = std::move(adjustment); }
-        void set_vadjustment(vte::glib::RefPtr<CtkAdjustment>&& adjustment) { terminal()->widget_set_vadjustment(std::move(adjustment)); }
+        void set_hadjustment(bte::glib::RefPtr<CtkAdjustment>&& adjustment) noexcept { m_hadjustment = std::move(adjustment); }
+        void set_vadjustment(bte::glib::RefPtr<CtkAdjustment>&& adjustment) { terminal()->widget_set_vadjustment(std::move(adjustment)); }
         auto hadjustment() noexcept { return m_hadjustment.get(); }
         auto vadjustment() noexcept { return terminal()->vadjustment(); }
         void set_hscroll_policy(CtkScrollablePolicy policy) noexcept { m_hscroll_policy = policy; }
@@ -110,19 +110,19 @@ public:
         auto vscroll_policy() const noexcept { return m_vscroll_policy; }
         auto padding() const noexcept { return terminal()->padding(); }
 
-        bool set_cursor_blink_mode(VteCursorBlinkMode mode) { return terminal()->set_cursor_blink_mode(vte::terminal::Terminal::CursorBlinkMode(mode)); }
+        bool set_cursor_blink_mode(VteCursorBlinkMode mode) { return terminal()->set_cursor_blink_mode(bte::terminal::Terminal::CursorBlinkMode(mode)); }
         auto cursor_blink_mode() const noexcept { return VteCursorBlinkMode(terminal()->cursor_blink_mode()); }
 
-        bool set_cursor_shape(VteCursorShape shape) { return terminal()->set_cursor_shape(vte::terminal::Terminal::CursorShape(shape)); }
+        bool set_cursor_shape(VteCursorShape shape) { return terminal()->set_cursor_shape(bte::terminal::Terminal::CursorShape(shape)); }
         auto cursor_shape() const noexcept { return VteCursorShape(terminal()->cursor_shape()); }
 
-        bool set_backspace_binding(VteEraseBinding mode) { return terminal()->set_backspace_binding(vte::terminal::Terminal::EraseMode(mode)); }
+        bool set_backspace_binding(VteEraseBinding mode) { return terminal()->set_backspace_binding(bte::terminal::Terminal::EraseMode(mode)); }
         auto backspace_binding() const noexcept { return VteEraseBinding(terminal()->backspace_binding()); }
 
-        bool set_delete_binding(VteEraseBinding mode) { return terminal()->set_delete_binding(vte::terminal::Terminal::EraseMode(mode)); }
+        bool set_delete_binding(VteEraseBinding mode) { return terminal()->set_delete_binding(bte::terminal::Terminal::EraseMode(mode)); }
         auto delete_binding() const noexcept { return VteEraseBinding(terminal()->delete_binding()); }
 
-        bool set_text_blink_mode(VteTextBlinkMode mode) { return terminal()->set_text_blink_mode(vte::terminal::Terminal::TextBlinkMode(mode)); }
+        bool set_text_blink_mode(VteTextBlinkMode mode) { return terminal()->set_text_blink_mode(bte::terminal::Terminal::TextBlinkMode(mode)); }
         auto text_blink_mode() const noexcept { return VteTextBlinkMode(terminal()->text_blink_mode()); }
 
         bool set_word_char_exceptions(std::optional<std::string_view> stropt);
@@ -140,8 +140,8 @@ public:
         void feed_child(std::string_view const& str) { terminal()->feed_child(str); }
         void feed_child_binary(std::string_view const& str) { terminal()->feed_child_binary(str); }
 
-        char *regex_match_check(vte::grid::column_t column,
-                                vte::grid::row_t row,
+        char *regex_match_check(bte::grid::column_t column,
+                                bte::grid::row_t row,
                                 int* tag)
         {
                 return terminal()->regex_match_check(column, row, tag);
@@ -157,7 +157,7 @@ public:
         }
 
         bool regex_match_check_extra(CdkEvent* event,
-                                     vte::base::Regex const** regexes,
+                                     bte::base::Regex const** regexes,
                                      size_t n_regexes,
                                      uint32_t match_flags,
                                      char** matches)
@@ -194,13 +194,13 @@ protected:
                 return ctk_widget_get_realized(m_widget);
         }
 
-        vte::glib::RefPtr<CdkCursor> create_cursor(CdkCursorType cursor_type) const noexcept;
+        bte::glib::RefPtr<CdkCursor> create_cursor(CdkCursorType cursor_type) const noexcept;
 
         void set_cursor(CursorType type) noexcept;
         void set_cursor(CdkCursor* cursor) noexcept;
         void set_cursor(Cursor const& cursor) noexcept;
 
-        bool im_filter_keypress(vte::terminal::KeyEvent const& event) noexcept;
+        bool im_filter_keypress(bte::terminal::KeyEvent const& event) noexcept;
 
         void im_focus_in() noexcept;
         void im_focus_out() noexcept;
@@ -215,43 +215,43 @@ protected:
 
         void unset_pty() noexcept;
 
-        unsigned key_event_translate_ctrlkey(vte::terminal::KeyEvent const& event) const noexcept;
+        unsigned key_event_translate_ctrlkey(bte::terminal::KeyEvent const& event) const noexcept;
 
 public: // FIXMEchpe
         void im_preedit_changed() noexcept;
 
 private:
         unsigned read_modifiers_from_cdk(CdkEvent* event) const noexcept;
-        vte::terminal::KeyEvent key_event_from_cdk(CdkEventKey* event) const;
-        std::optional<vte::terminal::MouseEvent> mouse_event_from_cdk(CdkEvent* event) const;
+        bte::terminal::KeyEvent key_event_from_cdk(CdkEventKey* event) const;
+        std::optional<bte::terminal::MouseEvent> mouse_event_from_cdk(CdkEvent* event) const;
 
         CtkWidget* m_widget;
 
-        vte::terminal::Terminal* m_terminal;
+        bte::terminal::Terminal* m_terminal;
 
         /* Event window */
         CdkWindow *m_event_window;
 
         /* Cursors */
-        vte::glib::RefPtr<CdkCursor> m_default_cursor;
-        vte::glib::RefPtr<CdkCursor> m_invisible_cursor;
-        vte::glib::RefPtr<CdkCursor> m_mousing_cursor;
-        vte::glib::RefPtr<CdkCursor> m_hyperlink_cursor;
+        bte::glib::RefPtr<CdkCursor> m_default_cursor;
+        bte::glib::RefPtr<CdkCursor> m_invisible_cursor;
+        bte::glib::RefPtr<CdkCursor> m_mousing_cursor;
+        bte::glib::RefPtr<CdkCursor> m_hyperlink_cursor;
 
         /* Input method */
-        vte::glib::RefPtr<CtkIMContext> m_im_context;
+        bte::glib::RefPtr<CtkIMContext> m_im_context;
 
         /* PTY */
-        vte::glib::RefPtr<VtePty> m_pty;
+        bte::glib::RefPtr<VtePty> m_pty;
 
         /* Misc */
         std::optional<std::string> m_word_char_exceptions{};
 
-        vte::glib::RefPtr<CtkAdjustment> m_hadjustment{};
+        bte::glib::RefPtr<CtkAdjustment> m_hadjustment{};
         uint32_t m_hscroll_policy : 1;
         uint32_t m_vscroll_policy : 1;
 };
 
 } // namespace platform
 
-} // namespace vte
+} // namespace bte

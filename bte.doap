@@ -5,15 +5,15 @@
          xmlns="http://usefulinc.com/ns/doap#">
 
   <name xml:lang="en">Terminal widget</name>
-  <shortdesc xml:lang="en">vte terminal widget</shortdesc>
+  <shortdesc xml:lang="en">bte terminal widget</shortdesc>
   <description xml:lang="en">Terminal emulation library</description>
 
   <mailing-list
   rdf:resource="http://mail.gnome.org/mailman/listinfo/desktop-devel-list" />
   <download-page
-  rdf:resource="http://download.gnome.org/sources/vte"/>
+  rdf:resource="http://download.gnome.org/sources/bte"/>
   <bug-database
-  rdf:resource="https://gitlab.gnome.org/GNOME/vte/issues/" />
+  rdf:resource="https://gitlab.gnome.org/GNOME/bte/issues/" />
   <category rdf:resource="http://api.gnome.org/doap-extensions#core" />
   <programming-language>C++</programming-language>
   <programming-language>C</programming-language>

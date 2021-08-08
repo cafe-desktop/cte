@@ -74,7 +74,7 @@ test_glib_refptr(void)
         obj_t obj1;
         obj1.obj = test_object_new();
         g_object_add_weak_pointer(G_OBJECT(obj1.obj), &obj1.ptr);
-        auto ptr1 = vte::glib::RefPtr<TestObject>{obj1.obj};
+        auto ptr1 = bte::glib::RefPtr<TestObject>{obj1.obj};
         g_assert_true(ptr1.get() == obj1.obj);
 
         auto ptr2 = std::move(ptr1);
@@ -97,7 +97,7 @@ test_glib_refptr(void)
         obj3.obj = test_object_new();
         g_object_add_weak_pointer(G_OBJECT(obj3.obj), &obj3.ptr);
         g_assert_nonnull(obj3.ptr);
-        auto ptr3 = vte::glib::RefPtr<TestObject>{obj3.obj};
+        auto ptr3 = bte::glib::RefPtr<TestObject>{obj3.obj};
         TestObject* obj4 = ptr3.release();
         g_assert_null(ptr3.get());
         g_assert_nonnull(obj4);
@@ -108,7 +108,7 @@ test_glib_refptr(void)
         obj5.obj = test_object_new();
         g_object_add_weak_pointer(G_OBJECT(obj5.obj), &obj5.ptr);
         g_assert_nonnull(obj5.ptr);
-        vte::glib::RefPtr<TestObject> ptr5{obj5.obj};
+        bte::glib::RefPtr<TestObject> ptr5{obj5.obj};
 
         obj_t obj6;
         obj6.obj = test_object_new();
@@ -129,7 +129,7 @@ main(int argc,
 {
         g_test_init(&argc, &argv, nullptr);
 
-        g_test_add_func("/vte/glib/refptr", test_glib_refptr);
+        g_test_add_func("/bte/glib/refptr", test_glib_refptr);
 
         return g_test_run();
 }

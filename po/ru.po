@@ -1,7 +1,7 @@
 # translation of ru.po to
-# Russian translation for vte.
+# Russian translation for bte.
 # Copyright (C) 2003, 2007 Free Software Foundation, Inc.
-# This file is distributed under the same license as the vte package.
+# This file is distributed under the same license as the bte package.
 #
 # Dmitry G. Mastrukov <dmitry@taurussoft.org>, 2003.
 # Leonid Kanter <leon@asplinux.ru>, 2007.
@@ -10,7 +10,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2018-09-02 17:55+0000\n"
 "PO-Revision-Date: 2018-09-10 23:12+0300\n"
 "Last-Translator: Stas Solovey <whats_up@tut.by>\n"
@@ -24,27 +24,27 @@ msgstr ""
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #. Translators: %s is replaced with error message returned by strerror().
-#: ../src/vte.cc:3989
+#: ../src/bte.cc:3989
 #, c-format
 msgid "Error reading from child: %s."
 msgstr "Произошла ошибка при чтении из потомка: %s."
 
-#: ../src/vte.cc:4139
+#: ../src/bte.cc:4139
 #, c-format
 msgid "Error (%s) converting data for child, dropping."
 msgstr ""
 "Произошла ошибка (%s) при преобразовании данных для потомка, отбрасывается."
 
-#: ../src/vte.cc:8131
+#: ../src/bte.cc:8131
 msgid "WARNING"
 msgstr "ПРЕДУПРЕЖДЕНИЕ"
 
-#: ../src/vte.cc:8132
+#: ../src/bte.cc:8132
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr ""
 "GnuTLS не включён; данные будут записаны на диск в незашифрованном виде!"
 
-#: ../src/vtectk.cc:3664
+#: ../src/btectk.cc:3664
 #, c-format
 msgid "Unable to convert characters from %s to %s."
 msgstr "Не удалось преобразовать символы из набора %s в набор %s."
@@ -100,6 +100,6 @@ msgstr "Не удалось преобразовать символы из на�
 #~ msgid "Error compiling regular expression \"%s\"."
 #~ msgstr "Произошла ошибка при компиляции регулярного выражения «%s». "
 
-#~ msgid "_vte_conv_open() failed setting word characters"
+#~ msgid "_bte_conv_open() failed setting word characters"
 #~ msgstr ""
-#~ "Произошёл сбой в функции _vte_conv_open() при установке символов в слове"
+#~ "Произошёл сбой в функции _bte_conv_open() при установке символов в слове"

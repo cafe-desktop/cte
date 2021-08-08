@@ -19,7 +19,7 @@
 
 #include <glib-object.h>
 
-namespace vte::glib {
+namespace bte::glib {
 
 class FreezeObjectNotify {
 public:
@@ -46,4 +46,4 @@ private:
         GObject* m_object;
 }; // class FreezeObjectNotify
 
-} // namespace vte::glib
+} // namespace bte::glib

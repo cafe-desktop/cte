@@ -26,7 +26,7 @@
 #include "glib-glue.hh"
 #include "refptr.hh"
 
-namespace vte::systemd {
+namespace bte::systemd {
 
 bool
 create_scope_for_pid_sync(pid_t pid,
@@ -48,14 +48,14 @@ create_scope_for_pid_sync(pid_t pid,
                 free(unit);
         }
 
-        auto bus = vte::glib::take_ref(g_bus_get_sync(G_BUS_TYPE_SESSION, cancellable, error));
+        auto bus = bte::glib::take_ref(g_bus_get_sync(G_BUS_TYPE_SESSION, cancellable, error));
         if (!bus)
                 return false;
 
-        auto uuid = vte::glib::take_string(g_uuid_string_random());
-        auto scope = vte::glib::take_string(g_strdup_printf("vte-spawn-%s.scope", uuid.get()));
-        auto prgname = vte::glib::take_string(g_utf8_make_valid(g_get_prgname(), -1));
-        auto description = vte::glib::take_string(g_strdup_printf("VTE child process %d launched by %s process %d", pid, prgname.get(), getpid()));
+        auto uuid = bte::glib::take_string(g_uuid_string_random());
+        auto scope = bte::glib::take_string(g_strdup_printf("bte-spawn-%s.scope", uuid.get()));
+        auto prgname = bte::glib::take_string(g_utf8_make_valid(g_get_prgname(), -1));
+        auto description = bte::glib::take_string(g_strdup_printf("VTE child process %d launched by %s process %d", pid, prgname.get(), getpid()));
 
         auto builder_stack = GVariantBuilder{};
         auto builder = &builder_stack;
@@ -84,7 +84,7 @@ create_scope_for_pid_sync(pid_t pid,
                 free(slice);
         } else {
                 // Fallback
-                g_variant_builder_add(builder, "(sv)", "Slice", g_variant_new_string("app-org.gnome.vte.slice"));
+                g_variant_builder_add(builder, "(sv)", "Slice", g_variant_new_string("app-org.gnome.bte.slice"));
         }
 
         g_variant_builder_close(builder); // a(sv)
@@ -111,4 +111,4 @@ create_scope_for_pid_sync(pid_t pid,
         return bool(reply);
 }
 
-} // namespace vte::systemd
+} // namespace bte::systemd

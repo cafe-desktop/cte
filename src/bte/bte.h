@@ -23,16 +23,16 @@
 
 #define __VTE_VTE_H_INSIDE__ 1
 
-#include "vteenums.h"
-#include "vteglobals.h"
-#include "vtepty.h"
-#include "vteregex.h"
-#include "vteterminal.h"
-#include "vtetypebuiltins.h"
-#include "vteversion.h"
+#include "bteenums.h"
+#include "bteglobals.h"
+#include "btepty.h"
+#include "bteregex.h"
+#include "bteterminal.h"
+#include "btetypebuiltins.h"
+#include "bteversion.h"
 
 #if !defined(VTE_DISABLE_DEPRECATED) || defined(VTE_COMPILATION)
-#include "vtedeprecated.h"
+#include "btedeprecated.h"
 #endif /* !VTE_DISABLE_DEPRECATED */
 
 #undef __VTE_VTE_H_INSIDE__

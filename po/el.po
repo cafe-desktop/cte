@@ -1,5 +1,5 @@
 # translation of el.po to Greek
-# Greek translation of vte.
+# Greek translation of bte.
 # Copyright (C) Free Software Foundation, 2003
 # This file is distributed under the same license as the PACKAGE package.
 # kostas: 21messages, 28Jan2003, initial translation
@@ -10,7 +10,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: el\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2018-06-20 20:20+0000\n"
 "PO-Revision-Date: 2018-08-15 14:13+0300\n"
 "Last-Translator: Efstathios Iosifidis <iosifidis@opensuse.org>\n"
@@ -24,28 +24,28 @@ msgstr ""
 "X-Project-Style: gnome\n"
 
 #. Translators: %s is replaced with error message returned by strerror().
-#: ../src/vte.cc:3966
+#: ../src/bte.cc:3966
 #, c-format
 msgid "Error reading from child: %s."
 msgstr "Σφάλμα ανάγνωσης από θυγατρική διεργασία: %s."
 
-#: ../src/vte.cc:4122
+#: ../src/bte.cc:4122
 #, c-format
 msgid "Error (%s) converting data for child, dropping."
 msgstr ""
 "Σφάλμα (%s) μετατροπής δεδομένων από θυγατρική διεργασία, απορρίπτεται."
 
-#: ../src/vte.cc:8179
+#: ../src/bte.cc:8179
 msgid "WARNING"
 msgstr "ΠΡΟΕΙΔΟΠΟΙΗΣΗ"
 
-#: ../src/vte.cc:8180
+#: ../src/bte.cc:8180
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr ""
 "Δεν είναι ενεργοποιημένο το GNUTLS, τα δεδομένα που θα εγγραφούν στο "
 "δίσκο δεν θα είναι κρυπτογραφημένα!"
 
-#: ../src/vtectk.cc:3618
+#: ../src/btectk.cc:3618
 #, c-format
 msgid "Unable to convert characters from %s to %s."
 msgstr "Αδύνατη η μετατροπή χαρακτήρων από %s σε %s."
@@ -97,8 +97,8 @@ msgstr "Αδύνατη η μετατροπή χαρακτήρων από %s σε
 #~ msgid "Error compiling regular expression \"%s\"."
 #~ msgstr "Σφάλμα σύνταξης κανονικής έκφρασης \"%s\"."
 
-#~ msgid "_vte_conv_open() failed setting word characters"
-#~ msgstr "_vte_conv_open() απέτυχε να ορίσει χαρακτήρες λέξης"
+#~ msgid "_bte_conv_open() failed setting word characters"
+#~ msgstr "_bte_conv_open() απέτυχε να ορίσει χαρακτήρες λέξης"
 
 #~ msgid "can not run %s"
 #~ msgstr "αδυναμία εκτέλεσης %s"

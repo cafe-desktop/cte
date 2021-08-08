@@ -9,7 +9,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lv\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2020-05-27 19:17+0000\n"
 "PO-Revision-Date: 2020-09-12 16:08+0300\n"
 "Last-Translator: Rūdolfs Mazurs <rudolfs.mazurs@gmail.com>\n"
@@ -22,11 +22,11 @@ msgstr ""
 " 2);\n"
 "X-Generator: Lokalize 19.12.3\n"
 
-#: src/vte.cc:7763
+#: src/bte.cc:7763
 msgid "WARNING"
 msgstr "BRĪDINĀJUMS"
 
-#: src/vte.cc:7765
+#: src/bte.cc:7765
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr "GnuTLS nav ieslēgti; dati diskā tiks ierakstīti nešifrēti!"
 
@@ -102,8 +102,8 @@ msgstr "Nevarēja izpildīt bērnprocesu “%s”: "
 #~ msgid "Error reading PTY size, using defaults: %s\n"
 #~ msgstr "Kļūda, lasot PTY izmēru, lieto noklusētos: %s.\n"
 
-#~ msgid "_vte_conv_open() failed setting word characters"
-#~ msgstr "_vte_conv_open() avarēja iestatot vārdu rakstzīmes"
+#~ msgid "_bte_conv_open() failed setting word characters"
+#~ msgstr "_bte_conv_open() avarēja iestatot vārdu rakstzīmes"
 
 #~ msgid "Error adding `%s' to environment, continuing."
 #~ msgstr "Kļūda pievienojot `%s' videi, turpinu."

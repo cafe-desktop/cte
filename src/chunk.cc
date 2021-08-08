@@ -22,7 +22,7 @@
 #include <cstddef> // offsetof
 #include <new>
 
-namespace vte {
+namespace bte {
 
 namespace base {
 
@@ -62,4 +62,4 @@ Chunk::prune(unsigned int max_size) noexcept
 
 } // namespace base
 
-} // namespace vte
+} // namespace bte

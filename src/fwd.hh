@@ -17,7 +17,7 @@
 
 #pragma once
 
-namespace vte {
+namespace bte {
 
 namespace base {
 
@@ -38,4 +38,4 @@ class DrawingContext;
 
 } // namespace view
 
-} // namespace vte
+} // namespace bte

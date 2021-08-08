@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef vte_vteaccess_h_included
-#define vte_vteaccess_h_included
+#ifndef bte_bteaccess_h_included
+#define bte_bteaccess_h_included
 
 
 #include <glib.h>
@@ -26,7 +26,7 @@
 
 G_BEGIN_DECLS
 
-#define VTE_TYPE_TERMINAL_ACCESSIBLE            (_vte_terminal_accessible_get_type ())
+#define VTE_TYPE_TERMINAL_ACCESSIBLE            (_bte_terminal_accessible_get_type ())
 #define VTE_TERMINAL_ACCESSIBLE(object)         (G_TYPE_CHECK_INSTANCE_CAST ((object), VTE_TYPE_TERMINAL_ACCESSIBLE, VteTerminalAccessible))
 #define VTE_TERMINAL_ACCESSIBLE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), VTE_TYPE_TERMINAL_ACCESSIBLE, VteTerminalAccessibleClass))
 #define VTE_IS_TERMINAL_ACCESSIBLE(object)      (G_TYPE_CHECK_INSTANCE_TYPE ((object), VTE_TYPE_TERMINAL_ACCESSIBLE))
@@ -49,7 +49,7 @@ struct _VteTerminalAccessibleClass {
 	CtkWidgetAccessibleClass parent_class;
 };
 
-GType _vte_terminal_accessible_get_type(void);
+GType _bte_terminal_accessible_get_type(void);
 
 G_END_DECLS
 

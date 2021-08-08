@@ -27,7 +27,7 @@
     <releaseinfo>
       Documentation for VTE version &version;.
       The latest version of this documentation can be found on-line at the
-      <ulink role="online-location" url="http://library.gnome.org/devel/vte/">GNOME Library</ulink>.
+      <ulink role="online-location" url="http://library.gnome.org/devel/bte/">GNOME Library</ulink>.
     </releaseinfo>
 
     <copyright>
@@ -60,16 +60,16 @@
   <part>
     <title>API Reference</title>
     <chapter>
-      <xi:include href="xml/vte-terminal.xml"/>
+      <xi:include href="xml/bte-terminal.xml"/>
     </chapter>
     <chapter>
-      <xi:include href="xml/vte-regex.xml"/>
+      <xi:include href="xml/bte-regex.xml"/>
     </chapter>
     <chapter>
-      <xi:include href="xml/vte-pty.xml"/>
+      <xi:include href="xml/bte-pty.xml"/>
     </chapter>
     <chapter>
-      <xi:include href="xml/vte-version.xml"/>
+      <xi:include href="xml/bte-version.xml"/>
     </chapter>
   </part>
 

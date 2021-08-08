@@ -1,11 +1,11 @@
-# Kurdish (Sorani) translation for vte2.91
+# Kurdish (Sorani) translation for bte2.91
 # Copyright (c) 2020 Rosetta Contributors and Canonical Ltd 2020
-# This file is distributed under the same license as the vte2.91 package.
+# This file is distributed under the same license as the bte2.91 package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: vte2.91\n"
+"Project-Id-Version: bte2.91\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2019-05-13 09:31+0000\n"
 "PO-Revision-Date: 2020-05-05 01:16+0300\n"
@@ -19,25 +19,25 @@ msgstr ""
 "Language: ckb\n"
 
 #. Translators: %s is replaced with error message returned by strerror().
-#: ../src/vte.cc:3928
+#: ../src/bte.cc:3928
 #, c-format
 msgid "Error reading from child: %s."
 msgstr "هەڵەی خوێندنەوە لە مناڵەوە: %s."
 
-#: ../src/vte.cc:4078
+#: ../src/bte.cc:4078
 #, c-format
 msgid "Error (%s) converting data for child, dropping."
 msgstr "هەڵە(%s) لە گۆڕینی زانیاری فۆر منداڵ، فڕێدان."
 
-#: ../src/vte.cc:7889
+#: ../src/bte.cc:7889
 msgid "WARNING"
 msgstr "ئاگاداربە"
 
-#: ../src/vte.cc:7890
+#: ../src/bte.cc:7890
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr "GnuTLS چالاک نیە؛ زانیارییەکان دەکرێنە سەر پەپکە بێ ئەوەی پارێزراوبکرێن!"
 
-#: ../src/vtectk.cc:3666
+#: ../src/btectk.cc:3666
 #, c-format
 msgid "Unable to convert characters from %s to %s."
 msgstr "نەتوانرا نووسەکان بگۆڕدرێت لە %s بۆ %s."

@@ -32,7 +32,7 @@
 static void
 test_modes_ecma(void)
 {
-        vte::terminal::modes::ECMA modes{};
+        bte::terminal::modes::ECMA modes{};
 
         g_assert_false(modes.IRM());
         g_assert_true(modes.BDSM());
@@ -43,7 +43,7 @@ test_modes_ecma(void)
         g_assert_true(modes.IRM());
         g_assert_false(modes.BDSM());
 
-        vte::terminal::modes::ECMA copy{modes};
+        bte::terminal::modes::ECMA copy{modes};
         g_assert_cmpuint(copy.get_modes(), ==, modes.get_modes());
         g_assert_cmpint(copy.IRM(), ==, modes.IRM());
         g_assert_cmpint(copy.BDSM(), ==, modes.BDSM());
@@ -56,7 +56,7 @@ test_modes_ecma(void)
 static void
 test_modes_private(void)
 {
-        vte::terminal::modes::Private modes{};
+        bte::terminal::modes::Private modes{};
 
         g_assert_true(modes.DEC_AUTOWRAP());
         g_assert_true(modes.XTERM_META_SENDS_ESCAPE());
@@ -64,16 +64,16 @@ test_modes_private(void)
         g_assert_false(modes.XTERM_FOCUS());
         modes.set_XTERM_FOCUS(true);
         g_assert_true(modes.XTERM_FOCUS());
-        modes.push_saved(vte::terminal::modes::Private::eXTERM_FOCUS);
+        modes.push_saved(bte::terminal::modes::Private::eXTERM_FOCUS);
         modes.set_XTERM_FOCUS(false);
         g_assert_false(modes.XTERM_FOCUS());
-        bool set = modes.pop_saved(vte::terminal::modes::Private::eXTERM_FOCUS);
+        bool set = modes.pop_saved(bte::terminal::modes::Private::eXTERM_FOCUS);
         g_assert_true(set);
         modes.set_XTERM_FOCUS(set);
         g_assert_true(modes.XTERM_FOCUS());
-        modes.push_saved(vte::terminal::modes::Private::eXTERM_FOCUS);
+        modes.push_saved(bte::terminal::modes::Private::eXTERM_FOCUS);
         modes.clear_saved();
-        set = modes.pop_saved(vte::terminal::modes::Private::eXTERM_FOCUS);
+        set = modes.pop_saved(bte::terminal::modes::Private::eXTERM_FOCUS);
         g_assert_false(set);
 }
 
@@ -83,8 +83,8 @@ main(int argc,
 {
         g_test_init(&argc, &argv, nullptr);
 
-        g_test_add_func("/vte/modes/ecma", test_modes_ecma);
-        g_test_add_func("/vte/modes/private", test_modes_private);
+        g_test_add_func("/bte/modes/ecma", test_modes_ecma);
+        g_test_add_func("/bte/modes/private", test_modes_private);
 
         return g_test_run();
 }

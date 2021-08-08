@@ -1,14 +1,14 @@
-# Ukrainian translation of vte.
+# Ukrainian translation of bte.
 # Copyright (C) 2002
-# This file is distributed under the same license as the vte package.
+# This file is distributed under the same license as the bte package.
 # Yuriy Syrota <rastaman@renome.rovno.ua>, 2002.
 # Korostil Daniel <ted.korostiled@gmail.com>, 2011.
 # Mykola Tkach <Stuartlittle1970@gmail.com>, 2014.
 # Yuri Chornoivan <yurchor@ukr.net>, 2020.
 msgid ""
 msgstr ""
-"Project-Id-Version: vte\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Project-Id-Version: bte\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2020-04-27 18:50+0000\n"
 "PO-Revision-Date: 2020-04-27 23:42+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
@@ -21,11 +21,11 @@ msgstr ""
 "=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Lokalize 20.07.70\n"
 
-#: src/vte.cc:7843
+#: src/bte.cc:7843
 msgid "WARNING"
 msgstr "ПОПЕРЕДЖЕННЯ"
 
-#: src/vte.cc:7845
+#: src/bte.cc:7845
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr "GnuTLS не увімкнено; дані буде записано на диск без шифрування!"
 

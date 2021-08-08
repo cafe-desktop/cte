@@ -1,12 +1,12 @@
-# Kazakh translation for vte.
-# Copyright (C) 2014 vte's COPYRIGHT HOLDER
-# This file is distributed under the same license as the vte package.
+# Kazakh translation for bte.
+# Copyright (C) 2014 bte's COPYRIGHT HOLDER
+# This file is distributed under the same license as the bte package.
 # Baurzhan Muftakhidinov <baurthefirst@gmail.com>, 2014.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: vte master\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Project-Id-Version: bte master\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2020-05-27 19:17+0000\n"
 "PO-Revision-Date: 2020-09-12 19:05+0500\n"
 "Last-Translator: Baurzhan Muftakhidinov <baurthefirst@gmail.com>\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.4.1\n"
 
-#: src/vte.cc:7763
+#: src/bte.cc:7763
 msgid "WARNING"
 msgstr "ЕСКЕРТУ"
 
-#: src/vte.cc:7765
+#: src/bte.cc:7765
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr "GnuTLS іске қосылмаған; деректер дискке шифрленбеген түрде жазылатын болады!"
 

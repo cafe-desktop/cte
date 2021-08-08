@@ -1,5 +1,5 @@
 # traducción de es.po al Spanish
-# translation of vte.HEAD.po to Spanish
+# translation of bte.HEAD.po to Spanish
 # VTE Spanish translation file.
 # Copyright (C) 2002,2003, 2004, 2007 Free Software Foundation, Inc.
 # This file is distributed under the same license as the VTE package.
@@ -14,8 +14,8 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: vte.HEAD\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Project-Id-Version: bte.HEAD\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2020-04-27 18:50+0000\n"
 "PO-Revision-Date: 2020-04-28 17:39+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
@@ -27,11 +27,11 @@ msgstr ""
 "X-Generator: Gtranslator 3.36.0\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/vte.cc:7843
+#: src/bte.cc:7843
 msgid "WARNING"
 msgstr "ADVERTENCIA"
 
-#: src/vte.cc:7845
+#: src/bte.cc:7845
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr ""
 "GNUTLS no está activado; lo datos se escribirán en el disco sin cifrar."
@@ -128,9 +128,9 @@ msgstr "Falló al ejecutar el proceso hijo «%s»: "
 #~ msgid "Error compiling regular expression \"%s\"."
 #~ msgstr "Error al compilar la expresión regular «%s»."
 
-#~ msgid "_vte_conv_open() failed setting word characters"
+#~ msgid "_bte_conv_open() failed setting word characters"
 #~ msgstr ""
-#~ "Error en _vte_conv_open() al establecer los caracteres de la palabra"
+#~ "Error en _bte_conv_open() al establecer los caracteres de la palabra"
 
 #~ msgid "Error creating signal pipe."
 #~ msgstr "Ha ocurrido un error al crear la señal pipe."

@@ -18,8 +18,8 @@
 
 /* The interfaces in this file are subject to change at any time. */
 
-#ifndef vte_keymap_h_included
-#define vte_keymap_h_included
+#ifndef bte_keymap_h_included
+#define bte_keymap_h_included
 
 #include <glib.h>
 #include <cdk/cdk.h>
@@ -31,7 +31,7 @@ G_BEGIN_DECLS
 
 /* Map the specified keyval/modifier setup, dependent on the mode, to either
  * a literal string or a capability name. */
-void _vte_keymap_map(guint keyval,
+void _bte_keymap_map(guint keyval,
 		     guint modifiers,
 		     gboolean app_cursor_keys,
 		     gboolean app_keypad_keys,
@@ -39,10 +39,10 @@ void _vte_keymap_map(guint keyval,
 		     gsize *normal_length);
 
 /* Return TRUE if a keyval is just a modifier key. */
-gboolean _vte_keymap_key_is_modifier(guint keyval);
+gboolean _bte_keymap_key_is_modifier(guint keyval);
 
 /* Add modifiers to the sequence if they're needed. */
-void _vte_keymap_key_add_key_modifiers(guint keyval,
+void _bte_keymap_key_add_key_modifiers(guint keyval,
 				       guint modifiers,
 				       gboolean app_cursor_keys,
 				       char **normal,

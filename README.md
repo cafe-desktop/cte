@@ -7,8 +7,8 @@ Installation
 ------------
 
 ```
-$ git clone https://gitlab.gnome.org/GNOME/vte  # Get the source code of VTE
-$ cd vte                                        # Change to the toplevel directory
+$ git clone https://gitlab.gnome.org/GNOME/bte  # Get the source code of VTE
+$ cd bte                                        # Change to the toplevel directory
 $ meson _build                                  # Run the configure script
 $ ninja -C _build                               # Build VTE
 [ Optional ]
@@ -24,7 +24,7 @@ run the configure script before, you should also pass `--reconfigure` option to 
 (i.e. `sudo ninja -C _build install`) if installing to system directories.
 
 * If you wish to test VTE before installing it, you may execute it directly from
-its build directory. As `_build` directory, it should be `_build/src/app/vte-[version]`.
+its build directory. As `_build` directory, it should be `_build/src/app/bte-[version]`.
 
 * You can pass `-Ddebugg=true` option to meson if you wish to enable debug function.
 
@@ -36,14 +36,14 @@ After installing VTE with `-Ddebugg=true` flag, you can use `VTE_DEBUG` variable
 VTE to print out the debug information
 
 ```
-# You should change vte-[2.91] to the version you build
-$ VTE_DEBUG=selection ./_build/src/app/vte-2.91
+# You should change bte-[2.91] to the version you build
+$ VTE_DEBUG=selection ./_build/src/app/bte-2.91
 
 # Or, you can mixup with multiple logging level
-$ VTE_DEBUG=selection,draw,cell ./_build/src/app/vte-2.91
+$ VTE_DEBUG=selection,draw,cell ./_build/src/app/bte-2.91
 
 $ Or, you can use `all` to print out all logging message
-$ VTE_DEBUG=all ./_build/src/app/vte-2.91
+$ VTE_DEBUG=all ./_build/src/app/bte-2.91
 ```
 
 For logging level information, please refer to enum [VteDebugFlags](src/debug.h).
@@ -52,7 +52,7 @@ For logging level information, please refer to enum [VteDebugFlags](src/debug.h)
 Contributing
 ------------
 
-Bugs should be filed here: https://gitlab.gnome.org/GNOME/vte/issues/
+Bugs should be filed here: https://gitlab.gnome.org/GNOME/bte/issues/
 Please note that this is *not a support forum*; if you are a end user,
 always file bugs in your distribution's bug tracker, or use their
 support forums.

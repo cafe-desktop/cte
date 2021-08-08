@@ -72,7 +72,7 @@
   </menu>
   <template class="VteappWindow" parent="CtkApplicationWindow">
     <property name="can_focus">False</property>
-    <property name="role">vte-terminal</property>
+    <property name="role">bte-terminal</property>
     <property name="icon_name">utilities-terminal</property>
     <child>
       <object class="CtkBox" id="window_box">

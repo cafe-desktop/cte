@@ -21,9 +21,9 @@
 #include <cstdint>
 #include <cstring>
 
-#include "vtedefines.hh"
+#include "btedefines.hh"
 
-namespace vte {
+namespace bte {
 
 namespace terminal {
 
@@ -217,4 +217,4 @@ public:
 
 } // namespace terminal
 
-} // namespace vte
+} // namespace bte

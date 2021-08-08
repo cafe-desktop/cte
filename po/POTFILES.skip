@@ -1,6 +1,6 @@
 bindings/vala/app.ui
 bindings/vala/search-popover.ui
-src/vtespawn.cc
+src/btespawn.cc
 src/app/app.cc
 src/app/appmenu.ui
 src/app/search-popover.ui

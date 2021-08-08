@@ -23,10 +23,10 @@
 #include <glib.h>
 #include "debug.h"
 
-guint _vte_debug_flags;
+guint _bte_debug_flags;
 
 void
-_vte_debug_init(void)
+_bte_debug_init(void)
 {
 #ifdef VTE_DEBUG
   const GDebugKey keys[] = {
@@ -63,14 +63,14 @@ _vte_debug_init(void)
     { "exceptions",   VTE_DEBUG_EXCEPTIONS   },
   };
 
-  _vte_debug_flags = g_parse_debug_string (g_getenv("VTE_DEBUG"),
+  _bte_debug_flags = g_parse_debug_string (g_getenv("VTE_DEBUG"),
                                            keys, G_N_ELEMENTS (keys));
-  _vte_debug_print(0xFFFFFFFF, "VTE debug flags = %x\n", _vte_debug_flags);
+  _bte_debug_print(0xFFFFFFFF, "VTE debug flags = %x\n", _bte_debug_flags);
 #endif /* VTE_DEBUG */
 }
 
 const char *
-_vte_debug_sequence_to_string(const char *str,
+_bte_debug_sequence_to_string(const char *str,
                               gssize length)
 {
 #if defined(VTE_DEBUG)
@@ -153,7 +153,7 @@ hexdump_line(GString* str,
 #endif /* VTE_DEBUG */
 
 void
-_vte_debug_hexdump(char const* str,
+_bte_debug_hexdump(char const* str,
                    uint8_t const* buf,
                    size_t len)
 {

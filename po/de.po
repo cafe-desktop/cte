@@ -1,6 +1,6 @@
-# German vte translation
+# German bte translation
 # Copyright (C) 2002-2003 Free Software Foundation, Inc.
-# This file is distributed under the same license as the vte package.
+# This file is distributed under the same license as the bte package.
 # Christian Neumair <chris@gnome-de.org>, 2002, 2003.
 # Hendrik Richter <hendrikr@gnome.org>, 2007.
 # Andre Klapper <a9016009@gmx.de>, 2007.
@@ -9,8 +9,8 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: vte master\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Project-Id-Version: bte master\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2020-09-04 08:17+0000\n"
 "PO-Revision-Date: 2020-09-07 20:27+0200\n"
 "Last-Translator: Tim Sabsch <tim@sabsch.com>\n"
@@ -21,11 +21,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.4.1\n"
 
-#: src/vte.cc:7770
+#: src/bte.cc:7770
 msgid "WARNING"
 msgstr "WARNUNG"
 
-#: src/vte.cc:7772
+#: src/bte.cc:7772
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr ""
 "GnuTLS ist nicht aktiviert, die Daten werden unverschlüsselt auf die "
@@ -126,8 +126,8 @@ msgstr "Ausführung des Kind-Prozesses »%s« fehlgeschlagen: "
 #~ msgid "Error compiling regular expression \"%s\"."
 #~ msgstr "Fehler beim Kompilieren des regulären Ausdrucks »%s«."
 
-#~ msgid "_vte_conv_open() failed setting word characters"
-#~ msgstr "_vte_conv_open() konnte die Zeichen des Wortes nicht festlegen"
+#~ msgid "_bte_conv_open() failed setting word characters"
+#~ msgstr "_bte_conv_open() konnte die Zeichen des Wortes nicht festlegen"
 
 #~ msgid "Error creating signal pipe."
 #~ msgstr "Fehler beim Erstellen der Signalweiterleitung."

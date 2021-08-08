@@ -1,4 +1,4 @@
-# Swedish messages for vte.
+# Swedish messages for bte.
 # Copyright © 2002, 2003, 2006, 2007, 2010, 2016, 2018, 2020 Free Software Foundation, Inc.
 # Christian Rose <menthos@menthos.com>, 2002, 2003.
 # Daniel Nylander <po@danielnylander.se>, 2006, 2007, 2010.
@@ -6,8 +6,8 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: vte\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Project-Id-Version: bte\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2020-05-27 19:17+0000\n"
 "PO-Revision-Date: 2020-08-24 18:25+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
@@ -18,11 +18,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.4.1\n"
 
-#: src/vte.cc:7763
+#: src/bte.cc:7763
 msgid "WARNING"
 msgstr "VARNING"
 
-#: src/vte.cc:7765
+#: src/bte.cc:7765
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr "GnuTLS inte aktiverat; data kommer skrivas till disk okrypterade!"
 
@@ -110,8 +110,8 @@ msgstr "Misslyckades med att köra underordnad process ”%s”: "
 #~ msgid "Error compiling regular expression \"%s\"."
 #~ msgstr "Fel vid kompilering av reguljärt uttryck \"%s\"."
 
-#~ msgid "_vte_conv_open() failed setting word characters"
-#~ msgstr "_vte_conv_open() misslyckades med att ställa in ordtecken"
+#~ msgid "_bte_conv_open() failed setting word characters"
+#~ msgstr "_bte_conv_open() misslyckades med att ställa in ordtecken"
 
 #~ msgid "can not run %s"
 #~ msgstr "kan inte köra %s"

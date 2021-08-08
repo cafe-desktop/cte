@@ -20,7 +20,7 @@
 #define __VTE_VTE_MACROS_H__
 
 #if !defined (__VTE_VTE_H_INSIDE__) && !defined (VTE_COMPILATION)
-#error "Only <vte/vte.h> can be included directly."
+#error "Only <bte/bte.h> can be included directly."
 #endif
 
 #if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 6)
