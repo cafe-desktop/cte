@@ -14,15 +14,15 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this library.  If not, see <https://www.gnu.org/licenses/>.
 
-assert(get_option('gir'), 'gir is required for vala support')
-assert(get_option('ctk3'), 'vala support only available for ctk3')
+assert(get_option('gir'), 'gir is required for bala support')
+assert(get_option('ctk3'), 'bala support only available for ctk3')
 
-add_languages('vala', required: true)
+add_languages('bala', required: true)
 
-valac = meson.get_compiler('vala')
-assert(valac.version().version_compare('>= 0.24.0'), 'vala >= 0.24 required')
+balac = meson.get_compiler('bala')
+assert(balac.version().version_compare('>= 0.24.0'), 'bala >= 0.24 required')
 
-posix_dep = valac.find_library('posix')
+posix_dep = balac.find_library('posix')
 
 libvte_ctk3_vapi_deps = [
   'gio-2.0',
@@ -55,7 +55,7 @@ vapp_resource_sources = gnome.compile_resources(
 
 vapp_sources = vapp_resource_sources + files(
   'config.vapi',
-  'app.vala'
+  'app.bala'
 )
 
 vapp_cflags = [
@@ -63,16 +63,16 @@ vapp_cflags = [
   '-Wno-unused-variable',
 ]
 
-vapp_valaflags = [
+vapp_balaflags = [
   '--enable-deprecated'
 ]
 
-if valac.version().version_compare('>= 0.31.1')
-  vapp_valaflags += '--disable-since-check'
+if balac.version().version_compare('>= 0.31.1')
+  vapp_balaflags += '--disable-since-check'
 endif
 
 if ctk3_dep.version().version_compare('>= 3.16')
-  vapp_valaflags += '--define=CTK_3_16'
+  vapp_balaflags += '--define=CTK_3_16'
 endif
 
 vapp_incs = [
@@ -90,11 +90,11 @@ vapp_deps = [
 ]
 
 vapp = executable(
-  'vala-test',
+  'bala-test',
   sources: vapp_sources,
   include_directories: vapp_incs,
   dependencies: vapp_deps,
   c_args: vapp_cflags,
-  vala_args: vapp_valaflags,
+  bala_args: vapp_balaflags,
   install: false,
 )

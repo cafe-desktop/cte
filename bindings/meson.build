@@ -19,5 +19,5 @@ if get_option('gir') and (get_option('ctk3') or get_option('ctk4'))
 endif
 
 if get_option('vapi') and get_option('ctk3')
-  subdir('vala')
+  subdir('bala')
 endif

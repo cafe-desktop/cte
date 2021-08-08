@@ -16,7 +16,7 @@ requires:
     - libsystemd-dev
     - libxml2-utils
     - meson
-    - valac
+    - balac
     - wget
 
     #packages required for ctk
