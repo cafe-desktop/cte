@@ -24,17 +24,17 @@ assert(balac.version().version_compare('>= 0.24.0'), 'bala >= 0.24 required')
 
 posix_dep = balac.find_library('posix')
 
-libvte_ctk3_vapi_deps = [
+libvte_ctk3_bapi_deps = [
   'gio-2.0',
   'glib-2.0',
   'pango',
   'ctk+-3.0',
 ]
 
-libvte_ctk3_vapi_dep = gnome.generate_vapi(
+libvte_ctk3_bapi_dep = gnome.generate_bapi(
   vte_ctk3_api_name,
   sources: libvte_ctk3_gir[0],
-  packages: libvte_ctk3_vapi_deps,
+  packages: libvte_ctk3_bapi_deps,
   install: true,
 )
 
@@ -54,7 +54,7 @@ vapp_resource_sources = gnome.compile_resources(
 )
 
 vapp_sources = vapp_resource_sources + files(
-  'config.vapi',
+  'config.bapi',
   'app.bala'
 )
 
@@ -85,7 +85,7 @@ vapp_deps = [
   gio_dep,
   glib_dep,
   ctk3_dep,
-  libvte_ctk3_vapi_dep,
+  libvte_ctk3_bapi_dep,
   posix_dep,
 ]
 
