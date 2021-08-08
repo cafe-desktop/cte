@@ -17,7 +17,7 @@
  */
 
 /**
- * SECTION: vte-terminal
+ * SECTION: bte-terminal
  * @short_description: A terminal widget implementation
  *
  * A VteTerminal is a terminal emulator implemented as a CTK3 widget.

@@ -1,4 +1,4 @@
-# Dutch translation for vte.
+# Dutch translation for bte.
 #
 # Taco Witte <T.C.Witte@phys.uu.nl>, 2002
 # Reinout van Schouwen <reinout@cs.vu.nl>, 2002
@@ -8,8 +8,8 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: vte\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Project-Id-Version: bte\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2018-06-20 20:20+0000\n"
 "PO-Revision-Date: 2019-02-24 11:27+0100\n"
 "Last-Translator: Nathan Follens <nthn@unseen.is>\n"
@@ -21,27 +21,27 @@ msgstr ""
 "X-Generator: Poedit 2.2.1\n"
 
 #. Translators: %s is replaced with error message returned by strerror().
-#: ../src/vte.cc:3966
+#: ../src/bte.cc:3966
 #, c-format
 msgid "Error reading from child: %s."
 msgstr "Er is een fout opgetreden bij lezen van kind: %s."
 
-#: ../src/vte.cc:4122
+#: ../src/bte.cc:4122
 #, c-format
 msgid "Error (%s) converting data for child, dropping."
 msgstr "Fout (%s) bij converteren gegevens voor dochter, laat het vallen."
 
-#: ../src/vte.cc:8179
+#: ../src/bte.cc:8179
 msgid "WARNING"
 msgstr "WAARSCHUWING"
 
-#: ../src/vte.cc:8180
+#: ../src/bte.cc:8180
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr ""
 "GnuTLS niet ingeschakeld, gegevens zullen onversleuteld naar de schijf "
 "worden geschreven!"
 
-#: ../src/vtectk.cc:3618
+#: ../src/btectk.cc:3618
 #, c-format
 msgid "Unable to convert characters from %s to %s."
 msgstr "Kan tekens niet converteren van %s naar %s."
@@ -94,8 +94,8 @@ msgstr "Kan tekens niet converteren van %s naar %s."
 #~ msgstr ""
 #~ "Er is een fout opgetreden bij samenstellen reguliere expressie \"%s\"."
 
-#~ msgid "_vte_conv_open() failed setting word characters"
-#~ msgstr "_vte_conv_open() niet geslaagd in instellen woordtekens"
+#~ msgid "_bte_conv_open() failed setting word characters"
+#~ msgstr "_bte_conv_open() niet geslaagd in instellen woordtekens"
 
 #~ msgid "can not run %s"
 #~ msgstr "Kan %s niet starten"

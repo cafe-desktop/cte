@@ -23,9 +23,9 @@
 
 #include "libc-glue.hh"
 
-#include <vte/vte.h>
-#include "vteptyinternal.hh"
-#include "vtespawn.hh"
+#include <bte/bte.h>
+#include "bteptyinternal.hh"
+#include "btespawn.hh"
 #include "debug.h"
 #include "reaper.hh"
 
@@ -44,18 +44,18 @@
 #include "systemd.hh"
 #endif
 
-#include "vtedefines.hh"
+#include "btedefines.hh"
 
 #include "missing.hh"
 
-namespace vte::base {
+namespace bte::base {
 
 static int
 set_cloexec_cb(void* data,
                int fd)
 {
         if (fd >= *reinterpret_cast<int*>(data)) {
-                auto r = vte::libc::fd_set_cloexec(fd);
+                auto r = bte::libc::fd_set_cloexec(fd);
                 /* Ignore EBADF because the libc or fallback implementation
                  * of fdwalk may call this function on invalid file descriptors.
                  */
@@ -74,9 +74,9 @@ cloexec_from(int fd)
 
 static bool
 make_pipe(int flags,
-          vte::libc::FD& read_fd,
-          vte::libc::FD& write_fd,
-          vte::glib::Error& error)
+          bte::libc::FD& read_fd,
+          bte::libc::FD& write_fd,
+          bte::glib::Error& error)
 {
         int fds[2] = { -1, -1 };
         if (!g_unix_open_pipe(fds, flags, error))
@@ -99,14 +99,14 @@ read_ints(int fd,
           int *n_ints_read,
           int timeout,
           GPollFD *cancellable_pollfd,
-          vte::glib::Error& error)
+          bte::glib::Error& error)
 {
         GPollFD pollfds[2];
         auto n_pollfds = unsigned{0};
 
         if (timeout >= 0 || cancellable_pollfd != nullptr) {
-                if (vte::libc::fd_set_nonblock(fd) < 0) {
-                        auto errsv = vte::libc::ErrnoSaver{};
+                if (bte::libc::fd_set_nonblock(fd) < 0) {
+                        auto errsv = bte::libc::ErrnoSaver{};
                         error.set(G_IO_ERROR, g_io_error_from_errno(errsv),
                                   _("Failed to set pipe nonblocking: %s"),
                                   g_strerror(errsv));
@@ -151,14 +151,14 @@ read_ints(int fd,
                         if (r < 0 && errno == EINTR)
                                 goto again;
                         if (r < 0) {
-                                auto errsv = vte::libc::ErrnoSaver{};
+                                auto errsv = bte::libc::ErrnoSaver{};
                                 error.set(G_IO_ERROR, g_io_error_from_errno(errsv),
                                           _("poll error: %s"),
                                           g_strerror(errsv));
                                 return false;
                         }
                         if (r == 0) {
-                                auto errsv = vte::libc::ErrnoSaver{};
+                                auto errsv = bte::libc::ErrnoSaver{};
                                 error.set_literal(G_IO_ERROR, G_IO_ERROR_TIMED_OUT,
                                                   _("Operation timed out"));
                                 return false;
@@ -168,7 +168,7 @@ read_ints(int fd,
                          * to cancel the operation. We do NOT actually read from its FD!
                          */
                         if (n_pollfds == 2 && pollfds[1].revents) {
-                                auto errsv = vte::libc::ErrnoSaver{};
+                                auto errsv = bte::libc::ErrnoSaver{};
                                 error.set_literal(G_IO_ERROR, G_IO_ERROR_CANCELLED,
                                                   _("Operation was cancelled"));
                                 return false;
@@ -184,7 +184,7 @@ read_ints(int fd,
                         goto again;
 
                 if (chunk < 0) {
-                        auto errsv = vte::libc::ErrnoSaver{};
+                        auto errsv = bte::libc::ErrnoSaver{};
 
                         /* Some weird shit happened, bail out */
                         error.set(G_IO_ERROR, g_io_error_from_errno(errsv),
@@ -211,7 +211,7 @@ merge_environ(char** envp /* consumed */,
         auto table = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 
         if (inherit) {
-                auto parent_environ = vte::glib::take_strv(g_get_environ());
+                auto parent_environ = bte::glib::take_strv(g_get_environ());
                 if (parent_environ) {
                         auto penvv = parent_environ.get();
                         for (auto i = unsigned{0}; penvv[i] != NULL; ++i) {
@@ -277,7 +277,7 @@ merge_environ(char** envp /* consumed */,
 void
 SpawnContext::prepare_environ()
 {
-        m_envv = vte::glib::take_strv(merge_environ(m_envv.release(), m_cwd.get(), inherit_environ()));
+        m_envv = bte::glib::take_strv(merge_environ(m_envv.release(), m_cwd.get(), inherit_environ()));
 }
 
 char const*
@@ -299,7 +299,7 @@ SpawnContext::workbuf_size() const noexcept
  * async-signal-safe; see man:signal-safety(7).
  */
 SpawnContext::ExecError
-SpawnContext::exec(vte::libc::FD& child_report_error_pipe_write,
+SpawnContext::exec(bte::libc::FD& child_report_error_pipe_write,
                    void* workbuf,
                    size_t workbufsize) noexcept
 {
@@ -328,8 +328,8 @@ SpawnContext::exec(vte::libc::FD& child_report_error_pipe_write,
         sigset_t set;
         sigemptyset(&set);
         if (pthread_sigmask(SIG_SETMASK, &set, nullptr) == -1) {
-                auto errsv = vte::libc::ErrnoSaver{};
-                _vte_debug_print(VTE_DEBUG_PTY, "%s failed: %s\n",
+                auto errsv = bte::libc::ErrnoSaver{};
+                _bte_debug_print(VTE_DEBUG_PTY, "%s failed: %s\n",
                                  "pthread_sigmask", g_strerror(errsv));
                 return ExecError::SIGMASK;
         }
@@ -358,7 +358,7 @@ SpawnContext::exec(vte::libc::FD& child_report_error_pipe_write,
                 /* If the fallback fails too, make sure to return the errno
                  * from the original cwd, not the fallback cwd.
                  */
-                auto errsv = vte::libc::ErrnoSaver{};
+                auto errsv = bte::libc::ErrnoSaver{};
                 if (m_fallback_cwd && chdir(m_fallback_cwd.get()) < 0)
                         return ExecError::CHDIR;
 
@@ -370,10 +370,10 @@ SpawnContext::exec(vte::libc::FD& child_report_error_pipe_write,
                 /* This starts a new session; we become its process-group leader,
                  * and lose our controlling TTY.
                  */
-                _vte_debug_print(VTE_DEBUG_PTY, "Starting new session\n");
+                _bte_debug_print(VTE_DEBUG_PTY, "Starting new session\n");
                 if (setsid() == -1) {
-                        auto errsv = vte::libc::ErrnoSaver{};
-                        _vte_debug_print(VTE_DEBUG_PTY, "%s failed: %s\n",
+                        auto errsv = bte::libc::ErrnoSaver{};
+                        _bte_debug_print(VTE_DEBUG_PTY, "%s failed: %s\n",
                                          "setsid", g_strerror(errsv));
                         return ExecError::SETSID;
                 }
@@ -390,8 +390,8 @@ SpawnContext::exec(vte::libc::FD& child_report_error_pipe_write,
          */
         if (!(pty()->flags() & VTE_PTY_NO_CTTY)) {
                 if (ioctl(peer_fd, TIOCSCTTY, peer_fd) != 0) {
-                        auto errsv = vte::libc::ErrnoSaver{};
-                        _vte_debug_print(VTE_DEBUG_PTY, "%s failed: %s\n",
+                        auto errsv = bte::libc::ErrnoSaver{};
+                        _bte_debug_print(VTE_DEBUG_PTY, "%s failed: %s\n",
                                          "ioctl(TIOCSCTTY)", g_strerror(errsv));
                         return ExecError::SCTTY;
                 }
@@ -428,7 +428,7 @@ SpawnContext::exec(vte::libc::FD& child_report_error_pipe_write,
                                 if (from_fd != target_fd)
                                         continue;
 
-                                auto new_from_fd = vte::libc::fd_dup_cloexec(from_fd, target_fd + 1);
+                                auto new_from_fd = bte::libc::fd_dup_cloexec(from_fd, target_fd + 1);
                                 if (new_from_fd == -1)
                                         return ExecError::DUP;
 
@@ -458,12 +458,12 @@ SpawnContext::exec(vte::libc::FD& child_report_error_pipe_write,
 
                 if (target_fd == source_fd) {
                         /* Already assigned correctly, but need to remove FD_CLOEXEC */
-                        if (vte::libc::fd_unset_cloexec(target_fd) == -1)
+                        if (bte::libc::fd_unset_cloexec(target_fd) == -1)
                                 return ExecError::UNSET_CLOEXEC;
 
                 } else {
                         /* Now we know that target_fd can be safely overwritten. */
-                        if (vte::libc::fd_dup2(source_fd, target_fd) == -1)
+                        if (bte::libc::fd_dup2(source_fd, target_fd) == -1)
                                 return ExecError::DUP2;
                 }
         }
@@ -473,7 +473,7 @@ SpawnContext::exec(vte::libc::FD& child_report_error_pipe_write,
                 m_child_setup(m_child_setup_data.get());
 
         /* exec */
-        _vte_execute(arg0(),
+        _bte_execute(arg0(),
                      argv(),
                      environ(),
                      search_path(),
@@ -504,12 +504,12 @@ SpawnOperation::~SpawnOperation()
                         kill(m_pid, SIGHUP);
                 }
 
-                vte_reaper_add_child(m_pid);
+                bte_reaper_add_child(m_pid);
         }
 }
 
 bool
-SpawnOperation::prepare(vte::glib::Error& error)
+SpawnOperation::prepare(bte::glib::Error& error)
 {
 #ifndef WITH_SYSTEMD
         if (context().require_systemd_scope()) {
@@ -521,7 +521,7 @@ SpawnOperation::prepare(vte::glib::Error& error)
 
         if (m_cancellable &&
             !g_cancellable_make_pollfd(m_cancellable.get(), &m_cancellable_pollfd)) {
-                auto errsv = vte::libc::ErrnoSaver{};
+                auto errsv = bte::libc::ErrnoSaver{};
                 error.set(G_IO_ERROR,
                           g_io_error_from_errno(errsv),
                           "Failed to make cancellable pollfd: %s",
@@ -529,8 +529,8 @@ SpawnOperation::prepare(vte::glib::Error& error)
                 return false;
         }
 
-        auto child_report_error_pipe_read = vte::libc::FD{};
-        auto child_report_error_pipe_write = vte::libc::FD{};
+        auto child_report_error_pipe_read = bte::libc::FD{};
+        auto child_report_error_pipe_write = bte::libc::FD{};
         if (!make_pipe(FD_CLOEXEC,
                        child_report_error_pipe_read,
                        child_report_error_pipe_write,
@@ -539,9 +539,9 @@ SpawnOperation::prepare(vte::glib::Error& error)
 
         /* allocate workbuf for SpawnContext::Exec() */
         auto const workbufsize = context().workbuf_size();
-        auto workbuf = vte::glib::take_free_ptr(g_try_malloc(workbufsize));
+        auto workbuf = bte::glib::take_free_ptr(g_try_malloc(workbufsize));
         if (!workbuf) {
-                auto errsv = vte::libc::ErrnoSaver{};
+                auto errsv = bte::libc::ErrnoSaver{};
                 error.set(G_IO_ERROR,
                           g_io_error_from_errno(errsv),
                           "Failed to allocate workbuf: %s",
@@ -558,7 +558,7 @@ SpawnOperation::prepare(vte::glib::Error& error)
 
         auto const pid = fork();
         if (pid < 0) {
-                auto errsv = vte::libc::ErrnoSaver{};
+                auto errsv = bte::libc::ErrnoSaver{};
                 error.set(G_IO_ERROR,
                           g_io_error_from_errno(errsv),
                           "Failed to fork: %s",
@@ -578,7 +578,7 @@ SpawnOperation::prepare(vte::glib::Error& error)
                 g_free(workbuf.release());
 
                 /* If we get here, exec failed. Write the error to the pipe and exit. */
-                _vte_write_err(child_report_error_pipe_write.get(), int(err));
+                _bte_write_err(child_report_error_pipe_write.get(), int(err));
                 _exit(127);
                 return true;
         }
@@ -591,7 +591,7 @@ SpawnOperation::prepare(vte::glib::Error& error)
 }
 
 bool
-SpawnOperation::run(vte::glib::Error& error) noexcept
+SpawnOperation::run(bte::glib::Error& error) noexcept
 {
         int buf[2] = {G_SPAWN_ERROR_FAILED, ENOSYS};
         auto n_read = int{0};
@@ -616,7 +616,7 @@ SpawnOperation::run(vte::glib::Error& error) noexcept
 
                 switch (SpawnContext::ExecError(buf[0])) {
                 case SpawnContext::ExecError::CHDIR: {
-                        auto cwd = vte::glib::take_string(context().cwd() ? g_utf8_make_valid(context().cwd(), -1) : nullptr);
+                        auto cwd = bte::glib::take_string(context().cwd() ? g_utf8_make_valid(context().cwd(), -1) : nullptr);
                         error.set(G_IO_ERROR, g_io_error_from_errno(err),
                                   _("Failed to change to directory “%s”: %s"),
                                   cwd.get(),
@@ -685,7 +685,7 @@ SpawnOperation::run(vte::glib::Error& error) noexcept
                         break;
                 }
 
-                auto arg0 = vte::glib::take_string(g_utf8_make_valid(context().argv()[0], -1));
+                auto arg0 = bte::glib::take_string(g_utf8_make_valid(context().argv()[0], -1));
                 g_prefix_error(error,
                                _("Failed to execute child process “%s”: "),
                                arg0.get());
@@ -697,14 +697,14 @@ SpawnOperation::run(vte::glib::Error& error) noexcept
 
 #ifdef WITH_SYSTEMD
         if (context().systemd_scope() &&
-            !vte::systemd::create_scope_for_pid_sync(m_pid,
+            !bte::systemd::create_scope_for_pid_sync(m_pid,
                                                      m_timeout, // FIXME: recalc timeout
                                                      m_cancellable.get(),
                                                      error)) {
                 if (context().require_systemd_scope())
                         return false;
 
-                _vte_debug_print(VTE_DEBUG_PTY,
+                _bte_debug_print(VTE_DEBUG_PTY,
                                  "Failed to create systemd scope: %s",
                                  error.message());
                 error.reset();
@@ -717,7 +717,7 @@ SpawnOperation::run(vte::glib::Error& error) noexcept
 void
 SpawnOperation::run_in_thread(GTask* task) noexcept
 {
-        auto error = vte::glib::Error{};
+        auto error = bte::glib::Error{};
         if (run(error))
                 g_task_return_int(task, ssize_t{release_pid()});
         else
@@ -734,19 +734,19 @@ SpawnOperation::run_async(void* source_tag,
          * ownership of @this to the task, meaning that @this will be deleted after
          * the task is completed.
          */
-        auto task = vte::glib::take_ref(g_task_new(context().pty_wrapper(),
+        auto task = bte::glib::take_ref(g_task_new(context().pty_wrapper(),
                                                    m_cancellable.get(),
                                                    callback,
                                                    user_data));
         g_task_set_source_tag(task.get(), source_tag);
         g_task_set_task_data(task.get(), this, delete_cb);
-        // g_task_set_name(task.get(), "vte-spawn-async");
+        // g_task_set_name(task.get(), "bte-spawn-async");
 
         /* Spawning is split into the fork() phase, and waiting for the child to
          * exec or report an error. This is done so that the fork is happening on
-         * the main thread; see issue vte#118.
+         * the main thread; see issue bte#118.
          */
-        auto error = vte::glib::Error{};
+        auto error = bte::glib::Error{};
         if (!prepare(error))
                 return g_task_return_error(task.get(), error.release());
 
@@ -756,7 +756,7 @@ SpawnOperation::run_async(void* source_tag,
 
 bool
 SpawnOperation::run_sync(GPid* pid,
-                         vte::glib::Error& error)
+                         bte::glib::Error& error)
 {
         auto rv = prepare(error) && run(error);
         if (rv)
@@ -767,4 +767,4 @@ SpawnOperation::run_sync(GPid* pid,
         return rv;
 }
 
-} // namespace vte::base
+} // namespace bte::base

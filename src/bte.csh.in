@@ -20,5 +20,5 @@ if ( ! $?prompt | ! $?tcsh | ! $?TERM | ! $?VTE_VERSION ) exit
 
 switch($TERM)
   case xterm*:
-    alias precmd 'echo -n "\e]7;file://$HOST"; @libexecdir@/vte-urlencode-cwd; echo -n "\e\\"'
+    alias precmd 'echo -n "\e]7;file://$HOST"; @libexecdir@/bte-urlencode-cwd; echo -n "\e\\"'
 endsw

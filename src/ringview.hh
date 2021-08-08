@@ -22,11 +22,11 @@
 
 #include "bidi.hh"
 #include "ring.hh"
-#include "vterowdata.hh"
-#include "vtetypes.hh"
-#include "vteunistr.h"
+#include "bterowdata.hh"
+#include "btetypes.hh"
+#include "bteunistr.h"
 
-namespace vte {
+namespace bte {
 
 namespace base {
 
@@ -68,9 +68,9 @@ public:
         RingView& operator= (RingView&& o) = delete;
 
         void set_ring(Ring *ring);
-        void set_rows(vte::grid::row_t start, vte::grid::row_t len);
-        void set_width(vte::grid::column_t width);
-        inline constexpr vte::grid::column_t get_width() const noexcept { return m_width; }
+        void set_rows(bte::grid::row_t start, bte::grid::row_t len);
+        void set_width(bte::grid::column_t width);
+        inline constexpr bte::grid::column_t get_width() const noexcept { return m_width; }
         void set_enable_bidi(bool enable_bidi);
         void set_enable_shaping(bool enable_shaping);
 
@@ -79,9 +79,9 @@ public:
         void update();
         void pause();
 
-        VteRowData const* get_row(vte::grid::row_t row) const;
+        VteRowData const* get_row(bte::grid::row_t row) const;
 
-        BidiRow const* get_bidirow(vte::grid::row_t row) const;
+        BidiRow const* get_bidirow(bte::grid::row_t row) const;
 
 private:
         Ring *m_ring{nullptr};
@@ -97,20 +97,20 @@ private:
 
         std::unique_ptr<BidiRunner> m_bidirunner;
 
-        vte::grid::row_t m_top{0};  /* the row of the Ring corresponding to m_rows[0] */
+        bte::grid::row_t m_top{0};  /* the row of the Ring corresponding to m_rows[0] */
 
-        vte::grid::row_t m_start{0};
-        vte::grid::row_t m_len{0};
-        vte::grid::column_t m_width{0};
+        bte::grid::row_t m_start{0};
+        bte::grid::row_t m_len{0};
+        bte::grid::column_t m_width{0};
 
         bool m_invalid{true};
         bool m_paused{true};
 
         void resume();
 
-        BidiRow* get_bidirow_writable(vte::grid::row_t row) const;
+        BidiRow* get_bidirow_writable(bte::grid::row_t row) const;
 };
 
 }; /* namespace base */
 
-}; /* namespace vte */
+}; /* namespace bte */

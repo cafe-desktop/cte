@@ -26,7 +26,7 @@
 
 #include "icu-decoder.hh"
 
-namespace vte::base {
+namespace bte::base {
 
 class ICUConverter {
 public:
@@ -68,7 +68,7 @@ private:
         converter_shared_type m_charset_converter;
         converter_shared_type m_u32_converter;
         converter_shared_type m_u8_converter;
-        vte::base::ICUDecoder m_decoder;
+        bte::base::ICUDecoder m_decoder;
 
         /* Note that m_decoder will share m_charset_converter and only use it in the
          * toUnicode direction; and m_u32_decoder, and will use that only in the
@@ -77,4 +77,4 @@ private:
          */
 };
 
-} // namespace vte::base
+} // namespace bte::base

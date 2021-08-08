@@ -34,9 +34,9 @@
 
 #include <string.h>
 
-#include "vteunistr.h"
-#include "vtemacros.h"
-#include "vtedefines.hh"
+#include "bteunistr.h"
+#include "btemacros.h"
+#include "btedefines.hh"
 
 #include "attr.hh"
 #include "color-triple.hh"
@@ -56,23 +56,23 @@
 #define CELL_ATTR_BOOL(lname,uname) \
         inline void set_##lname(bool value) \
         { \
-                vte_attr_set_bool(&attr, VTE_ATTR_##uname##_MASK, value); \
+                bte_attr_set_bool(&attr, VTE_ATTR_##uname##_MASK, value); \
         } \
         \
         inline constexpr bool lname() const \
         { \
-                return vte_attr_get_bool(attr, VTE_ATTR_##uname##_SHIFT); \
+                return bte_attr_get_bool(attr, VTE_ATTR_##uname##_SHIFT); \
         }
 
 #define CELL_ATTR_UINT(lname,uname) \
         inline void set_##lname(unsigned int value) \
         { \
-                vte_attr_set_value(&attr, VTE_ATTR_##uname##_MASK, VTE_ATTR_##uname##_SHIFT, value); \
+                bte_attr_set_value(&attr, VTE_ATTR_##uname##_MASK, VTE_ATTR_##uname##_SHIFT, value); \
         } \
         \
         inline constexpr uint32_t lname() const \
         { \
-                return vte_attr_get_value(attr, VTE_ATTR_##uname##_VALUE_MASK, VTE_ATTR_##uname##_SHIFT); \
+                return bte_attr_get_value(attr, VTE_ATTR_##uname##_VALUE_MASK, VTE_ATTR_##uname##_SHIFT); \
         }
 
 typedef struct _VTE_GNUC_PACKED VteCellAttr {
@@ -96,18 +96,18 @@ typedef struct _VTE_GNUC_PACKED VteCellAttr {
 
         inline void copy_colors(VteCellAttr const& other)
         {
-                m_colors = vte_color_triple_copy(other.colors());
+                m_colors = bte_color_triple_copy(other.colors());
         }
 
 #define CELL_ATTR_COLOR(name) \
         inline void set_##name(uint32_t value) \
         { \
-                vte_color_triple_set_##name(&m_colors, value); \
+                bte_color_triple_set_##name(&m_colors, value); \
         } \
         \
         inline constexpr uint32_t name() const \
         { \
-                return vte_color_triple_get_##name(m_colors); \
+                return bte_color_triple_get_##name(m_colors); \
         }
 
         CELL_ATTR_COLOR(fore)
@@ -182,7 +182,7 @@ static_assert(offsetof (VteStreamCellAttr, hyperlink_length) == VTE_CELL_ATTR_CO
  */
 
 typedef struct _VTE_GNUC_PACKED _VteCell {
-	vteunistr c;
+	bteunistr c;
 	VteCellAttr attr;
 } VteCell;
 

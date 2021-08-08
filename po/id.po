@@ -1,14 +1,14 @@
-# Indonesia translation of vte.
-# Copyright (C) 2005 THE vte's COPYRIGHT HOLDER
-# This file is distributed under the same license as the vte package.
+# Indonesia translation of bte.
+# Copyright (C) 2005 THE bte's COPYRIGHT HOLDER
+# This file is distributed under the same license as the bte package.
 #
 #
 # Mohammad DAMT <mdamt@bisnisweb.com>, 2005.
 # Kukuh Syafaat <kukuhsyafaat@gnome.org>, 2018, 2020.
 msgid ""
 msgstr ""
-"Project-Id-Version: vte.master.id\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Project-Id-Version: bte.master.id\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2020-05-27 19:17+0000\n"
 "PO-Revision-Date: 2020-05-31 14:10+0700\n"
 "Last-Translator: Kukuh Syafaat <kukuhsyafaat@gnome.org>\n"
@@ -21,11 +21,11 @@ msgstr ""
 "X-Generator: Poedit 2.3.1\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: src/vte.cc:7763
+#: src/bte.cc:7763
 msgid "WARNING"
 msgstr "PERINGATAN"
 
-#: src/vte.cc:7765
+#: src/bte.cc:7765
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr "GNUTLS tidak difungsikan; data akan ditulis ke disk tanpa enkripsi!"
 

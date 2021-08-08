@@ -19,7 +19,7 @@
 namespace Test
 {
 
-[CtkTemplate (ui = "/org/gnome/vte/test/app/ui/search-popover.ui")]
+[CtkTemplate (ui = "/org/gnome/bte/test/app/ui/search-popover.ui")]
 class SearchPopover : Ctk.Popover
 {
   public Vte.Terminal terminal { get; construct set; }
@@ -172,7 +172,7 @@ class SearchPopover : Ctk.Popover
 
 } /* class SearchPopover */
 
-[CtkTemplate (ui = "/org/gnome/vte/test/app/ui/window.ui")]
+[CtkTemplate (ui = "/org/gnome/bte/test/app/ui/window.ui")]
 class Window : Ctk.ApplicationWindow
 {
   [CtkChild] private Ctk.Scrollbar scrollbar;
@@ -1070,7 +1070,7 @@ class App : Ctk.Application
     if (Environment.get_variable("G_ENABLE_DIAGNOSTIC") == null) {
       Environment.set_variable("G_ENABLE_DIAGNOSTIC", "0", true);
     }
-    Environment.set_prgname("vte-app");
+    Environment.set_prgname("bte-app");
     Environment.set_application_name("Terminal");
 
     try {

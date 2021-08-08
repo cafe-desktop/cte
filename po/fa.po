@@ -1,4 +1,4 @@
-# translation of vte to Persian
+# translation of bte to Persian
 # Copyright (C) 2003 The FarsiWeb Project Group
 # Copyright (C) 2010 The IFSUG Translation Group
 # Roozbeh Pournader <roozbeh@sharif.edu>, 2003.
@@ -7,8 +7,8 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: vte\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Project-Id-Version: bte\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2020-04-27 18:50+0000\n"
 "PO-Revision-Date: 2020-05-13 17:32+0000\n"
 "Last-Translator: Arash Mousavi <mousavi.arash@gmail.com>\n"
@@ -19,11 +19,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.3\n"
 
-#: src/vte.cc:7843
+#: src/bte.cc:7843
 msgid "WARNING"
 msgstr "هشدار"
 
-#: src/vte.cc:7845
+#: src/bte.cc:7845
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr "GnuTLS به کارنیفتاده؛ داده‌ها بدون رمزنگاری روی دیسک نوشته خواهند شد!"
 
@@ -111,8 +111,8 @@ msgstr "شکست در اجرای فرایند فرزند %s: "
 #~ msgid "Error compiling regular expression \"%s\"."
 #~ msgstr "خطا در ترجمهٔ عبارت باقاعدهٔ \"%s\"."
 
-#~ msgid "_vte_conv_open() failed setting word characters"
-#~ msgstr "‎_vte_conv_open()‎ نتوانست نویسه‌های کلمه را تنظیم کند"
+#~ msgid "_bte_conv_open() failed setting word characters"
+#~ msgstr "‎_bte_conv_open()‎ نتوانست نویسه‌های کلمه را تنظیم کند"
 
 #~ msgid "can not run %s"
 #~ msgstr "نمی‌توان %s را اجرا کرد"

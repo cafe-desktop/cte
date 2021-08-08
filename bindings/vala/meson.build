@@ -24,17 +24,17 @@ assert(valac.version().version_compare('>= 0.24.0'), 'vala >= 0.24 required')
 
 posix_dep = valac.find_library('posix')
 
-libvte_ctk3_vapi_deps = [
+libbte_ctk3_vapi_deps = [
   'gio-2.0',
   'glib-2.0',
   'pango',
   'ctk+-3.0',
 ]
 
-libvte_ctk3_vapi_dep = gnome.generate_vapi(
-  vte_ctk3_api_name,
-  sources: libvte_ctk3_gir[0],
-  packages: libvte_ctk3_vapi_deps,
+libbte_ctk3_vapi_dep = gnome.generate_vapi(
+  bte_ctk3_api_name,
+  sources: libbte_ctk3_gir[0],
+  packages: libbte_ctk3_vapi_deps,
   install: true,
 )
 
@@ -78,14 +78,14 @@ endif
 vapp_incs = [
   top_inc,
   src_inc,
-  vte_inc,
+  bte_inc,
 ]
 
 vapp_deps = [
   gio_dep,
   glib_dep,
   ctk3_dep,
-  libvte_ctk3_vapi_dep,
+  libbte_ctk3_vapi_dep,
   posix_dep,
 ]
 

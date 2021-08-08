@@ -16,7 +16,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <gresources>
-  <gresource prefix="/org/gnome/vte/app">
+  <gresource prefix="/org/gnome/bte/app">
     <file alias="ui/search-popover.ui" compressed="true" preprocess="xml-stripblanks">search-popover.ui</file>
     <file alias="ui/window.ui" compressed="true" preprocess="xml-stripblanks">window.ui</file>
     <file alias="ctk/menus.ui" compressed="true" preprocess="xml-stripblanks">appmenu.ui</file>

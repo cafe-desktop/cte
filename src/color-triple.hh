@@ -19,7 +19,7 @@
 
 #include <cstdint>
 
-typedef uint64_t vte_color_triple_t;
+typedef uint64_t bte_color_triple_t;
 
 #define VTE_COLOR_TRIPLE_FORE_SHIFT     (0)
 #define VTE_COLOR_TRIPLE_BACK_SHIFT     (25)
@@ -38,55 +38,55 @@ typedef uint64_t vte_color_triple_t;
                                                                VTE_DEFAULT_BG, \
                                                                VTE_DEFAULT_FG))
 
-static constexpr inline vte_color_triple_t vte_color_triple_init(void)
+static constexpr inline bte_color_triple_t bte_color_triple_init(void)
 {
         return VTE_COLOR_TRIPLE_INIT_DEFAULT;
 }
 
-static constexpr inline vte_color_triple_t vte_color_triple_copy(vte_color_triple_t ct)
+static constexpr inline bte_color_triple_t bte_color_triple_copy(bte_color_triple_t ct)
 {
         return ct;
 }
 
-static inline void vte_color_triple_set_fore(vte_color_triple_t* ct,
+static inline void bte_color_triple_set_fore(bte_color_triple_t* ct,
                                              uint32_t fore)
 {
         *ct = (*ct & ~VTE_COLOR_TRIPLE_FORE_MASK) | (uint64_t(fore)) << VTE_COLOR_TRIPLE_FORE_SHIFT;
 }
 
-static inline void vte_color_triple_set_back(vte_color_triple_t* ct,
+static inline void bte_color_triple_set_back(bte_color_triple_t* ct,
                                              uint32_t back)
 {
         *ct = (*ct & ~VTE_COLOR_TRIPLE_BACK_MASK) | (uint64_t(back)) << VTE_COLOR_TRIPLE_BACK_SHIFT;
 }
 
-static inline void vte_color_triple_set_deco(vte_color_triple_t* ct,
+static inline void bte_color_triple_set_deco(bte_color_triple_t* ct,
                                              uint32_t deco)
 {
         *ct = (*ct & ~VTE_COLOR_TRIPLE_DECO_MASK) | (uint64_t(deco)) << VTE_COLOR_TRIPLE_DECO_SHIFT;
 }
 
-static inline constexpr uint32_t vte_color_triple_get_fore(vte_color_triple_t ct)
+static inline constexpr uint32_t bte_color_triple_get_fore(bte_color_triple_t ct)
 {
         return uint32_t((ct >> VTE_COLOR_TRIPLE_FORE_SHIFT) & VTE_COLOR_TRIPLE_RGB_MASK(8, 8, 8));
 }
 
-static inline constexpr uint32_t vte_color_triple_get_back(vte_color_triple_t ct)
+static inline constexpr uint32_t bte_color_triple_get_back(bte_color_triple_t ct)
 {
         return uint32_t((ct >> VTE_COLOR_TRIPLE_BACK_SHIFT) & VTE_COLOR_TRIPLE_RGB_MASK(8, 8, 8));
 }
 
-static inline constexpr uint32_t vte_color_triple_get_deco(vte_color_triple_t ct)
+static inline constexpr uint32_t bte_color_triple_get_deco(bte_color_triple_t ct)
 {
         return uint32_t((ct >> VTE_COLOR_TRIPLE_DECO_SHIFT) & VTE_COLOR_TRIPLE_RGB_MASK(4, 5, 4));
 }
 
-static inline void vte_color_triple_get(vte_color_triple_t ct,
+static inline void bte_color_triple_get(bte_color_triple_t ct,
                                         uint32_t* fore,
                                         uint32_t* back,
                                         uint32_t* deco)
 {
-        *fore = vte_color_triple_get_fore(ct);
-        *back = vte_color_triple_get_back(ct);
-        *deco = vte_color_triple_get_deco(ct);
+        *fore = bte_color_triple_get_fore(ct);
+        *back = bte_color_triple_get_back(ct);
+        *deco = bte_color_triple_get_deco(ct);
 }

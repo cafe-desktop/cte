@@ -18,12 +18,12 @@
 #include "config.h"
 
 #include "regex.hh"
-#include "vte/vteenums.h"
-#include "vte/vteregex.h"
+#include "bte/bteenums.h"
+#include "bte/bteregex.h"
 
 #include <cassert>
 
-namespace vte {
+namespace bte {
 
 namespace base {
 
@@ -232,4 +232,4 @@ Regex::substitute(std::string_view const& subject,
 }
 
 } // namespace base
-} // namespace vte
+} // namespace bte

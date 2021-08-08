@@ -25,7 +25,7 @@
 #include <glib.h>
 
 using namespace std::literals;
-using namespace vte::base;
+using namespace bte::base;
 
 UTF8Decoder decoder{};
 
@@ -58,17 +58,17 @@ decode(uint8_t const* in,
         auto const iend = in + len;
         for (auto iptr = in; iptr < iend; ++iptr) {
                 switch (decoder.decode(*iptr)) {
-                case vte::base::UTF8Decoder::REJECT_REWIND:
+                case bte::base::UTF8Decoder::REJECT_REWIND:
                         /* Note that this will never lead to a loop, since in the
                          * next round this byte *will* be consumed.
                          */
                         --iptr;
                         [[fallthrough]];
-                case vte::base::UTF8Decoder::REJECT:
+                case bte::base::UTF8Decoder::REJECT:
                         decoder.reset();
                         /* Fall through to insert the U+FFFD replacement character. */
                         [[fallthrough]];
-                case vte::base::UTF8Decoder::ACCEPT:
+                case bte::base::UTF8Decoder::ACCEPT:
                         out.push_back(decoder.codepoint());
                         break;
                 default:
@@ -302,8 +302,8 @@ main(int argc,
 {
         g_test_init(&argc, &argv, nullptr);
 
-        g_test_add_func("/vte/utf8/decoder/decode", test_utf8_decoder_decode);
-        g_test_add_func("/vte/utf8/decoder/replacement", test_utf8_decoder_replacement);
+        g_test_add_func("/bte/utf8/decoder/decode", test_utf8_decoder_decode);
+        g_test_add_func("/bte/utf8/decoder/replacement", test_utf8_decoder_replacement);
 
         return g_test_run();
 }

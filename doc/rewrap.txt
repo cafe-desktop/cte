@@ -116,7 +116,7 @@ some time.
 
 The alternate screen should not be rewrapped. It is used by applications that
 have full control over the entire area and they will repaint it themselves.
-Rewrapping by vte would cause ugly artifacts after vte rewraps but before the
+Rewrapping by bte would cause ugly artifacts after bte rewraps but before the
 application catches up, e.g. characters aligned below each other would become
 arranged diagonally for a short while. (Moreover, with current VTE design,
 rewrapping the alternate screen would require many new fds to be used: main
@@ -436,7 +436,7 @@ infinite scrollback) rewrapping might become slow. On my computer (average
 laptop with Intel(R) Core(TM) i3 CPU, old-fashioned HDD) resizing 1 million
 lines take about 0.2 seconds wall clock time, this is close to the boundary of
 okay-ish speed. For this reason, rewrapping can be disabled with the
-vte_terminal_set_rewrap_on_resize() api call.
+bte_terminal_set_rewrap_on_resize() api call.
 
 Developers writing Vte-based multi-tab terminal emulators are encouraged to
 resize only the visible Vte, the hidden ones should be resized when they

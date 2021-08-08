@@ -21,11 +21,11 @@
 /* BEGIN sanity checks */
 
 #ifndef __EXCEPTIONS
-#error You MUST NOT use -fno-exceptions to build vte! Fix your build; and DO NOT file a bug upstream!
+#error You MUST NOT use -fno-exceptions to build bte! Fix your build; and DO NOT file a bug upstream!
 #endif
 
 #ifndef __GXX_RTTI
-#error You MUST NOT use -fno-rtti to build vte! Fix your build system; and DO NOT file a bug upstream!
+#error You MUST NOT use -fno-rtti to build bte! Fix your build system; and DO NOT file a bug upstream!
 #endif
 
 /* END sanity checks */
@@ -34,8 +34,8 @@
 #include "glib-glue.hh"
 
 #include "drawing-cairo.hh"
-#include "vtedefines.hh"
-#include "vtetypes.hh"
+#include "btedefines.hh"
+#include "btetypes.hh"
 #include "reaper.hh"
 #include "ring.hh"
 #include "ringview.hh"
@@ -46,8 +46,8 @@
 #include "tabstops.hh"
 #include "refptr.hh"
 
-#include "vtepcre2.h"
-#include "vteregexinternal.hh"
+#include "btepcre2.h"
+#include "bteregexinternal.hh"
 
 #include "chunk.hh"
 #include "pty.hh"
@@ -72,7 +72,7 @@ enum {
         VTE_BIDI_FLAG_ALL        = (1 << 4) - 1,
 };
 
-namespace vte {
+namespace bte {
 
 namespace platform {
 
@@ -83,11 +83,11 @@ namespace platform {
  * a reference to a CdkCursor*, or a cursor type.
  */
 using Cursor = std::variant<std::string,
-                            vte::glib::RefPtr<CdkCursor>,
+                            bte::glib::RefPtr<CdkCursor>,
                             CdkCursorType>;
 
 } // namespace platform
-} // namespace vte
+} // namespace bte
 
 typedef enum _VteCharacterReplacement {
         VTE_CHARACTER_REPLACEMENT_NONE,
@@ -96,7 +96,7 @@ typedef enum _VteCharacterReplacement {
 
 typedef struct _VtePaletteColor {
 	struct {
-		vte::color::rgb color;
+		bte::color::rgb color;
 		gboolean is_set;
 	} sources[2];
 } VtePaletteColor;
@@ -111,7 +111,7 @@ public:
         {
         }
 
-        vte::base::Ring m_ring; /* buffer contents */
+        bte::base::Ring m_ring; /* buffer contents */
         VteRing* row_data;
         VteVisualPosition cursor;  /* absolute value, from the beginning of the terminal history */
         double scroll_delta{0.0}; /* scroll offset */
@@ -131,7 +131,7 @@ public:
 };
 
 /* Until the selection can be generated on demand, let's not enable this on stable */
-#include "vte/vteversion.h"
+#include "bte/bteversion.h"
 #if (VTE_MINOR_VERSION % 2) == 0
 #undef HTML_SELECTION
 #else
@@ -153,7 +153,7 @@ typedef enum {
         LAST_VTE_TARGET
 } VteSelectionTarget;
 
-struct vte_scrolling_region {
+struct bte_scrolling_region {
         int start, end;
 };
 
@@ -243,7 +243,7 @@ private:
         Request *m_request;
 };
 
-namespace vte {
+namespace bte {
 
 namespace platform {
 class Widget;
@@ -252,7 +252,7 @@ class Widget;
 namespace terminal {
 
 class EventBase {
-        friend class vte::platform::Widget;
+        friend class bte::platform::Widget;
         friend class Terminal;
 
 public:
@@ -302,7 +302,7 @@ private:
 }; // class EventBase
 
 class KeyEvent : public EventBase {
-        friend class vte::platform::Widget;
+        friend class bte::platform::Widget;
         friend class Terminal;
 
 protected:
@@ -359,7 +359,7 @@ private:
 }; // class KeyEvent
 
 class MouseEvent : public EventBase {
-        friend class vte::platform::Widget;
+        friend class bte::platform::Widget;
         friend class Terminal;
 
 public:
@@ -465,7 +465,7 @@ private:
 }; // class MouseEvent
 
 class Terminal {
-        friend class vte::platform::Widget;
+        friend class bte::platform::Widget;
 
 private:
         /* These correspond to the parameters for DECSCUSR (Set cursor style). */
@@ -542,16 +542,16 @@ protected:
         };
 
 public:
-        Terminal(vte::platform::Widget* w,
+        Terminal(bte::platform::Widget* w,
                  VteTerminal *t);
         ~Terminal();
 
 public:
-        vte::platform::Widget* m_real_widget{nullptr};
+        bte::platform::Widget* m_real_widget{nullptr};
         inline constexpr auto widget() const noexcept { return m_real_widget; }
 
         VteTerminal *m_terminal{nullptr};
-        inline constexpr auto vte_terminal() const noexcept { return m_terminal; }
+        inline constexpr auto bte_terminal() const noexcept { return m_terminal; }
 
         CtkWidget *m_widget{nullptr};
         inline constexpr auto ctk_widget() const noexcept { return m_widget; }
@@ -559,22 +559,22 @@ public:
         void unset_widget() noexcept;
 
         /* Metric and sizing data: dimensions of the window */
-        vte::grid::row_t m_row_count{VTE_ROWS};
-        vte::grid::column_t m_column_count{VTE_COLUMNS};
+        bte::grid::row_t m_row_count{VTE_ROWS};
+        bte::grid::column_t m_column_count{VTE_COLUMNS};
 
-        vte::terminal::Tabstops m_tabstops{};
+        bte::terminal::Tabstops m_tabstops{};
 
-        vte::parser::Parser m_parser; /* control sequence state machine */
+        bte::parser::Parser m_parser; /* control sequence state machine */
 
-        vte::terminal::modes::ECMA m_modes_ecma{};
-        vte::terminal::modes::Private m_modes_private{};
+        bte::terminal::modes::ECMA m_modes_ecma{};
+        bte::terminal::modes::Private m_modes_private{};
 
 	/* PTY handling data. */
-        vte::base::RefPtr<vte::base::Pty> m_pty{};
+        bte::base::RefPtr<bte::base::Pty> m_pty{};
         inline constexpr auto& pty() const noexcept { return m_pty; }
 
         void unset_pty(bool notify_widget = true);
-        bool set_pty(vte::base::Pty* pty);
+        bool set_pty(bte::base::Pty* pty);
 
         guint m_pty_input_source{0};
         guint m_pty_output_source{0};
@@ -584,7 +584,7 @@ public:
         bool m_eos_pending{false};
         bool m_child_exited_after_eos_pending{false};
         bool child_exited_eos_wait_callback();
-        vte::glib::Timer m_child_exited_eos_wait_timer{std::bind(&Terminal::child_exited_eos_wait_callback,
+        bte::glib::Timer m_child_exited_eos_wait_timer{std::bind(&Terminal::child_exited_eos_wait_callback,
                                                                  this),
                                                        "child-exited-eos-wait-timer"};
         VteReaper *m_reaper;
@@ -592,9 +592,9 @@ public:
 	/* Queue of chunks of data read from the PTY.
          * Chunks are inserted at the back, and processed from the front.
          */
-        std::queue<vte::base::Chunk::unique_type, std::list<vte::base::Chunk::unique_type>> m_incoming_queue;
+        std::queue<bte::base::Chunk::unique_type, std::list<bte::base::Chunk::unique_type>> m_incoming_queue;
 
-        vte::base::UTF8Decoder m_utf8_decoder;
+        bte::base::UTF8Decoder m_utf8_decoder;
 
         enum class DataSyntax {
                 eECMA48_UTF8,
@@ -628,7 +628,7 @@ public:
 
 #ifdef WITH_ICU
         /* Legacy charset support */
-        std::unique_ptr<vte::base::ICUConverter> m_converter;
+        std::unique_ptr<bte::base::ICUConverter> m_converter;
 #endif /* WITH_ICU */
 
         char const* encoding() const noexcept
@@ -670,8 +670,8 @@ public:
         gboolean m_selecting_had_delta;
         bool m_selection_block_mode{false};  // FIXMEegmont move it into a 4th value in SelectionType?
         SelectionType m_selection_type{SelectionType::eCHAR};
-        vte::grid::halfcoords m_selection_origin, m_selection_last;  /* BiDi: logical in normal modes, visual in m_selection_block_mode */
-        vte::grid::span m_selection_resolved;
+        bte::grid::halfcoords m_selection_origin, m_selection_last;  /* BiDi: logical in normal modes, visual in m_selection_block_mode */
+        bte::grid::span m_selection_resolved;
 
 	/* Clipboard data information. */
         bool m_selection_owned[LAST_VTE_SELECTION];
@@ -696,10 +696,10 @@ public:
 	/* Scrolling options. */
         bool m_scroll_on_output{false};
         bool m_scroll_on_keystroke{true};
-        vte::grid::row_t m_scrollback_lines{0};
+        bte::grid::row_t m_scrollback_lines{0};
 
         /* Restricted scrolling */
-        struct vte_scrolling_region m_scrolling_region;     /* the region we scroll in */
+        struct bte_scrolling_region m_scrolling_region;     /* the region we scroll in */
         gboolean m_scrolling_restricted;
 
 	/* Cursor shape, as set via API */
@@ -708,7 +708,7 @@ public:
 
 	/* Cursor blinking */
         bool cursor_blink_timer_callback();
-        vte::glib::Timer m_cursor_blink_timer{std::bind(&Terminal::cursor_blink_timer_callback,
+        bte::glib::Timer m_cursor_blink_timer{std::bind(&Terminal::cursor_blink_timer_callback,
                                                         this),
                                               "cursor-blink-timer"};
         CursorBlinkMode m_cursor_blink_mode{CursorBlinkMode::eSYSTEM};
@@ -721,7 +721,7 @@ public:
 
         /* Contents blinking */
         bool text_blink_timer_callback();
-        vte::glib::Timer m_text_blink_timer{std::bind(&Terminal::text_blink_timer_callback,
+        bte::glib::Timer m_text_blink_timer{std::bind(&Terminal::text_blink_timer_callback,
                                                       this),
                                             "text-blink-timer"};
         bool m_text_blink_state{false};  /* whether blinking text should be visible at this very moment */
@@ -745,10 +745,10 @@ public:
          * this in grid coordinates because we want also to check if they were outside
          * the viewable area, and also want to catch in-cell movements if they make the pointer visible.
          */
-        vte::view::coords m_mouse_last_position{-1, -1};
+        bte::view::coords m_mouse_last_position{-1, -1};
         double m_mouse_smooth_scroll_delta{0.0};
         bool mouse_autoscroll_timer_callback();
-        vte::glib::Timer m_mouse_autoscroll_timer{std::bind(&Terminal::mouse_autoscroll_timer_callback,
+        bte::glib::Timer m_mouse_autoscroll_timer{std::bind(&Terminal::mouse_autoscroll_timer_callback,
                                                             this),
                                                   "mouse-autoscroll-timer"};
 
@@ -765,9 +765,9 @@ public:
                 MatchRegex(MatchRegex const&) = delete;
                 MatchRegex& operator= (MatchRegex const&) = delete;
 
-                MatchRegex(vte::base::RefPtr<vte::base::Regex>&& regex,
+                MatchRegex(bte::base::RefPtr<bte::base::Regex>&& regex,
                            uint32_t match_flags,
-                           vte::platform::Cursor&& cursor,
+                           bte::platform::Cursor&& cursor,
                            int tag = -1)
                         : m_regex{std::move(regex)},
                           m_match_flags{match_flags},
@@ -781,12 +781,12 @@ public:
                 auto const& cursor() const noexcept { return m_cursor; }
                 auto tag() const noexcept { return m_tag; }
 
-                void set_cursor(vte::platform::Cursor&& cursor) { m_cursor = std::move(cursor); }
+                void set_cursor(bte::platform::Cursor&& cursor) { m_cursor = std::move(cursor); }
 
         private:
-                vte::base::RefPtr<vte::base::Regex> m_regex{};
+                bte::base::RefPtr<bte::base::Regex> m_regex{};
                 uint32_t m_match_flags{0};
-                vte::platform::Cursor m_cursor{VTE_DEFAULT_CURSOR};
+                bte::platform::Cursor m_cursor{VTE_DEFAULT_CURSOR};
                 int m_tag{-1};
         };
 
@@ -833,17 +833,17 @@ public:
          * the minimal region around the last checked coordinates that don't contain
          * a match for any of the dingu regexes.
          */
-        vte::grid::span m_match_span;
+        bte::grid::span m_match_span;
 
 	/* Search data. */
-        vte::base::RefPtr<vte::base::Regex> m_search_regex{};
+        bte::base::RefPtr<bte::base::Regex> m_search_regex{};
         uint32_t m_search_regex_match_flags{0};
         gboolean m_search_wrap_around;
         GArray* m_search_attrs; /* Cache attrs */
 
 	/* Data used when rendering the text which does not require server
 	 * resources and which can be kept after unrealizing. */
-        using pango_font_description_type = vte::FreeablePtr<PangoFontDescription, decltype(&pango_font_description_free), &pango_font_description_free>;
+        using pango_font_description_type = bte::FreeablePtr<PangoFontDescription, decltype(&pango_font_description_free), &pango_font_description_free>;
         pango_font_description_type m_unscaled_font_desc{};
         pango_font_description_type  m_fontdesc{};
         double m_font_scale{1.};
@@ -890,7 +890,7 @@ public:
         }
 
 	/* Data used when rendering */
-        vte::view::DrawingContext m_draw{};
+        bte::view::DrawingContext m_draw{};
         bool m_clear_background{true};
 
         VtePaletteColor m_palette[VTE_PALETTE_SIZE];
@@ -960,17 +960,17 @@ public:
         CtkBorder m_padding{1, 1, 1, 1};
         auto padding() const noexcept { return &m_padding; }
 
-        vte::glib::RefPtr<CtkAdjustment> m_vadjustment{};
+        bte::glib::RefPtr<CtkAdjustment> m_vadjustment{};
         auto vadjustment() noexcept { return m_vadjustment.get(); }
 
         /* Hyperlinks */
         bool m_allow_hyperlink{false};
-        vte::base::Ring::hyperlink_idx_t m_hyperlink_hover_idx;
+        bte::base::Ring::hyperlink_idx_t m_hyperlink_hover_idx;
         const char *m_hyperlink_hover_uri; /* data is owned by the ring */
         long m_hyperlink_auto_id{0};
 
         /* RingView and friends */
-        vte::base::RingView m_ringview;
+        bte::base::RingView m_ringview;
         bool m_enable_bidi{true};
         bool m_enable_shaping{true};
 
@@ -980,24 +980,24 @@ public:
 public:
 
         // FIXMEchpe inline!
-        /* inline */ VteRowData* ring_insert(vte::grid::row_t position,
+        /* inline */ VteRowData* ring_insert(bte::grid::row_t position,
                                        bool fill);
         /* inline */ VteRowData* ring_append(bool fill);
-        /* inline */ void ring_remove(vte::grid::row_t position);
-        inline VteRowData const* find_row_data(vte::grid::row_t row) const;
-        inline VteRowData* find_row_data_writable(vte::grid::row_t row) const;
-        inline VteCell const* find_charcell(vte::grid::column_t col,
-                                            vte::grid::row_t row) const;
-        inline vte::grid::column_t find_start_column(vte::grid::column_t col,
-                                                     vte::grid::row_t row) const;
-        inline vte::grid::column_t find_end_column(vte::grid::column_t col,
-                                                   vte::grid::row_t row) const;
+        /* inline */ void ring_remove(bte::grid::row_t position);
+        inline VteRowData const* find_row_data(bte::grid::row_t row) const;
+        inline VteRowData* find_row_data_writable(bte::grid::row_t row) const;
+        inline VteCell const* find_charcell(bte::grid::column_t col,
+                                            bte::grid::row_t row) const;
+        inline bte::grid::column_t find_start_column(bte::grid::column_t col,
+                                                     bte::grid::row_t row) const;
+        inline bte::grid::column_t find_end_column(bte::grid::column_t col,
+                                                   bte::grid::row_t row) const;
 
-        inline vte::view::coord_t scroll_delta_pixel() const;
-        inline vte::grid::row_t pixel_to_row(vte::view::coord_t y) const;
-        inline vte::view::coord_t row_to_pixel(vte::grid::row_t row) const;
-        inline vte::grid::row_t first_displayed_row() const;
-        inline vte::grid::row_t last_displayed_row() const;
+        inline bte::view::coord_t scroll_delta_pixel() const;
+        inline bte::grid::row_t pixel_to_row(bte::view::coord_t y) const;
+        inline bte::view::coord_t row_to_pixel(bte::grid::row_t row) const;
+        inline bte::grid::row_t first_displayed_row() const;
+        inline bte::grid::row_t last_displayed_row() const;
         inline bool cursor_is_onscreen() const noexcept;
 
         inline VteRowData *insert_rows (guint cnt);
@@ -1005,8 +1005,8 @@ public:
         VteRowData *ensure_cursor();
         void update_insert_delta();
 
-        void set_hard_wrapped(vte::grid::row_t row);
-        void set_soft_wrapped(vte::grid::row_t row);
+        void set_hard_wrapped(bte::grid::row_t row);
+        void set_soft_wrapped(bte::grid::row_t row);
 
         void cleanup_fragments(long start,
                                long end);
@@ -1021,19 +1021,19 @@ public:
                          bool insert,
                          bool invalidate_now);
 
-        void invalidate_row(vte::grid::row_t row);
-        void invalidate_rows(vte::grid::row_t row_start,
-                             vte::grid::row_t row_end /* inclusive */);
-        void invalidate_row_and_context(vte::grid::row_t row);
-        void invalidate_rows_and_context(vte::grid::row_t row_start,
-                                         vte::grid::row_t row_end /* inclusive */);
-        void invalidate(vte::grid::span const& s);
-        void invalidate_symmetrical_difference(vte::grid::span const& a, vte::grid::span const& b, bool block);
+        void invalidate_row(bte::grid::row_t row);
+        void invalidate_rows(bte::grid::row_t row_start,
+                             bte::grid::row_t row_end /* inclusive */);
+        void invalidate_row_and_context(bte::grid::row_t row);
+        void invalidate_rows_and_context(bte::grid::row_t row_start,
+                                         bte::grid::row_t row_end /* inclusive */);
+        void invalidate(bte::grid::span const& s);
+        void invalidate_symmetrical_difference(bte::grid::span const& a, bte::grid::span const& b, bool block);
         void invalidate_match_span();
         void invalidate_all();
 
         guint8 get_bidi_flags() const noexcept;
-        void apply_bidi_attributes(vte::grid::row_t start, guint8 bidi_flags, guint8 bidi_flags_mask);
+        void apply_bidi_attributes(bte::grid::row_t start, guint8 bidi_flags, guint8 bidi_flags_mask);
         void maybe_apply_bidi_attributes(guint8 bidi_flags_mask);
 
         void reset_update_rects();
@@ -1064,36 +1064,36 @@ public:
         /* The usable view area. This is the allocation, minus the padding, but
          * including additional right/bottom area if the allocation is not grid aligned.
          */
-        vte::view::extents m_view_usable_extents;
+        bte::view::extents m_view_usable_extents;
 
         void set_allocated_rect(cairo_rectangle_int_t const& r) { m_allocated_rect = r; update_view_extents(); }
         void update_view_extents() {
                 m_view_usable_extents =
-                        vte::view::extents(m_allocated_rect.width - m_padding.left - m_padding.right,
+                        bte::view::extents(m_allocated_rect.width - m_padding.left - m_padding.right,
                                            m_allocated_rect.height - m_padding.top - m_padding.bottom);
         }
 
         bool widget_realized() const noexcept;
         inline cairo_rectangle_int_t const& get_allocated_rect() const { return m_allocated_rect; }
-        inline vte::view::coord_t get_allocated_width() const { return m_allocated_rect.width; }
-        inline vte::view::coord_t get_allocated_height() const { return m_allocated_rect.height; }
+        inline bte::view::coord_t get_allocated_width() const { return m_allocated_rect.width; }
+        inline bte::view::coord_t get_allocated_height() const { return m_allocated_rect.height; }
 
-        vte::view::coords view_coords_from_event(MouseEvent const& event) const;
-        vte::grid::coords grid_coords_from_event(MouseEvent const& event) const;
+        bte::view::coords view_coords_from_event(MouseEvent const& event) const;
+        bte::grid::coords grid_coords_from_event(MouseEvent const& event) const;
 
-        vte::view::coords view_coords_from_grid_coords(vte::grid::coords const& rowcol) const;
-        vte::grid::coords grid_coords_from_view_coords(vte::view::coords const& pos) const;
+        bte::view::coords view_coords_from_grid_coords(bte::grid::coords const& rowcol) const;
+        bte::grid::coords grid_coords_from_view_coords(bte::view::coords const& pos) const;
 
-        vte::grid::halfcoords selection_grid_halfcoords_from_view_coords(vte::view::coords const& pos) const;
-        bool view_coords_visible(vte::view::coords const& pos) const;
-        bool grid_coords_visible(vte::grid::coords const& rowcol) const;
+        bte::grid::halfcoords selection_grid_halfcoords_from_view_coords(bte::view::coords const& pos) const;
+        bool view_coords_visible(bte::view::coords const& pos) const;
+        bool grid_coords_visible(bte::grid::coords const& rowcol) const;
 
-        inline bool grid_coords_in_scrollback(vte::grid::coords const& rowcol) const { return rowcol.row() < m_screen->insert_delta; }
+        inline bool grid_coords_in_scrollback(bte::grid::coords const& rowcol) const { return rowcol.row() < m_screen->insert_delta; }
 
-        vte::grid::row_t confine_grid_row(vte::grid::row_t const& row) const;
-        vte::grid::coords confine_grid_coords(vte::grid::coords const& rowcol) const;
-        vte::grid::coords confined_grid_coords_from_event(MouseEvent const&) const;
-        vte::grid::coords confined_grid_coords_from_view_coords(vte::view::coords const& pos) const;
+        bte::grid::row_t confine_grid_row(bte::grid::row_t const& row) const;
+        bte::grid::coords confine_grid_coords(bte::grid::coords const& rowcol) const;
+        bte::grid::coords confined_grid_coords_from_event(MouseEvent const&) const;
+        bte::grid::coords confined_grid_coords_from_view_coords(bte::view::coords const& pos) const;
 
         void confine_coordinates(long *xp,
                                  long *yp);
@@ -1110,7 +1110,7 @@ public:
                                         CtkSelectionData *data,
                                         guint info);
 
-        void widget_set_vadjustment(vte::glib::RefPtr<CtkAdjustment>&& adjustment);
+        void widget_set_vadjustment(bte::glib::RefPtr<CtkAdjustment>&& adjustment);
 
         void widget_realize();
         void widget_unrealize();
@@ -1139,7 +1139,7 @@ public:
 
         void paint_cursor();
         void paint_im_preedit_string();
-        void draw_cells(vte::view::DrawingContext::TextRequest* items,
+        void draw_cells(bte::view::DrawingContext::TextRequest* items,
                         gssize n,
                         uint32_t fore,
                         uint32_t back,
@@ -1160,7 +1160,7 @@ public:
         void translate_pango_cells(PangoAttrList *attrs,
                                    VteCell *cells,
                                    gsize n_cells);
-        void draw_cells_with_attributes(vte::view::DrawingContext::TextRequest* items,
+        void draw_cells_with_attributes(bte::view::DrawingContext::TextRequest* items,
                                         gssize n,
                                         PangoAttrList *attrs,
                                         bool draw_default_bg,
@@ -1168,7 +1168,7 @@ public:
                                         int height);
         void draw_rows(VteScreen *screen,
                        cairo_region_t const* region,
-                       vte::grid::row_t start_row,
+                       bte::grid::row_t start_row,
                        long row_count,
                        gint start_y,
                        gint column_width,
@@ -1225,15 +1225,15 @@ public:
         void feed_child_binary(std::string_view const& data);
 
         bool is_word_char(gunichar c) const;
-        bool is_same_class(vte::grid::column_t acol,
-                           vte::grid::row_t arow,
-                           vte::grid::column_t bcol,
-                           vte::grid::row_t brow) const;
+        bool is_same_class(bte::grid::column_t acol,
+                           bte::grid::row_t arow,
+                           bte::grid::column_t bcol,
+                           bte::grid::row_t brow) const;
 
-        GString* get_text(vte::grid::row_t start_row,
-                          vte::grid::column_t start_col,
-                          vte::grid::row_t end_row,
-                          vte::grid::column_t end_col,
+        GString* get_text(bte::grid::row_t start_row,
+                          bte::grid::column_t start_col,
+                          bte::grid::row_t end_row,
+                          bte::grid::column_t end_col,
                           bool block,
                           bool wrap,
                           GArray* attributes = nullptr);
@@ -1248,7 +1248,7 @@ public:
 
         template<unsigned int redbits, unsigned int greenbits, unsigned int bluebits>
         inline void rgb_from_index(guint index,
-                                   vte::color::rgb& color) const;
+                                   bte::color::rgb& color) const;
         inline void determine_colors(VteCellAttr const* attr,
                                      bool selected,
                                      bool cursor,
@@ -1273,21 +1273,21 @@ public:
         GString* attributes_to_html(GString* text_string,
                                     GArray* attrs);
 
-        void start_selection(vte::view::coords const& pos,
+        void start_selection(bte::view::coords const& pos,
                              SelectionType type);
         bool maybe_end_selection();
 
         void select_all();
         void deselect_all();
 
-        vte::grid::coords resolve_selection_endpoint(vte::grid::halfcoords const& rowcolhalf, bool after) const;
+        bte::grid::coords resolve_selection_endpoint(bte::grid::halfcoords const& rowcolhalf, bool after) const;
         void resolve_selection();
-        void selection_maybe_swap_endpoints(vte::view::coords const& pos);
-        void modify_selection(vte::view::coords const& pos);
-        bool cell_is_selected_log(vte::grid::column_t lcol,
-                                  vte::grid::row_t) const;
-        bool cell_is_selected_vis(vte::grid::column_t vcol,
-                                  vte::grid::row_t) const;
+        void selection_maybe_swap_endpoints(bte::view::coords const& pos);
+        void modify_selection(bte::view::coords const& pos);
+        bool cell_is_selected_log(bte::grid::column_t lcol,
+                                  bte::grid::row_t) const;
+        bool cell_is_selected_vis(bte::grid::column_t vcol,
+                                  bte::grid::row_t) const;
 
         void reset_default_attributes(bool reset_hyperlink);
 
@@ -1353,7 +1353,7 @@ public:
         void emit_paste_clipboard();
         void emit_hyperlink_hover_uri_changed(const CdkRectangle *bbox);
 
-        void hyperlink_invalidate_and_get_bbox(vte::base::Ring::hyperlink_idx_t idx, CdkRectangle *bbox);
+        void hyperlink_invalidate_and_get_bbox(bte::base::Ring::hyperlink_idx_t idx, CdkRectangle *bbox);
         void hyperlink_hilite_update();
 
         void match_contents_clear();
@@ -1368,13 +1368,13 @@ public:
         char *hyperlink_check(MouseEvent const& event);
 
         bool regex_match_check_extra(MouseEvent const& event,
-                                     vte::base::Regex const** regexes,
+                                     bte::base::Regex const** regexes,
                                      size_t n_regexes,
                                      uint32_t match_flags,
                                      char** matches);
 
-        char *regex_match_check(vte::grid::column_t column,
-                                vte::grid::row_t row,
+        char *regex_match_check(bte::grid::column_t column,
+                                bte::grid::row_t row,
                                 int *tag);
         char *regex_match_check(MouseEvent const& event,
                                 int *tag);
@@ -1386,8 +1386,8 @@ public:
                                     CdkCursorType cursor_type);
         void regex_match_set_cursor(int tag,
                                     char const* cursor_name);
-        bool match_rowcol_to_offset(vte::grid::column_t column,
-                                    vte::grid::row_t row,
+        bool match_rowcol_to_offset(bte::grid::column_t column,
+                                    bte::grid::row_t row,
                                     gsize *offset_ptr,
                                     gsize *sattr_ptr,
                                     gsize *eattr_ptr);
@@ -1395,7 +1395,7 @@ public:
         pcre2_match_context_8 *create_match_context();
         bool match_check_pcre(pcre2_match_data_8 *match_data,
                               pcre2_match_context_8 *match_context,
-                              vte::base::Regex const* regex,
+                              bte::base::Regex const* regex,
                               uint32_t match_flags,
                               gsize sattr,
                               gsize eattr,
@@ -1405,44 +1405,44 @@ public:
                               gsize *end,
                               gsize *sblank_ptr,
                               gsize *eblank_ptr);
-        char *match_check_internal_pcre(vte::grid::column_t column,
-                                        vte::grid::row_t row,
+        char *match_check_internal_pcre(bte::grid::column_t column,
+                                        bte::grid::row_t row,
                                         MatchRegex const** match,
                                         gsize *start,
                                         gsize *end);
 
-        char *match_check_internal(vte::grid::column_t column,
-                                   vte::grid::row_t row,
+        char *match_check_internal(bte::grid::column_t column,
+                                   bte::grid::row_t row,
                                    MatchRegex const** match,
                                    gsize *start,
                                    gsize *end);
 
-        bool feed_mouse_event(vte::grid::coords const& unconfined_rowcol,
+        bool feed_mouse_event(bte::grid::coords const& unconfined_rowcol,
                               int button,
                               bool is_drag,
                               bool is_release);
-        bool maybe_send_mouse_button(vte::grid::coords const& rowcol,
+        bool maybe_send_mouse_button(bte::grid::coords const& rowcol,
                                      MouseEvent const& event);
-        bool maybe_send_mouse_drag(vte::grid::coords const& rowcol,
+        bool maybe_send_mouse_drag(bte::grid::coords const& rowcol,
                                    MouseEvent const& event);
 
         void feed_focus_event(bool in);
         void feed_focus_event_initial();
         void maybe_feed_focus_event(bool in);
 
-        bool search_set_regex(vte::base::RefPtr<vte::base::Regex>&& regex,
+        bool search_set_regex(bte::base::RefPtr<bte::base::Regex>&& regex,
                               uint32_t flags);
         auto search_regex() const noexcept { return m_search_regex.get(); }
 
         bool search_rows(pcre2_match_context_8 *match_context,
                          pcre2_match_data_8 *match_data,
-                         vte::grid::row_t start_row,
-                         vte::grid::row_t end_row,
+                         bte::grid::row_t start_row,
+                         bte::grid::row_t end_row,
                          bool backward);
         bool search_rows_iter(pcre2_match_context_8 *match_context,
                               pcre2_match_data_8 *match_data,
-                              vte::grid::row_t start_row,
-                              vte::grid::row_t end_row,
+                              bte::grid::row_t start_row,
+                              bte::grid::row_t end_row,
                               bool backward);
         bool search_find(bool backward);
         bool search_set_wrap_around(bool wrap);
@@ -1455,10 +1455,10 @@ public:
         long get_cell_height() { ensure_font(); return m_cell_height; }
         long get_cell_width()  { ensure_font(); return m_cell_width;  }
 
-        vte::color::rgb const* get_color(int entry) const;
+        bte::color::rgb const* get_color(int entry) const;
         void set_color(int entry,
                        int source,
-                       vte::color::rgb const& proposed);
+                       bte::color::rgb const& proposed);
         void reset_color(int entry,
                          int source);
 
@@ -1474,21 +1474,21 @@ public:
         bool set_cell_height_scale(double scale);
         bool set_cell_width_scale(double scale);
         bool set_cjk_ambiguous_width(int width);
-        void set_color_background(vte::color::rgb const &color);
-        void set_color_bold(vte::color::rgb const& color);
+        void set_color_background(bte::color::rgb const &color);
+        void set_color_bold(bte::color::rgb const& color);
         void reset_color_bold();
-        void set_color_cursor_background(vte::color::rgb const& color);
+        void set_color_cursor_background(bte::color::rgb const& color);
         void reset_color_cursor_background();
-        void set_color_cursor_foreground(vte::color::rgb const& color);
+        void set_color_cursor_foreground(bte::color::rgb const& color);
         void reset_color_cursor_foreground();
-        void set_color_foreground(vte::color::rgb const& color);
-        void set_color_highlight_background(vte::color::rgb const& color);
+        void set_color_foreground(bte::color::rgb const& color);
+        void set_color_highlight_background(bte::color::rgb const& color);
         void reset_color_highlight_background();
-        void set_color_highlight_foreground(vte::color::rgb const& color);
+        void set_color_highlight_foreground(bte::color::rgb const& color);
         void reset_color_highlight_foreground();
-        void set_colors(vte::color::rgb const *foreground,
-                        vte::color::rgb const *background,
-                        vte::color::rgb const *palette,
+        void set_colors(bte::color::rgb const *foreground,
+                        bte::color::rgb const *background,
+                        bte::color::rgb const *palette,
                         gsize palette_size);
         void set_colors_default();
         bool set_cursor_blink_mode(CursorBlinkMode mode);
@@ -1523,20 +1523,20 @@ public:
         inline void clear_screen();
         inline void clear_current_line();
         inline void clear_above_current();
-        inline void scroll_text(vte::grid::row_t scroll_amount);
+        inline void scroll_text(bte::grid::row_t scroll_amount);
         inline void switch_screen(VteScreen *new_screen);
         inline void switch_normal_screen();
         inline void switch_alternate_screen();
         inline void save_cursor();
         inline void restore_cursor();
 
-        inline void set_mode_ecma(vte::parser::Sequence const& seq,
+        inline void set_mode_ecma(bte::parser::Sequence const& seq,
                                   bool set) noexcept;
-        inline void set_mode_private(vte::parser::Sequence const& seq,
+        inline void set_mode_private(bte::parser::Sequence const& seq,
                                      bool set) noexcept;
         inline void set_mode_private(int mode,
                                      bool set) noexcept;
-        inline void save_mode_private(vte::parser::Sequence const& seq,
+        inline void save_mode_private(bte::parser::Sequence const& seq,
                                       bool save) noexcept;
         void update_mouse_protocol() noexcept;
 
@@ -1547,75 +1547,75 @@ public:
         inline void clear_below_current();
         inline void clear_to_eol();
         inline void delete_character();
-        inline void set_cursor_column(vte::grid::column_t col);
-        inline void set_cursor_column1(vte::grid::column_t col); /* 1-based */
+        inline void set_cursor_column(bte::grid::column_t col);
+        inline void set_cursor_column1(bte::grid::column_t col); /* 1-based */
         inline int get_cursor_column() const noexcept { return CLAMP(m_screen->cursor.col, 0, m_column_count - 1); }
         inline int get_cursor_column1() const noexcept { return get_cursor_column() + 1; }
-        inline void set_cursor_row(vte::grid::row_t row /* relative to scrolling region */);
-        inline void set_cursor_row1(vte::grid::row_t row /* relative to scrolling region */); /* 1-based */
+        inline void set_cursor_row(bte::grid::row_t row /* relative to scrolling region */);
+        inline void set_cursor_row1(bte::grid::row_t row /* relative to scrolling region */); /* 1-based */
         inline int get_cursor_row() const noexcept { return CLAMP(m_screen->cursor.row, 0, m_row_count - 1); }
         inline int get_cursor_row1() const noexcept { return get_cursor_row() + 1; }
-        inline void set_cursor_coords(vte::grid::row_t row /* relative to scrolling region */,
-                                      vte::grid::column_t column);
-        inline void set_cursor_coords1(vte::grid::row_t row /* relative to scrolling region */,
-                                       vte::grid::column_t column); /* 1-based */
-        inline vte::grid::row_t get_cursor_row_unclamped() const;
-        inline vte::grid::column_t get_cursor_column_unclamped() const;
-        inline void move_cursor_up(vte::grid::row_t rows);
-        inline void move_cursor_down(vte::grid::row_t rows);
+        inline void set_cursor_coords(bte::grid::row_t row /* relative to scrolling region */,
+                                      bte::grid::column_t column);
+        inline void set_cursor_coords1(bte::grid::row_t row /* relative to scrolling region */,
+                                       bte::grid::column_t column); /* 1-based */
+        inline bte::grid::row_t get_cursor_row_unclamped() const;
+        inline bte::grid::column_t get_cursor_column_unclamped() const;
+        inline void move_cursor_up(bte::grid::row_t rows);
+        inline void move_cursor_down(bte::grid::row_t rows);
         inline void erase_characters(long count);
         inline void insert_blank_character();
 
         template<unsigned int redbits, unsigned int greenbits, unsigned int bluebits>
-        inline bool seq_parse_sgr_color(vte::parser::Sequence const& seq,
+        inline bool seq_parse_sgr_color(bte::parser::Sequence const& seq,
                                         unsigned int& idx,
                                         uint32_t& color) const noexcept;
 
-        inline void move_cursor_backward(vte::grid::column_t columns);
-        inline void move_cursor_forward(vte::grid::column_t columns);
+        inline void move_cursor_backward(bte::grid::column_t columns);
+        inline void move_cursor_forward(bte::grid::column_t columns);
         inline void move_cursor_tab_backward(int count = 1);
         inline void move_cursor_tab_forward(int count = 1);
         inline void line_feed();
-        inline void erase_in_display(vte::parser::Sequence const& seq);
-        inline void erase_in_line(vte::parser::Sequence const& seq);
-        inline void insert_lines(vte::grid::row_t param);
-        inline void delete_lines(vte::grid::row_t param);
+        inline void erase_in_display(bte::parser::Sequence const& seq);
+        inline void erase_in_line(bte::parser::Sequence const& seq);
+        inline void insert_lines(bte::grid::row_t param);
+        inline void delete_lines(bte::grid::row_t param);
 
-        unsigned int checksum_area(vte::grid::row_t start_row,
-                                   vte::grid::column_t start_col,
-                                   vte::grid::row_t end_row,
-                                   vte::grid::column_t end_col);
+        unsigned int checksum_area(bte::grid::row_t start_row,
+                                   bte::grid::column_t start_col,
+                                   bte::grid::row_t end_row,
+                                   bte::grid::column_t end_col);
 
         void subscribe_accessible_events();
-        void select_text(vte::grid::column_t start_col,
-                         vte::grid::row_t start_row,
-                         vte::grid::column_t end_col,
-                         vte::grid::row_t end_row);
-        void select_empty(vte::grid::column_t col,
-                          vte::grid::row_t row);
+        void select_text(bte::grid::column_t start_col,
+                         bte::grid::row_t start_row,
+                         bte::grid::column_t end_col,
+                         bte::grid::row_t end_row);
+        void select_empty(bte::grid::column_t col,
+                          bte::grid::row_t row);
 
-        void send(vte::parser::u8SequenceBuilder const& builder,
+        void send(bte::parser::u8SequenceBuilder const& builder,
                   bool c1 = true,
-                  vte::parser::u8SequenceBuilder::Introducer introducer = vte::parser::u8SequenceBuilder::Introducer::DEFAULT,
-                  vte::parser::u8SequenceBuilder::ST st = vte::parser::u8SequenceBuilder::ST::DEFAULT) noexcept;
-        void send(vte::parser::Sequence const& seq,
-                  vte::parser::u8SequenceBuilder const& builder) noexcept;
+                  bte::parser::u8SequenceBuilder::Introducer introducer = bte::parser::u8SequenceBuilder::Introducer::DEFAULT,
+                  bte::parser::u8SequenceBuilder::ST st = bte::parser::u8SequenceBuilder::ST::DEFAULT) noexcept;
+        void send(bte::parser::Sequence const& seq,
+                  bte::parser::u8SequenceBuilder const& builder) noexcept;
         void send(unsigned int type,
                   std::initializer_list<int> params) noexcept;
-        void reply(vte::parser::Sequence const& seq,
+        void reply(bte::parser::Sequence const& seq,
                    unsigned int type,
                    std::initializer_list<int> params) noexcept;
-        void reply(vte::parser::Sequence const& seq,
+        void reply(bte::parser::Sequence const& seq,
                    unsigned int type,
                    std::initializer_list<int> params,
-                   vte::parser::ReplyBuilder const& builder) noexcept;
+                   bte::parser::ReplyBuilder const& builder) noexcept;
         #if 0
-        void reply(vte::parser::Sequence const& seq,
+        void reply(bte::parser::Sequence const& seq,
                    unsigned int type,
                    std::initializer_list<int> params,
                    std::string const& str) noexcept;
         #endif
-        void reply(vte::parser::Sequence const& seq,
+        void reply(bte::parser::Sequence const& seq,
                    unsigned int type,
                    std::initializer_list<int> params,
                    char const* format,
@@ -1625,38 +1625,38 @@ public:
         bool get_osc_color_index(int osc,
                                  int value,
                                  int& index) const noexcept;
-        void set_color_index(vte::parser::Sequence const& seq,
-                             vte::parser::StringTokeniser::const_iterator& token,
-                             vte::parser::StringTokeniser::const_iterator const& endtoken,
+        void set_color_index(bte::parser::Sequence const& seq,
+                             bte::parser::StringTokeniser::const_iterator& token,
+                             bte::parser::StringTokeniser::const_iterator const& endtoken,
                              int number,
                              int index,
                              int index_fallback,
                              int osc) noexcept;
 
         /* OSC handlers */
-        void set_color(vte::parser::Sequence const& seq,
-                       vte::parser::StringTokeniser::const_iterator& token,
-                       vte::parser::StringTokeniser::const_iterator const& endtoken,
+        void set_color(bte::parser::Sequence const& seq,
+                       bte::parser::StringTokeniser::const_iterator& token,
+                       bte::parser::StringTokeniser::const_iterator const& endtoken,
                        int osc) noexcept;
-        void set_special_color(vte::parser::Sequence const& seq,
-                               vte::parser::StringTokeniser::const_iterator& token,
-                               vte::parser::StringTokeniser::const_iterator const& endtoken,
+        void set_special_color(bte::parser::Sequence const& seq,
+                               bte::parser::StringTokeniser::const_iterator& token,
+                               bte::parser::StringTokeniser::const_iterator const& endtoken,
                                int index,
                                int index_fallback,
                                int osc) noexcept;
-        void reset_color(vte::parser::Sequence const& seq,
-                         vte::parser::StringTokeniser::const_iterator& token,
-                         vte::parser::StringTokeniser::const_iterator const& endtoken,
+        void reset_color(bte::parser::Sequence const& seq,
+                         bte::parser::StringTokeniser::const_iterator& token,
+                         bte::parser::StringTokeniser::const_iterator const& endtoken,
                          int osc) noexcept;
-        void set_current_directory_uri(vte::parser::Sequence const& seq,
-                                       vte::parser::StringTokeniser::const_iterator& token,
-                                       vte::parser::StringTokeniser::const_iterator const& endtoken) noexcept;
-        void set_current_file_uri(vte::parser::Sequence const& seq,
-                                  vte::parser::StringTokeniser::const_iterator& token,
-                                  vte::parser::StringTokeniser::const_iterator const& endtoken) noexcept;
-        void set_current_hyperlink(vte::parser::Sequence const& seq,
-                                   vte::parser::StringTokeniser::const_iterator& token,
-                                   vte::parser::StringTokeniser::const_iterator const& endtoken) noexcept;
+        void set_current_directory_uri(bte::parser::Sequence const& seq,
+                                       bte::parser::StringTokeniser::const_iterator& token,
+                                       bte::parser::StringTokeniser::const_iterator const& endtoken) noexcept;
+        void set_current_file_uri(bte::parser::Sequence const& seq,
+                                  bte::parser::StringTokeniser::const_iterator& token,
+                                  bte::parser::StringTokeniser::const_iterator const& endtoken) noexcept;
+        void set_current_hyperlink(bte::parser::Sequence const& seq,
+                                   bte::parser::StringTokeniser::const_iterator& token,
+                                   bte::parser::StringTokeniser::const_iterator const& endtoken) noexcept;
 
         void ringview_update();
 
@@ -1664,7 +1664,7 @@ public:
         bool m_line_wrapped; // signals line wrapped from character insertion
         // Note: inlining the handlers seems to worsen the performance, so we don't do that
 #define _VTE_CMD(cmd) \
-	/* inline */ void cmd (vte::parser::Sequence const& seq);
+	/* inline */ void cmd (bte::parser::Sequence const& seq);
 #define _VTE_NOP(cmd) G_GNUC_UNUSED _VTE_CMD(cmd)
 #include "parser-cmd.hh"
 #undef _VTE_CMD
@@ -1672,14 +1672,14 @@ public:
 };
 
 } // namespace terminal
-} // namespace vte
+} // namespace bte
 
 extern GTimer *process_timer;
 
-vte::terminal::Terminal* _vte_terminal_get_impl(VteTerminal *terminal);
+bte::terminal::Terminal* _bte_terminal_get_impl(VteTerminal *terminal);
 
 static inline bool
-_vte_double_equal(double a,
+_bte_double_equal(double a,
                   double b)
 {
 #pragma GCC diagnostic push

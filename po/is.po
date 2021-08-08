@@ -4,9 +4,9 @@
 # Sveinn í Felli <sv1@fellsnet.is>, 2015, 2017.
 msgid ""
 msgstr ""
-"Project-Id-Version: vte\n"
+"Project-Id-Version: bte\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=vte&keywords=I18N+L10N&component=general\n"
+"product=bte&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2016-09-17 18:49+0000\n"
 "PO-Revision-Date: 2017-03-01 11:45+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
@@ -19,27 +19,27 @@ msgstr ""
 "X-Generator: Lokalize 1.5\n"
 
 #: ../src/iso2022.cc:73 ../src/iso2022.cc:81 ../src/iso2022.cc:111
-#: ../src/vtectk.cc:3072
+#: ../src/btectk.cc:3072
 #, c-format
 msgid "Unable to convert characters from %s to %s."
 msgstr "Ekki tókst að umbreyta stöfum frá %s yfir í %s."
 
 #. Translators: %s is replaced with error message returned by strerror().
-#: ../src/vte.cc:4002
+#: ../src/bte.cc:4002
 #, c-format
 msgid "Error reading from child: %s."
 msgstr "Villa. Ekki tókst að lesa frá afleiðu: %s"
 
-#: ../src/vte.cc:4141
+#: ../src/bte.cc:4141
 #, c-format
 msgid "Error (%s) converting data for child, dropping."
 msgstr "Villa (%s) við umbreytingu á gögnum frá afleiðu, hætti við."
 
-#: ../src/vte.cc:7910
+#: ../src/bte.cc:7910
 msgid "WARNING"
 msgstr "AÐVÖRUN"
 
-#: ../src/vte.cc:7911
+#: ../src/bte.cc:7911
 msgid "GNUTLS not enabled; data will be written to disk unencrypted!"
 msgstr "GNUTLS er ekki virkt; gögn verða skrifuð ódulrituð á disk!"
 
@@ -105,7 +105,7 @@ msgstr "GNUTLS er ekki virkt; gögn verða skrifuð ódulrituð á disk!"
 #~ msgid "Error setting PTY size: %s."
 #~ msgstr "Villa. Ekki tókst að setja PTY stærð: %s"
 
-#~ msgid "_vte_conv_open() failed setting word characters"
+#~ msgid "_bte_conv_open() failed setting word characters"
 #~ msgstr "g_iconv_open() tókst ekki að setja orðrittákn"
 
 #~ msgid "Unknown pixel mode %d.\n"

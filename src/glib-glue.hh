@@ -26,10 +26,10 @@
 
 #include "cxx-utils.hh"
 
-namespace vte::glib {
+namespace bte::glib {
 
 template<typename T>
-using FreePtr = vte::FreeablePtr<T, decltype(&g_free), &g_free>;
+using FreePtr = bte::FreeablePtr<T, decltype(&g_free), &g_free>;
 
 template<typename T>
 FreePtr<T>
@@ -52,7 +52,7 @@ dup_string(char const* str)
         return take_string(g_strdup(str));
 }
 
-using StrvPtr = vte::FreeablePtr<char*, decltype(&g_strfreev), &g_strfreev>;
+using StrvPtr = bte::FreeablePtr<char*, decltype(&g_strfreev), &g_strfreev>;
 
 inline StrvPtr
 take_strv(char** strv)
@@ -219,7 +219,7 @@ private:
                 try {
                         rv = m_callback();
                 } catch (...) {
-                        vte::log_exception();
+                        bte::log_exception();
                 }
 
                 /* The Timer may have been re-scheduled or removed from within
@@ -271,4 +271,4 @@ bool set_error_from_exception(GError** error
 #endif
                               ) noexcept;
 
-} // namespace vte::glib
+} // namespace bte::glib

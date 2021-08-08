@@ -21,7 +21,7 @@
 #include <config.h>
 
 #include "debug.h"
-#include "vterowdata.hh"
+#include "bterowdata.hh"
 
 #include <string.h>
 
@@ -47,7 +47,7 @@ struct _VteCells {
 };
 
 static inline VteCells *
-_vte_cells_for_cell_array (VteCell *cells)
+_bte_cells_for_cell_array (VteCell *cells)
 {
 	if (G_UNLIKELY (!cells))
 		return NULL;
@@ -56,11 +56,11 @@ _vte_cells_for_cell_array (VteCell *cells)
 }
 
 static VteCells *
-_vte_cells_realloc (VteCells *cells, guint32 len)
+_bte_cells_realloc (VteCells *cells, guint32 len)
 {
 	guint32 alloc_len = (1 << g_bit_storage (MAX (len, 80))) - 1;
 
-	_vte_debug_print(VTE_DEBUG_RING, "Enlarging cell array of %d cells to %d cells\n", cells ? cells->alloc_len : 0, alloc_len);
+	_bte_debug_print(VTE_DEBUG_RING, "Enlarging cell array of %d cells to %d cells\n", cells ? cells->alloc_len : 0, alloc_len);
 	cells = (VteCells *)g_realloc (cells, G_STRUCT_OFFSET (VteCells, cells) + alloc_len * sizeof (cells->cells[0]));
 	cells->alloc_len = alloc_len;
 
@@ -68,9 +68,9 @@ _vte_cells_realloc (VteCells *cells, guint32 len)
 }
 
 static void
-_vte_cells_free (VteCells *cells)
+_bte_cells_free (VteCells *cells)
 {
-	_vte_debug_print(VTE_DEBUG_RING, "Freeing cell array of %d cells\n", cells->alloc_len);
+	_bte_debug_print(VTE_DEBUG_RING, "Freeing cell array of %d cells\n", cells->alloc_len);
 	g_free (cells);
 }
 
@@ -80,48 +80,48 @@ _vte_cells_free (VteCells *cells)
  */
 
 void
-_vte_row_data_init (VteRowData *row)
+_bte_row_data_init (VteRowData *row)
 {
 	memset (row, 0, sizeof (*row));
 }
 
 void
-_vte_row_data_clear (VteRowData *row)
+_bte_row_data_clear (VteRowData *row)
 {
 	VteCell *cells = row->cells;
-	_vte_row_data_init (row);
+	_bte_row_data_init (row);
 	row->cells = cells;
 }
 
 void
-_vte_row_data_fini (VteRowData *row)
+_bte_row_data_fini (VteRowData *row)
 {
 	if (row->cells)
-		_vte_cells_free (_vte_cells_for_cell_array (row->cells));
+		_bte_cells_free (_bte_cells_for_cell_array (row->cells));
 	row->cells = NULL;
 }
 
 static inline gboolean
-_vte_row_data_ensure (VteRowData *row, gulong len)
+_bte_row_data_ensure (VteRowData *row, gulong len)
 {
-	VteCells *cells = _vte_cells_for_cell_array (row->cells);
+	VteCells *cells = _bte_cells_for_cell_array (row->cells);
 	if (G_LIKELY (cells && len <= cells->alloc_len))
 		return TRUE;
 
 	if (G_UNLIKELY (len >= 0xFFFF))
 		return FALSE;
 
-	row->cells = _vte_cells_realloc (cells, len)->cells;
+	row->cells = _bte_cells_realloc (cells, len)->cells;
 
 	return TRUE;
 }
 
 void
-_vte_row_data_insert (VteRowData *row, gulong col, const VteCell *cell)
+_bte_row_data_insert (VteRowData *row, gulong col, const VteCell *cell)
 {
 	gulong i;
 
-	if (G_UNLIKELY (!_vte_row_data_ensure (row, row->len + 1)))
+	if (G_UNLIKELY (!_bte_row_data_ensure (row, row->len + 1)))
 		return;
 
 	for (i = row->len; i > col; i--)
@@ -131,16 +131,16 @@ _vte_row_data_insert (VteRowData *row, gulong col, const VteCell *cell)
 	row->len++;
 }
 
-void _vte_row_data_append (VteRowData *row, const VteCell *cell)
+void _bte_row_data_append (VteRowData *row, const VteCell *cell)
 {
-	if (G_UNLIKELY (!_vte_row_data_ensure (row, row->len + 1)))
+	if (G_UNLIKELY (!_bte_row_data_ensure (row, row->len + 1)))
 		return;
 
 	row->cells[row->len] = *cell;
 	row->len++;
 }
 
-void _vte_row_data_remove (VteRowData *row, gulong col)
+void _bte_row_data_remove (VteRowData *row, gulong col)
 {
 	gulong i;
 
@@ -151,12 +151,12 @@ void _vte_row_data_remove (VteRowData *row, gulong col)
 		row->len--;
 }
 
-void _vte_row_data_fill (VteRowData *row, const VteCell *cell, gulong len)
+void _bte_row_data_fill (VteRowData *row, const VteCell *cell, gulong len)
 {
 	if (row->len < len) {
 		gulong i;
 
-		if (G_UNLIKELY (!_vte_row_data_ensure (row, len)))
+		if (G_UNLIKELY (!_bte_row_data_ensure (row, len)))
 			return;
 
 		for (i = row->len; i < len; i++)
@@ -166,22 +166,22 @@ void _vte_row_data_fill (VteRowData *row, const VteCell *cell, gulong len)
 	}
 }
 
-void _vte_row_data_shrink (VteRowData *row, gulong max_len)
+void _bte_row_data_shrink (VteRowData *row, gulong max_len)
 {
 	if (max_len < row->len)
 		row->len = max_len;
 }
 
-void _vte_row_data_copy (const VteRowData *src, VteRowData *dst)
+void _bte_row_data_copy (const VteRowData *src, VteRowData *dst)
 {
-        _vte_row_data_ensure (dst, src->len);
+        _bte_row_data_ensure (dst, src->len);
         dst->len = src->len;
         dst->attr = src->attr;
         memcpy(dst->cells, src->cells, src->len * sizeof (src->cells[0]));
 }
 
 /* Get the length, ignoring trailing empty cells (with a custom background color). */
-guint16 _vte_row_data_nonempty_length (const VteRowData *row)
+guint16 _bte_row_data_nonempty_length (const VteRowData *row)
 {
         guint16 len;
         const VteCell *cell;

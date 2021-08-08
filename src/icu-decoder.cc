@@ -24,7 +24,7 @@
 
 #include "icu-decoder.hh"
 
-namespace vte::base {
+namespace bte::base {
 
 /*
  * ICUDecoder::decode:
@@ -148,4 +148,4 @@ ICUDecoder::reset() noexcept
         m_index = 0;
 }
 
-} // namespace vte::base
+} // namespace bte::base

@@ -21,7 +21,7 @@
 #include "fonts-pangocairo.hh"
 
 #include "debug.h"
-#include "vtedefines.hh"
+#include "btedefines.hh"
 
 /* Have a space between letters to make sure ligatures aren't used when caching the glyphs: bug 793391. */
 #define VTE_DRAW_SINGLE_WIDE_CHARACTERS	\
@@ -35,7 +35,7 @@
 					""
 
 static inline bool
-_vte_double_equal(double a,
+_bte_double_equal(double a,
                   double b)
 {
 #pragma GCC diagnostic push
@@ -46,11 +46,11 @@ _vte_double_equal(double a,
 
 #define FONT_CACHE_TIMEOUT (30) /* seconds */
 
-namespace vte {
+namespace bte {
 namespace view {
 
 FontInfo::UnistrInfo*
-FontInfo::find_unistr_info(vteunistr c)
+FontInfo::find_unistr_info(bteunistr c)
 {
 	if (G_LIKELY (c < G_N_ELEMENTS(m_ascii_unistr_info)))
 		return &m_ascii_unistr_info[c];
@@ -117,7 +117,7 @@ FontInfo::cache_ascii()
 	{
 		PangoGlyphGeometry *geometry;
 		PangoGlyph glyph;
-		vteunistr c;
+		bteunistr c;
 
 		/* Only cache simple clusters */
 		if (iter.start_char +1 != iter.end_char  ||
@@ -161,8 +161,8 @@ FontInfo::cache_ascii()
 	}
 
 #ifdef VTE_DEBUG
-	_vte_debug_print (VTE_DEBUG_PANGOCAIRO,
-			  "vtepangocairo: %p cached %d ASCII letters\n",
+	_bte_debug_print (VTE_DEBUG_PANGOCAIRO,
+			  "btepangocairo: %p cached %d ASCII letters\n",
 			  (void*)this, m_coverage_count[0]);
 #endif
 }
@@ -177,7 +177,7 @@ FontInfo::measure_font()
          * if the user (by design, or trough mis-configuration) uses a proportional
          * font, the latter method will greatly underestimate the required width,
          * leading to unreadable, overlapping characters.
-         * https://gitlab.gnome.org/GNOME/vte/issues/138
+         * https://gitlab.gnome.org/GNOME/bte/issues/138
          */
         int max_width{1};
         int max_height{1};
@@ -209,18 +209,18 @@ FontInfo::measure_font()
 		m_ascent = PANGO_PIXELS_CEIL(pango_layout_get_baseline(m_layout.get()));
 	}
 
-	_vte_debug_print (VTE_DEBUG_MISC,
-			  "vtepangocairo: %p font metrics = %dx%d (%d)\n",
+	_bte_debug_print (VTE_DEBUG_MISC,
+			  "btepangocairo: %p font metrics = %dx%d (%d)\n",
 			  (void*)this, m_width, m_height, m_ascent);
 }
 
 FontInfo::FontInfo(PangoContext *context)
 {
-	_vte_debug_print (VTE_DEBUG_PANGOCAIRO,
-			  "vtepangocairo: %p allocating FontInfo\n",
+	_bte_debug_print (VTE_DEBUG_PANGOCAIRO,
+			  "btepangocairo: %p allocating FontInfo\n",
 			  (void*)this);
 
-	m_layout = vte::glib::take_ref(pango_layout_new(context));
+	m_layout = bte::glib::take_ref(pango_layout_new(context));
 
 	auto tabs = pango_tab_array_new_with_positions(1, FALSE, PANGO_TAB_LEFT, 1);
 	pango_layout_set_tabs(m_layout.get(), tabs);
@@ -243,8 +243,8 @@ FontInfo::~FontInfo()
                             pango_layout_get_context(m_layout.get()));
 
 #ifdef VTE_DEBUG
-	_vte_debug_print (VTE_DEBUG_PANGOCAIRO,
-			  "vtepangocairo: %p freeing font_info.  coverages %d = %d + %d + %d\n",
+	_bte_debug_print (VTE_DEBUG_PANGOCAIRO,
+			  "btepangocairo: %p freeing font_info.  coverages %d = %d + %d + %d\n",
 			  (void*)this,
 			  m_coverage_count[0],
 			  m_coverage_count[1],
@@ -265,13 +265,13 @@ fontconfig_timestamp_quark (void)
 	static GQuark quark;
 
 	if (G_UNLIKELY (!quark))
-		quark = g_quark_from_static_string ("vte-fontconfig-timestamp");
+		quark = g_quark_from_static_string ("bte-fontconfig-timestamp");
 
 	return quark;
 }
 
 static void
-vte_pango_context_set_fontconfig_timestamp (PangoContext *context,
+bte_pango_context_set_fontconfig_timestamp (PangoContext *context,
 					    guint         fontconfig_timestamp)
 {
 	g_object_set_qdata ((GObject *) context,
@@ -280,7 +280,7 @@ vte_pango_context_set_fontconfig_timestamp (PangoContext *context,
 }
 
 static guint
-vte_pango_context_get_fontconfig_timestamp (PangoContext *context)
+bte_pango_context_get_fontconfig_timestamp (PangoContext *context)
 {
 	return GPOINTER_TO_UINT (g_object_get_qdata ((GObject *) context,
 						     fontconfig_timestamp_quark ()));
@@ -293,32 +293,32 @@ context_hash (PangoContext *context)
 	     ^ pango_font_description_hash (pango_context_get_font_description (context))
 	     ^ cairo_font_options_hash (pango_cairo_context_get_font_options (context))
 	     ^ GPOINTER_TO_UINT (pango_context_get_language (context))
-	     ^ vte_pango_context_get_fontconfig_timestamp (context);
+	     ^ bte_pango_context_get_fontconfig_timestamp (context);
 }
 
 static gboolean
 context_equal (PangoContext *a,
 	       PangoContext *b)
 {
-	return _vte_double_equal(pango_cairo_context_get_resolution(a), pango_cairo_context_get_resolution (b))
+	return _bte_double_equal(pango_cairo_context_get_resolution(a), pango_cairo_context_get_resolution (b))
 	    && pango_font_description_equal (pango_context_get_font_description (a), pango_context_get_font_description (b))
 	    && cairo_font_options_equal (pango_cairo_context_get_font_options (a), pango_cairo_context_get_font_options (b))
 	    && pango_context_get_language (a) == pango_context_get_language (b)
-	    && vte_pango_context_get_fontconfig_timestamp (a) == vte_pango_context_get_fontconfig_timestamp (b);
+	    && bte_pango_context_get_fontconfig_timestamp (a) == bte_pango_context_get_fontconfig_timestamp (b);
 }
 
-// FIXMEchpe return vte::base::RefPtr<FontInfo>
+// FIXMEchpe return bte::base::RefPtr<FontInfo>
 /* assumes ownership/reference of context */
 FontInfo*
-FontInfo::find_for_context(vte::glib::RefPtr<PangoContext>& context)
+FontInfo::find_for_context(bte::glib::RefPtr<PangoContext>& context)
 {
 	if (G_UNLIKELY (s_font_info_for_context == nullptr))
 		s_font_info_for_context = g_hash_table_new((GHashFunc) context_hash, (GEqualFunc) context_equal);
 
 	auto info = reinterpret_cast<FontInfo*>(g_hash_table_lookup(s_font_info_for_context, context.get()));
 	if (G_LIKELY(info)) {
-		_vte_debug_print (VTE_DEBUG_PANGOCAIRO,
-				  "vtepangocairo: %p found font_info in cache\n",
+		_bte_debug_print (VTE_DEBUG_PANGOCAIRO,
+				  "btepangocairo: %p found font_info in cache\n",
 				  info);
 		info = info->ref();
 	} else {
@@ -330,7 +330,7 @@ FontInfo::find_for_context(vte::glib::RefPtr<PangoContext>& context)
 
 /* assumes ownership/reference of context */
 FontInfo*
-FontInfo::create_for_context(vte::glib::RefPtr<PangoContext> context,
+FontInfo::create_for_context(bte::glib::RefPtr<PangoContext> context,
                              PangoFontDescription const* desc,
                              PangoLanguage* language,
                              guint fontconfig_timestamp)
@@ -339,10 +339,10 @@ FontInfo::create_for_context(vte::glib::RefPtr<PangoContext> context,
 		/* Ouch, Ctk+ switched over to some drawing system?
 		 * Lets just create one from the default font map.
 		 */
-		context = vte::glib::take_ref(pango_font_map_create_context(pango_cairo_font_map_get_default()));
+		context = bte::glib::take_ref(pango_font_map_create_context(pango_cairo_font_map_get_default()));
 	}
 
-	vte_pango_context_set_fontconfig_timestamp(context.get(), fontconfig_timestamp);
+	bte_pango_context_set_fontconfig_timestamp(context.get(), fontconfig_timestamp);
 
 	pango_context_set_base_dir(context.get(), PANGO_DIRECTION_LTR);
 
@@ -373,7 +373,7 @@ FontInfo::create_for_screen(CdkScreen* screen,
 	auto settings = ctk_settings_get_for_screen(screen);
 	auto fontconfig_timestamp = guint{};
 	g_object_get (settings, "ctk-fontconfig-timestamp", &fontconfig_timestamp, nullptr);
-	return create_for_context(vte::glib::take_ref(cdk_pango_context_get_for_screen(screen)),
+	return create_for_context(bte::glib::take_ref(cdk_pango_context_get_for_screen(screen)),
                                   desc, language, fontconfig_timestamp);
 }
 
@@ -388,7 +388,7 @@ FontInfo::create_for_widget(CtkWidget* widget,
 }
 
 FontInfo::UnistrInfo*
-FontInfo::get_unistr_info(vteunistr c)
+FontInfo::get_unistr_info(bteunistr c)
 {
 	PangoRectangle logical;
 	PangoLayoutLine *line;
@@ -400,7 +400,7 @@ FontInfo::get_unistr_info(vteunistr c)
 	auto ufi = &uinfo->m_ufi;
 
 	g_string_set_size(m_string, 0);
-	_vte_unistr_append_to_string(c, m_string);
+	_bte_unistr_append_to_string(c, m_string);
 	pango_layout_set_text(m_layout.get(), m_string->str, m_string->len);
 	pango_layout_get_extents(m_layout.get(), NULL, &logical);
 
@@ -463,4 +463,4 @@ FontInfo::get_unistr_info(vteunistr c)
 }
 
 } // namespace view
-} // namespace vte
+} // namespace bte

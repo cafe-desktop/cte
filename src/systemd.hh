@@ -23,11 +23,11 @@
 #include <glib.h>
 #include <gio/gio.h>
 
-namespace vte::systemd {
+namespace bte::systemd {
 
 bool create_scope_for_pid_sync(pid_t pid,
                                int timeout,
                                GCancellable* cancellable,
                                GError** error);
 
-} // namespace vte::systemd
+} // namespace bte::systemd

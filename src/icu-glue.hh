@@ -20,7 +20,7 @@
 #include <glib.h>
 #include <memory>
 
-namespace vte::base {
+namespace bte::base {
 
 char** get_icu_charsets(bool aliases = true);
 
@@ -31,4 +31,4 @@ bool get_icu_charset_is_ecma35(char const* charset);
 std::shared_ptr<UConverter> make_icu_converter(char const* charset,
                                                GError** error = nullptr);
 
-} // namespace vte::base
+} // namespace bte::base

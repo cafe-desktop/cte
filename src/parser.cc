@@ -45,33 +45,33 @@
  *
  * This parser is mostly DEC VT100+ compatible; known differences are:
  *
- * * DEC only recognises up to 16 parameters; vte up to 32 (and that can be easily
+ * * DEC only recognises up to 16 parameters; bte up to 32 (and that can be easily
  *   extended)
  *
- * * DEC's parameter values range is 0..16384; vte supports 0..65535 (16-bit range).
+ * * DEC's parameter values range is 0..16384; bte supports 0..65535 (16-bit range).
  *
  * * When the number of parameter exceeds that number, DEC executes the function
- *   with these parameters, ignoring the excessive parameters; vte ignores the
+ *   with these parameters, ignoring the excessive parameters; bte ignores the
  *   whole function instead.
  *
- * * DEC ignores CSI sequences with colon-separated parameters; vte implements colon-
+ * * DEC ignores CSI sequences with colon-separated parameters; bte implements colon-
  *   separated parameters as subparameters (this is an extension taken from ITU-T T.416).
  *
  * * DEC executes format effector controls in CSI, OSC, DCS sequences as if the
- *   control was received before the control sequence; vte only does this for CSI
+ *   control was received before the control sequence; bte only does this for CSI
  *   sequences and ignores all controls except ESC and BEL in OSC control strings,
  *   and passes all controls except ESC through to the control string in DCS sequences.
  *
- * * DEC only allows ST (either C0 or C1) to terminate OSC strings; vte allows
+ * * DEC only allows ST (either C0 or C1) to terminate OSC strings; bte allows
  *   OSC to be terminated by BEL (this is a deprecated xterm extension).
  *
- * * DEC parses ESC Z as DECID, a deprecated function equivalent to DA1; vte
+ * * DEC parses ESC Z as DECID, a deprecated function equivalent to DA1; bte
  *   implements ECMA-48's SCI (single character introducer) instead.
  */
 
 /*
  * Command Parser
- * The ctl-seq parser "vte_parser" only detects whole sequences, it does not
+ * The ctl-seq parser "bte_parser" only detects whole sequences, it does not
  * detect the specific command. Once a sequence is parsed, the command-parsers
  * are used to figure out their meaning.
  */
@@ -160,7 +160,7 @@ parser_check_matching_controls(uint32_t introducer,
 }
 
 static unsigned int
-vte_parse_host_control(vte_seq_t const* seq)
+bte_parse_host_control(bte_seq_t const* seq)
 {
         switch (seq->terminator) {
 #define _VTE_SEQ(cmd,type,f,pi,ni,i0) case f: return VTE_CMD_##cmd;
@@ -171,7 +171,7 @@ vte_parse_host_control(vte_seq_t const* seq)
 }
 
 static unsigned int
-vte_parse_charset_94(uint32_t raw,
+bte_parse_charset_94(uint32_t raw,
                      unsigned int intermediates)
 {
         assert (raw >= 0x30 && raw < 0x7f);
@@ -221,7 +221,7 @@ vte_parse_charset_94(uint32_t raw,
 }
 
 static unsigned int
-vte_parse_charset_94_n(uint32_t raw,
+bte_parse_charset_94_n(uint32_t raw,
                        unsigned int intermediates)
 {
         assert (raw >= 0x30 && raw < 0x7f);
@@ -243,7 +243,7 @@ vte_parse_charset_94_n(uint32_t raw,
 }
 
 static unsigned int
-vte_parse_charset_96(uint32_t raw,
+bte_parse_charset_96(uint32_t raw,
                      unsigned int intermediates)
 {
         assert (raw >= 0x30 && raw < 0x7f);
@@ -265,7 +265,7 @@ vte_parse_charset_96(uint32_t raw,
 }
 
 static unsigned int
-vte_parse_charset_96_n(uint32_t raw,
+bte_parse_charset_96_n(uint32_t raw,
                        unsigned int intermediates)
 {
         if (VTE_SEQ_INTERMEDIATE(intermediates) == VTE_SEQ_INTERMEDIATE_SPACE)
@@ -275,7 +275,7 @@ vte_parse_charset_96_n(uint32_t raw,
 }
 
 static unsigned int
-vte_parse_charset_ocs(uint32_t raw,
+bte_parse_charset_ocs(uint32_t raw,
                       unsigned int intermediates)
 {
         assert (raw >= 0x30 && raw < 0x7f);
@@ -310,7 +310,7 @@ vte_parse_charset_ocs(uint32_t raw,
 }
 
 static unsigned int
-vte_parse_charset_control(uint32_t raw,
+bte_parse_charset_control(uint32_t raw,
                           unsigned int intermediates)
 {
         assert (raw >= 0x30 && raw < 0x7f);
@@ -335,7 +335,7 @@ vte_parse_charset_control(uint32_t raw,
 }
 
 static unsigned int
-vte_parse_host_escape(vte_seq_t const* seq,
+bte_parse_host_escape(bte_seq_t const* seq,
                       unsigned int *cs_out)
 {
         unsigned int intermediates = seq->intermediates;
@@ -362,7 +362,7 @@ vte_parse_host_escape(vte_seq_t const* seq,
 
         case VTE_SEQ_INTERMEDIATE_BANG:    /* C0-designate */
         case VTE_SEQ_INTERMEDIATE_DQUOTE:  /* C1-designate */
-                *cs_out = VTE_MAKE_CHARSET(vte_parse_charset_control(seq->terminator, intermediates),
+                *cs_out = VTE_MAKE_CHARSET(bte_parse_charset_control(seq->terminator, intermediates),
                                            intermediate0 - VTE_SEQ_INTERMEDIATE_BANG);
                 return VTE_CMD_CnD;
 
@@ -382,7 +382,7 @@ vte_parse_host_escape(vte_seq_t const* seq,
                         case '@':
                         case 'A':
                         case 'B': /* G0-designate multibyte charset */
-                                *cs_out = VTE_MAKE_CHARSET(vte_parse_charset_94_n(seq->terminator,
+                                *cs_out = VTE_MAKE_CHARSET(bte_parse_charset_94_n(seq->terminator,
                                                                                   remaining_intermediates),
                                                            0);
                                 return VTE_CMD_GnDMm;
@@ -393,7 +393,7 @@ vte_parse_host_escape(vte_seq_t const* seq,
                 case VTE_SEQ_INTERMEDIATE_PCLOSE: /* G1-designate 94^n-set */
                 case VTE_SEQ_INTERMEDIATE_MULT:   /* G2-designate 94^n-set */
                 case VTE_SEQ_INTERMEDIATE_PLUS:   /* G3-designate 94^n-set */
-                        *cs_out = VTE_MAKE_CHARSET(vte_parse_charset_94_n(seq->terminator,
+                        *cs_out = VTE_MAKE_CHARSET(bte_parse_charset_94_n(seq->terminator,
                                                                           remaining_intermediates),
                                                    intermediate1 - VTE_SEQ_INTERMEDIATE_POPEN);
                         return VTE_CMD_GnDMm;
@@ -404,7 +404,7 @@ vte_parse_host_escape(vte_seq_t const* seq,
                 case VTE_SEQ_INTERMEDIATE_MINUS:  /* G1-designate 96^n-set */
                 case VTE_SEQ_INTERMEDIATE_DOT:    /* G2-designate 96^n-set */
                 case VTE_SEQ_INTERMEDIATE_SLASH:  /* G3-designate 96^n-set */
-                        *cs_out = VTE_MAKE_CHARSET(vte_parse_charset_96_n(seq->terminator,
+                        *cs_out = VTE_MAKE_CHARSET(bte_parse_charset_96_n(seq->terminator,
                                                                           remaining_intermediates),
                                                    intermediate1 - VTE_SEQ_INTERMEDIATE_COMMA);
                         return VTE_CMD_GnDMm;
@@ -413,7 +413,7 @@ vte_parse_host_escape(vte_seq_t const* seq,
         }
 
         case VTE_SEQ_INTERMEDIATE_PERCENT: /* Designate other coding system */
-                *cs_out = vte_parse_charset_ocs(seq->terminator,
+                *cs_out = bte_parse_charset_ocs(seq->terminator,
                                                 VTE_SEQ_REMOVE_INTERMEDIATE(intermediates));
                 return VTE_CMD_DOCS;
 
@@ -429,7 +429,7 @@ vte_parse_host_escape(vte_seq_t const* seq,
         case VTE_SEQ_INTERMEDIATE_PCLOSE:  /* G1-designate 94-set */
         case VTE_SEQ_INTERMEDIATE_MULT:    /* G2-designate 94-set */
         case VTE_SEQ_INTERMEDIATE_PLUS:    /* G3-designate 94-set */
-                *cs_out = VTE_MAKE_CHARSET(vte_parse_charset_94(seq->terminator,
+                *cs_out = VTE_MAKE_CHARSET(bte_parse_charset_94(seq->terminator,
                                                                 VTE_SEQ_REMOVE_INTERMEDIATE(intermediates)),
                                            intermediate0 - VTE_SEQ_INTERMEDIATE_POPEN);
                 return VTE_CMD_GnDm;
@@ -440,7 +440,7 @@ vte_parse_host_escape(vte_seq_t const* seq,
         case VTE_SEQ_INTERMEDIATE_MINUS:   /* G1-designate 96-set */
         case VTE_SEQ_INTERMEDIATE_DOT:     /* G2-designate 96-set */
         case VTE_SEQ_INTERMEDIATE_SLASH:   /* G3-designate 96-set */
-                *cs_out = VTE_MAKE_CHARSET(vte_parse_charset_96(seq->terminator,
+                *cs_out = VTE_MAKE_CHARSET(bte_parse_charset_96(seq->terminator,
                                                                 VTE_SEQ_REMOVE_INTERMEDIATE(intermediates)),
                                            intermediate0 - VTE_SEQ_INTERMEDIATE_COMMA);
                 return VTE_CMD_GnDm;
@@ -450,7 +450,7 @@ vte_parse_host_escape(vte_seq_t const* seq,
 }
 
 static unsigned int
-vte_parse_host_csi(vte_seq_t const* seq)
+bte_parse_host_csi(bte_seq_t const* seq)
 {
         switch (_VTE_SEQ_CODE(seq->terminator, seq->intermediates)) {
 #define _VTE_SEQ(cmd,type,f,p,ni,i) \
@@ -462,7 +462,7 @@ vte_parse_host_csi(vte_seq_t const* seq)
 }
 
 static unsigned int
-vte_parse_host_dcs(vte_seq_t const* seq)
+bte_parse_host_dcs(bte_seq_t const* seq)
 {
         switch (_VTE_SEQ_CODE(seq->terminator, seq->intermediates)) {
 #define _VTE_SEQ(cmd,type,f,p,ni,i) \
@@ -474,7 +474,7 @@ vte_parse_host_dcs(vte_seq_t const* seq)
 }
 
 static unsigned int
-vte_parse_host_sci(vte_seq_t const* seq)
+bte_parse_host_sci(bte_seq_t const* seq)
 {
         switch (_VTE_SEQ_CODE(seq->terminator, 0)) {
 #define _VTE_SEQ(cmd,type,f,p,ni,i) \
@@ -519,7 +519,7 @@ enum parser_state_t {
 
 /* Parser state transitioning */
 
-typedef int (* parser_action_func)(vte_parser_t* parser, uint32_t raw);
+typedef int (* parser_action_func)(bte_parser_t* parser, uint32_t raw);
 
 // FIXMEchpe: I get weird performance results here from
 // either not inlining, inlining these function or the
@@ -533,14 +533,14 @@ typedef int (* parser_action_func)(vte_parser_t* parser, uint32_t raw);
 
 /* nop */
 static PTINLINE int
-parser_nop(vte_parser_t* parser,
+parser_nop(bte_parser_t* parser,
            uint32_t raw)
 {
         return VTE_SEQ_NONE;
 }
 /* dispatch related actions */
 static PTINLINE int
-parser_action(vte_parser_t* parser,
+parser_action(bte_parser_t* parser,
               uint32_t raw,
               parser_action_func action)
 {
@@ -549,7 +549,7 @@ parser_action(vte_parser_t* parser,
 
 /* perform state transition */
 static PTINLINE int
-parser_transition_no_action(vte_parser_t* parser,
+parser_transition_no_action(bte_parser_t* parser,
                             uint32_t raw,
                             unsigned int state)
 {
@@ -559,7 +559,7 @@ parser_transition_no_action(vte_parser_t* parser,
 
 /* perform state transition and dispatch related actions */
 static PTINLINE int
-parser_transition(vte_parser_t* parser,
+parser_transition(bte_parser_t* parser,
                   uint32_t raw,
                   unsigned int state,
                   parser_action_func action)
@@ -600,28 +600,28 @@ parser_transition(vte_parser_t* parser,
 #endif // (inline) functions or macros
 
 /**
- * vte_parser_init() - Initialise parser object
- * @parser: the struct vte_parser
+ * bte_parser_init() - Initialise parser object
+ * @parser: the struct bte_parser
  */
 void
-vte_parser_init(vte_parser_t* parser)
+bte_parser_init(bte_parser_t* parser)
 {
         memset(parser, 0, sizeof(*parser));
-        vte_seq_string_init(&parser->seq.arg_str);
+        bte_seq_string_init(&parser->seq.arg_str);
 }
 
 /**
- * vte_parser_deinit() - Deinitialises parser object
+ * bte_parser_deinit() - Deinitialises parser object
  * @parser: parser object to deinitialise
  */
 void
-vte_parser_deinit(vte_parser_t* parser)
+bte_parser_deinit(bte_parser_t* parser)
 {
-        vte_seq_string_free(&parser->seq.arg_str);
+        bte_seq_string_free(&parser->seq.arg_str);
 }
 
 static inline int
-parser_clear(vte_parser_t* parser,
+parser_clear(bte_parser_t* parser,
              uint32_t raw)
 {
         /* seq.command is set when the sequence is executed,
@@ -634,7 +634,7 @@ parser_clear(vte_parser_t* parser,
 }
 
 static inline int
-parser_clear_int(vte_parser_t* parser,
+parser_clear_int(bte_parser_t* parser,
                  uint32_t raw)
 {
         parser->seq.intermediates = 0;
@@ -644,7 +644,7 @@ parser_clear_int(vte_parser_t* parser,
 }
 
 static inline int
-parser_clear_params(vte_parser_t* parser,
+parser_clear_params(bte_parser_t* parser,
                     uint32_t raw)
 {
         /* The (n_args+1)th parameter may have been started but not
@@ -668,7 +668,7 @@ parser_clear_params(vte_parser_t* parser,
 }
 
 static inline int
-parser_clear_int_and_params(vte_parser_t* parser,
+parser_clear_int_and_params(bte_parser_t* parser,
                             uint32_t raw)
 {
         parser_clear_int(parser, raw);
@@ -676,7 +676,7 @@ parser_clear_int_and_params(vte_parser_t* parser,
 }
 
 static int
-parser_ignore(vte_parser_t* parser,
+parser_ignore(bte_parser_t* parser,
               uint32_t raw)
 {
         parser->seq.type = VTE_SEQ_IGNORE;
@@ -687,7 +687,7 @@ parser_ignore(vte_parser_t* parser,
 }
 
 static int
-parser_print(vte_parser_t* parser,
+parser_print(bte_parser_t* parser,
              uint32_t raw)
 {
         parser->seq.type = VTE_SEQ_GRAPHIC;
@@ -698,18 +698,18 @@ parser_print(vte_parser_t* parser,
 }
 
 static int
-parser_execute(vte_parser_t* parser,
+parser_execute(bte_parser_t* parser,
                uint32_t raw)
 {
         parser->seq.type = VTE_SEQ_CONTROL;
         parser->seq.terminator = raw;
-        parser->seq.command = vte_parse_host_control(&parser->seq);
+        parser->seq.command = bte_parse_host_control(&parser->seq);
 
         return parser->seq.type;
 }
 
 static int
-parser_collect_esc(vte_parser_t* parser,
+parser_collect_esc(bte_parser_t* parser,
                    uint32_t raw)
 {
         assert(raw >= 0x20 && raw <= 0x2f);
@@ -723,7 +723,7 @@ parser_collect_esc(vte_parser_t* parser,
 }
 
 static int
-parser_collect_csi(vte_parser_t* parser,
+parser_collect_csi(bte_parser_t* parser,
                    uint32_t raw)
 {
         assert(raw >= 0x20 && raw <= 0x2f);
@@ -740,7 +740,7 @@ parser_collect_csi(vte_parser_t* parser,
 }
 
 static int
-parser_collect_parameter(vte_parser_t* parser,
+parser_collect_parameter(bte_parser_t* parser,
                          uint32_t raw)
 {
         assert(raw >= 0x3c && raw <= 0x3f);
@@ -758,7 +758,7 @@ parser_collect_parameter(vte_parser_t* parser,
 }
 
 static void
-parser_params_overflow(vte_parser_t* parser,
+parser_params_overflow(bte_parser_t* parser,
                        uint32_t raw)
 {
         /* An overflow of the parameter number can only happen in
@@ -784,11 +784,11 @@ parser_params_overflow(vte_parser_t* parser,
  * MAX+1th parameter following it.
  */
 static int
-parser_finish_param(vte_parser_t* parser,
+parser_finish_param(bte_parser_t* parser,
                     uint32_t raw)
 {
         if (G_LIKELY(parser->seq.n_args < VTE_PARSER_ARG_MAX - 1)) {
-                vte_seq_arg_finish(&parser->seq.args[parser->seq.n_args], false);
+                bte_seq_arg_finish(&parser->seq.args[parser->seq.n_args], false);
                 ++parser->seq.n_args;
                 ++parser->seq.n_final_args;
         } else
@@ -798,11 +798,11 @@ parser_finish_param(vte_parser_t* parser,
 }
 
 static int
-parser_finish_subparam(vte_parser_t* parser,
+parser_finish_subparam(bte_parser_t* parser,
                        uint32_t raw)
 {
         if (G_LIKELY(parser->seq.n_args < VTE_PARSER_ARG_MAX - 1)) {
-                vte_seq_arg_finish(&parser->seq.args[parser->seq.n_args], true);
+                bte_seq_arg_finish(&parser->seq.args[parser->seq.n_args], true);
                 ++parser->seq.n_args;
         } else
                 parser_params_overflow(parser, raw);
@@ -811,13 +811,13 @@ parser_finish_subparam(vte_parser_t* parser,
 }
 
 static int
-parser_param(vte_parser_t* parser,
+parser_param(bte_parser_t* parser,
              uint32_t raw)
 {
         /* assert(raw >= '0' && raw <= '9'); */
 
         if (G_LIKELY(parser->seq.n_args < VTE_PARSER_ARG_MAX))
-                vte_seq_arg_push(&parser->seq.args[parser->seq.n_args], raw);
+                bte_seq_arg_push(&parser->seq.args[parser->seq.n_args], raw);
         else
                 parser_params_overflow(parser, raw);
 
@@ -825,19 +825,19 @@ parser_param(vte_parser_t* parser,
 }
 
 static inline int
-parser_osc_start(vte_parser_t* parser,
+parser_osc_start(bte_parser_t* parser,
                  uint32_t raw)
 {
         parser_clear(parser, raw);
 
-        vte_seq_string_reset(&parser->seq.arg_str);
+        bte_seq_string_reset(&parser->seq.arg_str);
 
         parser->seq.introducer = raw;
         return VTE_SEQ_NONE;
 }
 
 static int
-parser_osc_collect(vte_parser_t* parser,
+parser_osc_collect(bte_parser_t* parser,
                    uint32_t raw)
 {
         /*
@@ -845,26 +845,26 @@ parser_osc_collect(vte_parser_t* parser,
          * Our state-machine already verifies those restrictions.
          */
 
-        if (G_UNLIKELY(!vte_seq_string_push(&parser->seq.arg_str, raw)))
+        if (G_UNLIKELY(!bte_seq_string_push(&parser->seq.arg_str, raw)))
                 parser->state = STATE_ST_IGNORE;
 
         return VTE_SEQ_NONE;
 }
 
 static int
-parser_dcs_start(vte_parser_t* parser,
+parser_dcs_start(bte_parser_t* parser,
                  uint32_t raw)
 {
         parser_clear_int_and_params(parser, raw);
 
-        vte_seq_string_reset(&parser->seq.arg_str);
+        bte_seq_string_reset(&parser->seq.arg_str);
 
         parser->seq.introducer = raw;
         return VTE_SEQ_NONE;
 }
 
 static int
-parser_dcs_consume(vte_parser_t* parser,
+parser_dcs_consume(bte_parser_t* parser,
                    uint32_t raw)
 {
         /* parser->seq is cleared during DCS-START state, thus there's no need
@@ -872,8 +872,8 @@ parser_dcs_consume(vte_parser_t* parser,
 
         if (G_LIKELY(parser->seq.n_args < VTE_PARSER_ARG_MAX)) {
                 if (parser->seq.n_args > 0 ||
-                    vte_seq_arg_started(parser->seq.args[parser->seq.n_args])) {
-                        vte_seq_arg_finish(&parser->seq.args[parser->seq.n_args], false);
+                    bte_seq_arg_started(parser->seq.args[parser->seq.n_args])) {
+                        bte_seq_arg_finish(&parser->seq.args[parser->seq.n_args], false);
                         ++parser->seq.n_args;
                         ++parser->seq.n_final_args;
                 }
@@ -881,36 +881,36 @@ parser_dcs_consume(vte_parser_t* parser,
 
         parser->seq.type = VTE_SEQ_DCS;
         parser->seq.terminator = raw;
-        parser->seq.command = vte_parse_host_dcs(&parser->seq);
+        parser->seq.command = bte_parse_host_dcs(&parser->seq);
 
         return VTE_SEQ_NONE;
 }
 
 static int
-parser_dcs_collect(vte_parser_t* parser,
+parser_dcs_collect(bte_parser_t* parser,
                    uint32_t raw)
 {
-        if (G_UNLIKELY(!vte_seq_string_push(&parser->seq.arg_str, raw)))
+        if (G_UNLIKELY(!bte_seq_string_push(&parser->seq.arg_str, raw)))
                 parser->state = STATE_DCS_IGNORE;
 
         return VTE_SEQ_NONE;
 }
 
 static int
-parser_esc(vte_parser_t* parser,
+parser_esc(bte_parser_t* parser,
            uint32_t raw)
 {
         parser->seq.type = VTE_SEQ_ESCAPE;
         parser->seq.terminator = raw;
         parser->seq.charset = VTE_CHARSET_NONE;
-        parser->seq.command = vte_parse_host_escape(&parser->seq,
+        parser->seq.command = bte_parse_host_escape(&parser->seq,
                                                     &parser->seq.charset);
 
         return parser->seq.type;
 }
 
 static int
-parser_csi(vte_parser_t* parser,
+parser_csi(bte_parser_t* parser,
            uint32_t raw)
 {
         /* parser->seq is cleared during CSI-ENTER state, thus there's no need
@@ -918,8 +918,8 @@ parser_csi(vte_parser_t* parser,
 
         if (G_LIKELY(parser->seq.n_args < VTE_PARSER_ARG_MAX)) {
                 if (parser->seq.n_args > 0 ||
-                    vte_seq_arg_started(parser->seq.args[parser->seq.n_args])) {
-                        vte_seq_arg_finish(&parser->seq.args[parser->seq.n_args], false);
+                    bte_seq_arg_started(parser->seq.args[parser->seq.n_args])) {
+                        bte_seq_arg_finish(&parser->seq.args[parser->seq.n_args], false);
                         ++parser->seq.n_args;
                         ++parser->seq.n_final_args;
                 }
@@ -927,19 +927,19 @@ parser_csi(vte_parser_t* parser,
 
         parser->seq.type = VTE_SEQ_CSI;
         parser->seq.terminator = raw;
-        parser->seq.command = vte_parse_host_csi(&parser->seq);
+        parser->seq.command = bte_parse_host_csi(&parser->seq);
 
         return parser->seq.type;
 }
 
 static int
-parser_osc(vte_parser_t* parser,
+parser_osc(bte_parser_t* parser,
            uint32_t raw)
 {
         /* parser->seq is cleared during OSC_START state, thus there's no need
          * to clear invalid fields here. */
 
-        vte_seq_string_finish(&parser->seq.arg_str);
+        bte_seq_string_finish(&parser->seq.arg_str);
 
         /* We only dispatch a DCS if the introducer and string
          * terminator are from the same control set, i.e. both
@@ -956,12 +956,12 @@ parser_osc(vte_parser_t* parser,
 }
 
 static int
-parser_dcs(vte_parser_t* parser,
+parser_dcs(bte_parser_t* parser,
            uint32_t raw)
 {
         /* parser->seq was already filled in parser_dcs_consume() */
 
-        vte_seq_string_finish(&parser->seq.arg_str);
+        bte_seq_string_finish(&parser->seq.arg_str);
 
         /* We only dispatch a DCS if the introducer and string
          * terminator are from the same control set, i.e. both
@@ -974,12 +974,12 @@ parser_dcs(vte_parser_t* parser,
 }
 
 static int
-parser_sci(vte_parser_t* parser,
+parser_sci(bte_parser_t* parser,
            uint32_t raw)
 {
         parser->seq.type = VTE_SEQ_SCI;
         parser->seq.terminator = raw;
-        parser->seq.command = vte_parse_host_sci(&parser->seq);
+        parser->seq.command = bte_parse_host_sci(&parser->seq);
 
         return parser->seq.type;
 }
@@ -1010,7 +1010,7 @@ parser_sci(vte_parser_t* parser,
 #define ACTION_SCI_DISPATCH parser_sci
 
 static int
-parser_feed_to_state(vte_parser_t* parser,
+parser_feed_to_state(bte_parser_t* parser,
                      uint32_t raw)
 {
         switch (parser->state) {
@@ -1391,7 +1391,7 @@ parser_feed_to_state(vte_parser_t* parser,
 }
 
 int
-vte_parser_feed(vte_parser_t* parser,
+bte_parser_feed(bte_parser_t* parser,
                 uint32_t raw)
 {
         /*
@@ -1440,7 +1440,7 @@ vte_parser_feed(vte_parser_t* parser,
 }
 
 void
-vte_parser_reset(vte_parser_t* parser)
+bte_parser_reset(bte_parser_t* parser)
 {
         parser_transition(parser, 0, STATE_GROUND, ACTION_IGNORE);
 }

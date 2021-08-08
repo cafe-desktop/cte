@@ -1,6 +1,6 @@
 /*** BEGIN file-header ***/
 #if !defined (__VTE_VTE_H_INSIDE__) && !defined (VTE_COMPILATION)
-#error "Only <vte/vte.h> can be included directly."
+#error "Only <bte/bte.h> can be included directly."
 #endif
 
 #ifndef __VTE_VTE_TYPE_BUILTINS_H__
@@ -8,7 +8,7 @@
 
 #include <glib-object.h>
 
-#include "vtemacros.h"
+#include "btemacros.h"
 
 G_BEGIN_DECLS
 /*** END file-header ***/

@@ -3,7 +3,7 @@
 LC_ALL=C
 export LC_ALL
 
-prefix=vte
+prefix=bte
 PREFIX=VTE
 
 if grep --version 2>/dev/null | grep GNU >/dev/null; then

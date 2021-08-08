@@ -1,13 +1,13 @@
-# Serbian translation of vte
+# Serbian translation of bte
 # Courtesy of Prevod.org team (http://www.prevod.org/) -- 2003—2016.
-# This file is distributed under the same license as the vte package.
+# This file is distributed under the same license as the bte package.
 # Maintainer: Вељко М. Станојевић <veljko@vms.homelinux.net>
 # Милош Поповић <gpopac@gmail.com>, 2010.
 # Мирослав Николић <miroslavnikolic@rocketmail.com>, 2011—2016.
 msgid ""
 msgstr ""
-"Project-Id-Version: vte\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Project-Id-Version: bte\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2020-05-27 19:17+0000\n"
 "PO-Revision-Date: 2020-08-31 16:37+0200\n"
 "Last-Translator: Марко М. Костић <marko.m.kostic@gmail.com>\n"
@@ -21,11 +21,11 @@ msgstr ""
 "X-Project-Style: gnome\n"
 "X-Generator: Poedit 2.4.1\n"
 
-#: src/vte.cc:7763
+#: src/bte.cc:7763
 msgid "WARNING"
 msgstr "УПОЗОРЕЊЕ"
 
-#: src/vte.cc:7765
+#: src/bte.cc:7765
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr "Гну-ТЛС није омогућен, подаци ће бити записани на диск нешифровани!"
 
@@ -116,8 +116,8 @@ msgstr "Нисам успео да извршим дете процес „%s“
 #~ msgid "Error compiling regular expression \"%s\"."
 #~ msgstr "Грешка при превођењу правилног израза „%s“."
 
-#~ msgid "_vte_conv_open() failed setting word characters"
-#~ msgstr "„_vte_conv_open()“ није успео да постави знакове речи"
+#~ msgid "_bte_conv_open() failed setting word characters"
+#~ msgstr "„_bte_conv_open()“ није успео да постави знакове речи"
 
 #~ msgid "can not run %s"
 #~ msgstr "не могу да покренем %s"

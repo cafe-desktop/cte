@@ -1,13 +1,13 @@
-# vte
-# This file is distributed under the same license as the vte package.
+# bte
+# This file is distributed under the same license as the bte package.
 #
 # Nam SungHyun <namsh@kldp.org>, 2003
 # Changwoo Ryu <cwryu@debian.org>, 2007, 2009, 2010, 2014, 2016, 2018, 2020.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: vte\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Project-Id-Version: bte\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2020-05-27 19:17+0000\n"
 "PO-Revision-Date: 2020-08-29 19:54+0900\n"
 "Last-Translator: Changwoo Ryu <cwryu@debian.org>\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/vte.cc:7763
+#: src/bte.cc:7763
 msgid "WARNING"
 msgstr "경고"
 
-#: src/vte.cc:7765
+#: src/bte.cc:7765
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr "GnuTLS 사용하지 않음. 데이터를 암호화하지 않은 상태로 디스크에 씁니다"
 

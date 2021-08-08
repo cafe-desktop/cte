@@ -104,7 +104,7 @@
 #define VTE_ATTR_NONE                  (0U)
 #define VTE_ATTR_DEFAULT               (VTE_ATTR_COLUMNS(1))
 
-static inline void vte_attr_set_bool(uint32_t* attr,
+static inline void bte_attr_set_bool(uint32_t* attr,
                                      uint32_t mask,
                                      bool value)
 {
@@ -114,7 +114,7 @@ static inline void vte_attr_set_bool(uint32_t* attr,
                 *attr &= ~mask;
 }
 
-static inline void vte_attr_set_value(uint32_t* attr,
+static inline void bte_attr_set_value(uint32_t* attr,
                                       uint32_t mask,
                                       unsigned int shift,
                                       uint32_t value)
@@ -123,13 +123,13 @@ static inline void vte_attr_set_value(uint32_t* attr,
         *attr = (*attr & ~mask) | ((value << shift) & mask /* assurance */);
 }
 
-static constexpr inline bool vte_attr_get_bool(uint32_t attr,
+static constexpr inline bool bte_attr_get_bool(uint32_t attr,
                                                unsigned int shift)
 {
         return (attr >> shift) & 1U;
 }
 
-static constexpr inline unsigned int vte_attr_get_value(uint32_t attr,
+static constexpr inline unsigned int bte_attr_get_value(uint32_t attr,
                                                         uint32_t value_mask,
                                                         unsigned int shift)
 {

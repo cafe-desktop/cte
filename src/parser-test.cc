@@ -41,7 +41,7 @@ using namespace std::literals;
 #define _VTE_NOQ(...)
 #endif
 
-using namespace vte::parser;
+using namespace bte::parser;
 
 Parser parser{};
 Sequence seq{parser};
@@ -163,15 +163,15 @@ print_seq()
 }
 #endif
 
-class vte_seq_builder : public u32SequenceBuilder {
+class bte_seq_builder : public u32SequenceBuilder {
 public:
-        vte_seq_builder(unsigned int type,
+        bte_seq_builder(unsigned int type,
                         uint32_t f)
                 : u32SequenceBuilder(type, f)
         {
         }
 
-        vte_seq_builder(unsigned int type,
+        bte_seq_builder(unsigned int type,
                         u32SequenceBuilder::string_type const& str)
                 : u32SequenceBuilder(type)
         {
@@ -214,7 +214,7 @@ feed_parser(std::u32string const& s)
 }
 
 static int
-feed_parser(vte_seq_builder& b,
+feed_parser(bte_seq_builder& b,
             bool c1 = false)
 {
         std::u32string s;
@@ -227,61 +227,61 @@ static void
 test_seq_arg(void)
 {
         /* Basic test */
-        vte_seq_arg_t arg = VTE_SEQ_ARG_INIT_DEFAULT;
-        g_assert_false(vte_seq_arg_started(arg));
-        g_assert_true(vte_seq_arg_default(arg));
+        bte_seq_arg_t arg = VTE_SEQ_ARG_INIT_DEFAULT;
+        g_assert_false(bte_seq_arg_started(arg));
+        g_assert_true(bte_seq_arg_default(arg));
 
-        vte_seq_arg_push(&arg, '1');
-        vte_seq_arg_push(&arg, '2');
-        vte_seq_arg_push(&arg, '3');
-        vte_seq_arg_finish(&arg);
+        bte_seq_arg_push(&arg, '1');
+        bte_seq_arg_push(&arg, '2');
+        bte_seq_arg_push(&arg, '3');
+        bte_seq_arg_finish(&arg);
 
-        g_assert_cmpint(vte_seq_arg_value(arg), ==, 123);
-        g_assert_false(vte_seq_arg_default(arg));
+        g_assert_cmpint(bte_seq_arg_value(arg), ==, 123);
+        g_assert_false(bte_seq_arg_default(arg));
 
         /* Test max value */
         arg = VTE_SEQ_ARG_INIT_DEFAULT;
-        vte_seq_arg_push(&arg, '6');
-        vte_seq_arg_push(&arg, '5');
-        vte_seq_arg_push(&arg, '5');
-        vte_seq_arg_push(&arg, '3');
-        vte_seq_arg_push(&arg, '6');
-        vte_seq_arg_finish(&arg);
+        bte_seq_arg_push(&arg, '6');
+        bte_seq_arg_push(&arg, '5');
+        bte_seq_arg_push(&arg, '5');
+        bte_seq_arg_push(&arg, '3');
+        bte_seq_arg_push(&arg, '6');
+        bte_seq_arg_finish(&arg);
 
-        g_assert_cmpint(vte_seq_arg_value(arg), ==, 65535);
+        g_assert_cmpint(bte_seq_arg_value(arg), ==, 65535);
 }
 
 static void
 test_seq_string(void)
 {
-        vte_seq_string_t str;
-        vte_seq_string_init(&str);
+        bte_seq_string_t str;
+        bte_seq_string_init(&str);
 
         size_t len;
-        auto buf = vte_seq_string_get(&str, &len);
+        auto buf = bte_seq_string_get(&str, &len);
         g_assert_cmpuint(len, ==, 0);
 
         for (unsigned int i = 0; i < VTE_SEQ_STRING_MAX_CAPACITY; ++i) {
-                auto rv = vte_seq_string_push(&str, 0xfffdU);
+                auto rv = bte_seq_string_push(&str, 0xfffdU);
                 g_assert_true(rv);
 
-                buf = vte_seq_string_get(&str, &len);
+                buf = bte_seq_string_get(&str, &len);
                 g_assert_cmpuint(len, ==, i + 1);
         }
 
         /* Try one more */
-        auto rv = vte_seq_string_push(&str, 0xfffdU);
+        auto rv = bte_seq_string_push(&str, 0xfffdU);
         g_assert_false(rv);
 
-        buf = vte_seq_string_get(&str, &len);
+        buf = bte_seq_string_get(&str, &len);
         for (unsigned int i = 0; i < len; i++)
                 g_assert_cmpuint(buf[i], ==, 0xfffdU);
 
-        vte_seq_string_reset(&str);
-        buf = vte_seq_string_get(&str, &len);
+        bte_seq_string_reset(&str);
+        buf = bte_seq_string_get(&str, &len);
         g_assert_cmpuint(len, ==, 0);
 
-        vte_seq_string_free(&str);
+        bte_seq_string_free(&str);
 }
 
 static void
@@ -313,7 +313,7 @@ test_seq_esc_invalid(void)
         for (uint32_t f = 0x0; f < 0x20; f++) {
                 parser.reset();
 
-                vte_seq_builder b{VTE_SEQ_ESCAPE, f};
+                bte_seq_builder b{VTE_SEQ_ESCAPE, f};
                 auto rv = feed_parser(b);
                 g_assert_cmpint(rv, !=, VTE_SEQ_ESCAPE);
         }
@@ -324,7 +324,7 @@ test_seq_esc(uint32_t f,
              uint32_t i[],
              unsigned int ni)
 {
-        vte_seq_builder b{VTE_SEQ_ESCAPE, f};
+        bte_seq_builder b{VTE_SEQ_ESCAPE, f};
         b.set_intermediates(i, ni);
 
         parser.reset();
@@ -368,7 +368,7 @@ test_seq_esc_charset(uint32_t f, /* final */
                      unsigned int cs /* expected charset */,
                      unsigned int slot /* expected slot */)
 {
-        vte_seq_builder b{VTE_SEQ_ESCAPE, f};
+        bte_seq_builder b{VTE_SEQ_ESCAPE, f};
         b.set_intermediates(i, ni);
 
         parser.reset();
@@ -601,7 +601,7 @@ test_seq_esc_Fpes(void)
         for (uint32_t f = 0x30; f < 0x7f; f++) {
                 parser.reset();
 
-                vte_seq_builder b{VTE_SEQ_ESCAPE, f};
+                bte_seq_builder b{VTE_SEQ_ESCAPE, f};
 
                 auto rv = feed_parser(b);
                 int expected_rv;
@@ -630,7 +630,7 @@ test_seq_esc_known(uint32_t f,
                    uint32_t i,
                    unsigned int cmd)
 {
-        vte_seq_builder b{VTE_SEQ_ESCAPE, f};
+        bte_seq_builder b{VTE_SEQ_ESCAPE, f};
         if (i != 0)
                 b.set_intermediates(&i, 1);
 
@@ -653,11 +653,11 @@ test_seq_esc_known(void)
 static void
 test_seq_csi(uint32_t f,
              uint32_t p,
-             vte_seq_arg_t params[16],
+             bte_seq_arg_t params[16],
              uint32_t i[4],
              unsigned int ni)
 {
-        vte_seq_builder b{VTE_SEQ_CSI, f};
+        bte_seq_builder b{VTE_SEQ_CSI, f};
         b.set_intermediates(i, ni);
         b.set_param_intro(p);
 
@@ -683,7 +683,7 @@ test_seq_csi(uint32_t f,
 
 static void
 test_seq_csi(uint32_t p,
-             vte_seq_arg_t params[16])
+             bte_seq_arg_t params[16])
 {
         uint32_t i[4];
         for (uint32_t f = 0x30; f < 0x7f; f++) {
@@ -698,7 +698,7 @@ test_seq_csi(uint32_t p,
 }
 
 static void
-test_seq_csi(vte_seq_arg_t params[16])
+test_seq_csi(bte_seq_arg_t params[16])
 {
         test_seq_csi(0, params);
         for (uint32_t p = 0x3c; p <= 0x3f; p++)
@@ -716,11 +716,11 @@ test_seq_csi(void)
          * There could be any number of extra params bytes, but we only test up to 1.
          * CSI can be either the C1 control itself, or ESC [
          */
-        vte_seq_arg_t params1[16]{ -1, 0, 1, 9, 10, 99, 100, 999,
+        bte_seq_arg_t params1[16]{ -1, 0, 1, 9, 10, 99, 100, 999,
                         1000, 9999, 10000, 65534, 65535, 65536, -1, -1 };
         test_seq_csi(params1);
 
-        vte_seq_arg_t params2[16]{ 1, -1, -1, -1, 1, -1, 1, 1,
+        bte_seq_arg_t params2[16]{ 1, -1, -1, -1, 1, -1, 1, 1,
                         1, -1, -1, -1, -1, 1, 1, 1 };
         test_seq_csi(params2);
 }
@@ -729,7 +729,7 @@ static void
 test_seq_sci(uint32_t f,
              bool valid)
 {
-        vte_seq_builder b{VTE_SEQ_SCI, f};
+        bte_seq_builder b{VTE_SEQ_SCI, f};
 
         /* First with C0 SCI */
         auto rv = feed_parser(b, false);
@@ -770,7 +770,7 @@ static void
 test_seq_sci_known(uint32_t f,
                    unsigned int cmd)
 {
-        vte_seq_builder b{VTE_SEQ_SCI, f};
+        bte_seq_builder b{VTE_SEQ_SCI, f};
 
         auto rv = feed_parser(b);
         g_assert_cmpint(rv, ==, VTE_SEQ_SCI);
@@ -794,7 +794,7 @@ test_seq_csi_known(uint32_t f,
                    uint32_t i,
                    unsigned int cmd)
 {
-        vte_seq_builder b{VTE_SEQ_CSI, f};
+        bte_seq_builder b{VTE_SEQ_CSI, f};
         if (p != 0)
                 b.set_param_intro(p);
         if (i != 0)
@@ -819,13 +819,13 @@ test_seq_csi_known(void)
 static void
 test_seq_dcs(uint32_t f,
              uint32_t p,
-             vte_seq_arg_t params[16],
+             bte_seq_arg_t params[16],
              uint32_t i[4],
              unsigned int ni,
              std::u32string const& str,
              int expected_rv = VTE_SEQ_DCS)
 {
-        vte_seq_builder b{VTE_SEQ_DCS, f};
+        bte_seq_builder b{VTE_SEQ_DCS, f};
         b.set_intermediates(i, ni);
         b.set_param_intro(p);
         b.set_string(str);
@@ -857,7 +857,7 @@ test_seq_dcs(uint32_t f,
 
 static void
 test_seq_dcs(uint32_t p,
-             vte_seq_arg_t params[16],
+             bte_seq_arg_t params[16],
              std::u32string const& str,
              int expected_rv = VTE_SEQ_DCS)
 {
@@ -877,7 +877,7 @@ test_seq_dcs(uint32_t p,
 }
 
 static void
-test_seq_dcs(vte_seq_arg_t params[16],
+test_seq_dcs(bte_seq_arg_t params[16],
              std::u32string const& str,
              int expected_rv = VTE_SEQ_DCS)
 {
@@ -899,11 +899,11 @@ test_seq_dcs(std::u32string const& str,
          * DCS can be either the C1 control itself, or ESC [; ST can be either the C1
          * control itself, or ESC \\
          */
-        vte_seq_arg_t params1[16]{ -1, 0, 1, 9, 10, 99, 100, 999,
+        bte_seq_arg_t params1[16]{ -1, 0, 1, 9, 10, 99, 100, 999,
                         1000, 9999, 10000, 65534, 65535, 65536, -1, -1 };
         test_seq_dcs(params1, str, expected_rv);
 
-        vte_seq_arg_t params2[16]{ 1, -1, -1, -1, 1, -1, 1, 1,
+        bte_seq_arg_t params2[16]{ 1, -1, -1, -1, 1, -1, 1, 1,
                         1, -1, -1, -1, -1, 1, 1, 1 };
         test_seq_dcs(params2, str, expected_rv);
 }
@@ -912,7 +912,7 @@ static void
 test_seq_dcs_simple(std::u32string const& str,
                     int expected_rv = VTE_SEQ_DCS)
 {
-        vte_seq_arg_t params[16]{ 1, -1, -1, -1, 1, -1, 1, 1,
+        bte_seq_arg_t params[16]{ 1, -1, -1, -1, 1, -1, 1, 1,
                         1, -1, -1, -1, -1, 1, 1, 1 };
         uint32_t i[4];
 
@@ -935,7 +935,7 @@ test_seq_dcs_known(uint32_t f,
                    uint32_t i,
                    unsigned int cmd)
 {
-        vte_seq_builder b{VTE_SEQ_DCS, f};
+        bte_seq_builder b{VTE_SEQ_DCS, f};
         if (p != 0)
                 b.set_param_intro(p);
         if (i != 0)
@@ -1029,7 +1029,7 @@ test_seq_csi_clear(void)
 {
         /* Check that parameters are cleared from when a sequence was aborted. */
 
-        vte_seq_builder b0{VTE_SEQ_CSI, 'm'};
+        bte_seq_builder b0{VTE_SEQ_CSI, 'm'};
         b0.set_param_intro(VTE_SEQ_PARAMETER_CHAR_WHAT);
         for (unsigned int i = 0; i < VTE_PARSER_ARG_MAX; ++i)
                 b0.append_param(127 * i + 17);
@@ -1042,7 +1042,7 @@ test_seq_csi_clear(void)
                 for (unsigned int n_args = 0; n_args < VTE_PARSER_ARG_MAX; ++n_args) {
                         feed_parser(str0.substr(0, len0));
 
-                        vte_seq_builder b1{VTE_SEQ_CSI, 'n'};
+                        bte_seq_builder b1{VTE_SEQ_CSI, 'n'};
                         b1.set_param_intro(VTE_SEQ_PARAMETER_CHAR_GT);
                         for (unsigned int i = 0; i < n_args; ++i)
                                 b1.append_param(257 * i + 31);
@@ -1082,7 +1082,7 @@ test_seq_csi_max(void)
          * produce a sequence with too may parameters.
          */
 
-        vte_seq_builder b{VTE_SEQ_CSI, 'm'};
+        bte_seq_builder b{VTE_SEQ_CSI, 'm'};
         b.set_param_intro(VTE_SEQ_PARAMETER_CHAR_WHAT);
         for (unsigned int i = 0; i < VTE_PARSER_ARG_MAX; ++i)
                 b.append_param(i);
@@ -1126,7 +1126,7 @@ test_seq_glue_arg(char const* str,
         g_assert_cmpuint(seq.terminator(), ==, raw_seq->terminator);
 
         for (unsigned int i = 0; i < raw_seq->n_args; i++)
-                g_assert_cmpuint(seq.param(i), ==, vte_seq_arg_value(raw_seq->args[i]));
+                g_assert_cmpuint(seq.param(i), ==, bte_seq_arg_value(raw_seq->args[i]));
 }
 
 static void
@@ -1233,7 +1233,7 @@ test_seq_glue_arg(void)
 }
 
 static int
-feed_parser_st(vte_seq_builder& b,
+feed_parser_st(bte_seq_builder& b,
                bool c1 = false,
                ssize_t max_arg_str_len = -1,
                u32SequenceBuilder::Introducer introducer = u32SequenceBuilder::Introducer::DEFAULT,
@@ -1275,7 +1275,7 @@ test_seq_osc(std::u32string const& str,
              u32SequenceBuilder::Introducer introducer = u32SequenceBuilder::Introducer::DEFAULT,
              u32SequenceBuilder::ST st = u32SequenceBuilder::ST::DEFAULT)
 {
-        vte_seq_builder b{VTE_SEQ_OSC, str};
+        bte_seq_builder b{VTE_SEQ_OSC, str};
 
         parser.reset();
         auto rv = feed_parser_st(b, c1, max_arg_str_len, introducer, st);
@@ -1481,34 +1481,34 @@ main(int argc,
 {
         g_test_init(&argc, &argv, nullptr);
 
-        g_test_add_func("/vte/parser/sequences/arg", test_seq_arg);
-        g_test_add_func("/vte/parser/sequences/string", test_seq_string);
-        g_test_add_func("/vte/parser/sequences/glue/arg", test_seq_glue_arg);
-        g_test_add_func("/vte/parser/sequences/glue/string", test_seq_glue_string);
-        g_test_add_func("/vte/parser/sequences/glue/string-tokeniser", test_seq_glue_string_tokeniser);
-        g_test_add_func("/vte/parser/sequences/glue/sequence-builder", test_seq_glue_sequence_builder);
-        g_test_add_func("/vte/parser/sequences/glue/reply-builder", test_seq_glue_reply_builder);
-        g_test_add_func("/vte/parser/sequences/control", test_seq_control);
-        g_test_add_func("/vte/parser/sequences/escape/invalid", test_seq_esc_invalid);
-        g_test_add_func("/vte/parser/sequences/escape/charset/94", test_seq_esc_charset_94);
-        g_test_add_func("/vte/parser/sequences/escape/charset/96", test_seq_esc_charset_96);
-        g_test_add_func("/vte/parser/sequences/escape/charset/94^n", test_seq_esc_charset_94_n);
-        g_test_add_func("/vte/parser/sequences/escape/charset/96^n", test_seq_esc_charset_96_n);
-        g_test_add_func("/vte/parser/sequences/escape/charset/control", test_seq_esc_charset_control);
-        g_test_add_func("/vte/parser/sequences/escape/charset/other", test_seq_esc_charset_other);
-        g_test_add_func("/vte/parser/sequences/escape/nF", test_seq_esc_nF);
-        g_test_add_func("/vte/parser/sequences/escape/F[pes]", test_seq_esc_Fpes);
-        g_test_add_func("/vte/parser/sequences/escape/known", test_seq_esc_known);
-        g_test_add_func("/vte/parser/sequences/csi", test_seq_csi);
-        g_test_add_func("/vte/parser/sequences/csi/known", test_seq_csi_known);
-        g_test_add_func("/vte/parser/sequences/csi/parameters", test_seq_csi_param);
-        g_test_add_func("/vte/parser/sequences/csi/clear", test_seq_csi_clear);
-        g_test_add_func("/vte/parser/sequences/csi/max", test_seq_csi_max);
-        g_test_add_func("/vte/parser/sequences/sci", test_seq_sci);
-        g_test_add_func("/vte/parser/sequences/sci/known", test_seq_sci_known);
-        g_test_add_func("/vte/parser/sequences/dcs", test_seq_dcs);
-        g_test_add_func("/vte/parser/sequences/dcs/known", test_seq_dcs_known);
-        g_test_add_func("/vte/parser/sequences/osc", test_seq_osc);
+        g_test_add_func("/bte/parser/sequences/arg", test_seq_arg);
+        g_test_add_func("/bte/parser/sequences/string", test_seq_string);
+        g_test_add_func("/bte/parser/sequences/glue/arg", test_seq_glue_arg);
+        g_test_add_func("/bte/parser/sequences/glue/string", test_seq_glue_string);
+        g_test_add_func("/bte/parser/sequences/glue/string-tokeniser", test_seq_glue_string_tokeniser);
+        g_test_add_func("/bte/parser/sequences/glue/sequence-builder", test_seq_glue_sequence_builder);
+        g_test_add_func("/bte/parser/sequences/glue/reply-builder", test_seq_glue_reply_builder);
+        g_test_add_func("/bte/parser/sequences/control", test_seq_control);
+        g_test_add_func("/bte/parser/sequences/escape/invalid", test_seq_esc_invalid);
+        g_test_add_func("/bte/parser/sequences/escape/charset/94", test_seq_esc_charset_94);
+        g_test_add_func("/bte/parser/sequences/escape/charset/96", test_seq_esc_charset_96);
+        g_test_add_func("/bte/parser/sequences/escape/charset/94^n", test_seq_esc_charset_94_n);
+        g_test_add_func("/bte/parser/sequences/escape/charset/96^n", test_seq_esc_charset_96_n);
+        g_test_add_func("/bte/parser/sequences/escape/charset/control", test_seq_esc_charset_control);
+        g_test_add_func("/bte/parser/sequences/escape/charset/other", test_seq_esc_charset_other);
+        g_test_add_func("/bte/parser/sequences/escape/nF", test_seq_esc_nF);
+        g_test_add_func("/bte/parser/sequences/escape/F[pes]", test_seq_esc_Fpes);
+        g_test_add_func("/bte/parser/sequences/escape/known", test_seq_esc_known);
+        g_test_add_func("/bte/parser/sequences/csi", test_seq_csi);
+        g_test_add_func("/bte/parser/sequences/csi/known", test_seq_csi_known);
+        g_test_add_func("/bte/parser/sequences/csi/parameters", test_seq_csi_param);
+        g_test_add_func("/bte/parser/sequences/csi/clear", test_seq_csi_clear);
+        g_test_add_func("/bte/parser/sequences/csi/max", test_seq_csi_max);
+        g_test_add_func("/bte/parser/sequences/sci", test_seq_sci);
+        g_test_add_func("/bte/parser/sequences/sci/known", test_seq_sci_known);
+        g_test_add_func("/bte/parser/sequences/dcs", test_seq_dcs);
+        g_test_add_func("/bte/parser/sequences/dcs/known", test_seq_dcs_known);
+        g_test_add_func("/bte/parser/sequences/osc", test_seq_osc);
 
         return g_test_run();
 }

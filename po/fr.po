@@ -1,6 +1,6 @@
-# French translation of vte.
+# French translation of bte.
 # Copyright (C) 2002-2020 Free Software Foundation, Inc.
-# This file is under the same license as the vte package.
+# This file is under the same license as the bte package.
 #
 # Laurent Richard <kouran@iespana.es>, 2002.
 # Christophe Merlet <redfox@redfoxcenter.org>, 2002-2006.
@@ -11,8 +11,8 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: vte 0.14.1\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Project-Id-Version: bte 0.14.1\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2020-08-10 11:59+0000\n"
 "PO-Revision-Date: 2020-09-05 20:35+0200\n"
 "Last-Translator: Thibault Martin <mail@thibaultmart.in>\n"
@@ -24,11 +24,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Gtranslator 3.36.0\n"
 
-#: src/vte.cc:7770
+#: src/bte.cc:7770
 msgid "WARNING"
 msgstr "AVERTISSEMENT"
 
-#: src/vte.cc:7772
+#: src/bte.cc:7772
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr ""
 "GnuTLS n’est pas activé ; les données seront écrites sur le disque sans être "

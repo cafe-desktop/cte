@@ -14,7 +14,7 @@
 # along with this library.  If not, see <https://www.gnu.org/licenses/>.
 
 # Meson insufficiency! Would be so much easier to just make this
-# (vte_ctk3_sources - vte_ctk3_public_headers).filter('.h'), but
+# (bte_ctk3_sources - bte_ctk3_public_headers).filter('.h'), but
 # but there is no array subtraction or filtering. Or just allow listing the
 # headers that we DO want to get scanned.
 # So instead just list all the headers here again... :-(
@@ -45,15 +45,15 @@ private_headers = [
   'parser-string.hh',
   'ring.hh',
   'tabstops.hh',
-  'vteconv.h',
-  'vtedraw.h',
-  'vteinternal.hh',
-  'vterowdata.hh',
-  'vtestream-base.h',
-  'vtestream-file.h',
-  'vtestream.h',
-  'vtetypebuiltins.h',
-  'vteunistr.h',
+  'bteconv.h',
+  'btedraw.h',
+  'bteinternal.hh',
+  'bterowdata.hh',
+  'btestream-base.h',
+  'btestream-file.h',
+  'btestream.h',
+  'btetypebuiltins.h',
+  'bteunistr.h',
 ]
 
 scan_args = [
@@ -64,7 +64,7 @@ scan_args = [
 glib_prefix = glib_dep.get_pkgconfig_variable('prefix')
 
 version_conf = configuration_data()
-version_conf.set('VERSION', vte_version)
+version_conf.set('VERSION', bte_version)
 
 content_files = configure_file(
   input: 'version.xml.in',
@@ -76,7 +76,7 @@ if get_option('ctk3')
   ctk3_prefix = ctk3_dep.get_pkgconfig_variable('prefix')
 
   fixxref_args = [
-    '--html-dir=' + (vte_prefix / gnome.gtkdoc_html_dir(vte_ctk3_api_name)),
+    '--html-dir=' + (bte_prefix / gnome.gtkdoc_html_dir(bte_ctk3_api_name)),
     '--extra-dir=' + (glib_prefix / gnome.gtkdoc_html_dir('glib')),
     '--extra-dir=' + (glib_prefix / gnome.gtkdoc_html_dir('gio')),
     '--extra-dir=' + (ctk3_prefix / gnome.gtkdoc_html_dir('cdk')),
@@ -85,19 +85,19 @@ if get_option('ctk3')
   ]
 
   gnome.gtkdoc(
-    'vte',
-    main_xml: 'vte-docs.xml',
-    module_version: vte_api_version,
-    src_dir: [src_inc, vte_inc],
+    'bte',
+    main_xml: 'bte-docs.xml',
+    module_version: bte_api_version,
+    src_dir: [src_inc, bte_inc],
     ignore_headers: private_headers,
     include_directories: top_inc,
-    dependencies: libvte_ctk3_dep,
+    dependencies: libbte_ctk3_dep,
     c_args: '-DVTE_COMPILATION',
-    namespace: 'vte',
+    namespace: 'bte',
     scan_args: scan_args,
     mkdb_args: '--source-suffixes=h,hh,c,cc',
     fixxref_args: fixxref_args,
-    gobject_typesfile: 'vte.types',
+    gobject_typesfile: 'bte.types',
     content_files: content_files,
     install: true,
   )

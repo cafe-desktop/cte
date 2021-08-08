@@ -22,10 +22,10 @@
 #include <unicode/errorcode.h>
 #include <unicode/ucnv.h>
 
-namespace vte::base {
+namespace bte::base {
 
 /*
- * vte::base::Decoder:
+ * bte::base::Decoder:
  *
  * Converts input from any ICU-supported charset to UTF-32, one input byte at a time.
  */
@@ -99,4 +99,4 @@ private:
 
 }; // class ICUDecoder
 
-} // namespace vte::base
+} // namespace bte::base

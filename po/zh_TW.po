@@ -1,12 +1,12 @@
-# Chinese (Taiwan) translation of vte.
+# Chinese (Taiwan) translation of bte.
 # Copyright (C) 2003, 06, 07 Free Software Foundation, Inc.
 # Abel Cheung <abel@oaka.org>, 2003, 06.
 #
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: vte 0.25.90\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Project-Id-Version: bte 0.25.90\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2020-09-12 19:27+0000\n"
 "PO-Revision-Date: 2020-09-22 23:12+0800\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.4.1\n"
 
-#: src/vte.cc:7764
+#: src/bte.cc:7764
 msgid "WARNING"
 msgstr "警告"
 
-#: src/vte.cc:7766
+#: src/bte.cc:7766
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr "GnuTLS 未啟用；資料將以未加密的方式寫入到磁碟 ！"
 
@@ -109,8 +109,8 @@ msgstr "無法執行「%s」子程序："
 #~ msgid "Error compiling regular expression \"%s\"."
 #~ msgstr "計算正規表示式‘%s’時出現錯誤。"
 
-#~ msgid "_vte_conv_open() failed setting word characters"
-#~ msgstr "_vte_conv_open() 無法轉換字元"
+#~ msgid "_bte_conv_open() failed setting word characters"
+#~ msgstr "_bte_conv_open() 無法轉換字元"
 
 #~ msgid "can not run %s"
 #~ msgstr "無法執行 %s"

@@ -21,20 +21,20 @@
 
 #include <gio/gio.h>
 
-#include "vte/vteenums.h"
+#include "bte/bteenums.h"
 
 #include "libc-glue.hh"
 
-namespace vte::base {
+namespace bte::base {
 
 class Pty {
 private:
         mutable volatile int m_refcount{1};
-        vte::libc::FD m_pty_fd{};
+        bte::libc::FD m_pty_fd{};
         VtePtyFlags m_flags{VTE_PTY_DEFAULT};
 
 public:
-        constexpr Pty(vte::libc::FD&& fd,
+        constexpr Pty(bte::libc::FD&& fd,
                       VtePtyFlags flags = VTE_PTY_DEFAULT) noexcept
                 : m_pty_fd{std::move(fd)},
                   m_flags{flags}
@@ -69,4 +69,4 @@ public:
                                    VtePtyFlags flags);
 };
 
-} // namespace vte::base
+} // namespace bte::base

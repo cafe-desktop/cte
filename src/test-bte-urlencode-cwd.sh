@@ -20,15 +20,15 @@
 
 set -e
 
-vte_urlencode_cwd="$1"
+bte_urlencode_cwd="$1"
 
-test -x "$vte_urlencode_cwd" || exit 126
+test -x "$bte_urlencode_cwd" || exit 126
 
 export PWD
 
 check_urlencode() {
   PWD=$(echo -ne "$1")
-  encoded=$("$vte_urlencode_cwd")
+  encoded=$("$bte_urlencode_cwd")
   if test "$encoded" != "$2"; then
     echo "FAILED:"
     echo "Input   : \"$PWD\""

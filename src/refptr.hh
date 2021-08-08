@@ -22,12 +22,12 @@
 
 #include "cxx-utils.hh"
 
-namespace vte {
+namespace bte {
 
 namespace glib {
 
 template<typename T>
-using RefPtr = vte::FreeablePtr<T, decltype(&g_object_unref), &g_object_unref>;
+using RefPtr = bte::FreeablePtr<T, decltype(&g_object_unref), &g_object_unref>;
 
 template<typename T>
 RefPtr<T>
@@ -96,4 +96,4 @@ take_ref(T* obj)
 
 } // namespace base
 
-} // namespace vte
+} // namespace bte

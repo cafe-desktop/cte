@@ -1,5 +1,5 @@
-# translation of vte.HEAD.po to Mongolian
-# translation of vte.HEAD.po to mongolian
+# translation of bte.HEAD.po to Mongolian
+# translation of bte.HEAD.po to mongolian
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
 # Sanlig Badral <badral@chinggis.com>, 2003.
@@ -7,9 +7,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: vte.HEAD\n"
+"Project-Id-Version: bte.HEAD\n"
 "Report-Msgid-Bugs-To: "
-"http://bugzilla.gnome.org/enter_bug.cgi?product=vte&component=general\n"
+"http://bugzilla.gnome.org/enter_bug.cgi?product=bte&component=general\n"
 "POT-Creation-Date: 2010-03-17 23:26+0000\n"
 "PO-Revision-Date: 2010-03-22 14:14+0200\n"
 "Last-Translator: Badral <badral@openmn.org>\n"
@@ -22,7 +22,7 @@ msgstr ""
 "X-Generator: Pootle 2.0.3\n"
 
 #: ../src/iso2022.c:771 ../src/iso2022.c:779 ../src/iso2022.c:810
-#: ../src/vte.c:2227
+#: ../src/bte.c:2227
 #, c-format
 msgid "Unable to convert characters from %s to %s."
 msgstr "Тэмдэгт %s -с %s рүү хөрвөх боломжгүй."
@@ -56,45 +56,45 @@ msgid "Duplicate (%s/%s)!"
 msgstr "Давхардал (%s/%s)!"
 
 #. Bail back to normal mode.
-#: ../src/vteapp.c:876
+#: ../src/bteapp.c:876
 msgid "Could not open console.\n"
 msgstr "Консолыг нээж чадсангүй.\n"
 
-#: ../src/vteapp.c:945
+#: ../src/bteapp.c:945
 msgid "Could not parse the geometry spec passed to --geometry"
 msgstr "--geometry параметрээр өгөгдсөн хэмжээг задлан шинжлэх боломжгүй байна"
 
-#: ../src/vte.c:1276
+#: ../src/bte.c:1276
 #, c-format
 msgid "Error compiling regular expression \"%s\"."
 msgstr "»%s« энгийн илэрхийлэлийг хөрвүүлж байхад алдаа."
 
 #. Translators: %s is replaced with error message returned by strerror().
-#: ../src/vte.c:4186
+#: ../src/bte.c:4186
 #, c-format
 msgid "Error reading from child: %s."
 msgstr "Хүүг уншихад алдаа: %s."
 
-#: ../src/vte.c:4314
+#: ../src/bte.c:4314
 msgid "Unable to send data to child, invalid charset convertor"
 msgstr ""
 "Хүчингүй тэмдэгт кодчлолын хөрвүүлэгчийн улмаас хүү рүү өгөгдлийг илгээх "
 "боломжгүй"
 
-#: ../src/vte.c:4325 ../src/vte.c:5347
+#: ../src/bte.c:4325 ../src/bte.c:5347
 #, c-format
 msgid "Error (%s) converting data for child, dropping."
 msgstr "Хүүгийн өгөгдлийн хөрвүүлэлтэнд алдаа (%s) гарч тасарлаа."
 
-#: ../src/vte.c:7563
+#: ../src/bte.c:7563
 #, c-format
 msgid "Error reading PTY size, using defaults: %s."
 msgstr "PTY-хэмжээ уншихад алдаа, стандартыг хэрэглэх: %s."
 
 #. Aaargh.  We're screwed.
-#: ../src/vte.c:13094
-msgid "_vte_conv_open() failed setting word characters"
-msgstr "_vte_conv_open() үгийн тэмдэгтүүдийг тогтоож чадсангүй"
+#: ../src/bte.c:13094
+msgid "_bte_conv_open() failed setting word characters"
+msgstr "_bte_conv_open() үгийн тэмдэгтүүдийг тогтоож чадсангүй"
 
 #~ msgid "Error adding `%s' to environment, continuing."
 #~ msgstr "»%s« -г орчин руу нэмэхэд алдаа гарлаа, үргэлжлүүлэх."

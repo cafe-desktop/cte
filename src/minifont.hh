@@ -21,10 +21,10 @@
 #include <cstdint>
 
 #include "fwd.hh"
-#include "vtetypes.hh"
-#include "vteunistr.h"
+#include "btetypes.hh"
+#include "bteunistr.h"
 
-namespace vte {
+namespace bte {
 namespace view {
 
 class Minifont {
@@ -34,7 +34,7 @@ public:
          * ourselves to handle cases where fonts don't have glyphs for them.
          */
         static inline constexpr bool
-        unistr_is_local_graphic(vteunistr const c) noexcept
+        unistr_is_local_graphic(bteunistr const c) noexcept
         {
                 /* Box Drawing & Block Elements */
                 return ((c >=  0x2500 && c <=  0x259f) ||
@@ -46,9 +46,9 @@ public:
          * character.
          */
         void draw_graphic(DrawingContext const& context,
-                          vteunistr c,
+                          bteunistr c,
                           uint32_t const attr,
-                          vte::color::rgb const* fg,
+                          bte::color::rgb const* fg,
                           int x,
                           int y,
                           int font_width,
@@ -58,4 +58,4 @@ public:
 }; // class Minifont
 
 } // namespace view
-} // namespace vte
+} // namespace bte

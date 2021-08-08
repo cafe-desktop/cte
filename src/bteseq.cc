@@ -30,9 +30,9 @@
 
 #include <glib.h>
 
-#include <vte/vte.h>
-#include "vteinternal.hh"
-#include "vtectk.hh"
+#include <bte/bte.h>
+#include "bteinternal.hh"
+#include "btectk.hh"
 #include "caps.hh"
 #include "debug.h"
 
@@ -71,20 +71,20 @@ enum {
 };
 
 void
-vte::parser::Sequence::print() const noexcept
+bte::parser::Sequence::print() const noexcept
 {
 #ifdef VTE_DEBUG
         auto c = m_seq != nullptr ? terminator() : 0;
         char c_buf[7];
         g_snprintf(c_buf, sizeof(c_buf), "%lc", c);
         g_printerr("%s:%s [%s]", type_string(), command_string(),
-                   g_unichar_isprint(c) ? c_buf : _vte_debug_sequence_to_string(c_buf, -1));
+                   g_unichar_isprint(c) ? c_buf : _bte_debug_sequence_to_string(c_buf, -1));
         if (m_seq != nullptr && m_seq->n_args > 0) {
                 g_printerr("[ ");
                 for (unsigned int i = 0; i < m_seq->n_args; i++) {
                         if (i > 0)
                                 g_print(", ");
-                        g_printerr("%d", vte_seq_arg_value(m_seq->args[i]));
+                        g_printerr("%d", bte_seq_arg_value(m_seq->args[i]));
                 }
                 g_printerr(" ]");
         }
@@ -98,7 +98,7 @@ vte::parser::Sequence::print() const noexcept
 }
 
 char const*
-vte::parser::Sequence::type_string() const
+bte::parser::Sequence::type_string() const
 {
         if (G_UNLIKELY(m_seq == nullptr))
                 return "(nil)";
@@ -123,7 +123,7 @@ vte::parser::Sequence::type_string() const
 }
 
 char const*
-vte::parser::Sequence::command_string() const
+bte::parser::Sequence::command_string() const
 {
         if (G_UNLIKELY(m_seq == nullptr))
                 return "(nil)";
@@ -143,12 +143,12 @@ vte::parser::Sequence::command_string() const
 
 // FIXMEchpe optimise this
 std::string
-vte::parser::Sequence::string_utf8() const noexcept
+bte::parser::Sequence::string_utf8() const noexcept
 {
         std::string str;
 
         size_t len;
-        auto buf = vte_seq_string_get(&m_seq->arg_str, &len);
+        auto buf = bte_seq_string_get(&m_seq->arg_str, &len);
 
         char u[6];
         for (size_t i = 0; i < len; ++i) {
@@ -159,11 +159,11 @@ vte::parser::Sequence::string_utf8() const noexcept
         return str;
 }
 
-/* A couple are duplicated from vte.c, to keep them static... */
+/* A couple are duplicated from bte.c, to keep them static... */
 
 /* Check how long a string of unichars is.  Slow version. */
 static gsize
-vte_unichar_strlen(gunichar const* c)
+bte_unichar_strlen(gunichar const* c)
 {
 	gsize i;
 	for (i = 0; c[i] != 0; i++) ;
@@ -175,11 +175,11 @@ vte_unichar_strlen(gunichar const* c)
  * length instead of walking the input twice.
  */
 char*
-vte::parser::Sequence::ucs4_to_utf8(gunichar const* str,
+bte::parser::Sequence::ucs4_to_utf8(gunichar const* str,
                                     ssize_t len) const noexcept
 {
         if (len < 0)
-                len = vte_unichar_strlen(str);
+                len = bte_unichar_strlen(str);
         auto outlen = (len * VTE_UTF8_BPC) + 1;
 
         auto result = (char*)g_try_malloc(outlen);
@@ -195,14 +195,14 @@ vte::parser::Sequence::ucs4_to_utf8(gunichar const* str,
         return result;
 }
 
-namespace vte {
+namespace bte {
 namespace terminal {
 
 /* Emit a "bell" signal. */
 void
 Terminal::emit_bell()
 {
-        _vte_debug_print(VTE_DEBUG_SIGNALS, "Emitting `bell'.\n");
+        _bte_debug_print(VTE_DEBUG_SIGNALS, "Emitting `bell'.\n");
         g_signal_emit(m_terminal, signals[SIGNAL_BELL], 0);
 }
 
@@ -211,7 +211,7 @@ void
 Terminal::emit_resize_window(guint columns,
                                        guint rows)
 {
-        _vte_debug_print(VTE_DEBUG_SIGNALS, "Emitting `resize-window'.\n");
+        _bte_debug_print(VTE_DEBUG_SIGNALS, "Emitting `resize-window'.\n");
         g_signal_emit(m_terminal, signals[SIGNAL_RESIZE_WINDOW], 0, columns, rows);
 }
 
@@ -249,7 +249,7 @@ void
 Terminal::clear_screen()
 {
         auto row = m_screen->cursor.row - m_screen->insert_delta;
-        auto initial = _vte_ring_next(m_screen->row_data);
+        auto initial = _bte_ring_next(m_screen->row_data);
 	/* Add a new screen's worth of rows. */
         for (auto i = 0; i < m_row_count; i++)
                 ring_append(true);
@@ -272,14 +272,14 @@ Terminal::clear_current_line()
 
 	/* If the cursor is actually on the screen, clear data in the row
 	 * which corresponds to the cursor. */
-        if (_vte_ring_next(m_screen->row_data) > m_screen->cursor.row) {
+        if (_bte_ring_next(m_screen->row_data) > m_screen->cursor.row) {
 		/* Get the data for the row which the cursor points to. */
-                rowdata = _vte_ring_index_writable(m_screen->row_data, m_screen->cursor.row);
+                rowdata = _bte_ring_index_writable(m_screen->row_data, m_screen->cursor.row);
 		g_assert(rowdata != NULL);
 		/* Remove it. */
-		_vte_row_data_shrink (rowdata, 0);
+		_bte_row_data_shrink (rowdata, 0);
 		/* Add enough cells to the end of the line to fill out the row. */
-                _vte_row_data_fill (rowdata, &m_color_defaults, m_column_count);
+                _bte_row_data_fill (rowdata, &m_color_defaults, m_column_count);
                 set_hard_wrapped(m_screen->cursor.row);
                 rowdata->attr.bidi_flags = get_bidi_flags();
                 /* Repaint this row's paragraph (might need to extend upwards). */
@@ -295,19 +295,19 @@ void
 Terminal::clear_above_current()
 {
         /* Make the line just above the writable area hard wrapped. */
-        if (m_screen->insert_delta > _vte_ring_delta(m_screen->row_data)) {
+        if (m_screen->insert_delta > _bte_ring_delta(m_screen->row_data)) {
                 set_hard_wrapped(m_screen->insert_delta - 1);
         }
         /* Clear data in all the writable rows above (excluding) the cursor's. */
         for (auto i = m_screen->insert_delta; i < m_screen->cursor.row; i++) {
-                if (_vte_ring_next(m_screen->row_data) > i) {
+                if (_bte_ring_next(m_screen->row_data) > i) {
 			/* Get the data for the row we're erasing. */
-                        auto rowdata = _vte_ring_index_writable(m_screen->row_data, i);
+                        auto rowdata = _bte_ring_index_writable(m_screen->row_data, i);
 			g_assert(rowdata != NULL);
 			/* Remove it. */
-			_vte_row_data_shrink (rowdata, 0);
+			_bte_row_data_shrink (rowdata, 0);
 			/* Add new cells until we fill the row. */
-                        _vte_row_data_fill (rowdata, &m_color_defaults, m_column_count);
+                        _bte_row_data_fill (rowdata, &m_color_defaults, m_column_count);
                         set_hard_wrapped(i);
                         rowdata->attr.bidi_flags = get_bidi_flags();
 		}
@@ -321,9 +321,9 @@ Terminal::clear_above_current()
 
 /* Scroll the text, but don't move the cursor.  Negative = up, positive = down. */
 void
-Terminal::scroll_text(vte::grid::row_t scroll_amount)
+Terminal::scroll_text(bte::grid::row_t scroll_amount)
 {
-        vte::grid::row_t start, end;
+        bte::grid::row_t start, end;
         if (m_scrolling_restricted) {
                 start = m_screen->insert_delta + m_scrolling_region.start;
                 end = m_screen->insert_delta + m_scrolling_region.end;
@@ -332,7 +332,7 @@ Terminal::scroll_text(vte::grid::row_t scroll_amount)
                 end = start + m_row_count - 1;
 	}
 
-        while (_vte_ring_next(m_screen->row_data) <= end)
+        while (_bte_ring_next(m_screen->row_data) <= end)
                 ring_append(false);
 
 	if (scroll_amount > 0) {
@@ -398,11 +398,11 @@ Terminal::switch_screen(VteScreen *new_screen)
          * wouldn't make sense and could lead to crashes.
          * Ideally we'd carry the target URI itself, but I'm just lazy.
          * Also, run a GC before we switch away from that screen. */
-        m_hyperlink_hover_idx = _vte_ring_get_hyperlink_at_position(m_screen->row_data, -1, -1, true, NULL);
+        m_hyperlink_hover_idx = _bte_ring_get_hyperlink_at_position(m_screen->row_data, -1, -1, true, NULL);
         g_assert (m_hyperlink_hover_idx == 0);
         m_hyperlink_hover_uri = NULL;
         emit_hyperlink_hover_uri_changed(NULL);  /* FIXME only emit if really changed */
-        m_defaults.attr.hyperlink_idx = _vte_ring_get_hyperlink_idx(m_screen->row_data, NULL);
+        m_defaults.attr.hyperlink_idx = _bte_ring_get_hyperlink_idx(m_screen->row_data, NULL);
         g_assert (m_defaults.attr.hyperlink_idx == 0);
 
         /* cursor.row includes insert_delta, adjust accordingly */
@@ -424,7 +424,7 @@ Terminal::switch_alternate_screen()
 }
 
 void
-Terminal::set_mode_ecma(vte::parser::Sequence const& seq,
+Terminal::set_mode_ecma(bte::parser::Sequence const& seq,
                                   bool set) noexcept
 {
         auto const n_params = seq.size();
@@ -432,7 +432,7 @@ Terminal::set_mode_ecma(vte::parser::Sequence const& seq,
                 auto const param = seq.collect1(i);
                 auto const mode = m_modes_ecma.mode_from_param(param);
 
-                _vte_debug_print(VTE_DEBUG_MODES,
+                _bte_debug_print(VTE_DEBUG_MODES,
                                  "Mode %d (%s) %s\n",
                                  param, m_modes_ecma.mode_to_cstring(mode),
                                  set ? "set" : "reset");
@@ -443,7 +443,7 @@ Terminal::set_mode_ecma(vte::parser::Sequence const& seq,
                 m_modes_ecma.set(mode, set);
 
                 if (mode == m_modes_ecma.eBDSM) {
-                        _vte_debug_print(VTE_DEBUG_BIDI,
+                        _bte_debug_print(VTE_DEBUG_BIDI,
                                          "BiDi %s mode\n",
                                          set ? "implicit" : "explicit");
                         maybe_apply_bidi_attributes(VTE_BIDI_FLAG_IMPLICIT);
@@ -472,7 +472,7 @@ Terminal::update_mouse_protocol() noexcept
         /* Mouse pointer might change */
         apply_mouse_cursor();
 
-        _vte_debug_print(VTE_DEBUG_MODES,
+        _bte_debug_print(VTE_DEBUG_MODES,
                          "Mouse protocol is now %d\n", (int)m_mouse_tracking_mode);
 }
 
@@ -490,7 +490,7 @@ Terminal::set_mode_private(int mode,
 
         /* Post actions */
         switch (mode) {
-        case vte::terminal::modes::Private::eDEC_132_COLUMN:
+        case bte::terminal::modes::Private::eDEC_132_COLUMN:
                 /* DECCOLM: set/reset to 132/80 columns mode, clear screen and cursor home */
                 // FIXMEchpe don't do clear screen if DECNCSM is set
                 /* FIXMEchpe!!!
@@ -505,43 +505,43 @@ Terminal::set_mode_private(int mode,
                 }
                 break;
 
-        case vte::terminal::modes::Private::eDEC_REVERSE_IMAGE:
+        case bte::terminal::modes::Private::eDEC_REVERSE_IMAGE:
                 invalidate_all();
                 break;
 
-        case vte::terminal::modes::Private::eDEC_ORIGIN:
+        case bte::terminal::modes::Private::eDEC_ORIGIN:
                 /* Reposition the cursor in its new home position. */
                 home_cursor();
                 break;
 
-        case vte::terminal::modes::Private::eDEC_TEXT_CURSOR:
+        case bte::terminal::modes::Private::eDEC_TEXT_CURSOR:
                 /* No need to invalidate the cursor here, this is done
                  * in process_incoming().
                  */
                 break;
 
-        case vte::terminal::modes::Private::eXTERM_ALTBUF:
+        case bte::terminal::modes::Private::eXTERM_ALTBUF:
                 [[fallthrough]];
-        case vte::terminal::modes::Private::eXTERM_OPT_ALTBUF:
+        case bte::terminal::modes::Private::eXTERM_OPT_ALTBUF:
                 [[fallthrough]];
-        case vte::terminal::modes::Private::eXTERM_OPT_ALTBUF_SAVE_CURSOR:
+        case bte::terminal::modes::Private::eXTERM_OPT_ALTBUF_SAVE_CURSOR:
                 if (set) {
-                        if (mode == vte::terminal::modes::Private::eXTERM_OPT_ALTBUF_SAVE_CURSOR)
+                        if (mode == bte::terminal::modes::Private::eXTERM_OPT_ALTBUF_SAVE_CURSOR)
                                 save_cursor();
 
                         switch_alternate_screen();
 
                         /* Clear the alternate screen */
-                        if (mode == vte::terminal::modes::Private::eXTERM_OPT_ALTBUF_SAVE_CURSOR)
+                        if (mode == bte::terminal::modes::Private::eXTERM_OPT_ALTBUF_SAVE_CURSOR)
                                 clear_screen();
                 } else {
-                        if (mode == vte::terminal::modes::Private::eXTERM_OPT_ALTBUF &&
+                        if (mode == bte::terminal::modes::Private::eXTERM_OPT_ALTBUF &&
                             m_screen == &m_alternate_screen)
                                 clear_screen();
 
                         switch_normal_screen();
 
-                        if (mode == vte::terminal::modes::Private::eXTERM_OPT_ALTBUF_SAVE_CURSOR)
+                        if (mode == bte::terminal::modes::Private::eXTERM_OPT_ALTBUF_SAVE_CURSOR)
                                 restore_cursor();
                 }
 
@@ -553,37 +553,37 @@ Terminal::set_mode_private(int mode,
                 invalidate_all();
                 break;
 
-        case vte::terminal::modes::Private::eXTERM_SAVE_CURSOR:
+        case bte::terminal::modes::Private::eXTERM_SAVE_CURSOR:
                 if (set)
                         save_cursor();
                 else
                         restore_cursor();
                 break;
 
-        case vte::terminal::modes::Private::eXTERM_MOUSE_X10:
-        case vte::terminal::modes::Private::eXTERM_MOUSE_VT220:
-        case vte::terminal::modes::Private::eXTERM_MOUSE_VT220_HIGHLIGHT:
-        case vte::terminal::modes::Private::eXTERM_MOUSE_BUTTON_EVENT:
-        case vte::terminal::modes::Private::eXTERM_MOUSE_ANY_EVENT:
-        case vte::terminal::modes::Private::eXTERM_MOUSE_EXT:
-        case vte::terminal::modes::Private::eXTERM_MOUSE_EXT_SGR:
+        case bte::terminal::modes::Private::eXTERM_MOUSE_X10:
+        case bte::terminal::modes::Private::eXTERM_MOUSE_VT220:
+        case bte::terminal::modes::Private::eXTERM_MOUSE_VT220_HIGHLIGHT:
+        case bte::terminal::modes::Private::eXTERM_MOUSE_BUTTON_EVENT:
+        case bte::terminal::modes::Private::eXTERM_MOUSE_ANY_EVENT:
+        case bte::terminal::modes::Private::eXTERM_MOUSE_EXT:
+        case bte::terminal::modes::Private::eXTERM_MOUSE_EXT_SGR:
                 update_mouse_protocol();
                 break;
 
-        case vte::terminal::modes::Private::eXTERM_FOCUS:
+        case bte::terminal::modes::Private::eXTERM_FOCUS:
                 if (set)
                         feed_focus_event_initial();
                 break;
 
-        case vte::terminal::modes::Private::eVTE_BIDI_BOX_MIRROR:
-                _vte_debug_print(VTE_DEBUG_BIDI,
+        case bte::terminal::modes::Private::eVTE_BIDI_BOX_MIRROR:
+                _bte_debug_print(VTE_DEBUG_BIDI,
                                  "BiDi box drawing mirroring %s\n",
                                  set ? "enabled" : "disabled");
                 maybe_apply_bidi_attributes(VTE_BIDI_FLAG_BOX_MIRROR);
                 break;
 
-        case vte::terminal::modes::Private::eVTE_BIDI_AUTO:
-                        _vte_debug_print(VTE_DEBUG_BIDI,
+        case bte::terminal::modes::Private::eVTE_BIDI_AUTO:
+                        _bte_debug_print(VTE_DEBUG_BIDI,
                                          "BiDi dir autodetection %s\n",
                                          set ? "enabled" : "disabled");
                 maybe_apply_bidi_attributes(VTE_BIDI_FLAG_AUTO);
@@ -595,7 +595,7 @@ Terminal::set_mode_private(int mode,
 }
 
 void
-Terminal::set_mode_private(vte::parser::Sequence const& seq,
+Terminal::set_mode_private(bte::parser::Sequence const& seq,
                                      bool set) noexcept
 {
         auto const n_params = seq.size();
@@ -603,7 +603,7 @@ Terminal::set_mode_private(vte::parser::Sequence const& seq,
                 auto const param = seq.collect1(i);
                 auto const mode = m_modes_private.mode_from_param(param);
 
-                _vte_debug_print(VTE_DEBUG_MODES,
+                _bte_debug_print(VTE_DEBUG_MODES,
                                  "Private mode %d (%s) %s\n",
                                  param, m_modes_private.mode_to_cstring(mode),
                                  set ? "set" : "reset");
@@ -616,7 +616,7 @@ Terminal::set_mode_private(vte::parser::Sequence const& seq,
 }
 
 void
-Terminal::save_mode_private(vte::parser::Sequence const& seq,
+Terminal::save_mode_private(bte::parser::Sequence const& seq,
                                       bool save) noexcept
 {
         auto const n_params = seq.size();
@@ -625,14 +625,14 @@ Terminal::save_mode_private(vte::parser::Sequence const& seq,
                 auto const mode = m_modes_private.mode_from_param(param);
 
                 if (mode < 0) {
-                        _vte_debug_print(VTE_DEBUG_MODES,
+                        _bte_debug_print(VTE_DEBUG_MODES,
                                          "Saving private mode %d (%s)\n",
                                          param, m_modes_private.mode_to_cstring(mode));
                         continue;
                 }
 
                 if (save) {
-                        _vte_debug_print(VTE_DEBUG_MODES,
+                        _bte_debug_print(VTE_DEBUG_MODES,
                                          "Saving private mode %d (%s) is %s\n",
                                          param, m_modes_private.mode_to_cstring(mode),
                                          m_modes_private.get(mode) ? "set" : "reset");
@@ -641,7 +641,7 @@ Terminal::save_mode_private(vte::parser::Sequence const& seq,
                 } else {
                         bool const set = m_modes_private.pop_saved(mode);
 
-                        _vte_debug_print(VTE_DEBUG_MODES,
+                        _bte_debug_print(VTE_DEBUG_MODES,
                                          "Restoring private mode %d (%s) to %s\n",
                                          param, m_modes_private.mode_to_cstring(mode),
                                          set ? "set" : "reset");
@@ -671,15 +671,15 @@ Terminal::clear_to_bol()
 	/* Clear the data up to the current column with the default
 	 * attributes.  If there is no such character cell, we need
 	 * to add one. */
-        vte::grid::column_t i;
+        bte::grid::column_t i;
         for (i = 0; i <= m_screen->cursor.col; i++) {
-                if (i < (glong) _vte_row_data_length (rowdata)) {
+                if (i < (glong) _bte_row_data_length (rowdata)) {
 			/* Muck with the cell in this location. */
-                        auto pcell = _vte_row_data_get_writable(rowdata, i);
+                        auto pcell = _bte_row_data_get_writable(rowdata, i);
                         *pcell = m_color_defaults;
 		} else {
 			/* Add new cells until we have one here. */
-                        _vte_row_data_append (rowdata, &m_color_defaults);
+                        _bte_row_data_append (rowdata, &m_color_defaults);
 		}
 	}
         /* Repaint this row's paragraph. */
@@ -699,25 +699,25 @@ Terminal::clear_below_current()
 	 * row the cursor is on and all of the rows below the cursor. */
         VteRowData *rowdata;
         auto i = m_screen->cursor.row;
-	if (i < _vte_ring_next(m_screen->row_data)) {
+	if (i < _bte_ring_next(m_screen->row_data)) {
 		/* Get the data for the row we're clipping. */
-                rowdata = _vte_ring_index_writable(m_screen->row_data, i);
+                rowdata = _bte_ring_index_writable(m_screen->row_data, i);
                 /* Clean up Tab/CJK fragments. */
-                if ((glong) _vte_row_data_length(rowdata) > m_screen->cursor.col)
-                        cleanup_fragments(m_screen->cursor.col, _vte_row_data_length(rowdata));
+                if ((glong) _bte_row_data_length(rowdata) > m_screen->cursor.col)
+                        cleanup_fragments(m_screen->cursor.col, _bte_row_data_length(rowdata));
 		/* Clear everything to the right of the cursor. */
 		if (rowdata)
-                        _vte_row_data_shrink(rowdata, m_screen->cursor.col);
+                        _bte_row_data_shrink(rowdata, m_screen->cursor.col);
 	}
 	/* Now for the rest of the lines. */
         for (i = m_screen->cursor.row + 1;
-	     i < _vte_ring_next(m_screen->row_data);
+	     i < _bte_ring_next(m_screen->row_data);
 	     i++) {
 		/* Get the data for the row we're removing. */
-		rowdata = _vte_ring_index_writable(m_screen->row_data, i);
+		rowdata = _bte_ring_index_writable(m_screen->row_data, i);
 		/* Remove it. */
 		if (rowdata)
-			_vte_row_data_shrink (rowdata, 0);
+			_bte_row_data_shrink (rowdata, 0);
 	}
 	/* Now fill the cleared areas. */
         bool const not_default_bg = (m_color_defaults.attr.back() != VTE_DEFAULT_BG);
@@ -726,15 +726,15 @@ Terminal::clear_below_current()
 	     i < m_screen->insert_delta + m_row_count;
 	     i++) {
 		/* Retrieve the row's data, creating it if necessary. */
-		if (_vte_ring_contains(m_screen->row_data, i)) {
-			rowdata = _vte_ring_index_writable (m_screen->row_data, i);
+		if (_bte_ring_contains(m_screen->row_data, i)) {
+			rowdata = _bte_ring_index_writable (m_screen->row_data, i);
 			g_assert(rowdata != NULL);
 		} else {
 			rowdata = ring_append(false);
 		}
 		/* Pad out the row. */
                 if (not_default_bg) {
-                        _vte_row_data_fill(rowdata, &m_color_defaults, m_column_count);
+                        _bte_row_data_fill(rowdata, &m_color_defaults, m_column_count);
 		}
                 set_hard_wrapped(i);
                 if (i > m_screen->cursor.row)
@@ -762,12 +762,12 @@ Terminal::clear_to_eol()
 	/* Get the data for the row which the cursor points to. */
         auto rowdata = ensure_cursor();
 	g_assert(rowdata != NULL);
-        if ((glong) _vte_row_data_length(rowdata) > m_screen->cursor.col) {
+        if ((glong) _bte_row_data_length(rowdata) > m_screen->cursor.col) {
                 /* Clean up Tab/CJK fragments. */
-                cleanup_fragments(m_screen->cursor.col, _vte_row_data_length(rowdata));
+                cleanup_fragments(m_screen->cursor.col, _bte_row_data_length(rowdata));
                 /* Remove the data at the end of the array until the current column
                  * is the end of the array. */
-                _vte_row_data_shrink(rowdata, m_screen->cursor.col);
+                _bte_row_data_shrink(rowdata, m_screen->cursor.col);
 		/* We've modified the display.  Make a note of it. */
 		m_text_deleted_flag = TRUE;
 	}
@@ -775,7 +775,7 @@ Terminal::clear_to_eol()
 
         if (not_default_bg) {
 		/* Add enough cells to fill out the row. */
-                _vte_row_data_fill(rowdata, &m_color_defaults, m_column_count);
+                _bte_row_data_fill(rowdata, &m_color_defaults, m_column_count);
 	}
         set_hard_wrapped(m_screen->cursor.row);
         /* Repaint this row's paragraph. */
@@ -789,15 +789,15 @@ Terminal::clear_to_eol()
  * Sets the cursor column to @col, clamped to the range 0..m_column_count-1.
  */
 void
-Terminal::set_cursor_column(vte::grid::column_t col)
+Terminal::set_cursor_column(bte::grid::column_t col)
 {
-	_vte_debug_print(VTE_DEBUG_PARSER,
+	_bte_debug_print(VTE_DEBUG_PARSER,
                          "Moving cursor to column %ld.\n", col);
         m_screen->cursor.col = CLAMP(col, 0, m_column_count - 1);
 }
 
 void
-Terminal::set_cursor_column1(vte::grid::column_t col)
+Terminal::set_cursor_column1(bte::grid::column_t col)
 {
         set_cursor_column(col - 1);
 }
@@ -810,9 +810,9 @@ Terminal::set_cursor_column1(vte::grid::column_t col)
  * (0 if restricted scrolling is off).
  */
 void
-Terminal::set_cursor_row(vte::grid::row_t row)
+Terminal::set_cursor_row(bte::grid::row_t row)
 {
-        vte::grid::row_t start_row, end_row;
+        bte::grid::row_t start_row, end_row;
         if (m_modes_private.DEC_ORIGIN() &&
             m_scrolling_restricted) {
                 start_row = m_scrolling_region.start;
@@ -828,7 +828,7 @@ Terminal::set_cursor_row(vte::grid::row_t row)
 }
 
 void
-Terminal::set_cursor_row1(vte::grid::row_t row)
+Terminal::set_cursor_row1(bte::grid::row_t row)
 {
         set_cursor_row(row - 1);
 }
@@ -839,7 +839,7 @@ Terminal::set_cursor_row1(vte::grid::row_t row)
  * Returns: the relative cursor row, 0-based and relative to the scrolling region
  * if set (regardless of origin mode).
  */
-vte::grid::row_t
+bte::grid::row_t
 Terminal::get_cursor_row_unclamped() const
 {
         auto row = m_screen->cursor.row - m_screen->insert_delta;
@@ -850,7 +850,7 @@ Terminal::get_cursor_row_unclamped() const
         return row;
 }
 
-vte::grid::column_t
+bte::grid::column_t
 Terminal::get_cursor_column_unclamped() const
 {
         return m_screen->cursor.col;
@@ -867,16 +867,16 @@ Terminal::get_cursor_column_unclamped() const
  * Sets the cursor column to @col, clamped to the range 0..m_column_count-1.
  */
 void
-Terminal::set_cursor_coords(vte::grid::row_t row,
-                                      vte::grid::column_t column)
+Terminal::set_cursor_coords(bte::grid::row_t row,
+                                      bte::grid::column_t column)
 {
         set_cursor_column(column);
         set_cursor_row(row);
 }
 
 void
-Terminal::set_cursor_coords1(vte::grid::row_t row,
-                                      vte::grid::column_t column)
+Terminal::set_cursor_coords1(bte::grid::row_t row,
+                                      bte::grid::column_t column)
 {
         set_cursor_column1(column);
         set_cursor_row1(row);
@@ -891,17 +891,17 @@ Terminal::delete_character()
 
         ensure_cursor_is_onscreen();
 
-        if (_vte_ring_next(m_screen->row_data) > m_screen->cursor.row) {
+        if (_bte_ring_next(m_screen->row_data) > m_screen->cursor.row) {
 		long len;
 		/* Get the data for the row which the cursor points to. */
-                rowdata = _vte_ring_index_writable(m_screen->row_data, m_screen->cursor.row);
+                rowdata = _bte_ring_index_writable(m_screen->row_data, m_screen->cursor.row);
 		g_assert(rowdata != NULL);
                 col = m_screen->cursor.col;
-		len = _vte_row_data_length (rowdata);
+		len = _bte_row_data_length (rowdata);
 
                 bool const not_default_bg = (m_color_defaults.attr.back() != VTE_DEFAULT_BG);
                 if (not_default_bg) {
-                        _vte_row_data_fill(rowdata, &basic_cell, m_column_count);
+                        _bte_row_data_fill(rowdata, &basic_cell, m_column_count);
                         len = m_column_count;
                 }
 
@@ -909,10 +909,10 @@ Terminal::delete_character()
 		if (col < len) {
                         /* Clean up Tab/CJK fragments. */
                         cleanup_fragments(col, col + 1);
-			_vte_row_data_remove (rowdata, col);
+			_bte_row_data_remove (rowdata, col);
 
                         if (not_default_bg) {
-                                _vte_row_data_fill(rowdata, &m_color_defaults, m_column_count);
+                                _bte_row_data_fill(rowdata, &m_color_defaults, m_column_count);
                                 len = m_column_count;
 			}
                         set_hard_wrapped(m_screen->cursor.row);
@@ -926,14 +926,14 @@ Terminal::delete_character()
 }
 
 void
-Terminal::move_cursor_down(vte::grid::row_t rows)
+Terminal::move_cursor_down(bte::grid::row_t rows)
 {
         rows = CLAMP(rows, 1, m_row_count);
 
         // FIXMEchpe why not do this afterwards?
         ensure_cursor_is_onscreen();
 
-        vte::grid::row_t end;
+        bte::grid::row_t end;
         // FIXMEchpe why not check DEC_ORIGIN here?
         if (m_scrolling_restricted && m_screen->cursor.row <= m_screen->insert_delta + m_scrolling_region.end) {
                 end = m_screen->insert_delta + m_scrolling_region.end;
@@ -954,24 +954,24 @@ Terminal::erase_characters(long count)
 
 	/* Clear out the given number of characters. */
 	auto rowdata = ensure_row();
-        if (_vte_ring_next(m_screen->row_data) > m_screen->cursor.row) {
+        if (_bte_ring_next(m_screen->row_data) > m_screen->cursor.row) {
 		g_assert(rowdata != NULL);
                 /* Clean up Tab/CJK fragments. */
                 cleanup_fragments(m_screen->cursor.col, m_screen->cursor.col + count);
 		/* Write over the characters.  (If there aren't enough, we'll
 		 * need to create them.) */
-                _vte_row_data_fill (rowdata, &basic_cell, m_screen->cursor.col);
+                _bte_row_data_fill (rowdata, &basic_cell, m_screen->cursor.col);
 		for (i = 0; i < count; i++) {
                         col = m_screen->cursor.col + i;
 			if (col >= 0) {
-				if (col < (glong) _vte_row_data_length (rowdata)) {
+				if (col < (glong) _bte_row_data_length (rowdata)) {
 					/* Replace this cell with the current
 					 * defaults. */
-					cell = _vte_row_data_get_writable (rowdata, col);
+					cell = _bte_row_data_get_writable (rowdata, col);
                                         *cell = m_color_defaults;
 				} else {
 					/* Add new cells until we have one here. */
-                                        _vte_row_data_fill (rowdata, &m_color_defaults, col + 1);
+                                        _bte_row_data_fill (rowdata, &m_color_defaults, col + 1);
 				}
 			}
 		}
@@ -995,7 +995,7 @@ Terminal::insert_blank_character()
 }
 
 void
-Terminal::move_cursor_backward(vte::grid::column_t columns)
+Terminal::move_cursor_backward(bte::grid::column_t columns)
 {
         ensure_cursor_is_onscreen();
 
@@ -1005,7 +1005,7 @@ Terminal::move_cursor_backward(vte::grid::column_t columns)
 }
 
 void
-Terminal::move_cursor_forward(vte::grid::column_t columns)
+Terminal::move_cursor_forward(bte::grid::column_t columns)
 {
         columns = CLAMP(columns, 1, m_column_count);
 
@@ -1065,8 +1065,8 @@ Terminal::move_cursor_tab_forward(int count)
          */
 
         VteRowData *rowdata = ensure_row();
-        auto const old_len = _vte_row_data_length (rowdata);
-        _vte_row_data_fill (rowdata, &basic_cell, newcol);
+        auto const old_len = _bte_row_data_length (rowdata);
+        _bte_row_data_fill (rowdata, &basic_cell, newcol);
 
         /* Insert smart tab if there's nothing in the line after
          * us, not even empty cells (with non-default background
@@ -1076,7 +1076,7 @@ Terminal::move_cursor_tab_forward(int count)
          */
         if (col >= old_len && (newcol - col) <= VTE_TAB_WIDTH_MAX) {
                 glong i;
-                VteCell *cell = _vte_row_data_get_writable (rowdata, col);
+                VteCell *cell = _bte_row_data_get_writable (rowdata, col);
                 VteCell tab = *cell;
                 tab.attr.set_columns(newcol - col);
                 tab.c = '\t';
@@ -1084,7 +1084,7 @@ Terminal::move_cursor_tab_forward(int count)
                 *cell = tab;
                 /* And adjust the fragments */
                 for (i = col + 1; i < newcol; i++) {
-                        cell = _vte_row_data_get_writable (rowdata, i);
+                        cell = _bte_row_data_get_writable (rowdata, i);
                         cell->c = '\t';
                         cell->attr.set_columns(1);
                         cell->attr.set_fragment(true);
@@ -1097,7 +1097,7 @@ Terminal::move_cursor_tab_forward(int count)
 }
 
 void
-Terminal::move_cursor_up(vte::grid::row_t rows)
+Terminal::move_cursor_up(bte::grid::row_t rows)
 {
         // FIXMEchpe allow 0 as no-op?
         rows = CLAMP(rows, 1, m_row_count);
@@ -1105,7 +1105,7 @@ Terminal::move_cursor_up(vte::grid::row_t rows)
         //FIXMEchpe why not do this afterward?
         ensure_cursor_is_onscreen();
 
-        vte::grid::row_t start;
+        bte::grid::row_t start;
         //FIXMEchpe why not check DEC_ORIGIN mode here?
         if (m_scrolling_restricted && m_screen->cursor.row >= m_screen->insert_delta + m_scrolling_region.start) {
                 start = m_screen->insert_delta + m_scrolling_region.start;
@@ -1134,7 +1134,7 @@ Terminal::move_cursor_up(vte::grid::row_t rows)
  */
 template<unsigned int redbits, unsigned int greenbits, unsigned int bluebits>
 bool
-Terminal::seq_parse_sgr_color(vte::parser::Sequence const& seq,
+Terminal::seq_parse_sgr_color(bte::parser::Sequence const& seq,
                                         unsigned int &idx,
                                         uint32_t& color) const noexcept
 {
@@ -1219,7 +1219,7 @@ Terminal::seq_parse_sgr_color(vte::parser::Sequence const& seq,
 }
 
 void
-Terminal::erase_in_display(vte::parser::Sequence const& seq)
+Terminal::erase_in_display(bte::parser::Sequence const& seq)
 {
         /* We don't implement the protected attribute, so we can ignore selective:
          * bool selective = (seq.command() == VTE_CMD_DECSED);
@@ -1254,7 +1254,7 @@ Terminal::erase_in_display(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::erase_in_line(vte::parser::Sequence const& seq)
+Terminal::erase_in_line(bte::parser::Sequence const& seq)
 {
         /* We don't implement the protected attribute, so we can ignore selective:
          * bool selective = (seq.command() == VTE_CMD_DECSEL);
@@ -1282,9 +1282,9 @@ Terminal::erase_in_line(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::insert_lines(vte::grid::row_t param)
+Terminal::insert_lines(bte::grid::row_t param)
 {
-        vte::grid::row_t start, end, i;
+        bte::grid::row_t start, end, i;
 
 	/* Find the region we're messing with. */
         auto row = m_screen->cursor.row;
@@ -1330,9 +1330,9 @@ Terminal::insert_lines(vte::grid::row_t param)
 }
 
 void
-Terminal::delete_lines(vte::grid::row_t param)
+Terminal::delete_lines(bte::grid::row_t param)
 {
-        vte::grid::row_t start, end, i;
+        bte::grid::row_t start, end, i;
 
 	/* Find the region we're messing with. */
         auto row = m_screen->cursor.row;
@@ -1413,9 +1413,9 @@ Terminal::get_osc_color_index(int osc,
 }
 
 void
-Terminal::set_color(vte::parser::Sequence const& seq,
-                              vte::parser::StringTokeniser::const_iterator& token,
-                              vte::parser::StringTokeniser::const_iterator const& endtoken,
+Terminal::set_color(bte::parser::Sequence const& seq,
+                              bte::parser::StringTokeniser::const_iterator& token,
+                              bte::parser::StringTokeniser::const_iterator const& endtoken,
                               int osc) noexcept
 {
         while (token != endtoken) {
@@ -1438,9 +1438,9 @@ Terminal::set_color(vte::parser::Sequence const& seq,
 }
 
 void
-Terminal::set_color_index(vte::parser::Sequence const& seq,
-                                    vte::parser::StringTokeniser::const_iterator& token,
-                                    vte::parser::StringTokeniser::const_iterator const& endtoken,
+Terminal::set_color_index(bte::parser::Sequence const& seq,
+                                    bte::parser::StringTokeniser::const_iterator& token,
+                                    bte::parser::StringTokeniser::const_iterator const& endtoken,
                                     int number,
                                     int index,
                                     int index_fallback,
@@ -1449,7 +1449,7 @@ Terminal::set_color_index(vte::parser::Sequence const& seq,
         auto const str = *token;
 
         if (str == "?"s) {
-                vte::color::rgb color{0, 0, 0};
+                bte::color::rgb color{0, 0, 0};
                 if (index != -1) {
                         auto const* c = get_color(index);
                         if (c == nullptr && index_fallback != -1)
@@ -1465,7 +1465,7 @@ Terminal::set_color_index(vte::parser::Sequence const& seq,
                         reply(seq, VTE_REPLY_OSC, {}, "%d;rgb:%04x/%04x/%04x",
                               osc, color.red, color.green, color.blue);
         } else {
-                vte::color::rgb color;
+                bte::color::rgb color;
 
                 if (index != -1 &&
                     color.parse(str.data())) {
@@ -1475,9 +1475,9 @@ Terminal::set_color_index(vte::parser::Sequence const& seq,
 }
 
 void
-Terminal::set_special_color(vte::parser::Sequence const& seq,
-                                      vte::parser::StringTokeniser::const_iterator& token,
-                                      vte::parser::StringTokeniser::const_iterator const& endtoken,
+Terminal::set_special_color(bte::parser::Sequence const& seq,
+                                      bte::parser::StringTokeniser::const_iterator& token,
+                                      bte::parser::StringTokeniser::const_iterator const& endtoken,
                                       int index,
                                       int index_fallback,
                                       int osc) noexcept
@@ -1489,9 +1489,9 @@ Terminal::set_special_color(vte::parser::Sequence const& seq,
 }
 
 void
-Terminal::reset_color(vte::parser::Sequence const& seq,
-                                vte::parser::StringTokeniser::const_iterator& token,
-                                vte::parser::StringTokeniser::const_iterator const& endtoken,
+Terminal::reset_color(bte::parser::Sequence const& seq,
+                                bte::parser::StringTokeniser::const_iterator& token,
+                                bte::parser::StringTokeniser::const_iterator const& endtoken,
                                 int osc) noexcept
 {
         /* Empty param? Reset all */
@@ -1524,9 +1524,9 @@ Terminal::reset_color(vte::parser::Sequence const& seq,
 }
 
 void
-Terminal::set_current_directory_uri(vte::parser::Sequence const& seq,
-                                              vte::parser::StringTokeniser::const_iterator& token,
-                                              vte::parser::StringTokeniser::const_iterator const& endtoken) noexcept
+Terminal::set_current_directory_uri(bte::parser::Sequence const& seq,
+                                              bte::parser::StringTokeniser::const_iterator& token,
+                                              bte::parser::StringTokeniser::const_iterator const& endtoken) noexcept
 {
         std::string uri;
         if (token != endtoken && token.size_remaining() > 0) {
@@ -1546,9 +1546,9 @@ Terminal::set_current_directory_uri(vte::parser::Sequence const& seq,
 }
 
 void
-Terminal::set_current_file_uri(vte::parser::Sequence const& seq,
-                                         vte::parser::StringTokeniser::const_iterator& token,
-                                         vte::parser::StringTokeniser::const_iterator const& endtoken) noexcept
+Terminal::set_current_file_uri(bte::parser::Sequence const& seq,
+                                         bte::parser::StringTokeniser::const_iterator& token,
+                                         bte::parser::StringTokeniser::const_iterator const& endtoken) noexcept
 
 {
         std::string uri;
@@ -1569,9 +1569,9 @@ Terminal::set_current_file_uri(vte::parser::Sequence const& seq,
 }
 
 void
-Terminal::set_current_hyperlink(vte::parser::Sequence const& seq,
-                                          vte::parser::StringTokeniser::const_iterator& token,
-                                          vte::parser::StringTokeniser::const_iterator const& endtoken) noexcept
+Terminal::set_current_hyperlink(bte::parser::Sequence const& seq,
+                                          bte::parser::StringTokeniser::const_iterator& token,
+                                          bte::parser::StringTokeniser::const_iterator const& endtoken) noexcept
 {
         if (token == endtoken)
                 return; // FIXMEchpe or should we treat this as a reset?
@@ -1588,7 +1588,7 @@ Terminal::set_current_hyperlink(vte::parser::Sequence const& seq,
 
         /* First, find the ID */
         auto tokenstr = *token;
-        vte::parser::StringTokeniser subtokeniser{tokenstr, ':'};
+        bte::parser::StringTokeniser subtokeniser{tokenstr, ':'};
         for (auto subtoken : subtokeniser) {
                 auto const len = subtoken.size();
                 if (len < 3)
@@ -1598,7 +1598,7 @@ Terminal::set_current_hyperlink(vte::parser::Sequence const& seq,
                         continue;
 
                 if (len > 3 + VTE_HYPERLINK_ID_LENGTH_MAX) {
-                        _vte_debug_print (VTE_DEBUG_HYPERLINK, "Overlong \"id\" ignored: \"%s\"\n",
+                        _bte_debug_print (VTE_DEBUG_HYPERLINK, "Overlong \"id\" ignored: \"%s\"\n",
                                           subtoken.data());
                         break;
                 }
@@ -1614,7 +1614,7 @@ Terminal::set_current_hyperlink(vte::parser::Sequence const& seq,
                 char idbuf[24];
                 auto len = g_snprintf(idbuf, sizeof(idbuf), ":%ld", m_hyperlink_auto_id++);
                 hyperlink.append(idbuf, len);
-                _vte_debug_print (VTE_DEBUG_HYPERLINK, "Autogenerated id=\"%s\"\n", hyperlink.data());
+                _bte_debug_print (VTE_DEBUG_HYPERLINK, "Autogenerated id=\"%s\"\n", hyperlink.data());
         }
 
         /* Now get the URI */
@@ -1627,15 +1627,15 @@ Terminal::set_current_hyperlink(vte::parser::Sequence const& seq,
         if (len > 0 && len <= VTE_HYPERLINK_URI_LENGTH_MAX) {
                 token.append_remaining(hyperlink);
 
-                _vte_debug_print (VTE_DEBUG_HYPERLINK, "OSC 8: id;uri=\"%s\"\n", hyperlink.data());
+                _bte_debug_print (VTE_DEBUG_HYPERLINK, "OSC 8: id;uri=\"%s\"\n", hyperlink.data());
 
-                idx = _vte_ring_get_hyperlink_idx(m_screen->row_data, hyperlink.data());
+                idx = _bte_ring_get_hyperlink_idx(m_screen->row_data, hyperlink.data());
         } else {
                 if (G_UNLIKELY(len > VTE_HYPERLINK_URI_LENGTH_MAX))
-                        _vte_debug_print (VTE_DEBUG_HYPERLINK, "Overlong URI ignored (len %" G_GSIZE_FORMAT ")\n", len);
+                        _bte_debug_print (VTE_DEBUG_HYPERLINK, "Overlong URI ignored (len %" G_GSIZE_FORMAT ")\n", len);
 
                 /* idx = 0; also remove the previous current_idx so that it can be GC'd now. */
-                idx = _vte_ring_get_hyperlink_idx(m_screen->row_data, nullptr);
+                idx = _bte_ring_get_hyperlink_idx(m_screen->row_data, nullptr);
         }
 
         m_defaults.attr.hyperlink_idx = idx;
@@ -1651,15 +1651,15 @@ Terminal::set_current_hyperlink(vte::parser::Sequence const& seq,
  */
 
 void
-Terminal::NONE(vte::parser::Sequence const& seq)
+Terminal::NONE(bte::parser::Sequence const& seq)
 {
 }
 
 void
-Terminal::GRAPHIC(vte::parser::Sequence const& seq)
+Terminal::GRAPHIC(bte::parser::Sequence const& seq)
 {
 #if 0
-        struct vte_char ch = VTE_CHAR_NULL;
+        struct bte_char ch = VTE_CHAR_NULL;
 
         if (screen->state.cursor_x + 1 == screen->page->width
             && screen->flags & VTE_FLAG_PENDING_WRAP
@@ -1670,8 +1670,8 @@ Terminal::GRAPHIC(vte::parser::Sequence const& seq)
 
         screen_cursor_clear_wrap(screen);
 
-        ch = vte_char_merge(ch, screen_map(screen, seq->terminator));
-        vte_page_write(screen->page,
+        ch = bte_char_merge(ch, screen_map(screen, seq->terminator));
+        bte_page_write(screen->page,
                           screen->state.cursor_x,
                           screen->state.cursor_y,
                           ch,
@@ -1692,7 +1692,7 @@ Terminal::GRAPHIC(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::ACK(vte::parser::Sequence const& seq)
+Terminal::ACK(bte::parser::Sequence const& seq)
 {
         /*
          * ACK - acknowledge
@@ -1705,7 +1705,7 @@ Terminal::ACK(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::ACS(vte::parser::Sequence const& seq)
+Terminal::ACS(bte::parser::Sequence const& seq)
 {
         /* ACS - announce-code-structure
          *
@@ -1808,7 +1808,7 @@ Terminal::ACS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::BEL(vte::parser::Sequence const& seq)
+Terminal::BEL(bte::parser::Sequence const& seq)
 {
         /*
          * BEL - sound bell tone
@@ -1821,7 +1821,7 @@ Terminal::BEL(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::BPH(vte::parser::Sequence const& seq)
+Terminal::BPH(bte::parser::Sequence const& seq)
 {
         /*
          * BPH - break permitted here
@@ -1833,7 +1833,7 @@ Terminal::BPH(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::BS(vte::parser::Sequence const& seq)
+Terminal::BS(bte::parser::Sequence const& seq)
 {
         /*
          * BS - backspace
@@ -1857,7 +1857,7 @@ Terminal::BS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::CBT(vte::parser::Sequence const& seq)
+Terminal::CBT(bte::parser::Sequence const& seq)
 {
         /*
          * CBT - cursor-backward-tabulation
@@ -1879,7 +1879,7 @@ Terminal::CBT(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::CCH(vte::parser::Sequence const& seq)
+Terminal::CCH(bte::parser::Sequence const& seq)
 {
         /*
          * CCH - cancel character
@@ -1895,7 +1895,7 @@ Terminal::CCH(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::CHA(vte::parser::Sequence const& seq)
+Terminal::CHA(bte::parser::Sequence const& seq)
 {
         /*
          * CHA - cursor-horizontal-absolute
@@ -1928,7 +1928,7 @@ Terminal::CHA(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::CHT(vte::parser::Sequence const& seq)
+Terminal::CHT(bte::parser::Sequence const& seq)
 {
         /*
          * CHT - cursor-horizontal-forward-tabulation
@@ -1953,7 +1953,7 @@ Terminal::CHT(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::CMD(vte::parser::Sequence const& seq)
+Terminal::CMD(bte::parser::Sequence const& seq)
 {
         /*
          * CMD - coding method delimiter
@@ -1966,7 +1966,7 @@ Terminal::CMD(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::CNL(vte::parser::Sequence const& seq)
+Terminal::CNL(bte::parser::Sequence const& seq)
 {
         /*
          * CNL - cursor-next-line
@@ -1999,7 +1999,7 @@ Terminal::CNL(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::CPL(vte::parser::Sequence const& seq)
+Terminal::CPL(bte::parser::Sequence const& seq)
 {
         /*
          * CPL - cursor-preceding-line
@@ -2030,7 +2030,7 @@ Terminal::CPL(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::CR(vte::parser::Sequence const& seq)
+Terminal::CR(bte::parser::Sequence const& seq)
 {
         /*
          * CR - carriage-return
@@ -2047,7 +2047,7 @@ Terminal::CR(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::CTC(vte::parser::Sequence const& seq)
+Terminal::CTC(bte::parser::Sequence const& seq)
 {
         /*
          * CTC - cursor tabulation control
@@ -2096,7 +2096,7 @@ Terminal::CTC(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::CUB(vte::parser::Sequence const& seq)
+Terminal::CUB(bte::parser::Sequence const& seq)
 {
         /*
          * CUB - cursor-backward
@@ -2126,7 +2126,7 @@ Terminal::CUB(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::CUD(vte::parser::Sequence const& seq)
+Terminal::CUD(bte::parser::Sequence const& seq)
 {
         /*
          * CUD - cursor-down
@@ -2158,7 +2158,7 @@ Terminal::CUD(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::CUF(vte::parser::Sequence const& seq)
+Terminal::CUF(bte::parser::Sequence const& seq)
 {
         /*
          * CUF -cursor-forward
@@ -2188,7 +2188,7 @@ Terminal::CUF(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::CUP(vte::parser::Sequence const& seq)
+Terminal::CUP(bte::parser::Sequence const& seq)
 {
         /*
          * CUP - cursor-position
@@ -2225,7 +2225,7 @@ Terminal::CUP(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::CUU(vte::parser::Sequence const& seq)
+Terminal::CUU(bte::parser::Sequence const& seq)
 {
         /*
          * CUU - cursor-up
@@ -2257,7 +2257,7 @@ Terminal::CUU(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::CVT(vte::parser::Sequence const& seq)
+Terminal::CVT(bte::parser::Sequence const& seq)
 {
         /*
          * CVT - cursor line tabulation
@@ -2278,7 +2278,7 @@ Terminal::CVT(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::CnD(vte::parser::Sequence const& seq)
+Terminal::CnD(bte::parser::Sequence const& seq)
 {
         /*
          * CnD - Cn-designate
@@ -2293,7 +2293,7 @@ Terminal::CnD(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DA1(vte::parser::Sequence const& seq)
+Terminal::DA1(bte::parser::Sequence const& seq)
 {
         /*
          * DA1 - primary-device-attributes
@@ -2380,7 +2380,7 @@ Terminal::DA1(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DA2(vte::parser::Sequence const& seq)
+Terminal::DA2(bte::parser::Sequence const& seq)
 {
         /*
          * DA2 - secondary-device-attributes
@@ -2410,7 +2410,7 @@ Terminal::DA2(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DA3(vte::parser::Sequence const& seq)
+Terminal::DA3(bte::parser::Sequence const& seq)
 {
         /*
          * DA3 - tertiary-device-attributes
@@ -2431,7 +2431,7 @@ Terminal::DA3(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DAQ(vte::parser::Sequence const& seq)
+Terminal::DAQ(bte::parser::Sequence const& seq)
 {
         /*
          * DAQ - define area qualification
@@ -2447,7 +2447,7 @@ Terminal::DAQ(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DC1(vte::parser::Sequence const& seq)
+Terminal::DC1(bte::parser::Sequence const& seq)
 {
         /*
          * DC1 - device-control-1 or XON
@@ -2460,7 +2460,7 @@ Terminal::DC1(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DC2(vte::parser::Sequence const& seq)
+Terminal::DC2(bte::parser::Sequence const& seq)
 {
         /*
          * DC2 - device-control-2
@@ -2472,7 +2472,7 @@ Terminal::DC2(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DC3(vte::parser::Sequence const& seq)
+Terminal::DC3(bte::parser::Sequence const& seq)
 {
         /*
          * DC3 - device-control-3 or XOFF
@@ -2486,7 +2486,7 @@ Terminal::DC3(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DC4(vte::parser::Sequence const& seq)
+Terminal::DC4(bte::parser::Sequence const& seq)
 {
         /*
          * DC4 - device-control-4
@@ -2498,7 +2498,7 @@ Terminal::DC4(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DCH(vte::parser::Sequence const& seq)
+Terminal::DCH(bte::parser::Sequence const& seq)
 {
         /*
          * DCH - delete-character
@@ -2516,7 +2516,7 @@ Terminal::DCH(vte::parser::Sequence const& seq)
                 num = seq->args[0];
 
         screen_cursor_clear_wrap(screen);
-        vte_page_delete_cells(screen->page,
+        bte_page_delete_cells(screen->page,
                                  screen->state.cursor_x,
                                  screen->state.cursor_y,
                                  num,
@@ -2533,7 +2533,7 @@ Terminal::DCH(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECAC(vte::parser::Sequence const& seq)
+Terminal::DECAC(bte::parser::Sequence const& seq)
 {
         /*
          * DECAC - assign color
@@ -2552,7 +2552,7 @@ Terminal::DECAC(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECALN(vte::parser::Sequence const& seq)
+Terminal::DECALN(bte::parser::Sequence const& seq)
 {
         /*
          * DECALN - screen-alignment-pattern
@@ -2568,13 +2568,13 @@ Terminal::DECALN(vte::parser::Sequence const& seq)
 	     row < m_screen->insert_delta + m_row_count;
 	     row++) {
 		/* Find this row. */
-                while (_vte_ring_next(m_screen->row_data) <= row)
+                while (_bte_ring_next(m_screen->row_data) <= row)
                         ring_append(false);
                 adjust_adjustments();
-                auto rowdata = _vte_ring_index_writable (m_screen->row_data, row);
+                auto rowdata = _bte_ring_index_writable (m_screen->row_data, row);
 		g_assert(rowdata != NULL);
 		/* Clear this row. */
-		_vte_row_data_shrink (rowdata, 0);
+		_bte_row_data_shrink (rowdata, 0);
 
                 emit_text_deleted();
 		/* Fill this row. */
@@ -2582,7 +2582,7 @@ Terminal::DECALN(vte::parser::Sequence const& seq)
 		cell.c = 'E';
 		cell.attr = basic_cell.attr;
 		cell.attr.set_columns(1);
-                _vte_row_data_fill(rowdata, &cell, m_column_count);
+                _bte_row_data_fill(rowdata, &cell, m_column_count);
                 emit_text_inserted();
 	}
         invalidate_all();
@@ -2592,7 +2592,7 @@ Terminal::DECALN(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECARR(vte::parser::Sequence const& seq)
+Terminal::DECARR(bte::parser::Sequence const& seq)
 {
         /*
          * DECARR - auto repeat rate
@@ -2607,7 +2607,7 @@ Terminal::DECARR(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECATC(vte::parser::Sequence const& seq)
+Terminal::DECATC(bte::parser::Sequence const& seq)
 {
         /*
          * DECATC - alternate text color
@@ -2629,7 +2629,7 @@ Terminal::DECATC(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECAUPSS(vte::parser::Sequence const& seq)
+Terminal::DECAUPSS(bte::parser::Sequence const& seq)
 {
         /*
          * DECAUPSS - assign user preferred supplemental sets
@@ -2651,7 +2651,7 @@ Terminal::DECAUPSS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECBI(vte::parser::Sequence const& seq)
+Terminal::DECBI(bte::parser::Sequence const& seq)
 {
         /*
          * DECBI - back-index
@@ -2668,7 +2668,7 @@ Terminal::DECBI(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECCARA(vte::parser::Sequence const& seq)
+Terminal::DECCARA(bte::parser::Sequence const& seq)
 {
         /*
          * DECCARA - change-attributes-in-rectangular-area
@@ -2704,7 +2704,7 @@ Terminal::DECCARA(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECCKD(vte::parser::Sequence const& seq)
+Terminal::DECCKD(bte::parser::Sequence const& seq)
 {
         /*
          * DECCKD - copy key default
@@ -2717,7 +2717,7 @@ Terminal::DECCKD(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECCRA(vte::parser::Sequence const& seq)
+Terminal::DECCRA(bte::parser::Sequence const& seq)
 {
         /*
          * DECCRA - copy-rectangular-area
@@ -2756,7 +2756,7 @@ Terminal::DECCRA(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECCRTST(vte::parser::Sequence const& seq)
+Terminal::DECCRTST(bte::parser::Sequence const& seq)
 {
         /*
          * DECCRTST - CRT saver time
@@ -2776,7 +2776,7 @@ Terminal::DECCRTST(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECDC(vte::parser::Sequence const& seq)
+Terminal::DECDC(bte::parser::Sequence const& seq)
 {
         /*
          * DECDC - delete-column
@@ -2788,7 +2788,7 @@ Terminal::DECDC(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECDHL_BH(vte::parser::Sequence const& seq)
+Terminal::DECDHL_BH(bte::parser::Sequence const& seq)
 {
         /*
          * DECDHL_BH - double-width-double-height-line: bottom half
@@ -2800,7 +2800,7 @@ Terminal::DECDHL_BH(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECDHL_TH(vte::parser::Sequence const& seq)
+Terminal::DECDHL_TH(bte::parser::Sequence const& seq)
 {
         /*
          * DECDHL_TH - double-width-double-height-line: top half
@@ -2812,7 +2812,7 @@ Terminal::DECDHL_TH(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECDLD(vte::parser::Sequence const& seq)
+Terminal::DECDLD(bte::parser::Sequence const& seq)
 {
         /*
          * DECDLD - dynamically redefinable character sets extension
@@ -2825,7 +2825,7 @@ Terminal::DECDLD(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECDLDA(vte::parser::Sequence const& seq)
+Terminal::DECDLDA(bte::parser::Sequence const& seq)
 {
         /*
          * DECDLD - down line load allocation
@@ -2839,7 +2839,7 @@ Terminal::DECDLDA(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECDMAC(vte::parser::Sequence const& seq)
+Terminal::DECDMAC(bte::parser::Sequence const& seq)
 {
         /*
          * DECDMAC - define-macro
@@ -2852,7 +2852,7 @@ Terminal::DECDMAC(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECDWL(vte::parser::Sequence const& seq)
+Terminal::DECDWL(bte::parser::Sequence const& seq)
 {
         /*
          * DECDWL - double-width-single-height-line
@@ -2864,7 +2864,7 @@ Terminal::DECDWL(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECEFR(vte::parser::Sequence const& seq)
+Terminal::DECEFR(bte::parser::Sequence const& seq)
 {
         /*
          * DECEFR - enable-filter-rectangle
@@ -2888,7 +2888,7 @@ Terminal::DECEFR(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECELF(vte::parser::Sequence const& seq)
+Terminal::DECELF(bte::parser::Sequence const& seq)
 {
         /*
          * DECELF - enable-local-functions
@@ -2902,7 +2902,7 @@ Terminal::DECELF(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECELR(vte::parser::Sequence const& seq)
+Terminal::DECELR(bte::parser::Sequence const& seq)
 {
         /*
          * DECELR - enable-locator-reporting
@@ -2923,7 +2923,7 @@ Terminal::DECELR(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECERA(vte::parser::Sequence const& seq)
+Terminal::DECERA(bte::parser::Sequence const& seq)
 {
         /*
          * DECERA - erase-rectangular-area
@@ -2957,7 +2957,7 @@ Terminal::DECERA(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECES(vte::parser::Sequence const& seq)
+Terminal::DECES(bte::parser::Sequence const& seq)
 {
         /*
          * DECES - enable session
@@ -2972,7 +2972,7 @@ Terminal::DECES(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECFI(vte::parser::Sequence const& seq)
+Terminal::DECFI(bte::parser::Sequence const& seq)
 {
         /*
          * DECFI - forward-index
@@ -2992,7 +2992,7 @@ Terminal::DECFI(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECFNK(vte::parser::Sequence const& seq)
+Terminal::DECFNK(bte::parser::Sequence const& seq)
 {
         /*
          * DECFNK - function key (or XTERM bracketed paste)
@@ -3003,7 +3003,7 @@ Terminal::DECFNK(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECFRA(vte::parser::Sequence const& seq)
+Terminal::DECFRA(bte::parser::Sequence const& seq)
 {
         /*
          * DECFRA - fill-rectangular-area
@@ -3046,7 +3046,7 @@ Terminal::DECFRA(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECIC(vte::parser::Sequence const& seq)
+Terminal::DECIC(bte::parser::Sequence const& seq)
 {
         /*
          * DECIC - insert-column
@@ -3061,7 +3061,7 @@ Terminal::DECIC(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECINVM(vte::parser::Sequence const& seq)
+Terminal::DECINVM(bte::parser::Sequence const& seq)
 {
         /*
          * DECINVM - invoke-macro
@@ -3074,7 +3074,7 @@ Terminal::DECINVM(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECKBD(vte::parser::Sequence const& seq)
+Terminal::DECKBD(bte::parser::Sequence const& seq)
 {
         /*
          * DECKBD - keyboard-language-selection
@@ -3087,7 +3087,7 @@ Terminal::DECKBD(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECKPAM(vte::parser::Sequence const& seq)
+Terminal::DECKPAM(bte::parser::Sequence const& seq)
 {
         /*
          * DECKPAM - keypad-application-mode
@@ -3100,11 +3100,11 @@ Terminal::DECKPAM(vte::parser::Sequence const& seq)
          * References: VT525
          */
 
-        set_mode_private(vte::terminal::modes::Private::eDEC_APPLICATION_KEYPAD, true);
+        set_mode_private(bte::terminal::modes::Private::eDEC_APPLICATION_KEYPAD, true);
 }
 
 void
-Terminal::DECKPNM(vte::parser::Sequence const& seq)
+Terminal::DECKPNM(bte::parser::Sequence const& seq)
 {
         /*
          * DECKPNM - keypad-numeric-mode
@@ -3115,11 +3115,11 @@ Terminal::DECKPNM(vte::parser::Sequence const& seq)
          *
          * References: VT525
          */
-        set_mode_private(vte::terminal::modes::Private::eDEC_APPLICATION_KEYPAD, false);
+        set_mode_private(bte::terminal::modes::Private::eDEC_APPLICATION_KEYPAD, false);
 }
 
 void
-Terminal::DECLANS(vte::parser::Sequence const& seq)
+Terminal::DECLANS(bte::parser::Sequence const& seq)
 {
         /*
          * DECLANS - load answerback message
@@ -3131,7 +3131,7 @@ Terminal::DECLANS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECLBAN(vte::parser::Sequence const& seq)
+Terminal::DECLBAN(bte::parser::Sequence const& seq)
 {
         /*
          * DECLBAN - load banner message
@@ -3145,7 +3145,7 @@ Terminal::DECLBAN(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECLBD(vte::parser::Sequence const& seq)
+Terminal::DECLBD(bte::parser::Sequence const& seq)
 {
         /*
          * DECLBD - locator button define
@@ -3155,7 +3155,7 @@ Terminal::DECLBD(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECLFKC(vte::parser::Sequence const& seq)
+Terminal::DECLFKC(bte::parser::Sequence const& seq)
 {
         /*
          * DECLFKC - local-function-key-control
@@ -3168,7 +3168,7 @@ Terminal::DECLFKC(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECLL(vte::parser::Sequence const& seq)
+Terminal::DECLL(bte::parser::Sequence const& seq)
 {
         /*
          * DECLL - load-leds
@@ -3188,7 +3188,7 @@ Terminal::DECLL(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECLTOD(vte::parser::Sequence const& seq)
+Terminal::DECLTOD(bte::parser::Sequence const& seq)
 {
         /*
          * DECLTOD - load-time-of-day
@@ -3201,7 +3201,7 @@ Terminal::DECLTOD(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECPAK(vte::parser::Sequence const& seq)
+Terminal::DECPAK(bte::parser::Sequence const& seq)
 {
         /*
          * DECPAK - program alphanumeric key
@@ -3214,7 +3214,7 @@ Terminal::DECPAK(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECPCTERM(vte::parser::Sequence const& seq)
+Terminal::DECPCTERM(bte::parser::Sequence const& seq)
 {
         /*
          * DECPCTERM - pcterm-mode
@@ -3228,7 +3228,7 @@ Terminal::DECPCTERM(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECPCTERM_OR_XTERM_RPM(vte::parser::Sequence const& seq)
+Terminal::DECPCTERM_OR_XTERM_RPM(bte::parser::Sequence const& seq)
 {
         /*
          * There's a conflict between DECPCTERM and XTERM_RPM.
@@ -3245,7 +3245,7 @@ Terminal::DECPCTERM_OR_XTERM_RPM(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECPFK(vte::parser::Sequence const& seq)
+Terminal::DECPFK(bte::parser::Sequence const& seq)
 {
         /*
          * DECPFK - program function key
@@ -3258,7 +3258,7 @@ Terminal::DECPFK(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECPKA(vte::parser::Sequence const& seq)
+Terminal::DECPKA(bte::parser::Sequence const& seq)
 {
         /*
          * DECPKA - program-key-action
@@ -3277,7 +3277,7 @@ Terminal::DECPKA(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECPKFMR(vte::parser::Sequence const& seq)
+Terminal::DECPKFMR(bte::parser::Sequence const& seq)
 {
         /*
          * DECPKFMR - program-key-free-memory-report
@@ -3289,7 +3289,7 @@ Terminal::DECPKFMR(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECPS(vte::parser::Sequence const& seq)
+Terminal::DECPS(bte::parser::Sequence const& seq)
 {
         /*
          * DECPS - play sound
@@ -3312,7 +3312,7 @@ Terminal::DECPS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECRARA(vte::parser::Sequence const& seq)
+Terminal::DECRARA(bte::parser::Sequence const& seq)
 {
         /*
          * DECRARA - reverse-attributes-in-rectangular-area
@@ -3351,7 +3351,7 @@ Terminal::DECRARA(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECRC(vte::parser::Sequence const& seq)
+Terminal::DECRC(bte::parser::Sequence const& seq)
 {
         /*
          * DECRC - restore-cursor
@@ -3374,7 +3374,7 @@ Terminal::DECRC(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECREGIS(vte::parser::Sequence const& seq)
+Terminal::DECREGIS(bte::parser::Sequence const& seq)
 {
         /*
          * DECREGIS - ReGIS graphics
@@ -3384,7 +3384,7 @@ Terminal::DECREGIS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECREQTPARM(vte::parser::Sequence const& seq)
+Terminal::DECREQTPARM(bte::parser::Sequence const& seq)
 {
         /*
          * DECREQTPARM - request-terminal-parameters
@@ -3453,7 +3453,7 @@ Terminal::DECREQTPARM(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECRQCRA(vte::parser::Sequence const& seq)
+Terminal::DECRQCRA(bte::parser::Sequence const& seq)
 {
         /*
          * DECRQCRA - request checksum of rectangular area
@@ -3537,7 +3537,7 @@ Terminal::DECRQCRA(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECRQDE(vte::parser::Sequence const& seq)
+Terminal::DECRQDE(bte::parser::Sequence const& seq)
 {
         /*
          * DECRQDE - request-display-extent
@@ -3550,7 +3550,7 @@ Terminal::DECRQDE(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECRQKT(vte::parser::Sequence const& seq)
+Terminal::DECRQKT(bte::parser::Sequence const& seq)
 {
         /*
          * DECRQKT - request-key-type
@@ -3562,7 +3562,7 @@ Terminal::DECRQKT(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECRQLP(vte::parser::Sequence const& seq)
+Terminal::DECRQLP(bte::parser::Sequence const& seq)
 {
         /*
          * DECRQLP - request-locator-position
@@ -3575,7 +3575,7 @@ Terminal::DECRQLP(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECRQM_ECMA(vte::parser::Sequence const& seq)
+Terminal::DECRQM_ECMA(bte::parser::Sequence const& seq)
 {
         /*
          * DECRQM_ECMA - request-mode-ecma
@@ -3598,13 +3598,13 @@ Terminal::DECRQM_ECMA(vte::parser::Sequence const& seq)
 
         int value;
         switch (mode) {
-        case vte::terminal::modes::ECMA::eUNKNOWN:      value = 0; break;
-        case vte::terminal::modes::ECMA::eALWAYS_SET:   value = 3; break;
-        case vte::terminal::modes::ECMA::eALWAYS_RESET: value = 4; break;
+        case bte::terminal::modes::ECMA::eUNKNOWN:      value = 0; break;
+        case bte::terminal::modes::ECMA::eALWAYS_SET:   value = 3; break;
+        case bte::terminal::modes::ECMA::eALWAYS_RESET: value = 4; break;
         default: assert(mode >= 0); value = m_modes_ecma.get(mode) ? 1 : 2; break;
         }
 
-        _vte_debug_print(VTE_DEBUG_MODES,
+        _bte_debug_print(VTE_DEBUG_MODES,
                          "Reporting mode %d (%s) is %d\n",
                          param, m_modes_ecma.mode_to_cstring(mode),
                          value);
@@ -3613,7 +3613,7 @@ Terminal::DECRQM_ECMA(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECRQM_DEC(vte::parser::Sequence const& seq)
+Terminal::DECRQM_DEC(bte::parser::Sequence const& seq)
 {
         /*
          * DECRQM_DEC - request-mode-dec
@@ -3627,13 +3627,13 @@ Terminal::DECRQM_DEC(vte::parser::Sequence const& seq)
 
         int value;
         switch (mode) {
-        case vte::terminal::modes::ECMA::eUNKNOWN:      value = 0; break;
-        case vte::terminal::modes::ECMA::eALWAYS_SET:   value = 3; break;
-        case vte::terminal::modes::ECMA::eALWAYS_RESET: value = 4; break;
+        case bte::terminal::modes::ECMA::eUNKNOWN:      value = 0; break;
+        case bte::terminal::modes::ECMA::eALWAYS_SET:   value = 3; break;
+        case bte::terminal::modes::ECMA::eALWAYS_RESET: value = 4; break;
         default: assert(mode >= 0); value = m_modes_private.get(mode) ? 1 : 2; break;
         }
 
-        _vte_debug_print(VTE_DEBUG_MODES,
+        _bte_debug_print(VTE_DEBUG_MODES,
                          "Reporting private mode %d (%s) is %d\n",
                          param, m_modes_private.mode_to_cstring(mode),
                          value);
@@ -3642,7 +3642,7 @@ Terminal::DECRQM_DEC(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECRQPKFM(vte::parser::Sequence const& seq)
+Terminal::DECRQPKFM(bte::parser::Sequence const& seq)
 {
         /*
          * DECRQPKFM - request-program-key-free-memory
@@ -3654,7 +3654,7 @@ Terminal::DECRQPKFM(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECRQPSR(vte::parser::Sequence const& seq)
+Terminal::DECRQPSR(bte::parser::Sequence const& seq)
 {
         /*
          * DECRQPSR - request-presentation-state-report
@@ -3696,7 +3696,7 @@ Terminal::DECRQPSR(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECRQSS(vte::parser::Sequence const& seq)
+Terminal::DECRQSS(bte::parser::Sequence const& seq)
 {
         /*
          * DECRQSS - request selection or setting
@@ -3716,7 +3716,7 @@ Terminal::DECRQSS(vte::parser::Sequence const& seq)
          */
 
         /* Use a subparser to get the command from the request */
-        vte::parser::Parser parser{};
+        bte::parser::Parser parser{};
         parser.feed(0x9b); /* CSI */
 
         int rv = VTE_SEQ_NONE;
@@ -3737,7 +3737,7 @@ Terminal::DECRQSS(vte::parser::Sequence const& seq)
                 rv = parser.feed(c);
         }
 
-        vte::parser::Sequence request{parser};
+        bte::parser::Sequence request{parser};
         /* If not the whole string was parsed, or the sequence
          * is not a CSI sequence, or it has parameters, reject
          * the request as invalid.
@@ -3800,7 +3800,7 @@ Terminal::DECRQSS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECRQTSR(vte::parser::Sequence const& seq)
+Terminal::DECRQTSR(bte::parser::Sequence const& seq)
 {
         /*
          * DECRQTSR - request-terminal-state-report
@@ -3846,7 +3846,7 @@ Terminal::DECRQTSR(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECRQUPSS(vte::parser::Sequence const& seq)
+Terminal::DECRQUPSS(bte::parser::Sequence const& seq)
 {
         /*
          * DECRQUPSS - request-user-preferred-supplemental-set
@@ -3863,7 +3863,7 @@ Terminal::DECRQUPSS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECRSPS(vte::parser::Sequence const& seq)
+Terminal::DECRSPS(bte::parser::Sequence const& seq)
 {
         /*
          * DECRSPS - restore presentation state
@@ -3892,7 +3892,7 @@ Terminal::DECRSPS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECRSTS(vte::parser::Sequence const& seq)
+Terminal::DECRSTS(bte::parser::Sequence const& seq)
 {
         /*
          * DECRSTS - restore terminal state
@@ -3921,7 +3921,7 @@ Terminal::DECRSTS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSACE(vte::parser::Sequence const& seq)
+Terminal::DECSACE(bte::parser::Sequence const& seq)
 {
         /*
          * DECSACE - select-attribute-change-extent
@@ -3946,7 +3946,7 @@ Terminal::DECSACE(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSASD(vte::parser::Sequence const& seq)
+Terminal::DECSASD(bte::parser::Sequence const& seq)
 {
         /*
          * DECSASD - select-active-status-display
@@ -3967,7 +3967,7 @@ Terminal::DECSASD(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSC(vte::parser::Sequence const& seq)
+Terminal::DECSC(bte::parser::Sequence const& seq)
 {
         /*
          * DECSC - save-cursor
@@ -3991,7 +3991,7 @@ Terminal::DECSC(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSCA(vte::parser::Sequence const& seq)
+Terminal::DECSCA(bte::parser::Sequence const& seq)
 {
         /*
          * DECSCA - select character protection attribute
@@ -4028,7 +4028,7 @@ Terminal::DECSCA(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSCL(vte::parser::Sequence const& seq)
+Terminal::DECSCL(bte::parser::Sequence const& seq)
 {
         /*
          * DECSCL - select-conformance-level
@@ -4065,7 +4065,7 @@ Terminal::DECSCL(vte::parser::Sequence const& seq)
                         bit = seq->args[1];
         }
 
-        vte_screen_hard_reset(screen);
+        bte_screen_hard_reset(screen);
 
         switch (level) {
         case 61:
@@ -4084,7 +4084,7 @@ Terminal::DECSCL(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSCP(vte::parser::Sequence const& seq)
+Terminal::DECSCP(bte::parser::Sequence const& seq)
 {
         /*
          * DECSCP - select-communication-port
@@ -4096,7 +4096,7 @@ Terminal::DECSCP(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSCPP(vte::parser::Sequence const& seq)
+Terminal::DECSCPP(bte::parser::Sequence const& seq)
 {
         /*
          * DECSCPP - select-columns-per-page
@@ -4118,7 +4118,7 @@ Terminal::DECSCPP(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSCS(vte::parser::Sequence const& seq)
+Terminal::DECSCS(bte::parser::Sequence const& seq)
 {
         /*
          * DECSCS - select-communication-speed
@@ -4130,7 +4130,7 @@ Terminal::DECSCS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSCUSR(vte::parser::Sequence const& seq)
+Terminal::DECSCUSR(bte::parser::Sequence const& seq)
 {
         /*
          * DECSCUSR - set-cursor-style
@@ -4162,7 +4162,7 @@ Terminal::DECSCUSR(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSDDT(vte::parser::Sequence const& seq)
+Terminal::DECSDDT(bte::parser::Sequence const& seq)
 {
         /*
          * DECSDDT - select-disconnect-delay-time
@@ -4174,7 +4174,7 @@ Terminal::DECSDDT(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSDPT(vte::parser::Sequence const& seq)
+Terminal::DECSDPT(bte::parser::Sequence const& seq)
 {
         /*
          * DECSDPT - select-digital-printed-data-type
@@ -4186,7 +4186,7 @@ Terminal::DECSDPT(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSED(vte::parser::Sequence const& seq)
+Terminal::DECSED(bte::parser::Sequence const& seq)
 {
         /*
          * DECSED - selective-erase-in-display
@@ -4208,7 +4208,7 @@ Terminal::DECSED(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSEL(vte::parser::Sequence const& seq)
+Terminal::DECSEL(bte::parser::Sequence const& seq)
 {
         /*
          * DECSEL - selective-erase-in-line
@@ -4230,7 +4230,7 @@ Terminal::DECSEL(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSERA(vte::parser::Sequence const& seq)
+Terminal::DECSERA(bte::parser::Sequence const& seq)
 {
         /*
          * DECSERA - selective-erase-rectangular-area
@@ -4265,7 +4265,7 @@ Terminal::DECSERA(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSEST(vte::parser::Sequence const& seq)
+Terminal::DECSEST(bte::parser::Sequence const& seq)
 {
         /*
          * DECSEST - energy saver time
@@ -4286,7 +4286,7 @@ Terminal::DECSEST(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSFC(vte::parser::Sequence const& seq)
+Terminal::DECSFC(bte::parser::Sequence const& seq)
 {
         /*
          * DECSFC - select-flow-control
@@ -4298,7 +4298,7 @@ Terminal::DECSFC(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSGR(vte::parser::Sequence const& seq)
+Terminal::DECSGR(bte::parser::Sequence const& seq)
 {
         /*
          * DECSGR - DEC select graphics rendition
@@ -4326,7 +4326,7 @@ Terminal::DECSGR(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSIXEL(vte::parser::Sequence const& seq)
+Terminal::DECSIXEL(bte::parser::Sequence const& seq)
 {
         /*
          * DECSIXEL - SIXEL graphics
@@ -4336,7 +4336,7 @@ Terminal::DECSIXEL(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSKCV(vte::parser::Sequence const& seq)
+Terminal::DECSKCV(bte::parser::Sequence const& seq)
 {
         /*
          * DECSKCV - set-key-click-volume
@@ -4358,7 +4358,7 @@ Terminal::DECSKCV(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSLCK(vte::parser::Sequence const& seq)
+Terminal::DECSLCK(bte::parser::Sequence const& seq)
 {
         /*
          * DECSLCK - set-lock-key-style
@@ -4371,7 +4371,7 @@ Terminal::DECSLCK(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSLE(vte::parser::Sequence const& seq)
+Terminal::DECSLE(bte::parser::Sequence const& seq)
 {
         /*
          * DECSLE - select-locator-events
@@ -4383,7 +4383,7 @@ Terminal::DECSLE(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSLPP(vte::parser::Sequence const& seq)
+Terminal::DECSLPP(bte::parser::Sequence const& seq)
 {
         /*
          * DECSLPP - set-lines-per-page
@@ -4412,13 +4412,13 @@ Terminal::DECSLPP(vte::parser::Sequence const& seq)
         else if (param < 24)
                 return;
 
-        _vte_debug_print(VTE_DEBUG_EMULATION, "Resizing to %d rows.\n", param);
+        _bte_debug_print(VTE_DEBUG_EMULATION, "Resizing to %d rows.\n", param);
 
         emit_resize_window(m_column_count, param);
 }
 
 void
-Terminal::DECSLRM(vte::parser::Sequence const& seq)
+Terminal::DECSLRM(bte::parser::Sequence const& seq)
 {
         /*
          * DECSLRM - set left and right margins
@@ -4447,7 +4447,7 @@ Terminal::DECSLRM(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSLRM_OR_SCOSC(vte::parser::Sequence const& seq)
+Terminal::DECSLRM_OR_SCOSC(bte::parser::Sequence const& seq)
 {
         /*
          * set left and right margins or SCO restore cursor - DECSLRM or SCOSC
@@ -4475,7 +4475,7 @@ Terminal::DECSLRM_OR_SCOSC(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSMBV(vte::parser::Sequence const& seq)
+Terminal::DECSMBV(bte::parser::Sequence const& seq)
 {
         /*
          * DECSMBV - set-margin-bell-volume
@@ -4497,7 +4497,7 @@ Terminal::DECSMBV(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSMKR(vte::parser::Sequence const& seq)
+Terminal::DECSMKR(bte::parser::Sequence const& seq)
 {
         /*
          * DECSMKR - select-modifier-key-reporting
@@ -4512,7 +4512,7 @@ Terminal::DECSMKR(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSNLS(vte::parser::Sequence const& seq)
+Terminal::DECSNLS(bte::parser::Sequence const& seq)
 {
         /*
          * DECSNLS - set-lines-per-screen
@@ -4533,7 +4533,7 @@ Terminal::DECSNLS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSPMA(vte::parser::Sequence const& seq)
+Terminal::DECSPMA(bte::parser::Sequence const& seq)
 {
         /*
          * DECSPMA - session page memory allocation
@@ -4546,7 +4546,7 @@ Terminal::DECSPMA(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSPP(vte::parser::Sequence const& seq)
+Terminal::DECSPP(bte::parser::Sequence const& seq)
 {
         /*
          * DECSPP - set-port-parameter
@@ -4560,7 +4560,7 @@ Terminal::DECSPP(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSPPCS(vte::parser::Sequence const& seq)
+Terminal::DECSPPCS(bte::parser::Sequence const& seq)
 {
         /*
          * DECSPPCS - select-pro-printer-character-set
@@ -4573,7 +4573,7 @@ Terminal::DECSPPCS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSPRTT(vte::parser::Sequence const& seq)
+Terminal::DECSPRTT(bte::parser::Sequence const& seq)
 {
         /*
          * DECSPRTT - select-printer-type
@@ -4586,7 +4586,7 @@ Terminal::DECSPRTT(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSR(vte::parser::Sequence const& seq)
+Terminal::DECSR(bte::parser::Sequence const& seq)
 {
         /*
          * DECSR - secure-reset
@@ -4615,7 +4615,7 @@ Terminal::DECSR(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSRFR(vte::parser::Sequence const& seq)
+Terminal::DECSRFR(bte::parser::Sequence const& seq)
 {
         /*
          * DECSRFR - select-refresh-rate
@@ -4628,7 +4628,7 @@ Terminal::DECSRFR(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSSCLS(vte::parser::Sequence const& seq)
+Terminal::DECSSCLS(bte::parser::Sequence const& seq)
 {
         /*
          * DECSSCLS - set-scroll-speed
@@ -4641,7 +4641,7 @@ Terminal::DECSSCLS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSSDT(vte::parser::Sequence const& seq)
+Terminal::DECSSDT(bte::parser::Sequence const& seq)
 {
         /*
          * DECSSDT - select-status-display-line-type
@@ -4663,7 +4663,7 @@ Terminal::DECSSDT(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSSL(vte::parser::Sequence const& seq)
+Terminal::DECSSL(bte::parser::Sequence const& seq)
 {
         /*
          * DECSSL - select-setup-language
@@ -4683,7 +4683,7 @@ Terminal::DECSSL(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECST8C(vte::parser::Sequence const& seq)
+Terminal::DECST8C(bte::parser::Sequence const& seq)
 {
         /*
          * DECST8C - set-tab-at-every-8-columns
@@ -4702,7 +4702,7 @@ Terminal::DECST8C(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSTBM(vte::parser::Sequence const& seq)
+Terminal::DECSTBM(bte::parser::Sequence const& seq)
 {
         /*
          * DECSTBM - set-top-and-bottom-margins
@@ -4744,7 +4744,7 @@ Terminal::DECSTBM(vte::parser::Sequence const& seq)
                 bottom = screen->page->height;
         }
 
-        vte_page_set_scroll_region(screen->page, top - 1, bottom - top + 1);
+        bte_page_set_scroll_region(screen->page, top - 1, bottom - top + 1);
         screen_cursor_clear_wrap(screen);
         screen_cursor_set(screen, 0, 0);
 #endif
@@ -4778,15 +4778,15 @@ Terminal::DECSTBM(vte::parser::Sequence const& seq)
                 m_scrolling_restricted = FALSE;
 	} else {
 		/* Maybe extend the ring -- bug 710483 */
-                while (_vte_ring_next(m_screen->row_data) < m_screen->insert_delta + m_row_count)
-                        _vte_ring_insert(m_screen->row_data, _vte_ring_next(m_screen->row_data), get_bidi_flags());
+                while (_bte_ring_next(m_screen->row_data) < m_screen->insert_delta + m_row_count)
+                        _bte_ring_insert(m_screen->row_data, _bte_ring_next(m_screen->row_data), get_bidi_flags());
 	}
 
         home_cursor();
 }
 
 void
-Terminal::DECSTGLT(vte::parser::Sequence const& seq)
+Terminal::DECSTGLT(bte::parser::Sequence const& seq)
 {
         /*
          * DECSTGLT - select color lookup table
@@ -4814,7 +4814,7 @@ Terminal::DECSTGLT(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSTR(vte::parser::Sequence const& seq)
+Terminal::DECSTR(bte::parser::Sequence const& seq)
 {
         /*
          * DECSTR - soft-terminal-reset
@@ -4828,7 +4828,7 @@ Terminal::DECSTR(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSTRL(vte::parser::Sequence const& seq)
+Terminal::DECSTRL(bte::parser::Sequence const& seq)
 {
         /*
          * DECSTRL - set-transmit-rate-limit
@@ -4840,7 +4840,7 @@ Terminal::DECSTRL(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSTUI(vte::parser::Sequence const& seq)
+Terminal::DECSTUI(bte::parser::Sequence const& seq)
 {
         /*
          * DECSTUI - set terminal unit ID
@@ -4853,7 +4853,7 @@ Terminal::DECSTUI(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSWBV(vte::parser::Sequence const& seq)
+Terminal::DECSWBV(bte::parser::Sequence const& seq)
 {
         /*
          * DECSWBV - set-warning-bell-volume
@@ -4875,7 +4875,7 @@ Terminal::DECSWBV(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSWL(vte::parser::Sequence const& seq)
+Terminal::DECSWL(bte::parser::Sequence const& seq)
 {
         /*
          * DECSWL - single-width-single-height-line
@@ -4887,7 +4887,7 @@ Terminal::DECSWL(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECSZS(vte::parser::Sequence const& seq)
+Terminal::DECSZS(bte::parser::Sequence const& seq)
 {
         /*
          * DECSZS - select zero symbol
@@ -4910,7 +4910,7 @@ Terminal::DECSZS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECTID(vte::parser::Sequence const& seq)
+Terminal::DECTID(bte::parser::Sequence const& seq)
 {
         /*
          * DECTID - select-terminal-id
@@ -4924,7 +4924,7 @@ Terminal::DECTID(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECTME(vte::parser::Sequence const& seq)
+Terminal::DECTME(bte::parser::Sequence const& seq)
 {
         /*
          * DECTME - terminal-mode-emulation
@@ -4940,7 +4940,7 @@ Terminal::DECTME(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECTST(vte::parser::Sequence const& seq)
+Terminal::DECTST(bte::parser::Sequence const& seq)
 {
         /*
          * DECTST - invoke-confidence-test
@@ -4957,7 +4957,7 @@ Terminal::DECTST(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECUDK(vte::parser::Sequence const& seq)
+Terminal::DECUDK(bte::parser::Sequence const& seq)
 {
         /*
          * DECUDK - user define keys
@@ -4970,7 +4970,7 @@ Terminal::DECUDK(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DECUS(vte::parser::Sequence const& seq)
+Terminal::DECUS(bte::parser::Sequence const& seq)
 {
         /*
          * DECUS - update session
@@ -4982,7 +4982,7 @@ Terminal::DECUS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DL(vte::parser::Sequence const& seq)
+Terminal::DL(bte::parser::Sequence const& seq)
 {
         /*
          * DL - delete-line
@@ -5010,7 +5010,7 @@ Terminal::DL(vte::parser::Sequence const& seq)
         if (seq->args[0] > 0)
                 num = seq->args[0];
 
-        vte_page_delete_lines(screen->page,
+        bte_page_delete_lines(screen->page,
                                  screen->state.cursor_y,
                                  num,
                                  &screen->state.attr,
@@ -5022,7 +5022,7 @@ Terminal::DL(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DLE(vte::parser::Sequence const& seq)
+Terminal::DLE(bte::parser::Sequence const& seq)
 {
         /*
          * DLE - data link escape
@@ -5037,7 +5037,7 @@ Terminal::DLE(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DMI(vte::parser::Sequence const& seq)
+Terminal::DMI(bte::parser::Sequence const& seq)
 {
         /*
          * DMI - disable manual input
@@ -5049,7 +5049,7 @@ Terminal::DMI(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DOCS(vte::parser::Sequence const& seq)
+Terminal::DOCS(bte::parser::Sequence const& seq)
 {
         /*
          * DOCS - designate other coding systyem
@@ -5062,7 +5062,7 @@ Terminal::DOCS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DSR_ECMA(vte::parser::Sequence const& seq)
+Terminal::DSR_ECMA(bte::parser::Sequence const& seq)
 {
         /*
          * DSR_ECMA - Device Status Report
@@ -5104,7 +5104,7 @@ Terminal::DSR_ECMA(vte::parser::Sequence const& seq)
                  *   @arg[0]: line
                  *   @arg[1]: column
                  */
-                vte::grid::row_t rowval, origin, rowmax;
+                bte::grid::row_t rowval, origin, rowmax;
                 if (m_modes_private.DEC_ORIGIN() &&
                     m_scrolling_restricted) {
                         origin = m_scrolling_region.start;
@@ -5127,7 +5127,7 @@ Terminal::DSR_ECMA(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DSR_DEC(vte::parser::Sequence const& seq)
+Terminal::DSR_DEC(bte::parser::Sequence const& seq)
 {
         /*
          * DSR_DEC - device-status-report-dec
@@ -5151,7 +5151,7 @@ Terminal::DSR_DEC(vte::parser::Sequence const& seq)
                  *   @arg[2]: page
                  *     Always report page 1 here (per XTERM source code).
                  */
-                vte::grid::row_t rowval, origin, rowmax;
+                bte::grid::row_t rowval, origin, rowmax;
                 if (m_modes_private.DEC_ORIGIN() &&
                     m_scrolling_restricted) {
                         origin = m_scrolling_region.start;
@@ -5290,7 +5290,7 @@ Terminal::DSR_DEC(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::DTA(vte::parser::Sequence const& seq)
+Terminal::DTA(bte::parser::Sequence const& seq)
 {
         /*
          * DTA - dimension text area
@@ -5309,7 +5309,7 @@ Terminal::DTA(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::EA(vte::parser::Sequence const& seq)
+Terminal::EA(bte::parser::Sequence const& seq)
 {
         /*
          * EA - erase in area
@@ -5344,7 +5344,7 @@ Terminal::EA(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::ECH(vte::parser::Sequence const& seq)
+Terminal::ECH(bte::parser::Sequence const& seq)
 {
         /*
          * ECH - erase-character
@@ -5375,7 +5375,7 @@ Terminal::ECH(vte::parser::Sequence const& seq)
         if (seq->args[0] > 0)
                 num = seq->args[0];
 
-        vte_page_erase(screen->page,
+        bte_page_erase(screen->page,
                           screen->state.cursor_x, screen->state.cursor_y,
                           screen->state.cursor_x + num, screen->state.cursor_y,
                           &screen->state.attr, screen->age, false);
@@ -5390,7 +5390,7 @@ Terminal::ECH(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::ED(vte::parser::Sequence const& seq)
+Terminal::ED(bte::parser::Sequence const& seq)
 {
         /*
          * ED - erase-in-display
@@ -5427,7 +5427,7 @@ Terminal::ED(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::EF(vte::parser::Sequence const& seq)
+Terminal::EF(bte::parser::Sequence const& seq)
 {
         /*
          * EF - erase in field
@@ -5456,7 +5456,7 @@ Terminal::EF(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::EL(vte::parser::Sequence const& seq)
+Terminal::EL(bte::parser::Sequence const& seq)
 {
         /*
          * EL - erase-in-line
@@ -5489,7 +5489,7 @@ Terminal::EL(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::EM(vte::parser::Sequence const& seq)
+Terminal::EM(bte::parser::Sequence const& seq)
 {
         /*
          * EM - end of medium
@@ -5499,7 +5499,7 @@ Terminal::EM(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::EMI(vte::parser::Sequence const& seq)
+Terminal::EMI(bte::parser::Sequence const& seq)
 {
         /*
          * DMI - enable manual input
@@ -5511,7 +5511,7 @@ Terminal::EMI(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::ENQ(vte::parser::Sequence const& seq)
+Terminal::ENQ(bte::parser::Sequence const& seq)
 {
         /*
          * ENQ - enquiry
@@ -5525,7 +5525,7 @@ Terminal::ENQ(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::EOT(vte::parser::Sequence const& seq)
+Terminal::EOT(bte::parser::Sequence const& seq)
 {
         /*
          * EOT - end of transmission
@@ -5538,7 +5538,7 @@ Terminal::EOT(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::EPA(vte::parser::Sequence const& seq)
+Terminal::EPA(bte::parser::Sequence const& seq)
 {
         /*
          * EPA - end of guarded area
@@ -5555,7 +5555,7 @@ Terminal::EPA(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::ESA(vte::parser::Sequence const& seq)
+Terminal::ESA(bte::parser::Sequence const& seq)
 {
         /*
          * ESA - end of selected area
@@ -5568,7 +5568,7 @@ Terminal::ESA(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::ETB(vte::parser::Sequence const& seq)
+Terminal::ETB(bte::parser::Sequence const& seq)
 {
         /*
          * ETB - end of transmission block
@@ -5581,7 +5581,7 @@ Terminal::ETB(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::ETX(vte::parser::Sequence const& seq)
+Terminal::ETX(bte::parser::Sequence const& seq)
 {
         /*
          * ETX - end of text
@@ -5594,7 +5594,7 @@ Terminal::ETX(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::FF(vte::parser::Sequence const& seq)
+Terminal::FF(bte::parser::Sequence const& seq)
 {
         /*
          * FF - form-feed
@@ -5607,7 +5607,7 @@ Terminal::FF(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::FNK(vte::parser::Sequence const& seq)
+Terminal::FNK(bte::parser::Sequence const& seq)
 {
         /*
          * FNK - function key
@@ -5625,7 +5625,7 @@ Terminal::FNK(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::FNT(vte::parser::Sequence const& seq)
+Terminal::FNT(bte::parser::Sequence const& seq)
 {
         /*
          * FNT - font selection
@@ -5646,7 +5646,7 @@ Terminal::FNT(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::GCC(vte::parser::Sequence const& seq)
+Terminal::GCC(bte::parser::Sequence const& seq)
 {
         /*
          * GCC - graphic character combination
@@ -5668,7 +5668,7 @@ Terminal::GCC(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::GSM(vte::parser::Sequence const& seq)
+Terminal::GSM(bte::parser::Sequence const& seq)
 {
         /*
          * GSM - graphic size modification
@@ -5688,7 +5688,7 @@ Terminal::GSM(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::GSS(vte::parser::Sequence const& seq)
+Terminal::GSS(bte::parser::Sequence const& seq)
 {
         /*
          * GSM - graphic size selection
@@ -5706,7 +5706,7 @@ Terminal::GSS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::GnDm(vte::parser::Sequence const& seq)
+Terminal::GnDm(bte::parser::Sequence const& seq)
 {
         /*
          * GnDm - Gn-designate 9m-charset
@@ -5741,7 +5741,7 @@ Terminal::GnDm(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::GnDMm(vte::parser::Sequence const& seq)
+Terminal::GnDMm(bte::parser::Sequence const& seq)
 {
         /*
          * GnDm - Gn-designate multibyte 9m-charset
@@ -5756,7 +5756,7 @@ Terminal::GnDMm(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::HPA(vte::parser::Sequence const& seq)
+Terminal::HPA(bte::parser::Sequence const& seq)
 {
         /*
          * HPA - horizontal position absolute
@@ -5788,7 +5788,7 @@ Terminal::HPA(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::HPB(vte::parser::Sequence const& seq)
+Terminal::HPB(bte::parser::Sequence const& seq)
 {
         /*
          * HPB - horizontal position backward
@@ -5806,7 +5806,7 @@ Terminal::HPB(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::HPR(vte::parser::Sequence const& seq)
+Terminal::HPR(bte::parser::Sequence const& seq)
 {
         /*
          * HPR - horizontal-position-relative
@@ -5834,7 +5834,7 @@ Terminal::HPR(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::HT(vte::parser::Sequence const& seq)
+Terminal::HT(bte::parser::Sequence const& seq)
 {
         /*
          * HT - character tabulation
@@ -5857,7 +5857,7 @@ Terminal::HT(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::HTJ(vte::parser::Sequence const& seq)
+Terminal::HTJ(bte::parser::Sequence const& seq)
 {
         /*
          * HTJ - character tabulation with justification
@@ -5873,7 +5873,7 @@ Terminal::HTJ(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::HTS(vte::parser::Sequence const& seq)
+Terminal::HTS(bte::parser::Sequence const& seq)
 {
         /*
          * HTS - horizontal-tab-set
@@ -5889,7 +5889,7 @@ Terminal::HTS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::HVP(vte::parser::Sequence const& seq)
+Terminal::HVP(bte::parser::Sequence const& seq)
 {
         /*
          * HVP - horizontal-and-vertical-position
@@ -5914,7 +5914,7 @@ Terminal::HVP(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::ICH(vte::parser::Sequence const& seq)
+Terminal::ICH(bte::parser::Sequence const& seq)
 {
         /*
          * ICH - insert-character
@@ -5942,7 +5942,7 @@ Terminal::ICH(vte::parser::Sequence const& seq)
                 num = seq->args[0];
 
         screen_cursor_clear_wrap(screen);
-        vte_page_insert_cells(screen->page,
+        bte_page_insert_cells(screen->page,
                                  screen->state.cursor_x,
                                  screen->state.cursor_y,
                                  num,
@@ -5958,7 +5958,7 @@ Terminal::ICH(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::IDCS(vte::parser::Sequence const& seq)
+Terminal::IDCS(bte::parser::Sequence const& seq)
 {
         /*
          * IDCS - identify device control string
@@ -5976,7 +5976,7 @@ Terminal::IDCS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::IGS(vte::parser::Sequence const& seq)
+Terminal::IGS(bte::parser::Sequence const& seq)
 {
         /*
          * IGS - identify graphic subrepertoire
@@ -5998,7 +5998,7 @@ Terminal::IGS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::IL(vte::parser::Sequence const& seq)
+Terminal::IL(bte::parser::Sequence const& seq)
 {
         /*
          * IL - insert-line
@@ -6027,7 +6027,7 @@ Terminal::IL(vte::parser::Sequence const& seq)
                 num = seq->args[0];
 
         screen_cursor_clear_wrap(screen);
-        vte_page_insert_lines(screen->page,
+        bte_page_insert_lines(screen->page,
                                  screen->state.cursor_y,
                                  num,
                                  &screen->state.attr,
@@ -6039,7 +6039,7 @@ Terminal::IL(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::IND(vte::parser::Sequence const& seq)
+Terminal::IND(bte::parser::Sequence const& seq)
 {
         /*
          * IND - index - DEPRECATED
@@ -6051,7 +6051,7 @@ Terminal::IND(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::INT(vte::parser::Sequence const& seq)
+Terminal::INT(bte::parser::Sequence const& seq)
 {
         /*
          * INT - interrupt
@@ -6061,7 +6061,7 @@ Terminal::INT(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::IRR(vte::parser::Sequence const& seq)
+Terminal::IRR(bte::parser::Sequence const& seq)
 {
         /*
          * IRR - identify-revised-registration
@@ -6075,7 +6075,7 @@ Terminal::IRR(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::IS1(vte::parser::Sequence const& seq)
+Terminal::IS1(bte::parser::Sequence const& seq)
 {
         /*
          * IS1 - information separator 1 / unit separator (US)
@@ -6085,7 +6085,7 @@ Terminal::IS1(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::IS2(vte::parser::Sequence const& seq)
+Terminal::IS2(bte::parser::Sequence const& seq)
 {
         /*
          * IS2 - information separator 2 / record separator (RS)
@@ -6095,7 +6095,7 @@ Terminal::IS2(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::IS3(vte::parser::Sequence const& seq)
+Terminal::IS3(bte::parser::Sequence const& seq)
 {
         /*
          * IS3 - information separator 3 / group separator (GS)
@@ -6105,7 +6105,7 @@ Terminal::IS3(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::IS4(vte::parser::Sequence const& seq)
+Terminal::IS4(bte::parser::Sequence const& seq)
 {
         /*
          * IS4 - information separator 4 / file separator (FS)
@@ -6115,7 +6115,7 @@ Terminal::IS4(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::JFY(vte::parser::Sequence const& seq)
+Terminal::JFY(bte::parser::Sequence const& seq)
 {
         /*
          * JFY - justify
@@ -6127,7 +6127,7 @@ Terminal::JFY(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::LF(vte::parser::Sequence const& seq)
+Terminal::LF(bte::parser::Sequence const& seq)
 {
         /*
          * LF - line-feed
@@ -6146,7 +6146,7 @@ Terminal::LF(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::LS0(vte::parser::Sequence const& seq)
+Terminal::LS0(bte::parser::Sequence const& seq)
 {
         /*
          * LS0 -locking shift 0 (8 bit)
@@ -6165,7 +6165,7 @@ Terminal::LS0(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::LS1(vte::parser::Sequence const& seq)
+Terminal::LS1(bte::parser::Sequence const& seq)
 {
         /*
          * LS1 -locking shift 1 (8 bit)
@@ -6184,7 +6184,7 @@ Terminal::LS1(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::LS1R(vte::parser::Sequence const& seq)
+Terminal::LS1R(bte::parser::Sequence const& seq)
 {
         /*
          * LS1R - locking-shift-1-right
@@ -6199,7 +6199,7 @@ Terminal::LS1R(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::LS2(vte::parser::Sequence const& seq)
+Terminal::LS2(bte::parser::Sequence const& seq)
 {
         /*
          * LS2 - locking-shift-2
@@ -6214,7 +6214,7 @@ Terminal::LS2(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::LS2R(vte::parser::Sequence const& seq)
+Terminal::LS2R(bte::parser::Sequence const& seq)
 {
         /*
          * LS2R - locking-shift-2-right
@@ -6229,7 +6229,7 @@ Terminal::LS2R(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::LS3(vte::parser::Sequence const& seq)
+Terminal::LS3(bte::parser::Sequence const& seq)
 {
         /*
          * LS3 - locking-shift-3
@@ -6245,7 +6245,7 @@ Terminal::LS3(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::LS3R(vte::parser::Sequence const& seq)
+Terminal::LS3R(bte::parser::Sequence const& seq)
 {
         /*
          * LS3R - locking-shift-3-right
@@ -6260,7 +6260,7 @@ Terminal::LS3R(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::MC_ECMA(vte::parser::Sequence const& seq)
+Terminal::MC_ECMA(bte::parser::Sequence const& seq)
 {
         /*
          * MC_ECMA - media-copy-ecma
@@ -6273,7 +6273,7 @@ Terminal::MC_ECMA(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::MC_DEC(vte::parser::Sequence const& seq)
+Terminal::MC_DEC(bte::parser::Sequence const& seq)
 {
         /*
          * MC_DEC - media-copy-dec
@@ -6285,7 +6285,7 @@ Terminal::MC_DEC(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::MW(vte::parser::Sequence const& seq)
+Terminal::MW(bte::parser::Sequence const& seq)
 {
         /*
          * MW - message waiting
@@ -6297,7 +6297,7 @@ Terminal::MW(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::NAK(vte::parser::Sequence const& seq)
+Terminal::NAK(bte::parser::Sequence const& seq)
 {
         /*
          * NAK - negative acknowledge
@@ -6310,7 +6310,7 @@ Terminal::NAK(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::NBH(vte::parser::Sequence const& seq)
+Terminal::NBH(bte::parser::Sequence const& seq)
 {
         /*
          * BPH - no break permitted here
@@ -6322,7 +6322,7 @@ Terminal::NBH(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::NEL(vte::parser::Sequence const& seq)
+Terminal::NEL(bte::parser::Sequence const& seq)
 {
         /*
          * NEL - next-line
@@ -6342,7 +6342,7 @@ Terminal::NEL(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::NP(vte::parser::Sequence const& seq)
+Terminal::NP(bte::parser::Sequence const& seq)
 {
         /*
          * NP - next-page
@@ -6363,7 +6363,7 @@ Terminal::NP(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::NUL(vte::parser::Sequence const& seq)
+Terminal::NUL(bte::parser::Sequence const& seq)
 {
         /*
          * NUL - nothing
@@ -6373,7 +6373,7 @@ Terminal::NUL(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::OSC(vte::parser::Sequence const& seq)
+Terminal::OSC(bte::parser::Sequence const& seq)
 {
         /*
          * OSC - operating system command
@@ -6390,7 +6390,7 @@ Terminal::OSC(vte::parser::Sequence const& seq)
          */
 
         auto str = seq.string_utf8();
-        vte::parser::StringTokeniser tokeniser{str, ';'};
+        bte::parser::StringTokeniser tokeniser{str, ';'};
         auto it = tokeniser.cbegin();
         int osc;
         if (!it.number(osc))
@@ -6523,7 +6523,7 @@ Terminal::OSC(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::PEC(vte::parser::Sequence const& seq)
+Terminal::PEC(bte::parser::Sequence const& seq)
 {
         /*
          * PEC - presentation expand or contract
@@ -6535,7 +6535,7 @@ Terminal::PEC(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::PFS(vte::parser::Sequence const& seq)
+Terminal::PFS(bte::parser::Sequence const& seq)
 {
         /*
          * PFS - page format selection
@@ -6547,7 +6547,7 @@ Terminal::PFS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::PLD(vte::parser::Sequence const& seq)
+Terminal::PLD(bte::parser::Sequence const& seq)
 {
         /*
          * PLD - partial line forward
@@ -6559,7 +6559,7 @@ Terminal::PLD(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::PLU(vte::parser::Sequence const& seq)
+Terminal::PLU(bte::parser::Sequence const& seq)
 {
         /*
          * PLU - partial line backward
@@ -6571,7 +6571,7 @@ Terminal::PLU(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::PP(vte::parser::Sequence const& seq)
+Terminal::PP(bte::parser::Sequence const& seq)
 {
         /*
          * PP - preceding page
@@ -6592,7 +6592,7 @@ Terminal::PP(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::PPA(vte::parser::Sequence const& seq)
+Terminal::PPA(bte::parser::Sequence const& seq)
 {
         /*
          * PPA - page position absolute
@@ -6614,7 +6614,7 @@ Terminal::PPA(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::PPB(vte::parser::Sequence const& seq)
+Terminal::PPB(bte::parser::Sequence const& seq)
 {
         /*
          * PPB - page position backward
@@ -6635,7 +6635,7 @@ Terminal::PPB(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::PPR(vte::parser::Sequence const& seq)
+Terminal::PPR(bte::parser::Sequence const& seq)
 {
         /*
          * PPR - page position foward
@@ -6656,7 +6656,7 @@ Terminal::PPR(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::PTX(vte::parser::Sequence const& seq)
+Terminal::PTX(bte::parser::Sequence const& seq)
 {
         /*
          * PTX - parallel texts
@@ -6684,7 +6684,7 @@ Terminal::PTX(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::PU1(vte::parser::Sequence const& seq)
+Terminal::PU1(bte::parser::Sequence const& seq)
 {
         /*
          * PU1 - private use 1
@@ -6696,7 +6696,7 @@ Terminal::PU1(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::PU2(vte::parser::Sequence const& seq)
+Terminal::PU2(bte::parser::Sequence const& seq)
 {
         /*
          * PU1 - private use 2
@@ -6708,7 +6708,7 @@ Terminal::PU2(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::QUAD(vte::parser::Sequence const& seq)
+Terminal::QUAD(bte::parser::Sequence const& seq)
 {
         /*
          * QUAD - quad
@@ -6720,7 +6720,7 @@ Terminal::QUAD(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::REP(vte::parser::Sequence const& seq)
+Terminal::REP(bte::parser::Sequence const& seq)
 {
         /*
          * REP - repeat
@@ -6744,7 +6744,7 @@ Terminal::REP(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::RI(vte::parser::Sequence const& seq)
+Terminal::RI(bte::parser::Sequence const& seq)
 {
         /*
          * RI - reverse-index
@@ -6759,7 +6759,7 @@ Terminal::RI(vte::parser::Sequence const& seq)
 
         ensure_cursor_is_onscreen();
 
-        vte::grid::row_t start, end;
+        bte::grid::row_t start, end;
         if (m_scrolling_restricted) {
                 start = m_scrolling_region.start + m_screen->insert_delta;
                 end = m_scrolling_region.end + m_screen->insert_delta;
@@ -6793,7 +6793,7 @@ Terminal::RI(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::RIS(vte::parser::Sequence const& seq)
+Terminal::RIS(bte::parser::Sequence const& seq)
 {
         /*
          * RIS - reset-to-initial-state
@@ -6807,7 +6807,7 @@ Terminal::RIS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::RLOGIN_MML(vte::parser::Sequence const& seq)
+Terminal::RLOGIN_MML(bte::parser::Sequence const& seq)
 {
         /*
          * RLOGIN_MML - RLogin music markup language
@@ -6819,7 +6819,7 @@ Terminal::RLOGIN_MML(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::RM_ECMA(vte::parser::Sequence const& seq)
+Terminal::RM_ECMA(bte::parser::Sequence const& seq)
 {
         /*
          * RM_ECMA - reset-mode-ecma
@@ -6833,7 +6833,7 @@ Terminal::RM_ECMA(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::RM_DEC(vte::parser::Sequence const& seq)
+Terminal::RM_DEC(bte::parser::Sequence const& seq)
 {
         /*
          * RM_DEC - reset-mode-dec
@@ -6848,7 +6848,7 @@ Terminal::RM_DEC(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SCORC(vte::parser::Sequence const& seq)
+Terminal::SCORC(bte::parser::Sequence const& seq)
 {
         /*
          * SCORC - SCO restore cursor
@@ -6867,7 +6867,7 @@ Terminal::SCORC(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SCOSC(vte::parser::Sequence const& seq)
+Terminal::SCOSC(bte::parser::Sequence const& seq)
 {
         /*
          * SCORC - SCO save cursor
@@ -6883,7 +6883,7 @@ Terminal::SCOSC(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SACS(vte::parser::Sequence const& seq)
+Terminal::SACS(bte::parser::Sequence const& seq)
 {
         /*
          * SACS - set additional character separation
@@ -6901,7 +6901,7 @@ Terminal::SACS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SAPV(vte::parser::Sequence const& seq)
+Terminal::SAPV(bte::parser::Sequence const& seq)
 {
         /*
          * SAPV - select alternative presentation variants
@@ -6920,7 +6920,7 @@ Terminal::SAPV(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SCO(vte::parser::Sequence const& seq)
+Terminal::SCO(bte::parser::Sequence const& seq)
 {
         /*
          * SCO - select character orientation
@@ -6938,7 +6938,7 @@ Terminal::SCO(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SCP(vte::parser::Sequence const& seq)
+Terminal::SCP(bte::parser::Sequence const& seq)
 {
         /*
          * SCP - select character path
@@ -6972,15 +6972,15 @@ Terminal::SCP(vte::parser::Sequence const& seq)
         case 0:
                 /* FIXME switch to the emulator's default, once we have that concept */
                 m_bidi_rtl = FALSE;
-                _vte_debug_print(VTE_DEBUG_BIDI, "BiDi: default direction restored\n");
+                _bte_debug_print(VTE_DEBUG_BIDI, "BiDi: default direction restored\n");
                 break;
         case 1:
                 m_bidi_rtl = FALSE;
-                _vte_debug_print(VTE_DEBUG_BIDI, "BiDi: switch to LTR\n");
+                _bte_debug_print(VTE_DEBUG_BIDI, "BiDi: switch to LTR\n");
                 break;
         case 2:
                 m_bidi_rtl = TRUE;
-                _vte_debug_print(VTE_DEBUG_BIDI, "BiDi: switch to RTL\n");
+                _bte_debug_print(VTE_DEBUG_BIDI, "BiDi: switch to RTL\n");
                 break;
         default:
                 return;
@@ -6990,7 +6990,7 @@ Terminal::SCP(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SCS(vte::parser::Sequence const& seq)
+Terminal::SCS(bte::parser::Sequence const& seq)
 {
         /*
          * SCS - set character spacing
@@ -7006,7 +7006,7 @@ Terminal::SCS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SD(vte::parser::Sequence const& seq)
+Terminal::SD(bte::parser::Sequence const& seq)
 {
         /*
          * SD - scroll down / pan up
@@ -7027,7 +7027,7 @@ Terminal::SD(vte::parser::Sequence const& seq)
         if (seq->args[0] > 0)
                 num = seq->args[0];
 
-        vte_page_scroll_down(screen->page,
+        bte_page_scroll_down(screen->page,
                                 num,
                                 &screen->state.attr,
                                 screen->age,
@@ -7040,7 +7040,7 @@ Terminal::SD(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SD_OR_XTERM_IHMT(vte::parser::Sequence const& seq)
+Terminal::SD_OR_XTERM_IHMT(bte::parser::Sequence const& seq)
 {
         /*
          * There's a conflict between SD and XTERM IHMT that we
@@ -7056,7 +7056,7 @@ Terminal::SD_OR_XTERM_IHMT(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SDS(vte::parser::Sequence const& seq)
+Terminal::SDS(bte::parser::Sequence const& seq)
 {
         /*
          * SDS - start directed string
@@ -7075,7 +7075,7 @@ Terminal::SDS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SEE(vte::parser::Sequence const& seq)
+Terminal::SEE(bte::parser::Sequence const& seq)
 {
         /*
          * SEE - select editing extent
@@ -7096,7 +7096,7 @@ Terminal::SEE(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SEF(vte::parser::Sequence const& seq)
+Terminal::SEF(bte::parser::Sequence const& seq)
 {
         /*
          * SEF - sheet eject and feed
@@ -7116,7 +7116,7 @@ Terminal::SEF(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SGR(vte::parser::Sequence const& seq)
+Terminal::SGR(bte::parser::Sequence const& seq)
 {
         /*
          * SGR - select-graphics-rendition
@@ -7261,7 +7261,7 @@ Terminal::SGR(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SHS(vte::parser::Sequence const& seq)
+Terminal::SHS(bte::parser::Sequence const& seq)
 {
         /*
          * SHS - select character spacing
@@ -7279,7 +7279,7 @@ Terminal::SHS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SIMD(vte::parser::Sequence const& seq)
+Terminal::SIMD(bte::parser::Sequence const& seq)
 {
         /*
          * SIMD - select implicit movement direction
@@ -7297,7 +7297,7 @@ Terminal::SIMD(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SL(vte::parser::Sequence const& seq)
+Terminal::SL(bte::parser::Sequence const& seq)
 {
         /*
          * SL - scroll left
@@ -7315,7 +7315,7 @@ Terminal::SL(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SLH(vte::parser::Sequence const& seq)
+Terminal::SLH(bte::parser::Sequence const& seq)
 {
         /*
          * SLH - set line home
@@ -7335,7 +7335,7 @@ Terminal::SLH(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SLL(vte::parser::Sequence const& seq)
+Terminal::SLL(bte::parser::Sequence const& seq)
 {
         /*
          * SLL - set line limit
@@ -7355,7 +7355,7 @@ Terminal::SLL(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SLS(vte::parser::Sequence const& seq)
+Terminal::SLS(bte::parser::Sequence const& seq)
 {
         /*
          * SLS - set line spacing
@@ -7373,7 +7373,7 @@ Terminal::SLS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SM_ECMA(vte::parser::Sequence const& seq)
+Terminal::SM_ECMA(bte::parser::Sequence const& seq)
 {
         /*
          * SM_ECMA - set-mode-ecma
@@ -7387,7 +7387,7 @@ Terminal::SM_ECMA(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SM_DEC(vte::parser::Sequence const& seq)
+Terminal::SM_DEC(bte::parser::Sequence const& seq)
 {
         /*
          * SM_DEC - set-mode-dec
@@ -7402,7 +7402,7 @@ Terminal::SM_DEC(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SOH(vte::parser::Sequence const& seq)
+Terminal::SOH(bte::parser::Sequence const& seq)
 {
         /*
          * SOH - start of heading
@@ -7413,7 +7413,7 @@ Terminal::SOH(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SPA(vte::parser::Sequence const& seq)
+Terminal::SPA(bte::parser::Sequence const& seq)
 {
         /*
          * SPA - start of protected area
@@ -7430,7 +7430,7 @@ Terminal::SPA(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SPD(vte::parser::Sequence const& seq)
+Terminal::SPD(bte::parser::Sequence const& seq)
 {
         /*
          * SPD - select presentation directions
@@ -7464,11 +7464,11 @@ Terminal::SPD(vte::parser::Sequence const& seq)
         case -1:
         case 0:
                 m_bidi_rtl = FALSE;
-                _vte_debug_print(VTE_DEBUG_BIDI, "BiDi: switch to LTR\n");
+                _bte_debug_print(VTE_DEBUG_BIDI, "BiDi: switch to LTR\n");
                 break;
         case 3:
                 m_bidi_rtl = TRUE;
-                _vte_debug_print(VTE_DEBUG_BIDI, "BiDi: switch to RTL\n");
+                _bte_debug_print(VTE_DEBUG_BIDI, "BiDi: switch to RTL\n");
                 break;
         default:
                 return;
@@ -7480,7 +7480,7 @@ Terminal::SPD(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SPH(vte::parser::Sequence const& seq)
+Terminal::SPH(bte::parser::Sequence const& seq)
 {
         /*
          * SPH - set page home
@@ -7500,7 +7500,7 @@ Terminal::SPH(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SPI(vte::parser::Sequence const& seq)
+Terminal::SPI(bte::parser::Sequence const& seq)
 {
         /*
          * SPI - spacing increment
@@ -7519,7 +7519,7 @@ Terminal::SPI(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SPL(vte::parser::Sequence const& seq)
+Terminal::SPL(bte::parser::Sequence const& seq)
 {
         /*
          * SPL - set page limit
@@ -7539,7 +7539,7 @@ Terminal::SPL(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SPQR(vte::parser::Sequence const& seq)
+Terminal::SPQR(bte::parser::Sequence const& seq)
 {
         /*
          * SPQR - select print quality and rapidity
@@ -7555,7 +7555,7 @@ Terminal::SPQR(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SR(vte::parser::Sequence const& seq)
+Terminal::SR(bte::parser::Sequence const& seq)
 {
         /*
          * SL - scroll right
@@ -7573,7 +7573,7 @@ Terminal::SR(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SRCS(vte::parser::Sequence const& seq)
+Terminal::SRCS(bte::parser::Sequence const& seq)
 {
         /*
          * SRCS - set reduced character separation
@@ -7591,7 +7591,7 @@ Terminal::SRCS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SRS(vte::parser::Sequence const& seq)
+Terminal::SRS(bte::parser::Sequence const& seq)
 {
         /*
          * SRS - start reversed string
@@ -7609,7 +7609,7 @@ Terminal::SRS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SSA(vte::parser::Sequence const& seq)
+Terminal::SSA(bte::parser::Sequence const& seq)
 {
         /*
          * SSA - start of selected area
@@ -7626,7 +7626,7 @@ Terminal::SSA(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SSU(vte::parser::Sequence const& seq)
+Terminal::SSU(bte::parser::Sequence const& seq)
 {
         /*
          * SSU - set size unit
@@ -7642,7 +7642,7 @@ Terminal::SSU(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SSW(vte::parser::Sequence const& seq)
+Terminal::SSW(bte::parser::Sequence const& seq)
 {
         /*
          * SSW - set space width
@@ -7658,7 +7658,7 @@ Terminal::SSW(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SS2(vte::parser::Sequence const& seq)
+Terminal::SS2(bte::parser::Sequence const& seq)
 {
         /*
          * SS2 - single-shift-2
@@ -7674,7 +7674,7 @@ Terminal::SS2(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SS3(vte::parser::Sequence const& seq)
+Terminal::SS3(bte::parser::Sequence const& seq)
 {
         /*
          * SS3 - single-shift-3
@@ -7690,7 +7690,7 @@ Terminal::SS3(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::ST(vte::parser::Sequence const& seq)
+Terminal::ST(bte::parser::Sequence const& seq)
 {
         /*
          * ST - string-terminator
@@ -7703,7 +7703,7 @@ Terminal::ST(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::STAB(vte::parser::Sequence const& seq)
+Terminal::STAB(bte::parser::Sequence const& seq)
 {
         /*
          * STAB - selective tabulation
@@ -7720,7 +7720,7 @@ Terminal::STAB(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::STS(vte::parser::Sequence const& seq)
+Terminal::STS(bte::parser::Sequence const& seq)
 {
         /*
          * STS - set transmit state
@@ -7732,7 +7732,7 @@ Terminal::STS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::STX(vte::parser::Sequence const& seq)
+Terminal::STX(bte::parser::Sequence const& seq)
 {
         /*
          * STX - start of text
@@ -7745,7 +7745,7 @@ Terminal::STX(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SU(vte::parser::Sequence const& seq)
+Terminal::SU(bte::parser::Sequence const& seq)
 {
         /*
          * SU - scroll-up / pan down
@@ -7766,7 +7766,7 @@ Terminal::SU(vte::parser::Sequence const& seq)
         if (seq->args[0] > 0)
                 num = seq->args[0];
 
-        vte_page_scroll_up(screen->page,
+        bte_page_scroll_up(screen->page,
                               num,
                               &screen->state.attr,
                               screen->age,
@@ -7778,7 +7778,7 @@ Terminal::SU(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SUB(vte::parser::Sequence const& seq)
+Terminal::SUB(bte::parser::Sequence const& seq)
 {
         /*
          * SUB - substitute
@@ -7793,7 +7793,7 @@ Terminal::SUB(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SVS(vte::parser::Sequence const& seq)
+Terminal::SVS(bte::parser::Sequence const& seq)
 {
         /*
          * SVS - select line spacing
@@ -7812,7 +7812,7 @@ Terminal::SVS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::SYN(vte::parser::Sequence const& seq)
+Terminal::SYN(bte::parser::Sequence const& seq)
 {
         /*
          * SYN - synchronous idle
@@ -7825,7 +7825,7 @@ Terminal::SYN(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::TAC(vte::parser::Sequence const& seq)
+Terminal::TAC(bte::parser::Sequence const& seq)
 {
         /*
          * TAC - tabulation aligned centre
@@ -7838,7 +7838,7 @@ Terminal::TAC(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::TALE(vte::parser::Sequence const& seq)
+Terminal::TALE(bte::parser::Sequence const& seq)
 {
         /*
          * TALE - tabulation aligned leading edge
@@ -7851,7 +7851,7 @@ Terminal::TALE(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::TATE(vte::parser::Sequence const& seq)
+Terminal::TATE(bte::parser::Sequence const& seq)
 {
         /*
          * TATE - tabulation aligned trailing edge
@@ -7864,7 +7864,7 @@ Terminal::TATE(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::TBC(vte::parser::Sequence const& seq)
+Terminal::TBC(bte::parser::Sequence const& seq)
 {
         /*
          * TBC - tab-clear
@@ -7911,7 +7911,7 @@ Terminal::TBC(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::TCC(vte::parser::Sequence const& seq)
+Terminal::TCC(bte::parser::Sequence const& seq)
 {
         /*
          * TCC - tabulation centred on character
@@ -7925,7 +7925,7 @@ Terminal::TCC(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::TSR(vte::parser::Sequence const& seq)
+Terminal::TSR(bte::parser::Sequence const& seq)
 {
         /*
          * TSR - tabulation stop remove
@@ -7946,7 +7946,7 @@ Terminal::TSR(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::TSS(vte::parser::Sequence const& seq)
+Terminal::TSS(bte::parser::Sequence const& seq)
 {
         /*
          * TSS - thin space specification
@@ -7964,7 +7964,7 @@ Terminal::TSS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::VPA(vte::parser::Sequence const& seq)
+Terminal::VPA(bte::parser::Sequence const& seq)
 {
         /*
          * VPA - vertical line position absolute
@@ -7997,7 +7997,7 @@ Terminal::VPA(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::VPB(vte::parser::Sequence const& seq)
+Terminal::VPB(bte::parser::Sequence const& seq)
 {
         /*
          * VPB - line position backward
@@ -8025,7 +8025,7 @@ Terminal::VPB(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::VPR(vte::parser::Sequence const& seq)
+Terminal::VPR(bte::parser::Sequence const& seq)
 {
         /*
          * VPR - vertical line position relative
@@ -8053,7 +8053,7 @@ Terminal::VPR(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::VT(vte::parser::Sequence const& seq)
+Terminal::VT(bte::parser::Sequence const& seq)
 {
         /*
          * VT - vertical-tab
@@ -8067,7 +8067,7 @@ Terminal::VT(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::VTS(vte::parser::Sequence const& seq)
+Terminal::VTS(bte::parser::Sequence const& seq)
 {
         /*
          * VTS - line tabulation set
@@ -8080,7 +8080,7 @@ Terminal::VTS(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::WYCAA(vte::parser::Sequence const& seq)
+Terminal::WYCAA(bte::parser::Sequence const& seq)
 {
         /*
          * WYCAA - redefine character display attribute association
@@ -8240,7 +8240,7 @@ Terminal::WYCAA(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::WYDHL_BH(vte::parser::Sequence const& seq)
+Terminal::WYDHL_BH(bte::parser::Sequence const& seq)
 {
         /*
          * WYDHL_BH - single width double height line: bottom half
@@ -8252,7 +8252,7 @@ Terminal::WYDHL_BH(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::WYDHL_TH(vte::parser::Sequence const& seq)
+Terminal::WYDHL_TH(bte::parser::Sequence const& seq)
 {
         /*
          * WYDHL_TH - single width double height line: top half
@@ -8264,7 +8264,7 @@ Terminal::WYDHL_TH(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::WYSCRATE(vte::parser::Sequence const& seq)
+Terminal::WYSCRATE(bte::parser::Sequence const& seq)
 {
         /*
          * WYSCRATE - set smooth scroll rate
@@ -8277,7 +8277,7 @@ Terminal::WYSCRATE(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::WYLSFNT(vte::parser::Sequence const& seq)
+Terminal::WYLSFNT(bte::parser::Sequence const& seq)
 {
         /*
          * WYLSFNT - load soft font
@@ -8289,7 +8289,7 @@ Terminal::WYLSFNT(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::XDGSYNC(vte::parser::Sequence const& seq)
+Terminal::XDGSYNC(bte::parser::Sequence const& seq)
 {
         /*
          * XDGSYNC - synchronous update
@@ -8311,11 +8311,11 @@ Terminal::XDGSYNC(vte::parser::Sequence const& seq)
          * References: https://gitlab.com/gnachman/iterm2/wikis/synchronized-updates-spec
          */
 
-        /* TODO: implement this! https://gitlab.gnome.org/GNOME/vte/issues/15 */
+        /* TODO: implement this! https://gitlab.gnome.org/GNOME/bte/issues/15 */
 }
 
 void
-Terminal::XTERM_CHECKSUM_MODE(vte::parser::Sequence const& seq)
+Terminal::XTERM_CHECKSUM_MODE(bte::parser::Sequence const& seq)
 {
         /*
          * XTERM_CHECKSUM_MODE - xterm DECRQCRA checksum mode
@@ -8340,7 +8340,7 @@ Terminal::XTERM_CHECKSUM_MODE(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::XTERM_IHMT(vte::parser::Sequence const& seq)
+Terminal::XTERM_IHMT(bte::parser::Sequence const& seq)
 {
         /*
          * XTERM_IHMT - xterm-initiate-highlight-mouse-tracking
@@ -8350,7 +8350,7 @@ Terminal::XTERM_IHMT(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::XTERM_MLHP(vte::parser::Sequence const& seq)
+Terminal::XTERM_MLHP(bte::parser::Sequence const& seq)
 {
         /*
          * XTERM_MLHP - xterm-memory-lock-hp-bugfix
@@ -8360,7 +8360,7 @@ Terminal::XTERM_MLHP(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::XTERM_MUHP(vte::parser::Sequence const& seq)
+Terminal::XTERM_MUHP(bte::parser::Sequence const& seq)
 {
         /*
          * XTERM_MUHP - xterm-memory-unlock-hp-bugfix
@@ -8370,7 +8370,7 @@ Terminal::XTERM_MUHP(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::XTERM_RPM(vte::parser::Sequence const& seq)
+Terminal::XTERM_RPM(bte::parser::Sequence const& seq)
 {
         /*
          * XTERM_RPM - xterm restore DEC private mode
@@ -8384,7 +8384,7 @@ Terminal::XTERM_RPM(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::XTERM_RQTCAP(vte::parser::Sequence const& seq)
+Terminal::XTERM_RQTCAP(bte::parser::Sequence const& seq)
 {
         /*
          * XTERM_TQTCAP - xterm request termcap/terminfo
@@ -8394,7 +8394,7 @@ Terminal::XTERM_RQTCAP(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::XTERM_RRV(vte::parser::Sequence const& seq)
+Terminal::XTERM_RRV(bte::parser::Sequence const& seq)
 {
         /*
          * XTERM_RRV - xterm-reset-resource-value
@@ -8404,7 +8404,7 @@ Terminal::XTERM_RRV(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::XTERM_RTM(vte::parser::Sequence const& seq)
+Terminal::XTERM_RTM(bte::parser::Sequence const& seq)
 {
         /*
          * XTERM_RTM - xterm-reset-title-mode
@@ -8414,7 +8414,7 @@ Terminal::XTERM_RTM(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::XTERM_SGFX(vte::parser::Sequence const& seq)
+Terminal::XTERM_SGFX(bte::parser::Sequence const& seq)
 {
         /*
          * XTERM_SGFX - xterm-sixel-graphics
@@ -8424,7 +8424,7 @@ Terminal::XTERM_SGFX(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::XTERM_SGR_REPORT(vte::parser::Sequence const& seq)
+Terminal::XTERM_SGR_REPORT(bte::parser::Sequence const& seq)
 {
         /*
          * XTERM_SGR_REPORT: report SGR attributes in rectangular area
@@ -8456,7 +8456,7 @@ Terminal::XTERM_SGR_REPORT(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::XTERM_SGR_STACK_POP(vte::parser::Sequence const& seq)
+Terminal::XTERM_SGR_STACK_POP(bte::parser::Sequence const& seq)
 {
         /*
          * XTERM_SGR_STACK_POP: pop SGR stack
@@ -8468,11 +8468,11 @@ Terminal::XTERM_SGR_STACK_POP(vte::parser::Sequence const& seq)
          *
          * References: XTERM 334
          */
-        /* TODO: Implement this: https://gitlab.gnome.org/GNOME/vte/issues/23 */
+        /* TODO: Implement this: https://gitlab.gnome.org/GNOME/bte/issues/23 */
 }
 
 void
-Terminal::XTERM_SGR_STACK_PUSH(vte::parser::Sequence const& seq)
+Terminal::XTERM_SGR_STACK_PUSH(bte::parser::Sequence const& seq)
 {
         /*
          * XTERM_SGR_STACK_PUSH: push SGR stack
@@ -8493,11 +8493,11 @@ Terminal::XTERM_SGR_STACK_PUSH(vte::parser::Sequence const& seq)
          *
          * References: XTERM 334
          */
-        /* TODO: Implement this: https://gitlab.gnome.org/GNOME/vte/issues/23 */
+        /* TODO: Implement this: https://gitlab.gnome.org/GNOME/bte/issues/23 */
 }
 
 void
-Terminal::XTERM_SPM(vte::parser::Sequence const& seq)
+Terminal::XTERM_SPM(bte::parser::Sequence const& seq)
 {
         /*
          * XTERM_SPM - xterm save DEC private mode
@@ -8511,7 +8511,7 @@ Terminal::XTERM_SPM(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::XTERM_PTRMODE(vte::parser::Sequence const& seq)
+Terminal::XTERM_PTRMODE(bte::parser::Sequence const& seq)
 {
         /*
          * XTERM_PTRMODE - xterm set pointer mode
@@ -8525,7 +8525,7 @@ Terminal::XTERM_PTRMODE(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::XTERM_SRV(vte::parser::Sequence const& seq)
+Terminal::XTERM_SRV(bte::parser::Sequence const& seq)
 {
         /*
          * XTERM_SRV - xterm-set-resource-value
@@ -8535,7 +8535,7 @@ Terminal::XTERM_SRV(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::XTERM_STM(vte::parser::Sequence const& seq)
+Terminal::XTERM_STM(bte::parser::Sequence const& seq)
 {
         /*
          * XTERM_STM - xterm-set-title-mode
@@ -8545,7 +8545,7 @@ Terminal::XTERM_STM(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::XTERM_STCAP(vte::parser::Sequence const& seq)
+Terminal::XTERM_STCAP(bte::parser::Sequence const& seq)
 {
         /*
          * XTERM_STCAP - xterm set termcap/terminfo
@@ -8555,7 +8555,7 @@ Terminal::XTERM_STCAP(vte::parser::Sequence const& seq)
 }
 
 void
-Terminal::XTERM_WM(vte::parser::Sequence const& seq)
+Terminal::XTERM_WM(bte::parser::Sequence const& seq)
 {
         /*
          * XTERM_WM - xterm-window-management
@@ -8598,7 +8598,7 @@ Terminal::XTERM_WM(vte::parser::Sequence const& seq)
                 seq.collect(1, {&height, &width});
 
                 if (width != -1 && height != -1) {
-                        _vte_debug_print(VTE_DEBUG_EMULATION,
+                        _bte_debug_print(VTE_DEBUG_EMULATION,
                                          "Resizing window to %dx%d pixels, grid size %dx%d.\n",
                                          width, height,
                                          width / int(m_cell_height), height / int(m_cell_width));
@@ -8621,7 +8621,7 @@ Terminal::XTERM_WM(vte::parser::Sequence const& seq)
                 seq.collect(1, {&height, &width});
 
                 if (width != -1 && height != -1) {
-                        _vte_debug_print(VTE_DEBUG_EMULATION,
+                        _bte_debug_print(VTE_DEBUG_EMULATION,
                                          "Resizing window to %d columns, %d rows.\n",
                                          width, height);
                         emit_resize_window(width, height);
@@ -8680,7 +8680,7 @@ Terminal::XTERM_WM(vte::parser::Sequence const& seq)
                 auto cdkscreen = ctk_widget_get_screen(m_widget);
                 int height = cdk_screen_get_height(cdkscreen);
                 int width = cdk_screen_get_width(cdkscreen);
-                _vte_debug_print(VTE_DEBUG_EMULATION,
+                _bte_debug_print(VTE_DEBUG_EMULATION,
                                  "Reporting screen size as %dx%d cells.\n",
                                  height / int(m_cell_height), width / int(m_cell_width));
 
@@ -8696,10 +8696,10 @@ Terminal::XTERM_WM(vte::parser::Sequence const& seq)
                  * http://marc.info/?l=bugtraq&m=104612710031920&w=2
                  * and CVE-2003-0070.
                  */
-                _vte_debug_print(VTE_DEBUG_EMULATION,
+                _bte_debug_print(VTE_DEBUG_EMULATION,
                                  "Reporting empty icon title.\n");
 
-                send(seq, vte::parser::u8SequenceBuilder{VTE_SEQ_OSC, "L"s});
+                send(seq, bte::parser::u8SequenceBuilder{VTE_SEQ_OSC, "L"s});
                 break;
 
         case VTE_XTERM_WM_GET_WINDOW_TITLE:
@@ -8709,10 +8709,10 @@ Terminal::XTERM_WM(vte::parser::Sequence const& seq)
                  * http://marc.info/?l=bugtraq&m=104612710031920&w=2
                  * and CVE-2003-0070.
                  */
-                _vte_debug_print(VTE_DEBUG_EMULATION,
+                _bte_debug_print(VTE_DEBUG_EMULATION,
                                  "Reporting empty window title.\n");
 
-                send(seq, vte::parser::u8SequenceBuilder{VTE_SEQ_OSC, "l"s});
+                send(seq, bte::parser::u8SequenceBuilder{VTE_SEQ_OSC, "l"s});
                 break;
 
         case VTE_XTERM_WM_TITLE_STACK_PUSH:
@@ -8767,4 +8767,4 @@ Terminal::XTERM_WM(vte::parser::Sequence const& seq)
 }
 
 } // namespace terminal
-} // namespace vte
+} // namespace bte

@@ -26,7 +26,7 @@ app_resource_data = files(
 
 app_common_cppflags = [
   '-DG_LOG_DOMAIN="VTE"',
-  '-DLOCALEDIR="@0@"'.format(vte_prefix / vte_localedir),
+  '-DLOCALEDIR="@0@"'.format(bte_prefix / bte_localedir),
   '-DVTE_DISABLE_DEPRECATION_WARNINGS',
 ]
 
@@ -45,10 +45,10 @@ if get_option('ctk3')
 
   app_ctk3_sources = app_sources + app_ctk3_resource_sources
   app_ctk3_cppflags = app_common_cppflags + ctk3_version_cppflags
-  app_ctk3_deps = app_common_deps + [libvte_ctk3_dep]
+  app_ctk3_deps = app_common_deps + [libbte_ctk3_dep]
 
   app_ctk3 = executable(
-    'vte-' + vte_ctk3_api_version,
+    'bte-' + bte_ctk3_api_version,
     app_ctk3_sources,
     dependencies: app_ctk3_deps,
     cpp_args: app_ctk3_cppflags,

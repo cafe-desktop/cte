@@ -17,22 +17,22 @@
 gir_dep = dependency('gobject-introspection-1.0', version: '>= 0.9.0')
 
 if get_option('ctk3')
-  libvte_ctk3_gir_includes = [
+  libbte_ctk3_gir_includes = [
     'Cdk-3.0',
     'Ctk-3.0',
     'Pango-1.0',
   ]
 
-  libvte_ctk3_gir = gnome.generate_gir(
-    libvte_ctk3,
-    sources: libvte_ctk3_public_headers + libvte_common_doc_sources,
-    includes: libvte_ctk3_gir_includes,
-    dependencies: libvte_ctk3_dep,
+  libbte_ctk3_gir = gnome.generate_gir(
+    libbte_ctk3,
+    sources: libbte_ctk3_public_headers + libbte_common_doc_sources,
+    includes: libbte_ctk3_gir_includes,
+    dependencies: libbte_ctk3_dep,
     extra_args: '-DVTE_COMPILATION',
-    nsversion: vte_ctk3_api_version,
+    nsversion: bte_ctk3_api_version,
     namespace: 'Vte',
-    export_packages: vte_ctk3_api_name,
-    header: 'vte' / 'vte.h',
+    export_packages: bte_ctk3_api_name,
+    header: 'bte' / 'bte.h',
     install: true,
   )
 endif

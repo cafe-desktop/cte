@@ -14,57 +14,57 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this library.  If not, see <https://www.gnu.org/licenses/>.
 
-vte_inc = include_directories('.')
+bte_inc = include_directories('.')
 
-libvte_common_enum_headers = files(
+libbte_common_enum_headers = files(
   # These files contain enums to be extracted by glib-mkenums
-  'vtedeprecated.h',
-  'vteenums.h',
+  'btedeprecated.h',
+  'bteenums.h',
 )
 
-libvte_ctk3_enum_sources = gnome.mkenums(
-  'vtetypebuiltins.h',
-  sources: libvte_common_enum_headers,
-  c_template: '../vtetypebuiltins.cc.template',
-  h_template: '../vtetypebuiltins.h.template',
+libbte_ctk3_enum_sources = gnome.mkenums(
+  'btetypebuiltins.h',
+  sources: libbte_common_enum_headers,
+  c_template: '../btetypebuiltins.cc.template',
+  h_template: '../btetypebuiltins.h.template',
   install_header: true,
-  install_dir: vte_includedir / vte_ctk3_api_path
+  install_dir: bte_includedir / bte_ctk3_api_path
 )
 
-libvte_common_public_headers = files(
-  'vte.h',
-  'vtedeprecated.h',
-  'vteenums.h',
-  'vteglobals.h',
-  'vtemacros.h',
-  'vtepty.h',
-  'vteregex.h',
-  'vteterminal.h',
+libbte_common_public_headers = files(
+  'bte.h',
+  'btedeprecated.h',
+  'bteenums.h',
+  'bteglobals.h',
+  'btemacros.h',
+  'btepty.h',
+  'bteregex.h',
+  'bteterminal.h',
 )
 
-vteversion_conf = configuration_data()
-vteversion_conf.set('VTE_MAJOR_VERSION', vte_major_version)
-vteversion_conf.set('VTE_MINOR_VERSION', vte_minor_version)
-vteversion_conf.set('VTE_MICRO_VERSION', vte_micro_version)
+bteversion_conf = configuration_data()
+bteversion_conf.set('VTE_MAJOR_VERSION', bte_major_version)
+bteversion_conf.set('VTE_MINOR_VERSION', bte_minor_version)
+bteversion_conf.set('VTE_MICRO_VERSION', bte_micro_version)
 
-libvte_version_headers = configure_file(
-  input: 'vteversion.h.in',
+libbte_version_headers = configure_file(
+  input: 'bteversion.h.in',
   output: '@BASENAME@',
-  configuration: vteversion_conf,
+  configuration: bteversion_conf,
   install: false,
 )
 
 if get_option('ctk3')
-  libvte_ctk3_public_headers = libvte_common_public_headers + [libvte_version_headers]
+  libbte_ctk3_public_headers = libbte_common_public_headers + [libbte_version_headers]
 
   install_headers(
-    libvte_ctk3_public_headers,
-    subdir: vte_ctk3_api_path
+    libbte_ctk3_public_headers,
+    subdir: bte_ctk3_api_path
   )
 
   # BUG! Due to meson bug, this header cannot be installed with the rule above. Instead,
   # use the install_header attribute in the mkenums call, and add the header afterwards
   # to the list.
-  libvte_ctk3_public_headers += libvte_ctk3_enum_sources[1]
+  libbte_ctk3_public_headers += libbte_ctk3_enum_sources[1]
 
 endif

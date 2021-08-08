@@ -1,10 +1,10 @@
-# Translation of vte to Croatiann
+# Translation of bte to Croatiann
 # Copyright (C) Croatiann team
 # Translators: Automatski Prijevod <>,Denis Lackovic <delacko@fly.srk.fer.hr>,Robert Sedak <robert.sedak@sk.t-com.hr>
 msgid ""
 msgstr ""
-"Project-Id-Version: vte 0\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Project-Id-Version: bte 0\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2020-05-27 19:17+0000\n"
 "PO-Revision-Date: 2020-08-23 14:41+0200\n"
 "Last-Translator: gogo <trebelnik2@gmail.com>\n"
@@ -16,11 +16,11 @@ msgstr ""
 "X-Launchpad-Export-Date: 2016-09-15 11:47+0000\n"
 "X-Generator: Poedit 2.4.1\n"
 
-#: src/vte.cc:7763
+#: src/bte.cc:7763
 msgid "WARNING"
 msgstr "UPOZORENJE"
 
-#: src/vte.cc:7765
+#: src/bte.cc:7765
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr "GNUTLS nije omogućen; podaci će biti zapisivani nešifrirano na disk!"
 
@@ -96,8 +96,8 @@ msgstr "Neuspjelo pokretanje podređenog procesa “%s”: "
 #~ msgid "Error setting PTY size: %s."
 #~ msgstr "Greška postavljanja PTY veličine: %s."
 
-#~ msgid "_vte_conv_open() failed setting word characters"
-#~ msgstr "_vte_conv_open() nije uspio postaviti znakove riječi"
+#~ msgid "_bte_conv_open() failed setting word characters"
+#~ msgstr "_bte_conv_open() nije uspio postaviti znakove riječi"
 
 #~ msgid "Got unexpected (key?) sequence `%s'."
 #~ msgstr "Dobio sam neočekivani (tipkanjem?) slijed `%s'."

@@ -18,7 +18,7 @@
 
 #include "config.h"
 
-#include "vteutils.h"
+#include "bteutils.h"
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -42,7 +42,7 @@
 #endif /* __linux__ */
 
 int
-_vte_mkstemp (void)
+_bte_mkstemp (void)
 {
         int fd;
         gchar *file_name;
@@ -57,7 +57,7 @@ _vte_mkstemp (void)
         /* Try again with g_file_open_tmp */
 #endif
 
-        fd = g_file_open_tmp ("vteXXXXXX", &file_name, NULL);
+        fd = g_file_open_tmp ("bteXXXXXX", &file_name, NULL);
         if (fd == -1)
                 return -1;
 

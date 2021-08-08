@@ -23,14 +23,14 @@
 #include <glib.h>
 #include <gio/gio.h>
 
-#include "vtepty.h"
-#include "vteptyinternal.hh"
+#include "btepty.h"
+#include "bteptyinternal.hh"
 
 #include "glib-glue.hh"
 #include "libc-glue.hh"
 #include "refptr.hh"
 
-namespace vte::base {
+namespace bte::base {
 
 class SpawnContext {
 public:
@@ -38,15 +38,15 @@ public:
 
 private:
 
-        vte::glib::RefPtr<VtePty> m_pty{};
+        bte::glib::RefPtr<VtePty> m_pty{};
 
-        vte::glib::StringPtr m_cwd{};
-        vte::glib::StringPtr m_fallback_cwd{};
-        vte::glib::StringPtr m_arg0{};
-        vte::glib::StrvPtr m_argv{};
-        vte::glib::StrvPtr m_envv{};
+        bte::glib::StringPtr m_cwd{};
+        bte::glib::StringPtr m_fallback_cwd{};
+        bte::glib::StringPtr m_arg0{};
+        bte::glib::StrvPtr m_argv{};
+        bte::glib::StrvPtr m_envv{};
 
-        std::vector<vte::libc::FD> m_fds{};
+        std::vector<bte::libc::FD> m_fds{};
 
         // these 3 are placeholder elements for the PTY peer fd being mapped to 0, 1, 2 later
         // we preallocate this here so that the child setup function doesn't do any
@@ -72,39 +72,39 @@ public:
 
         void set_cwd(char const* cwd)
         {
-                m_cwd = vte::glib::dup_string(cwd);
+                m_cwd = bte::glib::dup_string(cwd);
         }
 
         void set_fallback_cwd(char const* cwd)
         {
-                m_fallback_cwd = vte::glib::dup_string(cwd);
+                m_fallback_cwd = bte::glib::dup_string(cwd);
         }
 
         void set_argv(char const* arg0,
                       char const* const* argv)
         {
-                m_arg0 = vte::glib::dup_string(arg0);
-                m_argv = vte::glib::dup_strv(argv);
+                m_arg0 = bte::glib::dup_string(arg0);
+                m_argv = bte::glib::dup_strv(argv);
         }
 
         void set_environ(char const* const* envv)
         {
-                m_envv = vte::glib::dup_strv(envv);
+                m_envv = bte::glib::dup_strv(envv);
         }
 
         void setenv(char const* env,
                     char const* value,
                     bool overwrite = true)
         {
-                m_envv = vte::glib::take_strv(g_environ_setenv(m_envv.release(), env, value, overwrite));
+                m_envv = bte::glib::take_strv(g_environ_setenv(m_envv.release(), env, value, overwrite));
         }
 
         void unsetenv(char const* env)
         {
-                m_envv = vte::glib::take_strv(g_environ_unsetenv(m_envv.release(), env));
+                m_envv = bte::glib::take_strv(g_environ_unsetenv(m_envv.release(), env));
         }
 
-        void set_pty(vte::glib::RefPtr<VtePty>&& pty)
+        void set_pty(bte::glib::RefPtr<VtePty>&& pty)
         {
                 m_pty = std::move(pty);
         }
@@ -156,7 +156,7 @@ public:
         auto environ()      const noexcept { return m_envv.get(); }
 
         auto pty_wrapper() const noexcept { return m_pty.get();  }
-        auto pty() const noexcept { return _vte_pty_get_impl(pty_wrapper()); }
+        auto pty() const noexcept { return _bte_pty_get_impl(pty_wrapper()); }
 
         constexpr auto inherit_environ()       const noexcept { return m_inherit_environ;       }
         constexpr auto systemd_scope()         const noexcept { return m_systemd_scope;         }
@@ -180,7 +180,7 @@ public:
                 UNSET_CLOEXEC,
         };
 
-        ExecError exec(vte::libc::FD& child_report_error_pipe_write,
+        ExecError exec(bte::libc::FD& child_report_error_pipe_write,
                        void* workbuf,
                        size_t workbufsize) noexcept;
 
@@ -192,17 +192,17 @@ private:
 
         SpawnContext m_context{};
         int m_timeout{default_timeout};
-        vte::glib::RefPtr<GCancellable> m_cancellable{};
+        bte::glib::RefPtr<GCancellable> m_cancellable{};
 
         GPollFD m_cancellable_pollfd{-1, 0, 0};
-        vte::libc::FD m_child_report_error_pipe_read{};
+        bte::libc::FD m_child_report_error_pipe_read{};
         pid_t m_pid{-1};
         bool m_kill_pid{true};
 
         auto& context() noexcept { return m_context; }
 
-        bool prepare(vte::glib::Error& error);
-        bool run(vte::glib::Error& error) noexcept;
+        bool prepare(bte::glib::Error& error);
+        bool run(bte::glib::Error& error) noexcept;
 
         void run_in_thread(GTask* task) noexcept;
 
@@ -227,7 +227,7 @@ public:
                        GCancellable* cancellable)
                 : m_context{std::move(context)},
                   m_timeout{timeout >= 0 ? timeout : default_timeout},
-                  m_cancellable{vte::glib::make_ref(cancellable)}
+                  m_cancellable{bte::glib::make_ref(cancellable)}
         {
                 m_context.prepare_environ();
         }
@@ -244,8 +244,8 @@ public:
                        void* user_data); /* takes ownership of @this ! */
 
         bool run_sync(GPid* pid,
-                      vte::glib::Error& error);
+                      bte::glib::Error& error);
 
 }; // class SpawnOperation
 
-} // namespace vte::base
+} // namespace bte::base

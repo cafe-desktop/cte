@@ -27,13 +27,13 @@
 #include <string>
 
 #include "cxx-utils.hh"
-#include "vtectk.hh"
-#include "vteptyinternal.hh"
+#include "btectk.hh"
+#include "bteptyinternal.hh"
 #include "debug.h"
 
 using namespace std::literals;
 
-namespace vte {
+namespace bte {
 
 namespace platform {
 
@@ -50,7 +50,7 @@ try
 }
 catch (...)
 {
-        vte::log_exception();
+        bte::log_exception();
 }
 
 static void
@@ -58,12 +58,12 @@ im_preedit_start_cb(CtkIMContext* im_context,
                     Widget* that) noexcept
 try
 {
-        _vte_debug_print(VTE_DEBUG_EVENTS, "Input method pre-edit started.\n");
+        _bte_debug_print(VTE_DEBUG_EVENTS, "Input method pre-edit started.\n");
         that->terminal()->im_preedit_set_active(true);
 }
 catch (...)
 {
-        vte::log_exception();
+        bte::log_exception();
 }
 
 static void
@@ -71,12 +71,12 @@ im_preedit_end_cb(CtkIMContext* im_context,
                   Widget* that) noexcept
 try
 {
-        _vte_debug_print(VTE_DEBUG_EVENTS, "Input method pre-edit ended.\n");
+        _bte_debug_print(VTE_DEBUG_EVENTS, "Input method pre-edit ended.\n");
         that->terminal()->im_preedit_set_active(false);
 }
 catch (...)
 {
-        vte::log_exception();
+        bte::log_exception();
 }
 
 static void
@@ -88,7 +88,7 @@ try
 }
 catch (...)
 {
-        vte::log_exception();
+        bte::log_exception();
 }
 
 static gboolean
@@ -96,12 +96,12 @@ im_retrieve_surrounding_cb(CtkIMContext* im_context,
                            Widget* that) noexcept
 try
 {
-        _vte_debug_print(VTE_DEBUG_EVENTS, "Input method retrieve-surrounding.\n");
+        _bte_debug_print(VTE_DEBUG_EVENTS, "Input method retrieve-surrounding.\n");
         return that->terminal()->im_retrieve_surrounding();
 }
 catch (...)
 {
-        vte::log_exception();
+        bte::log_exception();
         return false;
 }
 
@@ -112,28 +112,28 @@ im_delete_surrounding_cb(CtkIMContext* im_context,
                          Widget* that) noexcept
 try
 {
-        _vte_debug_print(VTE_DEBUG_EVENTS,
+        _bte_debug_print(VTE_DEBUG_EVENTS,
                          "Input method delete-surrounding offset %d n-chars %d.\n",
                          offset, n_chars);
         return that->terminal()->im_delete_surrounding(offset, n_chars);
 }
 catch (...)
 {
-        vte::log_exception();
+        bte::log_exception();
         return false;
 }
 
 static void
 settings_notify_cb(CtkSettings* settings,
                    GParamSpec* pspec,
-                   vte::platform::Widget* that) noexcept
+                   bte::platform::Widget* that) noexcept
 try
 {
         that->settings_changed();
 }
 catch (...)
 {
-        vte::log_exception();
+        bte::log_exception();
 }
 
 Widget::Widget(VteTerminal* t)
@@ -148,8 +148,8 @@ Widget::Widget(VteTerminal* t)
         ctk_widget_set_redraw_on_allocate(ctk(), false);
 
         /* Until Terminal init is completely fixed, use zero'd memory */
-        auto place = g_malloc0(sizeof(vte::terminal::Terminal));
-        m_terminal = new (place) vte::terminal::Terminal(this, t);
+        auto place = g_malloc0(sizeof(bte::terminal::Terminal));
+        m_terminal = new (place) bte::terminal::Terminal(this, t);
 }
 
 Widget::~Widget() noexcept
@@ -167,7 +167,7 @@ try
 }
 catch (...)
 {
-        vte::log_exception();
+        bte::log_exception();
 }
 
 void
@@ -177,10 +177,10 @@ Widget::beep() noexcept
                 cdk_window_beep(ctk_widget_get_window(m_widget));
 }
 
-vte::glib::RefPtr<CdkCursor>
+bte::glib::RefPtr<CdkCursor>
 Widget::create_cursor(CdkCursorType cursor_type) const noexcept
 {
-	return vte::glib::take_ref(cdk_cursor_new_for_display(ctk_widget_get_display(m_widget), cursor_type));
+	return bte::glib::take_ref(cdk_cursor_new_for_display(ctk_widget_get_display(m_widget), cursor_type));
 }
 
 void
@@ -243,19 +243,19 @@ Widget::dispose() noexcept
 void
 Widget::emit_child_exited(int status) noexcept
 {
-        _vte_debug_print(VTE_DEBUG_SIGNALS, "Emitting `child-exited'.\n");
+        _bte_debug_print(VTE_DEBUG_SIGNALS, "Emitting `child-exited'.\n");
         g_signal_emit(object(), signals[SIGNAL_CHILD_EXITED], 0, status);
 }
 
 void
 Widget::emit_eof() noexcept
 {
-        _vte_debug_print(VTE_DEBUG_SIGNALS, "Emitting `eof'.\n");
+        _bte_debug_print(VTE_DEBUG_SIGNALS, "Emitting `eof'.\n");
         g_signal_emit(object(), signals[SIGNAL_EOF], 0);
 }
 
 bool
-Widget::im_filter_keypress(vte::terminal::KeyEvent const& event) noexcept
+Widget::im_filter_keypress(bte::terminal::KeyEvent const& event) noexcept
 {
         // FIXMEchpe this can only be called when realized, so the m_im_context check is redundant
         return m_im_context &&
@@ -283,7 +283,7 @@ Widget::im_preedit_changed() noexcept
 	int cursorpos = 0;
 
         ctk_im_context_get_preedit_string(m_im_context.get(), &str, &attrs, &cursorpos);
-        _vte_debug_print(VTE_DEBUG_EVENTS, "Input method pre-edit changed (%s,%d).\n",
+        _bte_debug_print(VTE_DEBUG_EVENTS, "Input method pre-edit changed (%s,%d).\n",
                          str, cursorpos);
 
         if (str != nullptr)
@@ -323,7 +323,7 @@ Widget::read_modifiers_from_cdk(CdkEvent* event) const noexcept
 }
 
 unsigned
-Widget::key_event_translate_ctrlkey(vte::terminal::KeyEvent const& event) const noexcept
+Widget::key_event_translate_ctrlkey(bte::terminal::KeyEvent const& event) const noexcept
 {
 	if (event.keyval() < 128)
 		return event.keyval();
@@ -341,7 +341,7 @@ Widget::key_event_translate_ctrlkey(vte::terminal::KeyEvent const& event) const 
                                                      i,
                                                      &keyval, NULL, NULL, &consumed_modifiers);
 		if (keyval < 128) {
-			_vte_debug_print (VTE_DEBUG_EVENTS,
+			_bte_debug_print (VTE_DEBUG_EVENTS,
                                           "ctrl+Key, group=%d de-grouped into keyval=0x%x\n",
                                           event.group(), keyval);
                         break;
@@ -351,13 +351,13 @@ Widget::key_event_translate_ctrlkey(vte::terminal::KeyEvent const& event) const 
         return keyval;
 }
 
-vte::terminal::KeyEvent
+bte::terminal::KeyEvent
 Widget::key_event_from_cdk(CdkEventKey* event) const
 {
-        auto type = vte::terminal::EventBase::Type{};
+        auto type = bte::terminal::EventBase::Type{};
         switch (cdk_event_get_event_type(reinterpret_cast<CdkEvent*>(event))) {
-        case CDK_KEY_PRESS: type = vte::terminal::KeyEvent::Type::eKEY_PRESS;     break;
-        case CDK_KEY_RELEASE: type = vte::terminal::KeyEvent::Type::eKEY_RELEASE; break;
+        case CDK_KEY_PRESS: type = bte::terminal::KeyEvent::Type::eKEY_PRESS;     break;
+        case CDK_KEY_RELEASE: type = bte::terminal::KeyEvent::Type::eKEY_RELEASE; break;
         default: g_assert_not_reached(); return {};
         }
 
@@ -372,19 +372,19 @@ Widget::key_event_from_cdk(CdkEventKey* event) const
                 event->is_modifier != 0};
 }
 
-std::optional<vte::terminal::MouseEvent>
+std::optional<bte::terminal::MouseEvent>
 Widget::mouse_event_from_cdk(CdkEvent* event) const
 {
-        auto type = vte::terminal::EventBase::Type{};
+        auto type = bte::terminal::EventBase::Type{};
         switch (cdk_event_get_event_type(event)) {
-        case CDK_2BUTTON_PRESS:  type = vte::terminal::MouseEvent::Type::eMOUSE_DOUBLE_PRESS; break;
-        case CDK_3BUTTON_PRESS:  type = vte::terminal::MouseEvent::Type::eMOUSE_TRIPLE_PRESS; break;
-        case CDK_BUTTON_PRESS:   type = vte::terminal::MouseEvent::Type::eMOUSE_PRESS;        break;
-        case CDK_BUTTON_RELEASE: type = vte::terminal::MouseEvent::Type::eMOUSE_RELEASE;      break;
-        case CDK_ENTER_NOTIFY:   type = vte::terminal::MouseEvent::Type::eMOUSE_ENTER;        break;
-        case CDK_LEAVE_NOTIFY:   type = vte::terminal::MouseEvent::Type::eMOUSE_LEAVE;        break;
-        case CDK_MOTION_NOTIFY:  type = vte::terminal::MouseEvent::Type::eMOUSE_MOTION;       break;
-        case CDK_SCROLL:         type = vte::terminal::MouseEvent::Type::eMOUSE_SCROLL;       break;
+        case CDK_2BUTTON_PRESS:  type = bte::terminal::MouseEvent::Type::eMOUSE_DOUBLE_PRESS; break;
+        case CDK_3BUTTON_PRESS:  type = bte::terminal::MouseEvent::Type::eMOUSE_TRIPLE_PRESS; break;
+        case CDK_BUTTON_PRESS:   type = bte::terminal::MouseEvent::Type::eMOUSE_PRESS;        break;
+        case CDK_BUTTON_RELEASE: type = bte::terminal::MouseEvent::Type::eMOUSE_RELEASE;      break;
+        case CDK_ENTER_NOTIFY:   type = bte::terminal::MouseEvent::Type::eMOUSE_ENTER;        break;
+        case CDK_LEAVE_NOTIFY:   type = bte::terminal::MouseEvent::Type::eMOUSE_LEAVE;        break;
+        case CDK_MOTION_NOTIFY:  type = bte::terminal::MouseEvent::Type::eMOUSE_MOTION;       break;
+        case CDK_SCROLL:         type = bte::terminal::MouseEvent::Type::eMOUSE_SCROLL;       break;
         default:
                 return std::nullopt;
         }
@@ -398,11 +398,11 @@ Widget::mouse_event_from_cdk(CdkEvent* event) const
         auto button = unsigned{0};
         (void)cdk_event_get_button(event, &button);
 
-        auto mouse_event = vte::terminal::MouseEvent{event,
+        auto mouse_event = bte::terminal::MouseEvent{event,
                                                      type,
                                                      cdk_event_get_time(event),
                                                      read_modifiers_from_cdk(event),
-                                                     vte::terminal::MouseEvent::Button(button),
+                                                     bte::terminal::MouseEvent::Button(button),
                                                      x,
                                                      y};
         return mouse_event;
@@ -435,7 +435,7 @@ Widget::realize() noexcept
 	m_default_cursor = create_cursor(VTE_DEFAULT_CURSOR);
 	m_invisible_cursor = create_cursor(CDK_BLANK_CURSOR);
 	m_mousing_cursor = create_cursor(VTE_MOUSING_CURSOR);
-        if (_vte_debug_on(VTE_DEBUG_HYPERLINK))
+        if (_bte_debug_on(VTE_DEBUG_HYPERLINK))
                 /* Differ from the standard regex match cursor in debug mode. */
                 m_hyperlink_cursor = create_cursor(VTE_HYPERLINK_CURSOR_DEBUG);
         else
@@ -539,7 +539,7 @@ Widget::settings_changed() noexcept
                      "ctk-cursor-blink-timeout", &blink_timeout,
                      nullptr);
 
-        _vte_debug_print(VTE_DEBUG_MISC,
+        _bte_debug_print(VTE_DEBUG_MISC,
                          "Cursor blinking settings: blink=%d time=%d timeout=%d\n",
                          blink, blink_time, blink_timeout);
 
@@ -563,8 +563,8 @@ Widget::set_pty(VtePty* pty_obj) noexcept
         if (pty() == pty_obj)
                 return false;
 
-        m_pty = vte::glib::make_ref(pty_obj);
-        terminal()->set_pty(_vte_pty_get_impl(pty()));
+        m_pty = bte::glib::make_ref(pty_obj);
+        terminal()->set_pty(_bte_pty_get_impl(pty()));
 
         return true;
 }
@@ -672,4 +672,4 @@ Widget::unrealize() noexcept
 
 } // namespace platform
 
-} // namespace vte
+} // namespace bte

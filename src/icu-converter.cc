@@ -27,24 +27,24 @@
 #include "debug.h"
 #include "icu-glue.hh"
 
-namespace vte::base {
+namespace bte::base {
 
 std::unique_ptr<ICUConverter>
 ICUConverter::make(char const* charset,
                    GError** error)
 {
-        if (vte::base::get_icu_charset_is_ecma35(charset))
+        if (bte::base::get_icu_charset_is_ecma35(charset))
                 return {};
 
-        auto charset_converter = vte::base::make_icu_converter(charset, error);
+        auto charset_converter = bte::base::make_icu_converter(charset, error);
         if (!charset_converter)
                 return {};
 
-        auto u32_converter = vte::base::make_icu_converter("utf32platformendian", error);
+        auto u32_converter = bte::base::make_icu_converter("utf32platformendian", error);
         if (!u32_converter)
                 return {};
 
-        auto u8_converter = vte::base::make_icu_converter("utf8", error);
+        auto u8_converter = bte::base::make_icu_converter("utf8", error);
         if (!u8_converter)
                 return {};
 
@@ -71,7 +71,7 @@ ICUConverter::convert(std::string_view const& data)
                                       data.data(), data.size(),
                                       err);
         if (err.isFailure() && (err.get() != U_BUFFER_OVERFLOW_ERROR)) {
-                _vte_debug_print(VTE_DEBUG_CONVERSION,
+                _bte_debug_print(VTE_DEBUG_CONVERSION,
                                  "Error converting from UTF-8 to UTF-16 in preflight: %s\n",
                                  err.errorName());
                 return {};
@@ -90,7 +90,7 @@ ICUConverter::convert(std::string_view const& data)
                                  data.size(),
                                  err);
         if (err.isFailure()) {
-                _vte_debug_print(VTE_DEBUG_CONVERSION,
+                _bte_debug_print(VTE_DEBUG_CONVERSION,
                                  "Error converting from UTF-8 to UTF-16: %s\n",
                                  err.errorName());
                 return {};
@@ -105,7 +105,7 @@ ICUConverter::convert(std::string_view const& data)
                                            u16_size,
                                            err);
         if (err.isFailure() && (err.get() != U_BUFFER_OVERFLOW_ERROR)) {
-                _vte_debug_print(VTE_DEBUG_CONVERSION,
+                _bte_debug_print(VTE_DEBUG_CONVERSION,
                                  "Error converting from UTF-8 to %s in preflight: %s\n",
                                  m_charset.c_str(),
                                  err.errorName());
@@ -125,7 +125,7 @@ ICUConverter::convert(std::string_view const& data)
                                       u16_size,
                                       err);
         if (err.isFailure()) {
-                _vte_debug_print(VTE_DEBUG_CONVERSION,
+                _bte_debug_print(VTE_DEBUG_CONVERSION,
                                  "Error converting from UTF-16 to %s: %s\n",
                                  m_charset.c_str(),
                                  err.errorName());
@@ -135,4 +135,4 @@ ICUConverter::convert(std::string_view const& data)
         return target_buffer;
 }
 
-} // namespace vte::base
+} // namespace bte::base

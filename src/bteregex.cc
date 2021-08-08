@@ -16,7 +16,7 @@
  */
 
 /**
- * SECTION: vte-regex
+ * SECTION: bte-regex
  * @short_description: Regex for matching and searching. Uses PCRE2 internally.
  *
  * Since: 0.46
@@ -26,13 +26,13 @@
 
 #include <exception>
 
-#include "vtemacros.h"
-#include "vteenums.h"
-#include "vteregex.h"
-#include "vtepcre2.h"
+#include "btemacros.h"
+#include "bteenums.h"
+#include "bteregex.h"
+#include "btepcre2.h"
 
 #include "regex.hh"
-#include "vteregexinternal.hh"
+#include "bteregexinternal.hh"
 #include "glib-glue.hh"
 #include "cxx-utils.hh"
 
@@ -44,14 +44,14 @@
 #if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic ignored "-Wcast-function-type"
 #endif
-G_DEFINE_BOXED_TYPE(VteRegex, vte_regex,
-                    vte_regex_ref, (GBoxedFreeFunc)vte_regex_unref)
+G_DEFINE_BOXED_TYPE(VteRegex, bte_regex,
+                    bte_regex_ref, (GBoxedFreeFunc)bte_regex_unref)
 #pragma GCC diagnostic pop
 
-G_DEFINE_QUARK(vte-regex-error, vte_regex_error)
+G_DEFINE_QUARK(bte-regex-error, bte_regex_error)
 
 /**
- * vte_regex_ref:
+ * bte_regex_ref:
  * @regex: (transfer none): a #VteRegex
  *
  * Increases the reference count of @regex by one.
@@ -59,7 +59,7 @@ G_DEFINE_QUARK(vte-regex-error, vte_regex_error)
  * Returns: @regex
  */
 VteRegex *
-vte_regex_ref(VteRegex *regex) noexcept
+bte_regex_ref(VteRegex *regex) noexcept
 {
         g_return_val_if_fail(regex != nullptr, nullptr);
 
@@ -67,7 +67,7 @@ vte_regex_ref(VteRegex *regex) noexcept
 }
 
 /**
- * vte_regex_unref:
+ * bte_regex_unref:
  * @regex: (transfer full): a #VteRegex
  *
  * Decreases the reference count of @regex by one, and frees @regex
@@ -76,7 +76,7 @@ vte_regex_ref(VteRegex *regex) noexcept
  * Returns: %NULL
  */
 VteRegex *
-vte_regex_unref(VteRegex* regex) noexcept
+bte_regex_unref(VteRegex* regex) noexcept
 {
         g_return_val_if_fail(regex != nullptr, nullptr);
 
@@ -85,22 +85,22 @@ vte_regex_unref(VteRegex* regex) noexcept
 }
 
 static VteRegex*
-vte_regex_new(vte::base::Regex::Purpose purpose,
+bte_regex_new(bte::base::Regex::Purpose purpose,
               std::string_view const& pattern,
               uint32_t flags,
               GError** error) noexcept
 try
 {
-        return wrapper_from_regex(vte::base::Regex::compile(purpose, pattern, flags, error));
+        return wrapper_from_regex(bte::base::Regex::compile(purpose, pattern, flags, error));
 }
 catch (...)
 {
-        vte::glib::set_error_from_exception(error);
+        bte::glib::set_error_from_exception(error);
         return nullptr;
 }
 
 /**
- * vte_regex_new_for_match:
+ * bte_regex_new_for_match:
  * @pattern: a regex pattern string
  * @pattern_length: the length of @pattern in bytes, or -1 if the
  *  string is NUL-terminated and the length is unknown
@@ -108,8 +108,8 @@ catch (...)
  * @error: (allow-none): return location for a #GError, or %NULL
  *
  * Compiles @pattern into a regex for use as a match regex
- * with vte_terminal_match_add_regex() or
- * vte_terminal_event_check_regex_simple().
+ * with bte_terminal_match_add_regex() or
+ * bte_terminal_event_check_regex_simple().
  *
  * See man:pcre2pattern(3) for information
  * about the supported regex language.
@@ -120,26 +120,26 @@ catch (...)
  * Returns: (transfer full): a newly created #VteRegex, or %NULL with @error filled in
  */
 VteRegex *
-vte_regex_new_for_match(const char *pattern,
+bte_regex_new_for_match(const char *pattern,
                         gssize      pattern_length,
                         guint32     flags,
                         GError    **error) noexcept
 try
 {
         auto const len = size_t{pattern_length == -1 ? strlen(pattern) : size_t(pattern_length)};
-        return vte_regex_new(vte::base::Regex::Purpose::eMatch,
+        return bte_regex_new(bte::base::Regex::Purpose::eMatch,
                              {pattern, len},
                              flags,
                              error);
 }
 catch (...)
 {
-        vte::glib::set_error_from_exception(error);
+        bte::glib::set_error_from_exception(error);
         return nullptr;
 }
 
 /**
- * vte_regex_new_for_search:
+ * bte_regex_new_for_search:
  * @pattern: a regex pattern string
  * @pattern_length: the length of @pattern in bytes, or -1 if the
  *  string is NUL-terminated and the length is unknown
@@ -147,7 +147,7 @@ catch (...)
  * @error: (allow-none): return location for a #GError, or %NULL
  *
  * Compiles @pattern into a regex for use as a search regex
- * with vte_terminal_search_set_regex().
+ * with bte_terminal_search_set_regex().
  *
  * See man:pcre2pattern(3) for information
  * about the supported regex language.
@@ -158,26 +158,26 @@ catch (...)
  * Returns: (transfer full): a newly created #VteRegex, or %NULL with @error filled in
  */
 VteRegex *
-vte_regex_new_for_search(const char *pattern,
+bte_regex_new_for_search(const char *pattern,
                          gssize      pattern_length,
                          guint32     flags,
                          GError    **error) noexcept
 try
 {
         auto const len = size_t{pattern_length == -1 ? strlen(pattern) : size_t(pattern_length)};
-        return vte_regex_new(vte::base::Regex::Purpose::eSearch,
+        return bte_regex_new(bte::base::Regex::Purpose::eSearch,
                              {pattern, len},
                              flags,
                              error);
 }
 catch (...)
 {
-        vte::glib::set_error_from_exception(error);
+        bte::glib::set_error_from_exception(error);
         return nullptr;
 }
 
 /**
- * vte_regex_jit:
+ * bte_regex_jit:
  * @regex: a #VteRegex
  *
  * If the platform supports JITing, JIT compiles @regex.
@@ -186,7 +186,7 @@ catch (...)
  *   JIT support), or %FALSE with @error filled in
  */
 gboolean
-vte_regex_jit(VteRegex *regex,
+bte_regex_jit(VteRegex *regex,
               guint     flags,
               GError  **error) noexcept
 try
@@ -197,12 +197,12 @@ try
 }
 catch (...)
 {
-        return vte::glib::set_error_from_exception(error);
+        return bte::glib::set_error_from_exception(error);
 }
 
 bool
-_vte_regex_has_purpose(VteRegex *regex,
-                       vte::base::Regex::Purpose purpose)
+_bte_regex_has_purpose(VteRegex *regex,
+                       bte::base::Regex::Purpose purpose)
 {
         g_return_val_if_fail(regex != nullptr, false);
 
@@ -210,7 +210,7 @@ _vte_regex_has_purpose(VteRegex *regex,
 }
 
 bool
-_vte_regex_has_multiline_compile_flag(VteRegex *regex)
+_bte_regex_has_multiline_compile_flag(VteRegex *regex)
 {
         g_return_val_if_fail(regex != nullptr, 0);
 
@@ -218,7 +218,7 @@ _vte_regex_has_multiline_compile_flag(VteRegex *regex)
 }
 
 /**
- * vte_regex_substitute:
+ * bte_regex_substitute:
  * @regex: a #VteRegex
  * @subject: the subject string
  * @replacement: the replacement string
@@ -233,7 +233,7 @@ _vte_regex_has_multiline_compile_flag(VteRegex *regex)
  * Since: 0.56
  */
 char *
-vte_regex_substitute(VteRegex *regex,
+bte_regex_substitute(VteRegex *regex,
                      const char *subject,
                      const char *replacement,
                      guint32 flags,
@@ -250,6 +250,6 @@ try
 }
 catch (...)
 {
-        vte::glib::set_error_from_exception(error);
+        bte::glib::set_error_from_exception(error);
         return nullptr;
 }

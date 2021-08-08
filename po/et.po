@@ -1,18 +1,18 @@
-# vte eesti keele tõlge.
-# Estonian translation of vte.
+# bte eesti keele tõlge.
+# Estonian translation of bte.
 #
 # Copyright (C) 2003, 2005, 2006 Free Software Foundation, Inc
 # Copyright (C) 2007, 2010 The GNOME Project
-# This file is distributed under the same license as the vte package.
+# This file is distributed under the same license as the bte package.
 #
 # Allan Sims <allsi@eau.ee>, 2003.
 # Ivar Smolin <okul@linux.ee>, 2005-2007, 2010.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: vte MASTER\n"
+"Project-Id-Version: bte MASTER\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=vte&component=general\n"
+"product=bte&component=general\n"
 "POT-Creation-Date: 2010-12-04 12:48+0000\n"
 "PO-Revision-Date: 2010-05-27 08:15+0300\n"
 "Last-Translator: Ivar Smolin <okul@linux.ee>\n"
@@ -73,5 +73,5 @@ msgid "Error reading PTY size, using defaults: %s\n"
 msgstr "Viga PTY suuruse lugemisel, kasutatakse vaikeväärtust: %s\n"
 
 #. Aaargh.  We're screwed.
-msgid "_vte_conv_open() failed setting word characters"
-msgstr "Tõrge _vte_conv_open() sõnamärkide seadmisel"
+msgid "_bte_conv_open() failed setting word characters"
+msgstr "Tõrge _bte_conv_open() sõnamärkide seadmisel"

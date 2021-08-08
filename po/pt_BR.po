@@ -1,6 +1,6 @@
-# Brazilian Portuguese translation of vte
+# Brazilian Portuguese translation of bte
 # Copyright (C) 2002-2016 Free Software Foundation, Inc.
-# This file is distributed under the same license as the vte package.
+# This file is distributed under the same license as the bte package.
 # Alexandre Folle de Menezes <afmenez@terra.com.br>, 2002-2003.
 # Leonardo Ferreira Fontenelle <leo.fontenelle@gmail.com>, 2007.
 # Lucas Mazzardo Veloso <lmveloso@gmail.com>, 2007.
@@ -11,7 +11,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 2.0\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2020-05-27 19:17+0000\n"
 "PO-Revision-Date: 2020-08-10 08:58-0300\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
@@ -24,11 +24,11 @@ msgstr ""
 "X-Generator: Gtranslator 3.36.0\n"
 "X-Project-Style: gnome\n"
 
-#: src/vte.cc:7763
+#: src/bte.cc:7763
 msgid "WARNING"
 msgstr "AVISO"
 
-#: src/vte.cc:7765
+#: src/bte.cc:7765
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr ""
 "O GnuTLS não está habilitado; os dados serão escritos descriptografados em "
@@ -121,5 +121,5 @@ msgstr "Falha ao executar o processo filho “%s”: "
 #~ msgid "Error compiling regular expression \"%s\"."
 #~ msgstr "Erro compilando a expressão regular \"%s\"."
 
-#~ msgid "_vte_conv_open() failed setting word characters"
-#~ msgstr "_vte_conv_open() falhou ao definir caracteres de palavra"
+#~ msgid "_bte_conv_open() failed setting word characters"
+#~ msgstr "_bte_conv_open() falhou ao definir caracteres de palavra"

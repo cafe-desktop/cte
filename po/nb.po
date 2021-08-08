@@ -1,11 +1,11 @@
-# Norwegian (bokmål) translation of vte.
+# Norwegian (bokmål) translation of bte.
 # Copyright (C) Kjartan Maraas, 2002-2020.
 # Free Software Foundation, 2002.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: vte 0.62.x\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Project-Id-Version: bte 0.62.x\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2020-09-12 19:27+0000\n"
 "PO-Revision-Date: 2021-01-25 15:05+0100\n"
 "Last-Translator: Kjartan Maraas <kmaraas@gnome.org>\n"
@@ -15,11 +15,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/vte.cc:7764
+#: src/bte.cc:7764
 msgid "WARNING"
 msgstr "ADVARSEL"
 
-#: src/vte.cc:7766
+#: src/bte.cc:7766
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr ""
 "GNUTLS er ikke aktivert; data vil bli skrevet til disk uten kryptering!"

@@ -14,13 +14,13 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this library.  If not, see <https://www.gnu.org/licenses/>.
 
-subdir('vte')
+subdir('bte')
 
 src_inc = include_directories('.')
 
 a11y_sources = files(
-  'vteaccess.cc',
-  'vteaccess.h',
+  'bteaccess.cc',
+  'bteaccess.h',
 )
 
 debug_sources = files(
@@ -74,8 +74,8 @@ parser_sources = files(
 pty_sources = files(
   'pty.cc',
   'pty.hh',
-  'vtepty.cc',
-  'vteptyinternal.hh',
+  'btepty.cc',
+  'bteptyinternal.hh',
 )
 
 refptr_sources = files(
@@ -97,7 +97,7 @@ utf8_sources = files(
   'utf8.hh',
 )
 
-libvte_common_sources = debug_sources + glib_glue_sources + libc_glue_sources + modes_sources + parser_sources + pty_sources + refptr_sources + regex_sources + utf8_sources + files(
+libbte_common_sources = debug_sources + glib_glue_sources + libc_glue_sources + modes_sources + parser_sources + pty_sources + refptr_sources + regex_sources + utf8_sources + files(
   'attr.hh',
   'bidi.cc',
   'bidi.hh',
@@ -130,56 +130,56 @@ libvte_common_sources = debug_sources + glib_glue_sources + libc_glue_sources + 
   'spawn.hh',
   'utf8.cc',
   'utf8.hh',
-  'vte.cc',
-  'vtedefines.hh',
-  'vtectk.cc',
-  'vtectk.hh',
-  'vteinternal.hh',
-  'vtepcre2.h',
-  'vteregex.cc',
-  'vteregexinternal.hh',
-  'vterowdata.cc',
-  'vterowdata.hh',
-  'vteseq.cc',
-  'vtespawn.cc',
-  'vtespawn.hh',
-  'vtestream-base.h',
-  'vtestream-file.h',
-  'vtestream.cc',
-  'vtestream.h',
-  'vtetypes.cc',
-  'vtetypes.hh',
-  'vteunistr.cc',
-  'vteunistr.h',
-  'vteutils.cc',
-  'vteutils.h',
+  'bte.cc',
+  'btedefines.hh',
+  'btectk.cc',
+  'btectk.hh',
+  'bteinternal.hh',
+  'btepcre2.h',
+  'bteregex.cc',
+  'bteregexinternal.hh',
+  'bterowdata.cc',
+  'bterowdata.hh',
+  'bteseq.cc',
+  'btespawn.cc',
+  'btespawn.hh',
+  'btestream-base.h',
+  'btestream-file.h',
+  'btestream.cc',
+  'btestream.h',
+  'btetypes.cc',
+  'btetypes.hh',
+  'bteunistr.cc',
+  'bteunistr.h',
+  'bteutils.cc',
+  'bteutils.h',
   'widget.cc',
   'widget.hh',
 )
 
 if get_option('a11y')
-  libvte_common_sources += a11y_sources
+  libbte_common_sources += a11y_sources
 endif
 
 if get_option('icu')
-  libvte_common_sources += icu_sources
+  libbte_common_sources += icu_sources
 endif
 
 if systemd_dep.found()
-  libvte_common_sources += systemd_sources
+  libbte_common_sources += systemd_sources
 endif
 
-libvte_common_doc_sources = files(
+libbte_common_doc_sources = files(
   # These file contain gtk-doc comments to be extracted for docs and gir
-  'vtectk.cc',
-  'vtepty.cc',
-  'vteregex.cc',
+  'btectk.cc',
+  'btepty.cc',
+  'bteregex.cc',
 )
 
 # FIXMEchpe this should use files('...') (allowed as per docs, afaict), but that crashes meson
 generate_box_drawing = find_program('box_drawing_generate.sh')
 
-libvte_common_sources += custom_target(
+libbte_common_sources += custom_target(
   'box-drawing',
   input: 'box_drawing.txt',
   output: 'box_drawing.h',
@@ -188,28 +188,28 @@ libvte_common_sources += custom_target(
   install: false,
 )
 
-libvte_common_sources += gnome.compile_resources(
-  'vteresources',
-  'vte.gresource.xml',
-  c_name: '_vte',
+libbte_common_sources += gnome.compile_resources(
+  'bteresources',
+  'bte.gresource.xml',
+  c_name: '_bte',
 )
 
-libvte_common_sources += gnome.genmarshal(
+libbte_common_sources += gnome.genmarshal(
   'marshal',
   sources: 'marshal.list',
-  prefix: '_vte_marshal',
+  prefix: '_bte_marshal',
   internal: true,
   valist_marshallers: true,
 )
 
-libvte_common_public_deps = [
+libbte_common_public_deps = [
   gio_dep,
   glib_dep,
   gobject_dep,
   pango_dep,
 ]
 
-libvte_common_deps = libvte_common_public_deps + [
+libbte_common_deps = libbte_common_public_deps + [
   fribidi_dep,
   gnutls_dep,
   icu_dep,
@@ -222,48 +222,48 @@ libvte_common_deps = libvte_common_public_deps + [
 
 incs = [
   top_inc,
-  vte_inc,
+  bte_inc,
 ]
 
-libvte_common_cppflags = [
+libbte_common_cppflags = [
   '-DG_LOG_DOMAIN="VTE"',
-  '-DLOCALEDIR="@0@"'.format(vte_prefix / vte_localedir),
+  '-DLOCALEDIR="@0@"'.format(bte_prefix / bte_localedir),
   '-DVTE_DISABLE_DEPRECATION_WARNINGS',
   '-DVTE_COMPILATION',
   '-UPARSER_INCLUDE_NOP',
 ]
 
 if get_option('ctk3')
-  libvte_ctk3_sources = libvte_common_sources + libvte_ctk3_public_headers + libvte_ctk3_enum_sources
-  libvte_ctk3_cppflags = libvte_common_cppflags + ctk3_version_cppflags
-  libvte_ctk3_deps = libvte_common_deps + [ctk3_dep]
-  libvte_ctk3_public_deps = libvte_common_public_deps + [ctk3_dep]
+  libbte_ctk3_sources = libbte_common_sources + libbte_ctk3_public_headers + libbte_ctk3_enum_sources
+  libbte_ctk3_cppflags = libbte_common_cppflags + ctk3_version_cppflags
+  libbte_ctk3_deps = libbte_common_deps + [ctk3_dep]
+  libbte_ctk3_public_deps = libbte_common_public_deps + [ctk3_dep]
 
-  libvte_ctk3 = shared_library(
-    vte_ctk3_api_name,
-    sources: libvte_ctk3_sources,
-    version: libvte_ctk3_soversion,
+  libbte_ctk3 = shared_library(
+    bte_ctk3_api_name,
+    sources: libbte_ctk3_sources,
+    version: libbte_ctk3_soversion,
     include_directories: incs,
-    dependencies: libvte_ctk3_deps,
-    cpp_args: libvte_ctk3_cppflags,
+    dependencies: libbte_ctk3_deps,
+    cpp_args: libbte_ctk3_cppflags,
     install: true,
   )
 
-  libvte_ctk3_dep = declare_dependency(
-    sources: libvte_ctk3_public_headers,
-    include_directories: [src_inc, vte_inc],
-    dependencies: libvte_ctk3_deps,
-    link_with: libvte_ctk3
+  libbte_ctk3_dep = declare_dependency(
+    sources: libbte_ctk3_public_headers,
+    include_directories: [src_inc, bte_inc],
+    dependencies: libbte_ctk3_deps,
+    link_with: libbte_ctk3
   )
 
   pkg.generate(
-    libvte_ctk3,
-    version: vte_version,
-    name: 'vte',
+    libbte_ctk3,
+    version: bte_version,
+    name: 'bte',
     description: 'VTE widget for CTK+ 3.0',
-    filebase: vte_ctk3_api_name,
-    subdirs: vte_ctk3_api_name,
-    requires: libvte_ctk3_public_deps,
+    filebase: bte_ctk3_api_name,
+    subdirs: bte_ctk3_api_name,
+    requires: libbte_ctk3_public_deps,
     variables: 'exec_prefix=${prefix}',
   )
 endif
@@ -361,10 +361,10 @@ reflect_textview = executable(
   install: false,
 )
 
-reflect_vte = executable(
-  'reflect-vte',
+reflect_bte = executable(
+  'reflect-bte',
   sources: reflect_sources,
-  dependencies: [ctk3_dep, libvte_ctk3_dep],
+  dependencies: [ctk3_dep, libbte_ctk3_dep],
   c_args: [
     '-DUSE_VTE',
     '-DVTE_DISABLE_DEPRECATION_WARNINGS',
@@ -373,21 +373,21 @@ reflect_vte = executable(
   install: false,
 )
 
-# vte-urlencode-cwd
+# bte-urlencode-cwd
 
-vte_urlencode_cwd_sources = files(
+bte_urlencode_cwd_sources = files(
   'urlencode.cc',
 )
 
-vte_urlencode_cwd = executable(
-  'vte-urlencode-cwd',
+bte_urlencode_cwd = executable(
+  'bte-urlencode-cwd',
   cpp_args: [
     '-nostdlib',
   ],
   include_directories: [top_inc,],
   install: true,
-  install_dir: vte_libexecdir,
-  sources: vte_urlencode_cwd_sources,
+  install_dir: bte_libexecdir,
+  sources: bte_urlencode_cwd_sources,
 )
 
 # xticker
@@ -465,12 +465,12 @@ test_tabstops_sources = files(
 )
 
 test_stream_sources = files(
-  'vtestream-base.h',
-  'vtestream-file.h',
-  'vtestream.cc',
-  'vtestream.h',
-  'vteutils.cc',
-  'vteutils.h',
+  'btestream-base.h',
+  'btestream-file.h',
+  'btestream.cc',
+  'btestream.h',
+  'bteutils.cc',
+  'bteutils.h',
 )
 
 test_stream = executable(
@@ -502,14 +502,14 @@ test_utf8 = executable(
   install: false,
 )
 
-test_vtetypes_sources = libc_glue_sources + files(
-   'vtetypes.cc',
-   'vtetypes.hh',
+test_btetypes_sources = libc_glue_sources + files(
+   'btetypes.cc',
+   'btetypes.hh',
 )
 
-test_vtetypes = executable(
-  'test-vtetypes',
-  sources: test_vtetypes_sources,
+test_btetypes = executable(
+  'test-btetypes',
+  sources: test_btetypes_sources,
   dependencies: [glib_dep, pango_dep, ctk3_dep],
   cpp_args: ['-DMAIN'],
   include_directories: top_inc,
@@ -529,7 +529,7 @@ test_units = [
   ['stream', test_stream],
   ['tabstops', test_tabstops],
   ['utf8', test_utf8],
-  ['vtetypes', test_vtetypes],
+  ['btetypes', test_btetypes],
 ]
 
 foreach test: test_units
@@ -537,7 +537,7 @@ foreach test: test_units
     test[0],
     test[1],
     env: test_env,
-    timeout: 600, # See issue vte#120
+    timeout: 600, # See issue bte#120
   )
 endforeach
 
@@ -553,7 +553,7 @@ foreach test: test_scripts
 endforeach
 
 test_scripts_with_arg = [
-  ['vte-urlencode-cwd', 'test-vte-urlencode-cwd.sh', vte_urlencode_cwd],
+  ['bte-urlencode-cwd', 'test-bte-urlencode-cwd.sh', bte_urlencode_cwd],
 ]
 
 foreach test: test_scripts_with_arg
@@ -566,32 +566,32 @@ endforeach
 
 # Shell integration
 
-vte_csh = configure_file(
-  input: 'vte.csh.in',
+bte_csh = configure_file(
+  input: 'bte.csh.in',
   output: '@BASENAME@',
   configuration: {
-    'libexecdir': vte_prefix / vte_libexecdir,
+    'libexecdir': bte_prefix / bte_libexecdir,
   },
   install: true,
-  install_dir: vte_sysconfdir / 'profile.d',
+  install_dir: bte_sysconfdir / 'profile.d',
 )
 
-vte_sh = configure_file(
-  input: 'vte.sh.in',
+bte_sh = configure_file(
+  input: 'bte.sh.in',
   output: '@BASENAME@',
   configuration: {
-    'libexecdir': vte_prefix / vte_libexecdir,
+    'libexecdir': bte_prefix / bte_libexecdir,
   },
   install: true,
-  install_dir: vte_sysconfdir / 'profile.d',
+  install_dir: bte_sysconfdir / 'profile.d',
 )
 
 # Systemd integration
 
 if systemd_dep.found()
   install_data(
-    sources: 'vte-spawn-.scope.conf',
-    install_dir: vte_systemduserunitdir / 'vte-spawn-.scope.d',
+    sources: 'bte-spawn-.scope.conf',
+    install_dir: bte_systemduserunitdir / 'bte-spawn-.scope.d',
     rename: 'defaults.conf'
   )
 endif

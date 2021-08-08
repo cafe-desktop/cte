@@ -49,8 +49,8 @@
 
 #include "bidi.hh"
 #include "debug.h"
-#include "vtedefines.hh"
-#include "vteinternal.hh"
+#include "btedefines.hh"
+#include "bteinternal.hh"
 
 #ifdef WITH_FRIBIDI
 static_assert (sizeof (FriBidiChar) == sizeof (gunichar), "Unexpected FriBidiChar size");
@@ -59,7 +59,7 @@ static_assert (sizeof (FriBidiChar) == sizeof (gunichar), "Unexpected FriBidiCha
 /* Don't do Arabic ligatures as per bug 142. */
 #define VTE_ARABIC_SHAPING_FLAGS (FRIBIDI_FLAGS_ARABIC & ~FRIBIDI_FLAG_SHAPE_ARAB_LIGA)
 
-using namespace vte::base;
+using namespace bte::base;
 
 BidiRow::~BidiRow()
 {
@@ -70,7 +70,7 @@ BidiRow::~BidiRow()
 }
 
 void
-BidiRow::set_width(vte::grid::column_t width)
+BidiRow::set_width(bte::grid::column_t width)
 {
         g_assert_cmpint(width, >=, 0);
         if (G_UNLIKELY (width > G_MAXUSHORT)) {
@@ -102,8 +102,8 @@ BidiRow::set_width(vte::grid::column_t width)
 
 /* Converts from logical to visual column. Offscreen columns are mirrored
  * for RTL lines, e.g. (assuming 80 columns) -1 <=> 80, -2 <=> 81 etc. */
-vte::grid::column_t
-BidiRow::log2vis(vte::grid::column_t col) const
+bte::grid::column_t
+BidiRow::log2vis(bte::grid::column_t col) const
 {
         if (col >= 0 && col < m_width) {
                 return m_log2vis[col];
@@ -114,8 +114,8 @@ BidiRow::log2vis(vte::grid::column_t col) const
 
 /* Converts from visual to logical column. Offscreen columns are mirrored
  * for RTL lines, e.g. (assuming 80 columns) -1 <=> 80, -2 <=> 81 etc. */
-vte::grid::column_t
-BidiRow::vis2log(vte::grid::column_t col) const
+bte::grid::column_t
+BidiRow::vis2log(bte::grid::column_t col) const
 {
         if (col >= 0 && col < m_width) {
                 return m_vis2log[col];
@@ -127,7 +127,7 @@ BidiRow::vis2log(vte::grid::column_t col) const
 /* Whether the cell at the given visual position has RTL directionality.
  * For offscreen columns the line's base direction is returned. */
 bool
-BidiRow::vis_is_rtl(vte::grid::column_t col) const
+BidiRow::vis_is_rtl(bte::grid::column_t col) const
 {
         if (col >= 0 && col < m_width) {
                 return m_vis_rtl[col];
@@ -139,7 +139,7 @@ BidiRow::vis_is_rtl(vte::grid::column_t col) const
 /* Whether the cell at the given logical position has RTL directionality.
  * For offscreen columns the line's base direction is returned. */
 bool
-BidiRow::log_is_rtl(vte::grid::column_t col) const
+BidiRow::log_is_rtl(bte::grid::column_t col) const
 {
         if (col >= 0 && col < m_width) {
                 col = m_log2vis[col];
@@ -149,10 +149,10 @@ BidiRow::log_is_rtl(vte::grid::column_t col) const
         }
 }
 
-/* Get the shaped character (including combining accents, i.e. vteunistr) for the
+/* Get the shaped character (including combining accents, i.e. bteunistr) for the
  * given visual position.
  *
- * The unshaped character (including combining accents, i.e. vteunistr) needs to be
+ * The unshaped character (including combining accents, i.e. bteunistr) needs to be
  * passed to this method.
  *
  * m_vis_shaped_base_char stores the shaped base character without combining accents.
@@ -167,15 +167,15 @@ BidiRow::log_is_rtl(vte::grid::column_t col) const
  * FIXMEegmont This should have a wrapper method in RingView. That could always return
  * the actual (potentially shaped) character without asking for the unshaped one.
  */
-vteunistr
-BidiRow::vis_get_shaped_char(vte::grid::column_t col, vteunistr s) const
+bteunistr
+BidiRow::vis_get_shaped_char(bte::grid::column_t col, bteunistr s) const
 {
         g_assert_cmpint (col, >=, 0);
 
         if (col >= m_width || m_vis_shaped_base_char[col] == 0)
                 return s;
 
-        return _vte_unistr_replace_base(s, m_vis_shaped_base_char[col]);
+        return _bte_unistr_replace_base(s, m_vis_shaped_base_char[col]);
 }
 
 
@@ -198,7 +198,7 @@ is_arabic(gunichar c)
  * This whole shaping business with presentation form characters should be replaced by HarfBuzz.
  */
 void
-BidiRunner::explicit_line_shape(vte::grid::row_t row)
+BidiRunner::explicit_line_shape(bte::grid::row_t row)
 {
         const VteRowData *row_data = m_ringview->get_row(row);
 
@@ -228,9 +228,9 @@ BidiRunner::explicit_line_shape(vte::grid::row_t row)
         /* Walk in visual order from right to left. */
         i = width - 1;
         while (i >= 0) {
-                cell = _vte_row_data_get(row_data, bidirow->vis2log(i));
+                cell = _bte_row_data_get(row_data, bidirow->vis2log(i));
                 c = cell ? cell->c : 0;
-                base = _vte_unistr_get_base(c);
+                base = _bte_unistr_get_base(c);
                 if (!is_arabic(base)) {
                         i--;
                         continue;
@@ -241,14 +241,14 @@ BidiRunner::explicit_line_shape(vte::grid::row_t row)
                 j = i;
                 do {
                         auto prev_len = fribidi_chars_array->len;
-                        _vte_unistr_append_to_gunichars (cell->c, fribidi_chars_array);
+                        _bte_unistr_append_to_gunichars (cell->c, fribidi_chars_array);
                         g_assert_cmpint (fribidi_chars_array->len, >, prev_len);
 
                         j--;
                         if (j >= 0) {
-                                cell = _vte_row_data_get(row_data, bidirow->vis2log(j));
+                                cell = _bte_row_data_get(row_data, bidirow->vis2log(j));
                                 c = cell ? cell->c : 0;
-                                base = _vte_unistr_get_base(c);
+                                base = _bte_unistr_get_base(c);
                         } else {
                                 /* Pretend that visual column -1 contains a stop char. */
                                 base = 0;
@@ -296,14 +296,14 @@ BidiRunner::explicit_line_shape(vte::grid::row_t row)
                 j = i;
                 while (count > 0) {
                         g_assert_cmpint (j, >=, 0);
-                        cell = _vte_row_data_get(row_data, bidirow->vis2log(j));
+                        cell = _bte_row_data_get(row_data, bidirow->vis2log(j));
                         c = cell->c;
-                        base = _vte_unistr_get_base(c);
+                        base = _bte_unistr_get_base(c);
                         if (*fribidi_chars != base) {
                                 /* Shaping changed the codepoint, store it. */
                                 bidirow->m_vis_shaped_base_char[j] = *fribidi_chars;
                         }
-                        int len = _vte_unistr_strlen(c);
+                        int len = _bte_unistr_strlen(c);
                         fribidi_chars += len;
                         count -= len;
                         j--;
@@ -325,7 +325,7 @@ BidiRunner::explicit_line_shape(vte::grid::row_t row)
  * in place.
  */
 void
-BidiRunner::explicit_line(vte::grid::row_t row, bool rtl, bool do_shaping)
+BidiRunner::explicit_line(bte::grid::row_t row, bool rtl, bool do_shaping)
 {
         int i;
 
@@ -358,7 +358,7 @@ BidiRunner::explicit_line(vte::grid::row_t row, bool rtl, bool do_shaping)
 
 /* Figure out the mapping for the paragraph between the given rows. */
 void
-BidiRunner::paragraph(vte::grid::row_t start, vte::grid::row_t end,
+BidiRunner::paragraph(bte::grid::row_t start, bte::grid::row_t end,
                       bool do_bidi, bool do_shaping)
 {
         const VteRowData *row_data = m_ringview->get_row(start);
@@ -392,7 +392,7 @@ BidiRunner::paragraph(vte::grid::row_t start, vte::grid::row_t end,
 /* Set up the mapping according to explicit mode, for all the lines
  * of a paragraph between the given lines. */
 void
-BidiRunner::explicit_paragraph(vte::grid::row_t start, vte::grid::row_t end,
+BidiRunner::explicit_paragraph(bte::grid::row_t start, bte::grid::row_t end,
                                bool rtl, bool do_shaping)
 {
         for (; start < end; start++) {
@@ -404,14 +404,14 @@ BidiRunner::explicit_paragraph(vte::grid::row_t start, vte::grid::row_t end,
 /* Figure out the mapping for the implicit paragraph between the given rows.
  * Returns success. */
 bool
-BidiRunner::implicit_paragraph(vte::grid::row_t start, vte::grid::row_t end, bool do_shaping)
+BidiRunner::implicit_paragraph(bte::grid::row_t start, bte::grid::row_t end, bool do_shaping)
 {
         const VteCell *cell;
         const VteRowData *row_data;
         bool rtl;
         bool autodir;
         bool has_foreign;
-        vte::grid::row_t row;
+        bte::grid::row_t row;
         FriBidiParType pbase_dir;
         FriBidiLevel level;
         FriBidiChar *fribidi_chars;
@@ -529,14 +529,14 @@ BidiRunner::implicit_paragraph(vte::grid::row_t start, vte::grid::row_t end, boo
                         auto prev_len = fribidi_chars_array->len;
                         FriBidiStrIndex val;
 
-                        cell = _vte_row_data_get (row_data, tl);
+                        cell = _bte_row_data_get (row_data, tl);
                         if (cell->attr.fragment())
                                 continue;
 
                         /* Extract the base character and combining accents.
                          * Convert mid-line erased cells to spaces.
                          * Note: see the static assert at the top of this file. */
-                        _vte_unistr_append_to_gunichars (cell->c ? cell->c : ' ', fribidi_chars_array);
+                        _bte_unistr_append_to_gunichars (cell->c ? cell->c : ' ', fribidi_chars_array);
                         /* Make sure at least one character was produced. */
                         g_assert_cmpint (fribidi_chars_array->len, >, prev_len);
 
@@ -680,7 +680,7 @@ BidiRunner::implicit_paragraph(vte::grid::row_t start, vte::grid::row_t end, boo
                         if (fl == -1)
                                 continue;
                         tl = fribidi_to_term[fl];
-                        cell = _vte_row_data_get (row_data, tl);
+                        cell = _bte_row_data_get (row_data, tl);
                         g_assert (!cell->attr.fragment());
                         g_assert (cell->attr.columns() > 0);
                         if (FRIBIDI_LEVEL_IS_RTL(fribidi_levels[fl])) {
@@ -716,7 +716,7 @@ BidiRunner::implicit_paragraph(vte::grid::row_t start, vte::grid::row_t end, boo
 
                 /* From vis2log create the log2vis mapping too.
                  * In debug mode assert that we have a bijective mapping. */
-                if (_vte_debug_on (VTE_DEBUG_BIDI)) {
+                if (_bte_debug_on (VTE_DEBUG_BIDI)) {
                         for (tl = 0; tl < width; tl++) {
                                 bidirow->m_log2vis[tl] = -1;
                         }
@@ -726,7 +726,7 @@ BidiRunner::implicit_paragraph(vte::grid::row_t start, vte::grid::row_t end, boo
                         bidirow->m_log2vis[bidirow->m_vis2log[tv]] = tv;
                 }
 
-                if (_vte_debug_on (VTE_DEBUG_BIDI)) {
+                if (_bte_debug_on (VTE_DEBUG_BIDI)) {
                         for (tl = 0; tl < width; tl++) {
                                 g_assert_cmpint (bidirow->m_log2vis[tl], !=, -1);
                         }
@@ -744,11 +744,11 @@ BidiRunner::implicit_paragraph(vte::grid::row_t start, vte::grid::row_t end, boo
 /* Find the mirrored counterpart of a codepoint, just like
  * fribidi_get_mirror_char() or g_unichar_get_mirror_char() does.
  * Two additions:
- * - works with vteunistr, that is, preserves combining accents;
+ * - works with bteunistr, that is, preserves combining accents;
  * - optionally mirrors box drawing characters.
  */
 gboolean
-vte_bidi_get_mirror_char (vteunistr unistr, gboolean mirror_box_drawing, vteunistr *out)
+bte_bidi_get_mirror_char (bteunistr unistr, gboolean mirror_box_drawing, bteunistr *out)
 {
         static const unsigned char mirrored_2500[0x80] = {
                 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x10, 0x11, 0x12, 0x13,
@@ -760,7 +760,7 @@ vte_bidi_get_mirror_char (vteunistr unistr, gboolean mirror_box_drawing, vteunis
                 0x63, 0x5e, 0x5f, 0x60, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a, 0x6b, 0x6c, 0x6e, 0x6d, 0x70,
                 0x6f, 0x72, 0x71, 0x73, 0x76, 0x75, 0x74, 0x77, 0x7a, 0x79, 0x78, 0x7b, 0x7e, 0x7d, 0x7c, 0x7f };
 
-        gunichar base_ch = _vte_unistr_get_base (unistr);
+        gunichar base_ch = _bte_unistr_get_base (unistr);
         gunichar base_ch_mirrored = base_ch;
 
         if (G_UNLIKELY (base_ch >= 0x2500 && base_ch < 0x2580)) {
@@ -776,7 +776,7 @@ vte_bidi_get_mirror_char (vteunistr unistr, gboolean mirror_box_drawing, vteunis
 #endif
         }
 
-        vteunistr unistr_mirrored = _vte_unistr_replace_base (unistr, base_ch_mirrored);
+        bteunistr unistr_mirrored = _bte_unistr_replace_base (unistr, base_ch_mirrored);
 
         if (out)
                 *out = unistr_mirrored;

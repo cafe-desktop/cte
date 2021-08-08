@@ -27,7 +27,7 @@
 
 #include <cstdint>
 
-namespace vte {
+namespace bte {
 
 namespace base {
 
@@ -84,4 +84,4 @@ private:
 
 } // namespace base
 
-} // namespace vte
+} // namespace bte

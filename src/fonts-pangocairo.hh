@@ -25,12 +25,12 @@
 #include <ctk/ctk.h>
 
 #include "refptr.hh"
-#include "vteunistr.h"
+#include "bteunistr.h"
 
 /* Overview:
  *
  *
- * This file implements vte rendering using pangocairo.  Note that this does
+ * This file implements bte rendering using pangocairo.  Note that this does
  * NOT implement any kind of complex text rendering.  That's not currently a
  * goal.
  *
@@ -41,7 +41,7 @@
  *     to quickly draw text.
  *
  *   - A font_info keeps uses unistr_font_info structs that represent all
- *     information needed to quickly draw a single vteunistr.  The font_info
+ *     information needed to quickly draw a single bteunistr.  The font_info
  *     creates those unistr_font_info structs on demand and caches them
  *     indefinitely.  It uses a direct array for the ASCII range and a hash
  *     table for the rest.
@@ -59,7 +59,7 @@
  *     fastest way to draw text as it bypasses Pango completely and allows
  *     for stuffing multiple glyphs into a single cairo_show_glyphs() request
  *     (if scaled-fonts match).  This method is used if the glyphs used for
- *     the vteunistr as determined by Pango consists of a single regular glyph
+ *     the bteunistr as determined by Pango consists of a single regular glyph
  *     positioned at 0,0 using a regular font.  This method is used for more
  *     than 99% of the cases.  Only exceptional cases fall through to the
  *     other two methods.
@@ -74,7 +74,7 @@
  *
  *   - Coverage::USE_PANGO_LAYOUT_LINE:
  *     Keeping a pango layout line.  This method is used only in the very
- *     weird and exceptional case that a single vteunistr uses more than one
+ *     weird and exceptional case that a single bteunistr uses more than one
  *     font to be drawn.  This happens for example if some diacretics is not
  *     available in the font chosen for the base character.
  *
@@ -108,7 +108,7 @@
  * involved.
  */
 
-namespace vte {
+namespace bte {
 namespace view {
 
 class DrawingContext;
@@ -214,7 +214,7 @@ public:
 
         }; // struct UnistrInfo
 
-        UnistrInfo *get_unistr_info(vteunistr c);
+        UnistrInfo *get_unistr_info(bteunistr c);
         inline constexpr int width() const { return m_width; }
         inline constexpr int height() const { return m_height; }
         inline constexpr int ascent() const { return m_ascent; }
@@ -236,18 +236,18 @@ private:
 
         mutable int m_ref_count{1};
 
-        UnistrInfo* find_unistr_info(vteunistr c);
+        UnistrInfo* find_unistr_info(bteunistr c);
         void cache_ascii();
         void measure_font();
         guint m_destroy_timeout{0}; /* only used when ref_count == 0 */
 
 	/* reusable layout set with font and everything set */
-        vte::glib::RefPtr<PangoLayout> m_layout{};
+        bte::glib::RefPtr<PangoLayout> m_layout{};
 
 	/* cache of character info */
         // FIXME: use std::array<UnistrInfo, 128>
 	UnistrInfo m_ascii_unistr_info[128];
-        // FIXME: use std::unordered_map<vteunistr, UnistrInfo>
+        // FIXME: use std::unordered_map<bteunistr, UnistrInfo>
 	GHashTable* m_other_unistr_info{nullptr};
 
         /* cell metrics as taken from the font, not yet scaled by cell_{width,height}_scale */
@@ -264,8 +264,8 @@ private:
 	int m_coverage_count[4]{0, 0, 0, 0};
 #endif
 
-        static FontInfo* find_for_context(vte::glib::RefPtr<PangoContext>& context);
-        static FontInfo* create_for_context(vte::glib::RefPtr<PangoContext> context,
+        static FontInfo* find_for_context(bte::glib::RefPtr<PangoContext>& context);
+        static FontInfo* create_for_context(bte::glib::RefPtr<PangoContext> context,
                                             PangoFontDescription const* desc,
                                             PangoLanguage* language,
                                             guint fontconfig_timestamp);
@@ -283,4 +283,4 @@ private:
 }; // class FontInfo
 
 } // namespace view
-} // namespace vte
+} // namespace bte

@@ -1,4 +1,4 @@
-# Romanian translation for vte
+# Romanian translation for bte
 # Copyright (C) 2003 - 2006 Free Software Foundation, Inc.
 # Mișu Moldovan <dumol@gnome.ro>, 2003 - 2006, 2009
 # Lucian Adrian Grijincu <lucian.grijincu@gmail.com>, 2010.
@@ -6,8 +6,8 @@
 # Daniel Șerbănescu <daniel [at] serbanescu [dot] dk>, 2015.
 msgid ""
 msgstr ""
-"Project-Id-Version: vte\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Project-Id-Version: bte\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2020-04-27 18:50+0000\n"
 "PO-Revision-Date: 2020-05-03 14:52+0300\n"
 "Last-Translator: Florentina Mușat <florentina.musat.28 [at] gmail [dot] "
@@ -23,11 +23,11 @@ msgstr ""
 "X-Launchpad-Export-Date: 2009-01-14 02:40+0000\n"
 "X-Project-Style: gnome\n"
 
-#: src/vte.cc:7843
+#: src/bte.cc:7843
 msgid "WARNING"
 msgstr "AVERTIZARE"
 
-#: src/vte.cc:7845
+#: src/bte.cc:7845
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr "GnuTLS nu este activat; datele vor fi scrise pe disc necriptate!"
 
@@ -120,8 +120,8 @@ msgstr "Nu s-a putut executa procesul inferior „%s”: "
 #~ msgid "Error compiling regular expression \"%s\"."
 #~ msgstr "Eroare la compilarea expresiei regulate „%s”."
 
-#~ msgid "_vte_conv_open() failed setting word characters"
-#~ msgstr "_vte_iconv_open() a eșuat la definirea caracterelor cuvintelor"
+#~ msgid "_bte_conv_open() failed setting word characters"
+#~ msgstr "_bte_iconv_open() a eșuat la definirea caracterelor cuvintelor"
 
 #~ msgid "can not run %s"
 #~ msgstr "nu se poate porni %s"

@@ -1,5 +1,5 @@
 # translation of lt.po to Lithuanian
-# Lithuanian translation of vte
+# Lithuanian translation of bte
 # Copyright (C) 2003, 2007 Free Software Foundation, Inc.
 # Tomas Kuliavas <tokul@users.sourceforge.net>, 2003.
 # Gintautas Miliauskas <gintas@akl.lt>, 2007.
@@ -9,7 +9,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lt\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2020-05-27 19:17+0000\n"
 "PO-Revision-Date: 2020-07-12 20:42+0300\n"
 "Last-Translator: Aurimas Černius <aurisc4@gmail.com>\n"
@@ -22,11 +22,11 @@ msgstr ""
 "%100<10 || n%100>=20) ? 1 : 2)\n"
 "X-Generator: Gtranslator 3.36.0\n"
 
-#: src/vte.cc:7763
+#: src/bte.cc:7763
 msgid "WARNING"
 msgstr "ĮSPĖJIMAS"
 
-#: src/vte.cc:7765
+#: src/bte.cc:7765
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr "GNUTLS nėra įjungta; duomenys bus rašomi į diską nešifruojant!"
 

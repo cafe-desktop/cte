@@ -24,14 +24,14 @@
 #include "parser-arg.hh"
 #include "parser-string.hh"
 
-struct vte_parser_t;
-struct vte_seq_t;
+struct bte_parser_t;
+struct bte_seq_t;
 
 /*
  * Parsers
- * The vte_parser object parses control-sequences for both host and terminal
+ * The bte_parser object parses control-sequences for both host and terminal
  * side. Based on this parser, there is a set of command-parsers that take a
- * vte_seq sequence and returns the command it represents. This is different
+ * bte_seq sequence and returns the command it represents. This is different
  * for host and terminal side, and so far we only provide the terminal side, as
  * host side is not used by anyone.
  */
@@ -183,7 +183,7 @@ enum {
 #define VTE_CHARSET_GET_CHARSET(c) ((c) & VTE_CHARSET_CHARSET_MASK)
 #define VTE_CHARSET_GET_SLOT(c)    ((c) >> VTE_CHARSET_SLOT_OFFSET)
 
-struct vte_seq_t {
+struct bte_seq_t {
         unsigned int type;
         unsigned int command;
         uint32_t terminator;
@@ -192,18 +192,18 @@ struct vte_seq_t {
         unsigned int charset;
         unsigned int n_args;
         unsigned int n_final_args;
-        vte_seq_arg_t args[VTE_PARSER_ARG_MAX];
-        vte_seq_string_t arg_str;
+        bte_seq_arg_t args[VTE_PARSER_ARG_MAX];
+        bte_seq_string_t arg_str;
         uint32_t introducer;
 };
 
-struct vte_parser_t {
-        vte_seq_t seq;
+struct bte_parser_t {
+        bte_seq_t seq;
         unsigned int state;
 };
 
-void vte_parser_init(vte_parser_t* parser);
-void vte_parser_deinit(vte_parser_t* parser);
-int vte_parser_feed(vte_parser_t* parser,
+void bte_parser_init(bte_parser_t* parser);
+void bte_parser_deinit(bte_parser_t* parser);
+int bte_parser_feed(bte_parser_t* parser,
                     uint32_t raw);
-void vte_parser_reset(vte_parser_t* parser);
+void bte_parser_reset(bte_parser_t* parser);

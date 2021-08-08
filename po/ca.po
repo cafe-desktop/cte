@@ -1,4 +1,4 @@
-# vte Catalan translation.
+# bte Catalan translation.
 # Copyright © 2002, 2003, 2007 Free Software Foundation, Inc.
 # Enric Balletbó Serra <enric.balletbo@campus.uab.es>, 2002.
 # Jordi Mallach <jordi@sindominio.net>, 2003, 2007.
@@ -6,8 +6,8 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: vte 0.11.6\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Project-Id-Version: bte 0.11.6\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2020-05-27 19:17+0000\n"
 "PO-Revision-Date: 2020-07-03 02:37+0200\n"
 "Last-Translator: Gil Forcada <gilforcada@guifi.net>\n"
@@ -19,11 +19,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Gtranslator 3.36.0\n"
 
-#: src/vte.cc:7763
+#: src/bte.cc:7763
 msgid "WARNING"
 msgstr "AVÍS"
 
-#: src/vte.cc:7765
+#: src/bte.cc:7765
 #| msgid "GNUTLS not enabled; data will be written to disk unencrypted!"
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr ""

@@ -20,13 +20,13 @@
 #define __VTE_VTE_PTY_H__
 
 #if !defined (__VTE_VTE_H_INSIDE__) && !defined (VTE_COMPILATION)
-#error "Only <vte/vte.h> can be included directly."
+#error "Only <bte/bte.h> can be included directly."
 #endif
 
 #include <gio/gio.h>
 
-#include "vteenums.h"
-#include "vtemacros.h"
+#include "bteenums.h"
+#include "btemacros.h"
 
 G_BEGIN_DECLS
 
@@ -35,7 +35,7 @@ G_BEGIN_DECLS
 #define VTE_SPAWN_REQUIRE_SYSTEMD_SCOPE (1 << 27)
 
 _VTE_PUBLIC
-GQuark vte_pty_error_quark (void) _VTE_CXX_NOEXCEPT;
+GQuark bte_pty_error_quark (void) _VTE_CXX_NOEXCEPT;
 
 /**
  * VTE_PTY_ERROR:
@@ -43,11 +43,11 @@ GQuark vte_pty_error_quark (void) _VTE_CXX_NOEXCEPT;
  * Error domain for VTE PTY errors. Errors in this domain will be from the #VtePtyError
  * enumeration. See #GError for more information on error domains.
  */
-#define VTE_PTY_ERROR (vte_pty_error_quark ())
+#define VTE_PTY_ERROR (bte_pty_error_quark ())
 
 /* VTE PTY object */
 
-#define VTE_TYPE_PTY            (vte_pty_get_type())
+#define VTE_TYPE_PTY            (bte_pty_get_type())
 #define VTE_PTY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), VTE_TYPE_PTY, VtePty))
 #define VTE_PTY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  VTE_TYPE_PTY, VtePtyClass))
 #define VTE_IS_PTY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), VTE_TYPE_PTY))
@@ -58,45 +58,45 @@ typedef struct _VtePty        VtePty;
 typedef struct _VtePtyClass   VtePtyClass;
 
 _VTE_PUBLIC
-GType vte_pty_get_type (void);
+GType bte_pty_get_type (void);
 
 _VTE_PUBLIC
-VtePty *vte_pty_new_sync (VtePtyFlags flags,
+VtePty *bte_pty_new_sync (VtePtyFlags flags,
                           GCancellable *cancellable,
                           GError **error) _VTE_CXX_NOEXCEPT;
 
 _VTE_PUBLIC
-VtePty *vte_pty_new_foreign_sync (int fd,
+VtePty *bte_pty_new_foreign_sync (int fd,
                                   GCancellable *cancellable,
                                   GError **error) _VTE_CXX_NOEXCEPT;
 
 _VTE_PUBLIC
-int vte_pty_get_fd (VtePty *pty) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+int bte_pty_get_fd (VtePty *pty) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 _VTE_PUBLIC
-void vte_pty_child_setup (VtePty *pty) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+void bte_pty_child_setup (VtePty *pty) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 _VTE_PUBLIC
-gboolean vte_pty_get_size (VtePty *pty,
+gboolean bte_pty_get_size (VtePty *pty,
                            int *rows,
                            int *columns,
                            GError **error) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 _VTE_PUBLIC
-gboolean vte_pty_set_size (VtePty *pty,
+gboolean bte_pty_set_size (VtePty *pty,
                            int rows,
                            int columns,
                            GError **error) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 _VTE_PUBLIC
-gboolean vte_pty_set_utf8 (VtePty *pty,
+gboolean bte_pty_set_utf8 (VtePty *pty,
                            gboolean utf8,
                            GError **error) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC(VtePty, g_object_unref)
 
 _VTE_PUBLIC
-void vte_pty_spawn_async(VtePty *pty,
+void bte_pty_spawn_async(VtePty *pty,
                          const char *working_directory,
                          char **argv,
                          char **envv,
@@ -110,7 +110,7 @@ void vte_pty_spawn_async(VtePty *pty,
                          gpointer user_data) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) _VTE_GNUC_NONNULL(3);
 
 _VTE_PUBLIC
-void vte_pty_spawn_with_fds_async(VtePty *pty,
+void bte_pty_spawn_with_fds_async(VtePty *pty,
                                   char const* working_directory,
                                   char const* const* argv,
                                   char const* const* envv,
@@ -128,7 +128,7 @@ void vte_pty_spawn_with_fds_async(VtePty *pty,
                                   gpointer user_data) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) _VTE_GNUC_NONNULL(3);
 
 _VTE_PUBLIC
-gboolean vte_pty_spawn_finish(VtePty *pty,
+gboolean bte_pty_spawn_finish(VtePty *pty,
                               GAsyncResult *result,
                               GPid *child_pid /* out */,
                               GError **error) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) _VTE_GNUC_NONNULL(2);

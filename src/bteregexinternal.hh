@@ -19,22 +19,22 @@
 
 #include "regex.hh"
 
-static inline auto wrapper_from_regex(vte::base::Regex* regex)
+static inline auto wrapper_from_regex(bte::base::Regex* regex)
 {
         return reinterpret_cast<VteRegex*>(regex);
 }
 
 static inline auto regex_from_wrapper(VteRegex* regex)
 {
-        return reinterpret_cast<vte::base::Regex*>(regex);
+        return reinterpret_cast<bte::base::Regex*>(regex);
 }
 
 static inline auto regex_array_from_wrappers(VteRegex** regexes)
 {
-        return const_cast<vte::base::Regex const**>(reinterpret_cast<vte::base::Regex**>(regexes));
+        return const_cast<bte::base::Regex const**>(reinterpret_cast<bte::base::Regex**>(regexes));
 }
 
-bool _vte_regex_has_purpose(VteRegex* regex,
-                            vte::base::Regex::Purpose purpose);
+bool _bte_regex_has_purpose(VteRegex* regex,
+                            bte::base::Regex::Purpose purpose);
 
-bool _vte_regex_has_multiline_compile_flag(VteRegex* regex);
+bool _bte_regex_has_multiline_compile_flag(VteRegex* regex);

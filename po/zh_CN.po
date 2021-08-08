@@ -1,4 +1,4 @@
-# Simplified Chinese translation for vte.
+# Simplified Chinese translation for bte.
 # Copyright (C) 2003 Free Software Foundation, Inc.
 # Abel Cheung <maddog@linux.org.hk>, 2003.
 # He Qiangqiang <carton@linux.net.cn>, 2003.
@@ -10,8 +10,8 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: vte master\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/vte/issues\n"
+"Project-Id-Version: bte master\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/bte/issues\n"
 "POT-Creation-Date: 2020-05-27 19:17+0000\n"
 "PO-Revision-Date: 2020-06-15 16:23+0800\n"
 "Last-Translator: 王滋涵 Zephyr Wang <wi24rd@fedoraproject.org>\n"
@@ -23,11 +23,11 @@ msgstr ""
 "X-Generator: Gtranslator 3.36.0\n"
 "Plural-Forms: nplurals=1; plural=0\n"
 
-#: src/vte.cc:7763
+#: src/bte.cc:7763
 msgid "WARNING"
 msgstr "警告"
 
-#: src/vte.cc:7765
+#: src/bte.cc:7765
 msgid "GnuTLS not enabled; data will be written to disk unencrypted!"
 msgstr "GnuTLS 未启用；写入磁盘的数据没有加密！"
 
@@ -116,8 +116,8 @@ msgstr "无法执行子进程“%s”："
 #~ msgid "Error compiling regular expression \"%s\"."
 #~ msgstr "计算正则表达式“%s”时出错。"
 
-#~ msgid "_vte_conv_open() failed setting word characters"
-#~ msgstr "_vte_conv_open() 设置单词字符失败"
+#~ msgid "_bte_conv_open() failed setting word characters"
+#~ msgstr "_bte_conv_open() 设置单词字符失败"
 
 #~ msgid "can not run %s"
 #~ msgstr "无法执行 %s"

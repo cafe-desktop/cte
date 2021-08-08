@@ -21,8 +21,8 @@
 
 #include "cxx-utils.hh"
 
-namespace vte::cairo {
+namespace bte::cairo {
 
-using Surface = vte::FreeablePtr<cairo_surface_t, decltype(&cairo_surface_destroy), &cairo_surface_destroy>;
+using Surface = bte::FreeablePtr<cairo_surface_t, decltype(&cairo_surface_destroy), &cairo_surface_destroy>;
 
-} // namespace vte::cairo
+} // namespace bte::cairo

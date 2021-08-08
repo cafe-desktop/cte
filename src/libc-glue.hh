@@ -24,7 +24,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-namespace vte::libc {
+namespace bte::libc {
 
 class ErrnoSaver {
 public:
@@ -236,4 +236,4 @@ fd_dup2(int oldfd,
         return r;
 }
 
-} // namespace vte::libc
+} // namespace bte::libc

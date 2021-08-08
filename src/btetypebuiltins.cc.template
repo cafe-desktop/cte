@@ -1,5 +1,5 @@
 /*** BEGIN file-header ***/
-#include <vte/vte.h>
+#include <bte/bte.h>
 
 /*** END file-header ***/
 

@@ -48,7 +48,7 @@ enum {
 using namespace std::literals;
 
 char*
-vte::parser::Sequence::ucs4_to_utf8(gunichar const* str,
+bte::parser::Sequence::ucs4_to_utf8(gunichar const* str,
                                     ssize_t len) const noexcept
 {
         return g_ucs4_to_utf8(str, len, nullptr, nullptr, nullptr);
@@ -178,7 +178,7 @@ private:
         };
 
         void
-        print_params(vte::parser::Sequence const& seq) noexcept
+        print_params(bte::parser::Sequence const& seq) noexcept
         {
                 auto const size = seq.size();
                 if (size > 0)
@@ -193,7 +193,7 @@ private:
         }
 
         void
-        print_pintro(vte::parser::Sequence const& seq) noexcept
+        print_pintro(bte::parser::Sequence const& seq) noexcept
         {
                 auto const type = seq.type();
                 if (type != VTE_SEQ_CSI &&
@@ -209,7 +209,7 @@ private:
         }
 
         void
-        print_intermediates(vte::parser::Sequence const& seq) noexcept
+        print_intermediates(bte::parser::Sequence const& seq) noexcept
         {
                 auto const type = seq.type();
                 auto intermediates = seq.intermediates();
@@ -254,7 +254,7 @@ private:
         }
 
         void
-        print_string(vte::parser::Sequence const& seq) noexcept
+        print_string(bte::parser::Sequence const& seq) noexcept
         {
                 auto u8str = seq.string_param();
 
@@ -266,7 +266,7 @@ private:
         }
 
         void
-        print_seq_and_params(vte::parser::Sequence const& seq) noexcept
+        print_seq_and_params(bte::parser::Sequence const& seq) noexcept
         {
                 ReverseAttr attr(this);
 
@@ -288,7 +288,7 @@ private:
         }
 
         void
-        print_seq(vte::parser::Sequence const& seq) noexcept
+        print_seq(bte::parser::Sequence const& seq) noexcept
         {
                 switch (seq.type()) {
                 case VTE_SEQ_NONE: {
@@ -382,7 +382,7 @@ public:
                 printout();
         }
 
-        void operator()(vte::parser::Sequence const& seq) noexcept
+        void operator()(bte::parser::Sequence const& seq) noexcept
         {
                 print_seq(seq);
                 if (seq.command() == VTE_CMD_LF)
@@ -448,7 +448,7 @@ private:
         }
 
         void
-        check_sgr_color(vte::parser::Sequence const& seq,
+        check_sgr_color(bte::parser::Sequence const& seq,
                         unsigned int& idx) noexcept
         {
                 auto const sgr = seq.param(idx);
@@ -522,7 +522,7 @@ private:
         }
 
         void
-        check_sgr_underline(vte::parser::Sequence const& seq,
+        check_sgr_underline(bte::parser::Sequence const& seq,
                             unsigned int idx) noexcept
         {
                 auto const sgr = seq.param(idx);
@@ -550,7 +550,7 @@ private:
         }
 
         void
-        check_sgr(vte::parser::Sequence const& seq) noexcept
+        check_sgr(bte::parser::Sequence const& seq) noexcept
         {
                 for (unsigned int i = 0; i < seq.size(); i = seq.next(i)) {
                         auto const param = seq.param(i, 0);
@@ -580,7 +580,7 @@ public:
         constexpr Linter() noexcept = default;
         ~Linter() noexcept = default;
 
-        void operator()(vte::parser::Sequence const& seq) noexcept
+        void operator()(bte::parser::Sequence const& seq) noexcept
         {
                 auto cmd = seq.command();
                 switch (cmd) {
@@ -615,7 +615,7 @@ public:
 
 class Sink {
 public:
-        void operator()(vte::parser::Sequence const& seq) noexcept { }
+        void operator()(bte::parser::Sequence const& seq) noexcept { }
 
 }; // class Sink
 
@@ -630,15 +630,15 @@ private:
         process_file_utf8(int fd,
                           Functor& func)
         {
-                vte::parser::Parser parser{};
-                vte::parser::Sequence seq{parser};
+                bte::parser::Parser parser{};
+                bte::parser::Sequence seq{parser};
 
                 gsize const buf_size = 16384;
                 guchar* buf = g_new0(guchar, buf_size);
 
                 auto start_time = g_get_monotonic_time();
 
-                vte::base::UTF8Decoder decoder;
+                bte::base::UTF8Decoder decoder;
 
                 gsize buf_start = 0;
                 for (;;) {
@@ -654,18 +654,18 @@ private:
                         auto const bufend = buf + len;
                         for (auto sptr = buf; sptr < bufend; ++sptr) {
                                 switch (decoder.decode(*sptr)) {
-                                case vte::base::UTF8Decoder::REJECT_REWIND:
+                                case bte::base::UTF8Decoder::REJECT_REWIND:
                                         /* Rewind the stream.
                                          * Note that this will never lead to a loop, since in the
                                          * next round this byte *will* be consumed.
                                          */
                                         --sptr;
                                         [[fallthrough]];
-                                case vte::base::UTF8Decoder::REJECT:
+                                case bte::base::UTF8Decoder::REJECT:
                                         decoder.reset();
                                         /* Fall through to insert the U+FFFD replacement character. */
                                         [[fallthrough]];
-                                case vte::base::UTF8Decoder::ACCEPT: {
+                                case bte::base::UTF8Decoder::ACCEPT: {
                                         auto ret = parser.feed(decoder.codepoint());
                                         if (G_UNLIKELY(ret < 0)) {
                                                 g_printerr("Parser error!\n");
@@ -707,7 +707,7 @@ private:
 
                 for (auto i = 0; i < repeat; ++i) {
                         if (i > 0 && lseek(fd, 0, SEEK_SET) != 0) {
-                                auto errsv = vte::libc::ErrnoSaver{};
+                                auto errsv = bte::libc::ErrnoSaver{};
                                 g_printerr("Failed to seek: %s\n", g_strerror(errsv));
                                 return false;
                         }
@@ -749,7 +749,7 @@ public:
                                 } else {
                                         fd = open(filename, O_RDONLY);
                                         if (fd == -1) {
-                                                auto errsv = vte::libc::ErrnoSaver{};
+                                                auto errsv = bte::libc::ErrnoSaver{};
                                                 g_printerr("Error opening file %s: %s\n",
                                                            filename, g_strerror(errsv));
                                         }
@@ -906,10 +906,10 @@ main(int argc,
      char *argv[])
 {
         setlocale(LC_ALL, "");
-        _vte_debug_init();
+        _bte_debug_init();
 
         Options options{};
-        auto error = vte::glib::Error{};
+        auto error = bte::glib::Error{};
         if (!options.parse(argc, argv, error)) {
                 g_printerr("Failed to parse arguments: %s\n", error.message());
                 return EXIT_FAILURE;

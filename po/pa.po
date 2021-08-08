@@ -1,13 +1,13 @@
-# translation of vte.HEAD.po to Punjabi
+# translation of bte.HEAD.po to Punjabi
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
 #
 # A S Alam <aalam@users.sf.net>, 2004, 2005, 2006, 2007, 2009, 2010, 2014.
 msgid ""
 msgstr ""
-"Project-Id-Version: vte.HEAD\n"
+"Project-Id-Version: bte.HEAD\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=vte&keywords=I18N+L10N&component=general\n"
+"product=bte&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2014-09-21 11:44+0000\n"
 "PO-Revision-Date: 2014-09-21 08:40-0500\n"
 "Last-Translator: A S Alam <aalam@users.sf.net>\n"
@@ -44,7 +44,7 @@ msgid "Input"
 msgstr "ਇੰਪੁੱਟ"
 
 #: ../src/iso2022.c:791 ../src/iso2022.c:799 ../src/iso2022.c:830
-#: ../src/vte.c:1998
+#: ../src/bte.c:1998
 #, c-format
 msgid "Unable to convert characters from %s to %s."
 msgstr "ਇਸ ਸੰਕੇਤ %s ਤੋਂ %s ਤਬਦੀਲ ਕਰਨ ਤੋਂ ਅਸਮਰੱਥ ਹੈ।"
@@ -65,30 +65,30 @@ msgid "Attempt to set invalid wide NRC map '%c'."
 msgstr "ਗਲਤ ਚੌਡ਼ਾ NRC ਮੈਪ'%c' ਸੈੱਟ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਹੈ।"
 
 #. Bail back to normal mode.
-#: ../src/vteapp.c:1027
+#: ../src/bteapp.c:1027
 msgid "Could not open console.\n"
 msgstr "ਕੰਨਸੋਲ ਖੋਲ੍ਹਿਆ ਨਹੀ ਜਾ ਸਕਿਆ।\n"
 
-#: ../src/vteapp.c:1137
+#: ../src/bteapp.c:1137
 msgid "Could not parse the geometry spec passed to --geometry"
 msgstr "--geometry ਨੂੰ ਦਿੱਤੀ ਜੁਮੈਟਰੀ ਗਿਣਤੀ ਨੂੰ ਪਾਰਸ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ"
 
 #. Translators: %s is replaced with error message returned by strerror().
-#: ../src/vte.c:4164
+#: ../src/bte.c:4164
 #, c-format
 msgid "Error reading from child: %s."
 msgstr "ਚਲਾਈਡ ਤੋਂ ਪੜ੍ਹਨ ਦੌਰਾਨ ਗਲਤੀ: %s।"
 
-#: ../src/vte.c:4300
+#: ../src/bte.c:4300
 msgid "Unable to send data to child, invalid charset convertor"
 msgstr "ਚਾਈਲਡ ਨੂੰ ਡਾਟਾ ਭੇਜਣ ਲਈ ਅਸਮਰੱਥ, ਅਢੁੱਕਵਾਂ ਅੱਖਰ-ਸੈੱਟ ਕੰਨਵਰਟਰ"
 
-#: ../src/vte.c:4311 ../src/vte.c:5315
+#: ../src/bte.c:4311 ../src/bte.c:5315
 #, c-format
 msgid "Error (%s) converting data for child, dropping."
 msgstr "ਗਲਤੀ (%s) ਚਲਾਈਡ ਲਈ ਡਾਟਾ ਬਦਲਣ ਦੌਰਾਨ, ਛੱਡਿਆ ਗਿਆ।"
 
-#: ../src/vte.c:7628
+#: ../src/bte.c:7628
 #, c-format
 msgid "Error reading PTY size, using defaults: %s\n"
 msgstr "PTY ਅਕਾਰ ਪਡ਼੍ਹਨ ਵਿੱਚ ਗਲਤੀ, ਡਿਫਾਲਟ ਦੀ ਵਰਤੋਂ: %s\n"
@@ -102,8 +102,8 @@ msgstr "PTY ਅਕਾਰ ਪਡ਼੍ਹਨ ਵਿੱਚ ਗਲਤੀ, ਡਿਫ
 #~ msgid "Error compiling regular expression \"%s\"."
 #~ msgstr "ਨਿਯਮਿਤ ਸਮੀਕਰਨ \"%s\" ਨੂੰ ਕੰਪਾਇਲ ਕਰਨ ਦੀ ਗਲਤੀ ਹੈ।"
 
-#~ msgid "_vte_conv_open() failed setting word characters"
-#~ msgstr "_vte_conv_open() ਸ਼ਬਦ ਅੱਖਰ ਸੈਟ ਕਰਨ ਲਈ ਫੇਲ੍ਹ"
+#~ msgid "_bte_conv_open() failed setting word characters"
+#~ msgstr "_bte_conv_open() ਸ਼ਬਦ ਅੱਖਰ ਸੈਟ ਕਰਨ ਲਈ ਫੇਲ੍ਹ"
 
 #~ msgid "Error creating signal pipe."
 #~ msgstr "ਸੰਕੇਤ ਪਾਇਪ ਬਣਾਉਣ ਦੀ ਗਲਤੀ ਹੈ।"
