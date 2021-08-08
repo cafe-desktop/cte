@@ -17,7 +17,7 @@
 assert(get_option('gir'), 'gir is required for bala support')
 assert(get_option('ctk3'), 'bala support only available for ctk3')
 
-add_languages('vala', required: true)
+add_languages('vala', required: false)
 
 balac = meson.get_compiler('bala')
 assert(balac.version().version_compare('>= 0.24.0'), 'bala >= 0.24 required')
