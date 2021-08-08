@@ -24,19 +24,19 @@ add_languages('vala', required: false)
 
 #posix_dep = balac.find_library('posix')
 
-libvte_ctk3_bapi_deps = [
-  'gio-2.0',
-  'glib-2.0',
-  'pango',
-  'ctk+-3.0',
-]
+#libvte_ctk3_bapi_deps = [
+#  'gio-2.0',
+#  'glib-2.0',
+#  'pango',
+#  'ctk+-3.0',
+#]
 
-libvte_ctk3_bapi_dep = gnome.generate_bapi(
-  vte_ctk3_api_name,
-  sources: libvte_ctk3_gir[0],
-  packages: libvte_ctk3_bapi_deps,
-  install: true,
-)
+#libvte_ctk3_bapi_dep = gnome.generate_bapi(
+#  vte_ctk3_api_name,
+#  sources: libvte_ctk3_gir[0],
+#  packages: libvte_ctk3_bapi_deps,
+#  install: true,
+#)
 
 # Vala test application
 
@@ -85,7 +85,7 @@ vapp_deps = [
   gio_dep,
   glib_dep,
   ctk3_dep,
-  libvte_ctk3_bapi_dep,
+#  libvte_ctk3_bapi_dep,
   posix_dep,
 ]
 
