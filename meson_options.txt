@@ -95,6 +95,6 @@ option(
 option(
   'bapi', # would use 'bala' but that name is reserved
   type: 'boolean',
-  value: true,
+  value: false,
   description: 'Enable Vala bindings',
 )
