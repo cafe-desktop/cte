@@ -44,7 +44,7 @@ class Widget {
 public:
         friend class bte::terminal::Terminal;
 
-        Widget(VteTerminal* t);
+        Widget(BteTerminal* t);
         ~Widget() noexcept;
 
         Widget(Widget const&) = delete;
@@ -54,7 +54,7 @@ public:
 
         GObject* object() const noexcept { return reinterpret_cast<GObject*>(m_widget); }
         CtkWidget* ctk() const noexcept { return m_widget; }
-        VteTerminal* bte() const noexcept { return reinterpret_cast<VteTerminal*>(m_widget); }
+        BteTerminal* bte() const noexcept { return reinterpret_cast<BteTerminal*>(m_widget); }
 
         inline constexpr bte::terminal::Terminal* terminal() const noexcept { return m_terminal; }
 
@@ -87,8 +87,8 @@ public:
 
         bool primary_paste_enabled() const noexcept;
         void paste(CdkAtom board) noexcept { m_terminal->widget_paste(board); }
-        void copy(VteSelection sel,
-                  VteFormat format) noexcept { m_terminal->widget_copy(sel, format); }
+        void copy(BteSelection sel,
+                  BteFormat format) noexcept { m_terminal->widget_copy(sel, format); }
         void paste_received(char const* text) noexcept { m_terminal->widget_paste_received(text); }
         void clipboard_cleared(CtkClipboard *clipboard) noexcept { m_terminal->widget_clipboard_cleared(clipboard); }
         void clipboard_requested(CtkClipboard *target_clipboard,
@@ -110,20 +110,20 @@ public:
         auto vscroll_policy() const noexcept { return m_vscroll_policy; }
         auto padding() const noexcept { return terminal()->padding(); }
 
-        bool set_cursor_blink_mode(VteCursorBlinkMode mode) { return terminal()->set_cursor_blink_mode(bte::terminal::Terminal::CursorBlinkMode(mode)); }
-        auto cursor_blink_mode() const noexcept { return VteCursorBlinkMode(terminal()->cursor_blink_mode()); }
+        bool set_cursor_blink_mode(BteCursorBlinkMode mode) { return terminal()->set_cursor_blink_mode(bte::terminal::Terminal::CursorBlinkMode(mode)); }
+        auto cursor_blink_mode() const noexcept { return BteCursorBlinkMode(terminal()->cursor_blink_mode()); }
 
-        bool set_cursor_shape(VteCursorShape shape) { return terminal()->set_cursor_shape(bte::terminal::Terminal::CursorShape(shape)); }
-        auto cursor_shape() const noexcept { return VteCursorShape(terminal()->cursor_shape()); }
+        bool set_cursor_shape(BteCursorShape shape) { return terminal()->set_cursor_shape(bte::terminal::Terminal::CursorShape(shape)); }
+        auto cursor_shape() const noexcept { return BteCursorShape(terminal()->cursor_shape()); }
 
-        bool set_backspace_binding(VteEraseBinding mode) { return terminal()->set_backspace_binding(bte::terminal::Terminal::EraseMode(mode)); }
-        auto backspace_binding() const noexcept { return VteEraseBinding(terminal()->backspace_binding()); }
+        bool set_backspace_binding(BteEraseBinding mode) { return terminal()->set_backspace_binding(bte::terminal::Terminal::EraseMode(mode)); }
+        auto backspace_binding() const noexcept { return BteEraseBinding(terminal()->backspace_binding()); }
 
-        bool set_delete_binding(VteEraseBinding mode) { return terminal()->set_delete_binding(bte::terminal::Terminal::EraseMode(mode)); }
-        auto delete_binding() const noexcept { return VteEraseBinding(terminal()->delete_binding()); }
+        bool set_delete_binding(BteEraseBinding mode) { return terminal()->set_delete_binding(bte::terminal::Terminal::EraseMode(mode)); }
+        auto delete_binding() const noexcept { return BteEraseBinding(terminal()->delete_binding()); }
 
-        bool set_text_blink_mode(VteTextBlinkMode mode) { return terminal()->set_text_blink_mode(bte::terminal::Terminal::TextBlinkMode(mode)); }
-        auto text_blink_mode() const noexcept { return VteTextBlinkMode(terminal()->text_blink_mode()); }
+        bool set_text_blink_mode(BteTextBlinkMode mode) { return terminal()->set_text_blink_mode(bte::terminal::Terminal::TextBlinkMode(mode)); }
+        auto text_blink_mode() const noexcept { return BteTextBlinkMode(terminal()->text_blink_mode()); }
 
         bool set_word_char_exceptions(std::optional<std::string_view> stropt);
         auto word_char_exceptions() const noexcept { return m_word_char_exceptions ? m_word_char_exceptions.value().c_str() : nullptr; }
@@ -133,7 +133,7 @@ public:
         void emit_child_exited(int status) noexcept;
         void emit_eof() noexcept;
 
-        bool set_pty(VtePty* pty) noexcept;
+        bool set_pty(BtePty* pty) noexcept;
         inline auto pty() const noexcept { return m_pty.get(); }
 
         void feed(std::string_view const& str) { terminal()->feed(str); }
@@ -242,7 +242,7 @@ private:
         bte::glib::RefPtr<CtkIMContext> m_im_context;
 
         /* PTY */
-        bte::glib::RefPtr<VtePty> m_pty;
+        bte::glib::RefPtr<BtePty> m_pty;
 
         /* Misc */
         std::optional<std::string> m_word_char_exceptions{};

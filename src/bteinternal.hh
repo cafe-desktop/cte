@@ -89,21 +89,21 @@ using Cursor = std::variant<std::string,
 } // namespace platform
 } // namespace bte
 
-typedef enum _VteCharacterReplacement {
+typedef enum _BteCharacterReplacement {
         VTE_CHARACTER_REPLACEMENT_NONE,
         VTE_CHARACTER_REPLACEMENT_LINE_DRAWING
-} VteCharacterReplacement;
+} BteCharacterReplacement;
 
-typedef struct _VtePaletteColor {
+typedef struct _BtePaletteColor {
 	struct {
 		bte::color::rgb color;
 		gboolean is_set;
 	} sources[2];
-} VtePaletteColor;
+} BtePaletteColor;
 
-struct VteScreen {
+struct BteScreen {
 public:
-        VteScreen(gulong max_rows,
+        BteScreen(gulong max_rows,
                   bool has_streams) :
                 m_ring{max_rows, has_streams},
                 row_data(&m_ring),
@@ -112,21 +112,21 @@ public:
         }
 
         bte::base::Ring m_ring; /* buffer contents */
-        VteRing* row_data;
-        VteVisualPosition cursor;  /* absolute value, from the beginning of the terminal history */
+        BteRing* row_data;
+        BteVisualPosition cursor;  /* absolute value, from the beginning of the terminal history */
         double scroll_delta{0.0}; /* scroll offset */
         long insert_delta{0}; /* insertion offset */
 
         /* Stuff saved along with the cursor */
         struct {
-                VteVisualPosition cursor;  /* onscreen coordinate, that is, relative to insert_delta */
+                BteVisualPosition cursor;  /* onscreen coordinate, that is, relative to insert_delta */
                 uint8_t modes_ecma;
                 bool reverse_mode;
                 bool origin_mode;
-                VteCell defaults;
-                VteCell color_defaults;
-                VteCharacterReplacement character_replacements[2];
-                VteCharacterReplacement *character_replacement;
+                BteCell defaults;
+                BteCell color_defaults;
+                BteCharacterReplacement character_replacements[2];
+                BteCharacterReplacement *character_replacement;
         } saved;
 };
 
@@ -143,7 +143,7 @@ typedef enum {
 	VTE_SELECTION_PRIMARY,
 	VTE_SELECTION_CLIPBOARD,
 	LAST_VTE_SELECTION
-} VteSelection;
+} BteSelection;
 
 /* Used in the CtkClipboard API, to distinguish requests for HTML and TEXT
  * contents of a clipboard */
@@ -151,7 +151,7 @@ typedef enum {
         VTE_TARGET_TEXT,
         VTE_TARGET_HTML,
         LAST_VTE_TARGET
-} VteSelectionTarget;
+} BteSelectionTarget;
 
 struct bte_scrolling_region {
         int start, end;
@@ -510,21 +510,21 @@ private:
 
 protected:
 
-        /* NOTE: This needs to be kept in sync with the public VteCursorBlinkMode enum */
+        /* NOTE: This needs to be kept in sync with the public BteCursorBlinkMode enum */
         enum class CursorBlinkMode {
                 eSYSTEM,
                 eON,
                 eOFF
         };
 
-        /* NOTE: This needs to be kept in sync with the public VteCursorShape enum */
+        /* NOTE: This needs to be kept in sync with the public BteCursorShape enum */
         enum class CursorShape {
                 eBLOCK,
                 eIBEAM,
                 eUNDERLINE
         };
 
-        /* NOTE: This needs to be kept in sync with the public VteEraseMode enum */
+        /* NOTE: This needs to be kept in sync with the public BteEraseMode enum */
         enum EraseMode {
                 eAUTO,
                 eASCII_BACKSPACE,
@@ -533,7 +533,7 @@ protected:
                 eTTY,
         };
 
-        /* NOTE: This needs to be kept in sync with the public VteTextBlinkMode enum */
+        /* NOTE: This needs to be kept in sync with the public BteTextBlinkMode enum */
         enum class TextBlinkMode {
                 eNEVER     = 0,
                 eFOCUSED   = 1,
@@ -543,14 +543,14 @@ protected:
 
 public:
         Terminal(bte::platform::Widget* w,
-                 VteTerminal *t);
+                 BteTerminal *t);
         ~Terminal();
 
 public:
         bte::platform::Widget* m_real_widget{nullptr};
         inline constexpr auto widget() const noexcept { return m_real_widget; }
 
-        VteTerminal *m_terminal{nullptr};
+        BteTerminal *m_terminal{nullptr};
         inline constexpr auto bte_terminal() const noexcept { return m_terminal; }
 
         CtkWidget *m_widget{nullptr};
@@ -587,7 +587,7 @@ public:
         bte::glib::Timer m_child_exited_eos_wait_timer{std::bind(&Terminal::child_exited_eos_wait_callback,
                                                                  this),
                                                        "child-exited-eos-wait-timer"};
-        VteReaper *m_reaper;
+        BteReaper *m_reaper;
 
 	/* Queue of chunks of data read from the PTY.
          * Chunks are inserted at the back, and processed from the front.
@@ -624,7 +624,7 @@ public:
         long m_max_input_bytes{VTE_MAX_INPUT_READ};
 
 	/* Output data queue. */
-        VteByteArray *m_outgoing; /* pending input characters */
+        BteByteArray *m_outgoing; /* pending input characters */
 
 #ifdef WITH_ICU
         /* Legacy charset support */
@@ -644,22 +644,22 @@ public:
 
 	/* Screen data.  We support the normal screen, and an alternate
 	 * screen, which seems to be a DEC-specific feature. */
-        VteScreen m_normal_screen;
-        VteScreen m_alternate_screen;
-        VteScreen *m_screen; /* points to either m_normal_screen or m_alternate_screen */
+        BteScreen m_normal_screen;
+        BteScreen m_alternate_screen;
+        BteScreen *m_screen; /* points to either m_normal_screen or m_alternate_screen */
 
-        VteCell m_defaults;        /* Default characteristics for insertion of new characters:
+        BteCell m_defaults;        /* Default characteristics for insertion of new characters:
                                       colors (fore, back, deco) and other attributes (bold, italic,
                                       explicit hyperlink etc.). */
-        VteCell m_color_defaults;  /* Default characteristics for erasing characters:
+        BteCell m_color_defaults;  /* Default characteristics for erasing characters:
                                       colors (fore, back, deco) but no other attributes,
                                       and the U+0000 character that denotes erased cells. */
 
         /* charsets in the G0 and G1 slots */
-        VteCharacterReplacement m_character_replacements[2] = { VTE_CHARACTER_REPLACEMENT_NONE,
+        BteCharacterReplacement m_character_replacements[2] = { VTE_CHARACTER_REPLACEMENT_NONE,
                                                                 VTE_CHARACTER_REPLACEMENT_NONE };
         /* pointer to the active one */
-        VteCharacterReplacement *m_character_replacement{&m_character_replacements[0]};
+        BteCharacterReplacement *m_character_replacement{&m_character_replacements[0]};
 
         /* Word chars */
         std::vector<char32_t> m_word_char_exceptions;
@@ -675,7 +675,7 @@ public:
 
 	/* Clipboard data information. */
         bool m_selection_owned[LAST_VTE_SELECTION];
-        VteFormat m_selection_format[LAST_VTE_SELECTION];
+        BteFormat m_selection_format[LAST_VTE_SELECTION];
         bool m_changing_selection;
         GString *m_selection[LAST_VTE_SELECTION];  // FIXMEegmont rename this so that m_selection_resolved can become m_selection?
         CtkClipboard *m_clipboard[LAST_VTE_SELECTION];
@@ -893,7 +893,7 @@ public:
         bte::view::DrawingContext m_draw{};
         bool m_clear_background{true};
 
-        VtePaletteColor m_palette[VTE_PALETTE_SIZE];
+        BtePaletteColor m_palette[VTE_PALETTE_SIZE];
 
 	/* Mouse cursors. */
         gboolean m_mouse_cursor_over_widget; /* as per enter and leave events */
@@ -980,13 +980,13 @@ public:
 public:
 
         // FIXMEchpe inline!
-        /* inline */ VteRowData* ring_insert(bte::grid::row_t position,
+        /* inline */ BteRowData* ring_insert(bte::grid::row_t position,
                                        bool fill);
-        /* inline */ VteRowData* ring_append(bool fill);
+        /* inline */ BteRowData* ring_append(bool fill);
         /* inline */ void ring_remove(bte::grid::row_t position);
-        inline VteRowData const* find_row_data(bte::grid::row_t row) const;
-        inline VteRowData* find_row_data_writable(bte::grid::row_t row) const;
-        inline VteCell const* find_charcell(bte::grid::column_t col,
+        inline BteRowData const* find_row_data(bte::grid::row_t row) const;
+        inline BteRowData* find_row_data_writable(bte::grid::row_t row) const;
+        inline BteCell const* find_charcell(bte::grid::column_t col,
                                             bte::grid::row_t row) const;
         inline bte::grid::column_t find_start_column(bte::grid::column_t col,
                                                      bte::grid::row_t row) const;
@@ -1000,9 +1000,9 @@ public:
         inline bte::grid::row_t last_displayed_row() const;
         inline bool cursor_is_onscreen() const noexcept;
 
-        inline VteRowData *insert_rows (guint cnt);
-        VteRowData *ensure_row();
-        VteRowData *ensure_cursor();
+        inline BteRowData *insert_rows (guint cnt);
+        BteRowData *ensure_row();
+        BteRowData *ensure_cursor();
         void update_insert_delta();
 
         void set_hard_wrapped(bte::grid::row_t row);
@@ -1014,8 +1014,8 @@ public:
         void cursor_down(bool explicit_sequence);
         void drop_scrollback();
 
-        void restore_cursor(VteScreen *screen__);
-        void save_cursor(VteScreen *screen__);
+        void restore_cursor(BteScreen *screen__);
+        void save_cursor(BteScreen *screen__);
 
         void insert_char(gunichar c,
                          bool insert,
@@ -1102,8 +1102,8 @@ public:
         void set_cursor_aspect(float aspect);
 
         void widget_paste(CdkAtom board);
-        void widget_copy(VteSelection sel,
-                         VteFormat format);
+        void widget_copy(BteSelection sel,
+                         BteFormat format);
         void widget_paste_received(char const* text);
         void widget_clipboard_cleared(CtkClipboard *clipboard);
         void widget_clipboard_requested(CtkClipboard *target_clipboard,
@@ -1152,13 +1152,13 @@ public:
                         int column_width,
                         int row_height);
         void fudge_pango_colors(GSList *attributes,
-                                VteCell *cells,
+                                BteCell *cells,
                                 gsize n);
         void apply_pango_attr(PangoAttribute *attr,
-                              VteCell *cells,
+                              BteCell *cells,
                               gsize n_cells);
         void translate_pango_cells(PangoAttrList *attrs,
-                                   VteCell *cells,
+                                   BteCell *cells,
                                    gsize n_cells);
         void draw_cells_with_attributes(bte::view::DrawingContext::TextRequest* items,
                                         gssize n,
@@ -1166,7 +1166,7 @@ public:
                                         bool draw_default_bg,
                                         int column_width,
                                         int height);
-        void draw_rows(VteScreen *screen,
+        void draw_rows(BteScreen *screen,
                        cairo_region_t const* region,
                        bte::grid::row_t start_row,
                        long row_count,
@@ -1249,26 +1249,26 @@ public:
         template<unsigned int redbits, unsigned int greenbits, unsigned int bluebits>
         inline void rgb_from_index(guint index,
                                    bte::color::rgb& color) const;
-        inline void determine_colors(VteCellAttr const* attr,
+        inline void determine_colors(BteCellAttr const* attr,
                                      bool selected,
                                      bool cursor,
                                      guint *pfore,
                                      guint *pback,
                                      guint *pdeco) const;
-        inline void determine_colors(VteCell const* cell,
+        inline void determine_colors(BteCell const* cell,
                                      bool selected,
                                      guint *pfore,
                                      guint *pback,
                                      guint *pdeco) const;
-        inline void determine_cursor_colors(VteCell const* cell,
+        inline void determine_cursor_colors(BteCell const* cell,
                                             bool selected,
                                             guint *pfore,
                                             guint *pback,
                                             guint *pdeco) const;
 
-        char *cellattr_to_html(VteCellAttr const* attr,
+        char *cellattr_to_html(BteCellAttr const* attr,
                                char const* text) const;
-        VteCellAttr const* char_to_cell_attr(VteCharAttributes const* attr) const;
+        BteCellAttr const* char_to_cell_attr(BteCharAttributes const* attr) const;
 
         GString* attributes_to_html(GString* text_string,
                                     GArray* attrs);
@@ -1300,7 +1300,7 @@ public:
                                 CtkBorder char_spacing);
 
         void refresh_size();
-        void screen_set_size(VteScreen *screen_,
+        void screen_set_size(BteScreen *screen_,
                              long old_columns,
                              long old_rows,
                              bool do_rewrap);
@@ -1514,7 +1514,7 @@ public:
         void set_clear_background(bool setting);
 
         bool write_contents_sync (GOutputStream *stream,
-                                  VteWriteFlags flags,
+                                  BteWriteFlags flags,
                                   GCancellable *cancellable,
                                   GError **error);
 
@@ -1524,7 +1524,7 @@ public:
         inline void clear_current_line();
         inline void clear_above_current();
         inline void scroll_text(bte::grid::row_t scroll_amount);
-        inline void switch_screen(VteScreen *new_screen);
+        inline void switch_screen(BteScreen *new_screen);
         inline void switch_normal_screen();
         inline void switch_alternate_screen();
         inline void save_cursor();
@@ -1541,7 +1541,7 @@ public:
         void update_mouse_protocol() noexcept;
 
         inline void set_character_replacements(unsigned slot,
-                                               VteCharacterReplacement replacement);
+                                               BteCharacterReplacement replacement);
         inline void set_character_replacement(unsigned slot);
         inline void clear_to_bol();
         inline void clear_below_current();
@@ -1676,7 +1676,7 @@ public:
 
 extern GTimer *process_timer;
 
-bte::terminal::Terminal* _bte_terminal_get_impl(VteTerminal *terminal);
+bte::terminal::Terminal* _bte_terminal_get_impl(BteTerminal *terminal);
 
 static inline bool
 _bte_double_equal(double a,

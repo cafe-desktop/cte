@@ -80,9 +80,9 @@ RingView::resume()
         /* +16: A bit of arbitrary heuristics to likely prevent a quickly following
          * realloc for the required context lines. */
         m_rows_alloc_len = m_len + 16;
-        m_rows = (VteRowData **) g_malloc (sizeof (VteRowData *) * m_rows_alloc_len);
+        m_rows = (BteRowData **) g_malloc (sizeof (BteRowData *) * m_rows_alloc_len);
         for (int i = 0; i < m_rows_alloc_len; i++) {
-                m_rows[i] = (VteRowData *) g_malloc (sizeof (VteRowData));
+                m_rows[i] = (BteRowData *) g_malloc (sizeof (BteRowData));
                 _bte_row_data_init (m_rows[i]);
         }
 
@@ -160,7 +160,7 @@ RingView::set_rows(bte::grid::row_t start, bte::grid::row_t len)
         m_invalid = true;
 }
 
-VteRowData const*
+BteRowData const*
 RingView::get_row(bte::grid::row_t row) const
 {
         g_assert_cmpint(row, >=, m_top);
@@ -205,7 +205,7 @@ RingView::update()
          * than VTE_RINGVIEW_PARAGRAPH_LENGTH_MAX lines, and thus the
          * BiDi code will skip it. */
         bte::grid::row_t row = m_start;
-        const VteRowData *row_data;
+        const BteRowData *row_data;
 
         _bte_debug_print (VTE_DEBUG_RINGVIEW, "Ringview: updating for [%ld..%ld] (%ld rows).\n",
                                               m_start, m_start + m_len - 1, m_len);
@@ -233,9 +233,9 @@ RingView::update()
                         m_rows_alloc_len = std::max(m_rows_alloc_len + 1, m_rows_alloc_len * 5 / 4 /* whatever */);
                         _bte_debug_print (VTE_DEBUG_RINGVIEW, "Ringview: reallocate to %d rows\n",
                                                               m_rows_alloc_len);
-                        m_rows = (VteRowData **) g_realloc (m_rows, sizeof (VteRowData *) * m_rows_alloc_len);
+                        m_rows = (BteRowData **) g_realloc (m_rows, sizeof (BteRowData *) * m_rows_alloc_len);
                         for (int j = m_rows_len; j < m_rows_alloc_len; j++) {
-                                m_rows[j] = (VteRowData *) g_malloc (sizeof (VteRowData));
+                                m_rows[j] = (BteRowData *) g_malloc (sizeof (BteRowData));
                                 _bte_row_data_init (m_rows[j]);
                         }
                 }
@@ -250,7 +250,7 @@ RingView::update()
                         if (G_UNLIKELY (_bte_row_data_length(m_rows[m_rows_len]) > m_width)) {
                                 int j = m_width;
                                 while (j > 0) {
-                                        VteCell const* cell = _bte_row_data_get(m_rows[m_rows_len], j);
+                                        BteCell const* cell = _bte_row_data_get(m_rows[m_rows_len], j);
                                         if (!cell->attr.fragment())
                                                 break;
                                         j--;

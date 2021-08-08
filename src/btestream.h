@@ -26,19 +26,19 @@
 
 G_BEGIN_DECLS
 
-typedef struct _VteStream VteStream;
+typedef struct _BteStream BteStream;
 
-void _bte_stream_reset (VteStream *stream, gsize offset);
-gboolean _bte_stream_read (VteStream *stream, gsize offset, char *data, gsize len);
-void _bte_stream_append (VteStream *stream, const char *data, gsize len);
-void _bte_stream_truncate (VteStream *stream, gsize offset);
-void _bte_stream_advance_tail (VteStream *stream, gsize offset);
-gsize _bte_stream_tail (VteStream *stream);
-gsize _bte_stream_head (VteStream *stream);
+void _bte_stream_reset (BteStream *stream, gsize offset);
+gboolean _bte_stream_read (BteStream *stream, gsize offset, char *data, gsize len);
+void _bte_stream_append (BteStream *stream, const char *data, gsize len);
+void _bte_stream_truncate (BteStream *stream, gsize offset);
+void _bte_stream_advance_tail (BteStream *stream, gsize offset);
+gsize _bte_stream_tail (BteStream *stream);
+gsize _bte_stream_head (BteStream *stream);
 
 /* Various streams */
 
-VteStream *
+BteStream *
 _bte_file_stream_new (void);
 
 G_END_DECLS

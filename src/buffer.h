@@ -26,7 +26,7 @@
 
 G_BEGIN_DECLS
 
-typedef GByteArray VteByteArray;
+typedef GByteArray BteByteArray;
 
 #define _bte_byte_array_new				g_byte_array_new
 #define _bte_byte_array_free(B)			g_byte_array_free (B, TRUE)

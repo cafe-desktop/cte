@@ -79,14 +79,14 @@ public:
         void update();
         void pause();
 
-        VteRowData const* get_row(bte::grid::row_t row) const;
+        BteRowData const* get_row(bte::grid::row_t row) const;
 
         BidiRow const* get_bidirow(bte::grid::row_t row) const;
 
 private:
         Ring *m_ring{nullptr};
 
-        VteRowData **m_rows{nullptr};
+        BteRowData **m_rows{nullptr};
         int m_rows_len{0};
         int m_rows_alloc_len{0};
 

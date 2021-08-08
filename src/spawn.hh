@@ -38,7 +38,7 @@ public:
 
 private:
 
-        bte::glib::RefPtr<VtePty> m_pty{};
+        bte::glib::RefPtr<BtePty> m_pty{};
 
         bte::glib::StringPtr m_cwd{};
         bte::glib::StringPtr m_fallback_cwd{};
@@ -104,7 +104,7 @@ public:
                 m_envv = bte::glib::take_strv(g_environ_unsetenv(m_envv.release(), env));
         }
 
-        void set_pty(bte::glib::RefPtr<VtePty>&& pty)
+        void set_pty(bte::glib::RefPtr<BtePty>&& pty)
         {
                 m_pty = std::move(pty);
         }

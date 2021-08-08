@@ -276,13 +276,13 @@ Implementation
 Storing lines
 ─────────────
 
-Vte's ring was designed with rewrapping in mind, nevertheless it operates with
+Bte's ring was designed with rewrapping in mind, nevertheless it operates with
 rows. Changing it to work on paragraphs would require heavy refactoring, and
 would cause all sorts of troubles with overlong paragraphs. As the main
 features of terminals (showing content, scrolling etc.) are all built around
 rows, such a change for rewrapping only doesn't sound feasible. It's even
 unclear which approach would be better for a terminal built from scratch. So
-we decided to keep Vte operate with rows. Rewrapping is an expensive operation
+we decided to keep Bte operate with rows. Rewrapping is an expensive operation
 that builds up the notion of paragraphs from rows, and then cuts them to rows
 again.
 
@@ -352,7 +352,7 @@ A marker is a (row, column) pair where the row is either within the ring's
 range or in a further row, and the column is arbitrary.
 
 Before rewrapping, if the row is within the ring's range, the (row, column)
-pair is converted to a VteCellTextOffset which contains the text offset,
+pair is converted to a BteCellTextOffset which contains the text offset,
 fragment_cells denoting how many cells to walk from the first cell of a
 multicell character (i.e. 1 for the right half of a CJK), and eol_cells
 containing -1 if the cursor is over a character, 0 if the cursor is just after
@@ -375,9 +375,9 @@ text_stream's head for the immediate next row, one bigger for next row and so
 on, eol_cells will be set to the desired column, and fragment_cells is 0.
 Pretty much as if the ring continued with empty hard wrapped lines.
 
-After rewrapping, VteCellTextOffset is converted back to (row, column)
+After rewrapping, BteCellTextOffset is converted back to (row, column)
 according to the new width and new row numbering. This could be done solely
-based on VteCellTextOffset, but instead we update the row during rewrapping,
+based on BteCellTextOffset, but instead we update the row during rewrapping,
 and only compute the column afterwards. This is because we don't have a fast
 way of mapping text_offset to row number, this would require a binary search,
 it's much easier to remember this data when we're there anyway while
@@ -438,8 +438,8 @@ lines take about 0.2 seconds wall clock time, this is close to the boundary of
 okay-ish speed. For this reason, rewrapping can be disabled with the
 bte_terminal_set_rewrap_on_resize() api call.
 
-Developers writing Vte-based multi-tab terminal emulators are encouraged to
-resize only the visible Vte, the hidden ones should be resized when they
+Developers writing Bte-based multi-tab terminal emulators are encouraged to
+resize only the visible Bte, the hidden ones should be resized when they
 become visible. This avoids the time it takes to rewrap the buffer to be
 multiplied by the number of tabs and so block the user for a long
 uninterrupted time when they resize the window. Developers are also encouraged

@@ -46,7 +46,7 @@ $ Or, you can use `all` to print out all logging message
 $ VTE_DEBUG=all ./_build/src/app/bte-2.91
 ```
 
-For logging level information, please refer to enum [VteDebugFlags](src/debug.h).
+For logging level information, please refer to enum [BteDebugFlags](src/debug.h).
 
 
 Contributing

@@ -53,35 +53,35 @@
 
 #define I_(string) (g_intern_static_string(string))
 
-typedef struct _VtePtyPrivate VtePtyPrivate;
+typedef struct _BtePtyPrivate BtePtyPrivate;
 
 typedef struct {
 	GSpawnChildSetupFunc extra_child_setup;
 	gpointer extra_child_setup_data;
-} VtePtyChildSetupData;
+} BtePtyChildSetupData;
 
 /**
- * VtePty:
+ * BtePty:
  */
-struct _VtePty {
+struct _BtePty {
         GObject parent_instance;
 
         /* <private> */
-        VtePtyPrivate *priv;
+        BtePtyPrivate *priv;
 };
 
-struct _VtePtyPrivate {
+struct _BtePtyPrivate {
         bte::base::Pty* pty; /* owned */
         int foreign_fd; /* foreign FD if  != -1 */
-        VtePtyFlags flags;
+        BtePtyFlags flags;
 };
 
-struct _VtePtyClass {
+struct _BtePtyClass {
         GObjectClass parent_class;
 };
 
 bte::base::Pty*
-_bte_pty_get_impl(VtePty* pty)
+_bte_pty_get_impl(BtePty* pty)
 {
         return pty->priv->pty;
 }
@@ -127,10 +127,10 @@ _bte_pty_get_impl(VtePty* pty)
 
 /**
  * bte_pty_child_setup:
- * @pty: a #VtePty
+ * @pty: a #BtePty
  */
 void
-bte_pty_child_setup (VtePty *pty) noexcept
+bte_pty_child_setup (BtePty *pty) noexcept
 try
 {
         g_return_if_fail(pty != nullptr);
@@ -146,7 +146,7 @@ catch (...)
 
 /**
  * bte_pty_set_size:
- * @pty: a #VtePty
+ * @pty: a #BtePty
  * @rows: the desired number of rows
  * @columns: the desired number of columns
  * @error: (allow-none): return location to store a #GError, or %NULL
@@ -159,7 +159,7 @@ catch (...)
  * Returns: %TRUE on success, %FALSE on failure with @error filled in
  */
 gboolean
-bte_pty_set_size(VtePty *pty,
+bte_pty_set_size(BtePty *pty,
                  int rows,
                  int columns,
                  GError **error) noexcept
@@ -171,7 +171,7 @@ bte_pty_set_size(VtePty *pty,
 }
 
 bool
-_bte_pty_set_size(VtePty *pty,
+_bte_pty_set_size(BtePty *pty,
                   int rows,
                   int columns,
                   int cell_height_px,
@@ -202,7 +202,7 @@ catch (...)
 
 /**
  * bte_pty_get_size:
- * @pty: a #VtePty
+ * @pty: a #BtePty
  * @rows: (out) (allow-none): a location to store the number of rows, or %NULL
  * @columns: (out) (allow-none): a location to store the number of columns, or %NULL
  * @error: return location to store a #GError, or %NULL
@@ -214,7 +214,7 @@ catch (...)
  * Returns: %TRUE on success, %FALSE on failure with @error filled in
  */
 gboolean
-bte_pty_get_size(VtePty *pty,
+bte_pty_get_size(BtePty *pty,
                  int *rows,
                  int *columns,
                  GError **error) noexcept
@@ -241,7 +241,7 @@ catch (...)
 
 /**
  * bte_pty_set_utf8:
- * @pty: a #VtePty
+ * @pty: a #BtePty
  * @utf8: whether or not the pty is in UTF-8 mode
  * @error: (allow-none): return location to store a #GError, or %NULL
  *
@@ -252,7 +252,7 @@ catch (...)
  * Returns: %TRUE on success, %FALSE on failure with @error filled in
  */
 gboolean
-bte_pty_set_utf8(VtePty *pty,
+bte_pty_set_utf8(BtePty *pty,
                  gboolean utf8,
                  GError **error) noexcept
 try
@@ -276,14 +276,14 @@ catch (...)
 
 /**
  * bte_pty_close:
- * @pty: a #VtePty
+ * @pty: a #BtePty
  *
  * Since 0.42 this is a no-op.
  *
  * Deprecated: 0.42
  */
 void
-bte_pty_close (VtePty *pty) noexcept
+bte_pty_close (BtePty *pty) noexcept
 {
         /* impl->close(); */
 }
@@ -304,8 +304,8 @@ bte_pty_initable_init (GInitable *initable,
                        GError **error) noexcept
 try
 {
-        VtePty *pty = VTE_PTY (initable);
-        VtePtyPrivate *priv = pty->priv;
+        BtePty *pty = VTE_PTY (initable);
+        BtePtyPrivate *priv = pty->priv;
 
         if (priv->foreign_fd != -1) {
                 priv->pty = bte::base::Pty::create_foreign(priv->foreign_fd, priv->flags);
@@ -336,16 +336,16 @@ bte_pty_initable_iface_init (GInitableIface  *iface)
 
 /* GObjectClass impl */
 
-G_DEFINE_TYPE_WITH_CODE (VtePty, bte_pty, G_TYPE_OBJECT,
-                         G_ADD_PRIVATE (VtePty)
+G_DEFINE_TYPE_WITH_CODE (BtePty, bte_pty, G_TYPE_OBJECT,
+                         G_ADD_PRIVATE (BtePty)
                          G_IMPLEMENT_INTERFACE (G_TYPE_INITABLE, bte_pty_initable_iface_init))
 
 static void
-bte_pty_init (VtePty *pty)
+bte_pty_init (BtePty *pty)
 {
-        VtePtyPrivate *priv;
+        BtePtyPrivate *priv;
 
-        priv = pty->priv = (VtePtyPrivate *)bte_pty_get_instance_private (pty);
+        priv = pty->priv = (BtePtyPrivate *)bte_pty_get_instance_private (pty);
 
         priv->pty = nullptr;
         priv->foreign_fd = -1;
@@ -356,8 +356,8 @@ static void
 bte_pty_finalize (GObject *object) noexcept
 try
 {
-        VtePty *pty = VTE_PTY (object);
-        VtePtyPrivate *priv = pty->priv;
+        BtePty *pty = VTE_PTY (object);
+        BtePtyPrivate *priv = pty->priv;
 
         auto implptr = bte::base::RefPtr<bte::base::Pty>{priv->pty}; // moved
 
@@ -374,8 +374,8 @@ bte_pty_get_property (GObject    *object,
                        GValue     *value,
                        GParamSpec *pspec)
 {
-        VtePty *pty = VTE_PTY (object);
-        VtePtyPrivate *priv = pty->priv;
+        BtePty *pty = VTE_PTY (object);
+        BtePtyPrivate *priv = pty->priv;
 
         switch (property_id) {
         case PROP_FLAGS:
@@ -397,12 +397,12 @@ bte_pty_set_property (GObject      *object,
                        const GValue *value,
                        GParamSpec   *pspec)
 {
-        VtePty *pty = VTE_PTY (object);
-        VtePtyPrivate *priv = pty->priv;
+        BtePty *pty = VTE_PTY (object);
+        BtePtyPrivate *priv = pty->priv;
 
         switch (property_id) {
         case PROP_FLAGS:
-                priv->flags = (VtePtyFlags) g_value_get_flags(value);
+                priv->flags = (BtePtyFlags) g_value_get_flags(value);
                 break;
 
         case PROP_FD:
@@ -415,7 +415,7 @@ bte_pty_set_property (GObject      *object,
 }
 
 static void
-bte_pty_class_init (VtePtyClass *klass)
+bte_pty_class_init (BtePtyClass *klass)
 {
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
@@ -424,7 +424,7 @@ bte_pty_class_init (VtePtyClass *klass)
         object_class->finalize     = bte_pty_finalize;
 
         /**
-         * VtePty:flags:
+         * BtePty:flags:
          *
          * Flags.
          */
@@ -439,7 +439,7 @@ bte_pty_class_init (VtePtyClass *klass)
                                                     G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY)));
 
         /**
-         * VtePty:fd:
+         * BtePty:fd:
          *
          * The file descriptor of the PTY master.
          */
@@ -458,7 +458,7 @@ bte_pty_class_init (VtePtyClass *klass)
 /**
  * bte_pty_error_quark:
  *
- * Error domain for VTE PTY errors. Errors in this domain will be from the #VtePtyError
+ * Error domain for VTE PTY errors. Errors in this domain will be from the #BtePtyError
  * enumeration. See #GError for more information on error domains.
  *
  * Returns: the error domain for VTE PTY errors
@@ -476,7 +476,7 @@ bte_pty_error_quark(void) noexcept
 
 /**
  * bte_pty_new_sync: (constructor)
- * @flags: flags from #VtePtyFlags
+ * @flags: flags from #BtePtyFlags
  * @cancellable: (allow-none): a #GCancellable, or %NULL
  * @error: (allow-none): return location for a #GError, or %NULL
  *
@@ -507,14 +507,14 @@ bte_pty_error_quark(void) noexcept
  * shortly afterwards receiving a SIGWINCH signal. You should prefer
  * using bte_terminal_pty_new_sync() which does this automatically.
  *
- * Returns: (transfer full): a new #VtePty, or %NULL on error with @error filled in
+ * Returns: (transfer full): a new #BtePty, or %NULL on error with @error filled in
  */
-VtePty *
-bte_pty_new_sync (VtePtyFlags flags,
+BtePty *
+bte_pty_new_sync (BtePtyFlags flags,
                   GCancellable *cancellable,
                   GError **error) noexcept
 {
-        return (VtePty *) g_initable_new (VTE_TYPE_PTY,
+        return (BtePty *) g_initable_new (VTE_TYPE_PTY,
                                           cancellable,
                                           error,
                                           "flags", flags,
@@ -527,23 +527,23 @@ bte_pty_new_sync (VtePtyFlags flags,
  * @cancellable: (allow-none): a #GCancellable, or %NULL
  * @error: (allow-none): return location for a #GError, or %NULL
  *
- * Creates a new #VtePty for the PTY master @fd.
+ * Creates a new #BtePty for the PTY master @fd.
  *
  * No entry will be made in the lastlog, utmp or wtmp system files.
  *
- * Note that the newly created #VtePty will take ownership of @fd
+ * Note that the newly created #BtePty will take ownership of @fd
  * and close it on finalize.
  *
- * Returns: (transfer full): a new #VtePty for @fd, or %NULL on error with @error filled in
+ * Returns: (transfer full): a new #BtePty for @fd, or %NULL on error with @error filled in
  */
-VtePty *
+BtePty *
 bte_pty_new_foreign_sync (int fd,
                           GCancellable *cancellable,
                           GError **error) noexcept
 {
         g_return_val_if_fail(fd != -1, nullptr);
 
-        return (VtePty *) g_initable_new (VTE_TYPE_PTY,
+        return (BtePty *) g_initable_new (VTE_TYPE_PTY,
                                           cancellable,
                                           error,
                                           "fd", fd,
@@ -552,14 +552,14 @@ bte_pty_new_foreign_sync (int fd,
 
 /**
  * bte_pty_get_fd:
- * @pty: a #VtePty
+ * @pty: a #BtePty
  *
  * Returns: the file descriptor of the PTY master in @pty. The
  *   file descriptor belongs to @pty and must not be closed or have
  *   its flags changed
  */
 int
-bte_pty_get_fd (VtePty *pty) noexcept
+bte_pty_get_fd (BtePty *pty) noexcept
 try
 {
         g_return_val_if_fail(VTE_IS_PTY(pty), FALSE);
@@ -605,7 +605,7 @@ ignored_spawn_flags() noexcept
 }
 
 static bte::base::SpawnContext
-spawn_context_from_args(VtePty* pty,
+spawn_context_from_args(BtePty* pty,
                         char const* working_directory,
                         char const* const* argv,
                         char const* const* envv,
@@ -649,7 +649,7 @@ spawn_context_from_args(VtePty* pty,
 }
 
 bool
-_bte_pty_spawn_sync(VtePty* pty,
+_bte_pty_spawn_sync(BtePty* pty,
                     char const* working_directory,
                     char const* const* argv,
                     char const* const* envv,
@@ -719,7 +719,7 @@ _bte_pty_check_envv(char const* const* strv) noexcept
 
 /**
  * bte_pty_spawn_with_fds_async:
- * @pty: a #VtePty
+ * @pty: a #BtePty
  * @working_directory: (allow-none): the name of a directory the command should start
  *   in, or %NULL to use the current working directory
  * @argv: (array zero-terminated=1) (element-type filename): child's argument vector
@@ -775,7 +775,7 @@ _bte_pty_check_envv(char const* const* strv) noexcept
  * Since: 0.62
  */
 void
-bte_pty_spawn_with_fds_async(VtePty *pty,
+bte_pty_spawn_with_fds_async(BtePty *pty,
                              char const* working_directory,
                              char const* const* argv,
                              char const* const* envv,
@@ -842,7 +842,7 @@ catch (...)
 
 /**
  * bte_pty_spawn_async:
- * @pty: a #VtePty
+ * @pty: a #BtePty
  * @working_directory: (allow-none): the name of a directory the command should start
  *   in, or %NULL to use the current working directory
  * @argv: (array zero-terminated=1) (element-type filename): child's argument vector
@@ -864,7 +864,7 @@ catch (...)
  * Since: 0.48
  */
 void
-bte_pty_spawn_async(VtePty *pty,
+bte_pty_spawn_async(BtePty *pty,
                     const char *working_directory,
                     char **argv,
                     char **envv,
@@ -887,7 +887,7 @@ bte_pty_spawn_async(VtePty *pty,
 
 /**
  * bte_pty_spawn_finish:
- * @pty: a #VtePty
+ * @pty: a #BtePty
  * @result: a #GAsyncResult
  * @child_pid: (out) (allow-none) (transfer full): a location to store the child PID, or %NULL
  * @error: (allow-none): return location for a #GError, or %NULL
@@ -897,7 +897,7 @@ bte_pty_spawn_async(VtePty *pty,
  * Since: 0.48
  */
 gboolean
-bte_pty_spawn_finish(VtePty* pty,
+bte_pty_spawn_finish(BtePty* pty,
                      GAsyncResult* result,
                      GPid* child_pid /* out */,
                      GError** error) noexcept

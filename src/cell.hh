@@ -23,8 +23,8 @@
 
 #ifdef __clang__
 /* Clang generates lots of warnings for the code below. However while
- * the pointer in the VteCellAttr struct is indeed only 4-byte aligned,
- * the VteCellAttr is only used when a member of a VteCell, where it is
+ * the pointer in the BteCellAttr struct is indeed only 4-byte aligned,
+ * the BteCellAttr is only used when a member of a BteCell, where it is
  * at offset 4, resulting in a sufficient overall alignment. So we can
  * safely ignore the warning.
  */
@@ -43,12 +43,12 @@
 
 #define VTE_TAB_WIDTH_MAX		((1 << VTE_ATTR_COLUMNS_BITS) - 1)
 
-#define VTE_CELL_ATTR_COMMON_BYTES      12  /* The number of common bytes in VteCellAttr and VteStreamCellAttr */
+#define VTE_CELL_ATTR_COMMON_BYTES      12  /* The number of common bytes in BteCellAttr and BteStreamCellAttr */
 
 /*
- * VteCellAttr: A single cell style attributes
+ * BteCellAttr: A single cell style attributes
  *
- * When adding new attributes, keep in sync with VteStreamCellAttr and
+ * When adding new attributes, keep in sync with BteStreamCellAttr and
  * update VTE_CELL_ATTR_COMMON_BYTES accordingly.
  * Also don't forget to update basic_cell below!
  */
@@ -75,13 +75,13 @@
                 return bte_attr_get_value(attr, VTE_ATTR_##uname##_VALUE_MASK, VTE_ATTR_##uname##_SHIFT); \
         }
 
-typedef struct _VTE_GNUC_PACKED VteCellAttr {
+typedef struct _VTE_GNUC_PACKED BteCellAttr {
         uint32_t attr;
 
-	/* 4-byte boundary (8-byte boundary in VteCell) */
+	/* 4-byte boundary (8-byte boundary in BteCell) */
         uint64_t m_colors;                     /* fore, back and deco (underline) colour */
 
-        /* 12-byte boundary (16-byte boundary in VteCell) */
+        /* 12-byte boundary (16-byte boundary in BteCell) */
         uint32_t hyperlink_idx; /* a unique hyperlink index at a time for the ring's cells,
                                    0 means not a hyperlink, VTE_HYPERLINK_IDX_TARGET_IN_STREAM
                                    means the target is irrelevant/unknown at the moment.
@@ -94,7 +94,7 @@ typedef struct _VTE_GNUC_PACKED VteCellAttr {
 
         inline constexpr uint64_t colors() const { return m_colors; }
 
-        inline void copy_colors(VteCellAttr const& other)
+        inline void copy_colors(BteCellAttr const& other)
         {
                 m_colors = bte_color_triple_copy(other.colors());
         }
@@ -147,19 +147,19 @@ typedef struct _VTE_GNUC_PACKED VteCellAttr {
         CELL_ATTR_BOOL(dim, DIM)
         CELL_ATTR_BOOL(invisible, INVISIBLE)
         /* ATTR_BOOL(boxed, BOXED) */
-} VteCellAttr;
-static_assert(sizeof (VteCellAttr) == 16, "VteCellAttr has wrong size");
-static_assert(offsetof (VteCellAttr, hyperlink_idx) == VTE_CELL_ATTR_COMMON_BYTES, "VteCellAttr layout is wrong");
+} BteCellAttr;
+static_assert(sizeof (BteCellAttr) == 16, "BteCellAttr has wrong size");
+static_assert(offsetof (BteCellAttr, hyperlink_idx) == VTE_CELL_ATTR_COMMON_BYTES, "BteCellAttr layout is wrong");
 
 /*
- * VteStreamCellAttr: Variant of VteCellAttr to be stored in attr_stream.
+ * BteStreamCellAttr: Variant of BteCellAttr to be stored in attr_stream.
  *
- * When adding new attributes, keep in sync with VteCellAttr and
+ * When adding new attributes, keep in sync with BteCellAttr and
  * update VTE_CELL_ATTR_COMMON_BYTES accordingly.
  */
 
-typedef struct _VTE_GNUC_PACKED _VteStreamCellAttr {
-        uint32_t attr; /* Same as VteCellAttr. We only access columns
+typedef struct _VTE_GNUC_PACKED _BteStreamCellAttr {
+        uint32_t attr; /* Same as BteCellAttr. We only access columns
                         * and fragment, however.
                         */
         /* 4-byte boundary */
@@ -170,25 +170,25 @@ typedef struct _VTE_GNUC_PACKED _VteStreamCellAttr {
         /* Methods */
         CELL_ATTR_UINT(columns, COLUMNS)
         CELL_ATTR_BOOL(fragment, FRAGMENT)
-} VteStreamCellAttr;
-static_assert(sizeof (VteStreamCellAttr) == 14, "VteStreamCellAttr has wrong size");
-static_assert(offsetof (VteStreamCellAttr, hyperlink_length) == VTE_CELL_ATTR_COMMON_BYTES, "VteStreamCellAttr layout is wrong");
+} BteStreamCellAttr;
+static_assert(sizeof (BteStreamCellAttr) == 14, "BteStreamCellAttr has wrong size");
+static_assert(offsetof (BteStreamCellAttr, hyperlink_length) == VTE_CELL_ATTR_COMMON_BYTES, "BteStreamCellAttr layout is wrong");
 
 #undef CELL_ATTR_BOOL
 #undef CELL_ATTR_UINT
 
 /*
- * VteCell: A single cell's data
+ * BteCell: A single cell's data
  */
 
-typedef struct _VTE_GNUC_PACKED _VteCell {
+typedef struct _VTE_GNUC_PACKED _BteCell {
 	bteunistr c;
-	VteCellAttr attr;
-} VteCell;
+	BteCellAttr attr;
+} BteCell;
 
-static_assert(sizeof (VteCell) == 20, "VteCell has wrong size");
+static_assert(sizeof (BteCell) == 20, "BteCell has wrong size");
 
-static const VteCell basic_cell = {
+static const BteCell basic_cell = {
 	0,
 	{
                 VTE_ATTR_DEFAULT, /* attr */

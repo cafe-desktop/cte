@@ -22,9 +22,9 @@
  */
 
 /*
- * VteFileStream is implemented as three layers above each other.
+ * BteFileStream is implemented as three layers above each other.
  *
- * o The bottom layer is VteSnake. It provides a mapping from logical offsets
+ * o The bottom layer is BteSnake. It provides a mapping from logical offsets
  *   to physical file offsets, storing the stream in at most 3 continuous
  *   regions of the file. See below for details how this mapping is done.
  *
@@ -44,11 +44,11 @@
  *   makes the implementation a lot easier. It's also essential to maintain a
  *   unique encryption IV in the current design.)
  *
- *   The name was chosen because VteFileStream's way of advancing the head and
+ *   The name was chosen because BteFileStream's way of advancing the head and
  *   the tail is kinda like a snake, and the mapping to file offsets reminds
  *   me of the well-known game on old mobile phones.
  *
- * o The middle layer is called VteBoa. It does compression and encryption
+ * o The middle layer is called BteBoa. It does compression and encryption
  *   along with integrity check. It has (almost) the same API as the snake,
  *   but the blocksize is a bit smaller to leave room for the required
  *   overhead. See below for the exact layout.
@@ -63,7 +63,7 @@
  *   AES GCM. Also, because grown-ups might think it's a hat, when actually
  *   it's a boa constrictor digesting an elephant :)
  *
- * o The top layer is VteFileStream. It does buffering and caching. As opposed
+ * o The top layer is BteFileStream. It does buffering and caching. As opposed
  *   to the previous layers, this one provides methods on arbitrary amount of
  *   data. It doesn't offer random-access-writes, instead, it offers appending
  *   data, and truncating the head (undoing the latest appends). Write
@@ -274,7 +274,7 @@ _file_write (int fd, const char *data, gsize len, gsize offset)
 /******************************************************************************************/
 
 /*
- * VteSnake:
+ * BteSnake:
  *
  * The data structure implemented here remembers the last certain amount of
  * data written, with the size dynamically changing. Basic operations include
@@ -336,7 +336,7 @@ _file_write (int fd, const char *data, gsize len, gsize offset)
  * and so on...
  */
 
-typedef struct _VteSnake {
+typedef struct _BteSnake {
         GObject parent;
         int fd;
         int state;
@@ -347,28 +347,28 @@ typedef struct _VteSnake {
                 gsize fd_head;  /* FD's physical head offset. One of these four is redundant, nevermind. */
         } segment[3];           /* At most 3 segments, [0] at the tail. */
         gsize tail, head;       /* These are redundant too, for convenience. */
-} VteSnake;
+} BteSnake;
 #define VTE_SNAKE_SEGMENTS(s) ((s)->state == 4 ? 2 : (s)->state)
 
-typedef struct _VteSnakeClass {
+typedef struct _BteSnakeClass {
         GObjectClass parent_class;
 
-        void (*reset) (VteSnake *snake, gsize offset);
-        void (*write) (VteSnake *snake, gsize offset, const char *data, gsize len);
-        gboolean (*read) (VteSnake *snake, gsize offset, char *data);
-        void (*advance_tail) (VteSnake *snake, gsize offset);
-        gsize (*tail) (VteSnake *snake);
-        gsize (*head) (VteSnake *snake);
-} VteSnakeClass;
+        void (*reset) (BteSnake *snake, gsize offset);
+        void (*write) (BteSnake *snake, gsize offset, const char *data, gsize len);
+        gboolean (*read) (BteSnake *snake, gsize offset, char *data);
+        void (*advance_tail) (BteSnake *snake, gsize offset);
+        gsize (*tail) (BteSnake *snake);
+        gsize (*head) (BteSnake *snake);
+} BteSnakeClass;
 
 static GType _bte_snake_get_type (void);
 #define VTE_TYPE_SNAKE _bte_snake_get_type ()
-#define VTE_SNAKE_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), VTE_TYPE_SNAKE, VteSnakeClass))
+#define VTE_SNAKE_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), VTE_TYPE_SNAKE, BteSnakeClass))
 
-G_DEFINE_TYPE (VteSnake, _bte_snake, G_TYPE_OBJECT)
+G_DEFINE_TYPE (BteSnake, _bte_snake, G_TYPE_OBJECT)
 
 static void
-_bte_snake_init (VteSnake *snake)
+_bte_snake_init (BteSnake *snake)
 {
         snake->fd = -1;
         snake->state = 1;
@@ -377,7 +377,7 @@ _bte_snake_init (VteSnake *snake)
 static void
 _bte_snake_finalize (GObject *object)
 {
-        VteSnake *snake = (VteSnake *) object;
+        BteSnake *snake = (BteSnake *) object;
 
         _file_close (snake->fd);
 
@@ -385,7 +385,7 @@ _bte_snake_finalize (GObject *object)
 }
 
 static inline void
-_bte_snake_ensure_file (VteSnake *snake)
+_bte_snake_ensure_file (BteSnake *snake)
 {
         if (G_LIKELY (snake->fd != -1))
                 return;
@@ -393,9 +393,9 @@ _bte_snake_ensure_file (VteSnake *snake)
         snake->fd = _bte_mkstemp ();
 }
 
-static void _bte_snake_advance_tail (VteSnake *snake, gsize offset);
+static void _bte_snake_advance_tail (BteSnake *snake, gsize offset);
 static void
-_bte_snake_reset (VteSnake *snake, gsize offset)
+_bte_snake_reset (BteSnake *snake, gsize offset)
 {
         g_assert_cmpuint (offset % VTE_SNAKE_BLOCKSIZE, ==, 0);
 
@@ -418,7 +418,7 @@ _bte_snake_reset (VteSnake *snake, gsize offset)
  * already within the streams, not for appending a new block.
  */
 static gsize
-_bte_snake_offset_map (VteSnake *snake, gsize offset)
+_bte_snake_offset_map (BteSnake *snake, gsize offset)
 {
         int i;
         int segments = VTE_SNAKE_SEGMENTS(snake);
@@ -434,7 +434,7 @@ _bte_snake_offset_map (VteSnake *snake, gsize offset)
 
 /* Place VTE_SNAKE_BLOCKSIZE bytes at data */
 static gboolean
-_bte_snake_read (VteSnake *snake, gsize offset, char *data)
+_bte_snake_read (BteSnake *snake, gsize offset, char *data)
 {
         gsize fd_offset;
 
@@ -458,7 +458,7 @@ _bte_snake_read (VteSnake *snake, gsize offset, char *data)
  * 1->2, 2->3.
  */
 static void
-_bte_snake_write (VteSnake *snake, gsize offset, const char *data, gsize len)
+_bte_snake_write (BteSnake *snake, gsize offset, const char *data, gsize len)
 {
         gsize fd_offset;
 
@@ -516,7 +516,7 @@ _bte_snake_write (VteSnake *snake, gsize offset, const char *data, gsize len)
  * 2->1, 3->4, 4->1.
  */
 static void
-_bte_snake_advance_tail (VteSnake *snake, gsize offset)
+_bte_snake_advance_tail (BteSnake *snake, gsize offset)
 {
         g_assert_cmpuint (offset, >=, snake->tail);
         g_assert_cmpuint (offset, <=, snake->head);
@@ -567,19 +567,19 @@ _bte_snake_advance_tail (VteSnake *snake, gsize offset)
 }
 
 static gsize
-_bte_snake_tail (VteSnake *snake)
+_bte_snake_tail (BteSnake *snake)
 {
         return snake->tail;
 }
 
 static gsize
-_bte_snake_head (VteSnake *snake)
+_bte_snake_head (BteSnake *snake)
 {
         return snake->head;
 }
 
 static void
-_bte_snake_class_init (VteSnakeClass *klass)
+_bte_snake_class_init (BteSnakeClass *klass)
 {
         GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
@@ -596,7 +596,7 @@ _bte_snake_class_init (VteSnakeClass *klass)
 /******************************************************************************************/
 
 /*
- * VteBoa: Compress and encrypt an elephant to make it look like a hat.
+ * BteBoa: Compress and encrypt an elephant to make it look like a hat.
  *
  *                 _.----._
  *                /         \._______
@@ -635,40 +635,40 @@ _bte_snake_class_init (VteSnakeClass *klass)
          * The padding is there to make sure the structure is at least VTE_CIPHER_IV_SIZE bytes large.
          * Assertion is made later that the real data fits in its first VTE_CIPHER_IV_SIZE bytes.
          */
-        typedef struct _VteIv {
+        typedef struct _BteIv {
                 gsize offset;
                 guint32 overwrite_counter;
                 unsigned char padding[VTE_CIPHER_IV_SIZE];
-        } VteIv;
+        } BteIv;
 #endif
 
-typedef struct _VteBoa {
-        VteSnake parent;
+typedef struct _BteBoa {
+        BteSnake parent;
         gsize tail, head;
 
 #if !defined VTESTREAM_MAIN && defined WITH_GNUTLS
         gnutls_cipher_hd_t cipher_hd;
-        VteIv iv;
+        BteIv iv;
 #endif
         int compressBound;
-} VteBoa;
+} BteBoa;
 
-typedef struct _VteBoaClass {
+typedef struct _BteBoaClass {
         GObjectClass parent_class;
 
-        void (*reset) (VteBoa *boa, gsize offset);
-        void (*write) (VteBoa *boa, gsize offset, const char *data);
-        gboolean (*read) (VteBoa *boa, gsize offset, char *data);
-        void (*advance_tail) (VteBoa *boa, gsize offset);
-        gsize (*tail) (VteBoa *boa);
-        gsize (*head) (VteBoa *boa);
-} VteBoaClass;
+        void (*reset) (BteBoa *boa, gsize offset);
+        void (*write) (BteBoa *boa, gsize offset, const char *data);
+        gboolean (*read) (BteBoa *boa, gsize offset, char *data);
+        void (*advance_tail) (BteBoa *boa, gsize offset);
+        gsize (*tail) (BteBoa *boa);
+        gsize (*head) (BteBoa *boa);
+} BteBoaClass;
 
 static GType _bte_boa_get_type (void);
 #define VTE_TYPE_BOA _bte_boa_get_type ()
-#define VTE_BOA_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), VTE_TYPE_BOA, VteBoaClass))
+#define VTE_BOA_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), VTE_TYPE_BOA, BteBoaClass))
 
-G_DEFINE_TYPE (VteBoa, _bte_boa, VTE_TYPE_SNAKE)
+G_DEFINE_TYPE (BteBoa, _bte_boa, VTE_TYPE_SNAKE)
 
 /*----------------------------------------------------------------------------------------*/
 
@@ -676,7 +676,7 @@ G_DEFINE_TYPE (VteBoa, _bte_boa, VTE_TYPE_SNAKE)
 
 /* Encrypt: len bytes are overwritten in place, followed by VTE_CIPHER_TAG_SIZE more bytes for the tag. */
 static void
-_bte_boa_encrypt (VteBoa *boa, gsize offset, guint32 overwrite_counter, char *data, unsigned int len)
+_bte_boa_encrypt (BteBoa *boa, gsize offset, guint32 overwrite_counter, char *data, unsigned int len)
 {
 #ifndef VTESTREAM_MAIN
 # ifdef WITH_GNUTLS
@@ -703,7 +703,7 @@ _bte_boa_encrypt (VteBoa *boa, gsize offset, guint32 overwrite_counter, char *da
 
 /* Decrypt: data is len bytes of data + VTE_CIPHER_TAG_SIZE more bytes of tag. Returns FALSE on tag mismatch. */
 static gboolean
-_bte_boa_decrypt (VteBoa *boa, gsize offset, guint32 overwrite_counter, char *data, unsigned int len)
+_bte_boa_decrypt (BteBoa *boa, gsize offset, guint32 overwrite_counter, char *data, unsigned int len)
 {
         unsigned char tag[VTE_CIPHER_TAG_SIZE];
         unsigned int i, j;
@@ -813,7 +813,7 @@ _bte_boa_uncompress (char *dst, unsigned int dstlen, const char *src, unsigned i
 /*----------------------------------------------------------------------------------------*/
 
 static void
-_bte_boa_init (VteBoa *boa)
+_bte_boa_init (BteBoa *boa)
 {
 #if !defined VTESTREAM_MAIN && defined WITH_GNUTLS
         unsigned char key[VTE_CIPHER_KEY_SIZE];
@@ -826,7 +826,7 @@ _bte_boa_init (VteBoa *boa)
         g_assert_cmpuint (gnutls_cipher_get_tag_size(VTE_CIPHER_ALGORITHM), ==, VTE_CIPHER_TAG_SIZE);
 
         /* Assert that IV does indeed include all the data we want to use (offset and overwrite_counter). */
-        g_assert_cmpuint (offsetof(struct _VteIv, padding), <=, VTE_CIPHER_IV_SIZE);
+        g_assert_cmpuint (offsetof(struct _BteIv, padding), <=, VTE_CIPHER_IV_SIZE);
 
         /* Strong random for the key. */
         gnutls_rnd(GNUTLS_RND_KEY, key, VTE_CIPHER_KEY_SIZE);
@@ -847,7 +847,7 @@ static void
 _bte_boa_finalize (GObject *object)
 {
 #if !defined VTESTREAM_MAIN && defined WITH_GNUTLS
-        VteBoa *boa = (VteBoa *) object;
+        BteBoa *boa = (BteBoa *) object;
 
         explicit_bzero(&boa->iv, sizeof(boa->iv));
 
@@ -859,7 +859,7 @@ _bte_boa_finalize (GObject *object)
 }
 
 static void
-_bte_boa_reset (VteBoa *boa, gsize offset)
+_bte_boa_reset (BteBoa *boa, gsize offset)
 {
         g_assert_cmpuint (offset % VTE_BOA_BLOCKSIZE, ==, 0);
 
@@ -882,7 +882,7 @@ _bte_boa_reset (VteBoa *boa, gsize offset)
 /* Place VTE_BOA_BLOCKSIZE bytes at data.
  * data can be NULL if we're only interested in integrity verification and the overwrite_counter. */
 static gboolean
-_bte_boa_read_with_overwrite_counter (VteBoa *boa, gsize offset, char *data, _bte_overwrite_counter_t *overwrite_counter)
+_bte_boa_read_with_overwrite_counter (BteBoa *boa, gsize offset, char *data, _bte_overwrite_counter_t *overwrite_counter)
 {
         _bte_block_datalength_t compressed_len;
         char *buf = g_newa(char, VTE_SNAKE_BLOCKSIZE);
@@ -918,7 +918,7 @@ _bte_boa_read_with_overwrite_counter (VteBoa *boa, gsize offset, char *data, _bt
 }
 
 static gboolean
-_bte_boa_read (VteBoa *boa, gsize offset, char *data)
+_bte_boa_read (BteBoa *boa, gsize offset, char *data)
 {
         _bte_overwrite_counter_t overwrite_counter;
         return _bte_boa_read_with_overwrite_counter (boa, offset, data, &overwrite_counter);
@@ -929,7 +929,7 @@ _bte_boa_read (VteBoa *boa, gsize offset, char *data)
  * data is VTE_BOA_BLOCKSIZE bytes large.
  */
 static void
-_bte_boa_write (VteBoa *boa, gsize offset, const char *data)
+_bte_boa_write (BteBoa *boa, gsize offset, const char *data)
 {
         /* The overwrite counter is 1-based.  This is to make sure that the IV is never 0: 738601#c88,
            to make sure that an empty block (e.g. after a previous write failure) is always invalid,
@@ -989,7 +989,7 @@ _bte_boa_write (VteBoa *boa, gsize offset, const char *data)
 }
 
 static void
-_bte_boa_advance_tail (VteBoa *boa, gsize offset)
+_bte_boa_advance_tail (BteBoa *boa, gsize offset)
 {
         g_assert_cmpuint (offset, >=, boa->tail);
         g_assert_cmpuint (offset, <=, boa->head);
@@ -1001,19 +1001,19 @@ _bte_boa_advance_tail (VteBoa *boa, gsize offset)
 }
 
 static gsize
-_bte_boa_tail (VteBoa *boa)
+_bte_boa_tail (BteBoa *boa)
 {
         return boa->tail;
 }
 
 static gsize
-_bte_boa_head (VteBoa *boa)
+_bte_boa_head (BteBoa *boa)
 {
         return boa->head;
 }
 
 static void
-_bte_boa_class_init (VteBoaClass *klass)
+_bte_boa_class_init (BteBoaClass *klass)
 {
         GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
@@ -1030,13 +1030,13 @@ _bte_boa_class_init (VteBoaClass *klass)
 /******************************************************************************************/
 
 /*
- * VteFileStream: Implement buffering/caching on top of VteBoa.
+ * BteFileStream: Implement buffering/caching on top of BteBoa.
  */
 
-typedef struct _VteFileStream {
+typedef struct _BteFileStream {
         GObject parent;
 
-        VteBoa *boa;
+        BteBoa *boa;
 
         char *rbuf;
         /* Offset of the cached record, always a multiple of block size.
@@ -1048,25 +1048,25 @@ typedef struct _VteFileStream {
         gsize wbuf_len;
 
         gsize head, tail;
-} VteFileStream;
+} BteFileStream;
 
-typedef VteStreamClass VteFileStreamClass;
+typedef BteStreamClass BteFileStreamClass;
 
 static GType _bte_file_stream_get_type (void);
 #define VTE_TYPE_FILE_STREAM _bte_file_stream_get_type ()
 
-G_DEFINE_TYPE (VteFileStream, _bte_file_stream, VTE_TYPE_STREAM)
+G_DEFINE_TYPE (BteFileStream, _bte_file_stream, VTE_TYPE_STREAM)
 
-VteStream *
+BteStream *
 _bte_file_stream_new (void)
 {
-	return (VteStream *) g_object_new (VTE_TYPE_FILE_STREAM, NULL);
+	return (BteStream *) g_object_new (VTE_TYPE_FILE_STREAM, NULL);
 }
 
 static void
-_bte_file_stream_init (VteFileStream *stream)
+_bte_file_stream_init (BteFileStream *stream)
 {
-        stream->boa = (VteBoa *)g_object_new (VTE_TYPE_BOA, NULL);
+        stream->boa = (BteBoa *)g_object_new (VTE_TYPE_BOA, NULL);
 
         stream->rbuf = (char *)g_malloc(VTE_BOA_BLOCKSIZE);
         stream->wbuf = (char *)g_malloc(VTE_BOA_BLOCKSIZE);
@@ -1076,7 +1076,7 @@ _bte_file_stream_init (VteFileStream *stream)
 static void
 _bte_file_stream_finalize (GObject *object)
 {
-        VteFileStream *stream = (VteFileStream *) object;
+        BteFileStream *stream = (BteFileStream *) object;
 
         g_free(stream->rbuf);
         g_free(stream->wbuf);
@@ -1086,9 +1086,9 @@ _bte_file_stream_finalize (GObject *object)
 }
 
 static void
-_bte_file_stream_reset (VteStream *astream, gsize offset)
+_bte_file_stream_reset (BteStream *astream, gsize offset)
 {
-	VteFileStream *stream = (VteFileStream *) astream;
+	BteFileStream *stream = (BteFileStream *) astream;
         gsize offset_aligned = ALIGN_BOA(offset);
 
         /* This is the same assertion as in boa, repeated here for the buffering layer
@@ -1113,9 +1113,9 @@ _bte_file_stream_reset (VteStream *astream, gsize offset)
 }
 
 static gboolean
-_bte_file_stream_read (VteStream *astream, gsize offset, char *data, gsize len)
+_bte_file_stream_read (BteStream *astream, gsize offset, char *data, gsize len)
 {
-	VteFileStream *stream = (VteFileStream *) astream;
+	BteFileStream *stream = (BteFileStream *) astream;
 
         /* Out of bounds request.
          * Note: It needs to detect when offset is extremely large
@@ -1151,9 +1151,9 @@ _bte_file_stream_read (VteStream *astream, gsize offset, char *data, gsize len)
 }
 
 static void
-_bte_file_stream_append (VteStream *astream, const char *data, gsize len)
+_bte_file_stream_append (BteStream *astream, const char *data, gsize len)
 {
-	VteFileStream *stream = (VteFileStream *) astream;
+	BteFileStream *stream = (BteFileStream *) astream;
 
         while (len) {
                 gsize l = MIN(VTE_BOA_BLOCKSIZE - stream->wbuf_len, len);
@@ -1168,9 +1168,9 @@ _bte_file_stream_append (VteStream *astream, const char *data, gsize len)
 }
 
 static void
-_bte_file_stream_truncate (VteStream *astream, gsize offset)
+_bte_file_stream_truncate (BteStream *astream, gsize offset)
 {
-	VteFileStream *stream = (VteFileStream *) astream;
+	BteFileStream *stream = (BteFileStream *) astream;
 
         g_assert_cmpuint (offset, >=, stream->tail);
         g_assert_cmpuint (offset, <=, stream->head);
@@ -1197,9 +1197,9 @@ _bte_file_stream_truncate (VteStream *astream, gsize offset)
 }
 
 static void
-_bte_file_stream_advance_tail (VteStream *astream, gsize offset)
+_bte_file_stream_advance_tail (BteStream *astream, gsize offset)
 {
-	VteFileStream *stream = (VteFileStream *) astream;
+	BteFileStream *stream = (BteFileStream *) astream;
 
         g_assert_cmpuint (offset, >=, stream->tail);
         g_assert_cmpuint (offset, <=, stream->head);
@@ -1211,23 +1211,23 @@ _bte_file_stream_advance_tail (VteStream *astream, gsize offset)
 }
 
 static gsize
-_bte_file_stream_tail (VteStream *astream)
+_bte_file_stream_tail (BteStream *astream)
 {
-	VteFileStream *stream = (VteFileStream *) astream;
+	BteFileStream *stream = (BteFileStream *) astream;
 
 	return stream->tail;
 }
 
 static gsize
-_bte_file_stream_head (VteStream *astream)
+_bte_file_stream_head (BteStream *astream)
 {
-	VteFileStream *stream = (VteFileStream *) astream;
+	BteFileStream *stream = (BteFileStream *) astream;
 
 	return stream->head;
 }
 
 static void
-_bte_file_stream_class_init (VteFileStreamClass *klass)
+_bte_file_stream_class_init (BteFileStreamClass *klass)
 {
 	GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
@@ -1306,7 +1306,7 @@ static void
 test_fakes (void)
 {
         char buf[100], buf2[100];
-        VteBoa *boa = (VteBoa *)g_object_new (VTE_TYPE_BOA, NULL);
+        BteBoa *boa = (BteBoa *)g_object_new (VTE_TYPE_BOA, NULL);
 
         /* Encrypt */
         strcpy(buf, "abcdXYZ1234!!!");
@@ -1368,7 +1368,7 @@ test_fakes (void)
 static void
 test_snake (void)
 {
-        VteSnake *snake = (VteSnake *)g_object_new (VTE_TYPE_SNAKE, NULL);
+        BteSnake *snake = (BteSnake *)g_object_new (VTE_TYPE_SNAKE, NULL);
 
         /* Test overwriting data */
         snake_write (snake, 0, "Armadillo");
@@ -1396,7 +1396,7 @@ test_snake (void)
 
         /* Start over */
         g_object_unref (snake);
-        snake = (VteSnake *)g_object_new (VTE_TYPE_SNAKE, NULL);
+        snake = (BteSnake *)g_object_new (VTE_TYPE_SNAKE, NULL);
 
         /* State 1 */
         snake_write (snake, 0, "Armadillo");
@@ -1471,8 +1471,8 @@ test_snake (void)
 static void
 test_boa (void)
 {
-        VteBoa *boa = (VteBoa *)g_object_new (VTE_TYPE_BOA, NULL);
-        VteSnake *snake = (VteSnake *) &boa->parent;
+        BteBoa *boa = (BteBoa *)g_object_new (VTE_TYPE_BOA, NULL);
+        BteSnake *snake = (BteSnake *) &boa->parent;
 
         /* State 1 */
         _bte_boa_write (boa, 0, "axolotl");
@@ -1538,15 +1538,15 @@ test_boa (void)
 static void
 test_stream (void)
 {
-        VteBoa *boa;
-        VteSnake *snake;
+        BteBoa *boa;
+        BteSnake *snake;
         char buf[8];
 
-        VteStream *astream = _bte_file_stream_new();
-        VteFileStream *stream = (VteFileStream *) astream;
+        BteStream *astream = _bte_file_stream_new();
+        BteFileStream *stream = (BteFileStream *) astream;
         _bte_file_stream_init (stream);
         boa = stream->boa;
-        snake = (VteSnake *) &boa->parent;
+        snake = (BteSnake *) &boa->parent;
 
         /* Append */
         stream_append (astream, "axolot");

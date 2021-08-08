@@ -268,7 +268,7 @@ Terminal::clear_screen()
 void
 Terminal::clear_current_line()
 {
-	VteRowData *rowdata;
+	BteRowData *rowdata;
 
 	/* If the cursor is actually on the screen, clear data in the row
 	 * which corresponds to the cursor. */
@@ -390,7 +390,7 @@ Terminal::switch_normal_screen()
 }
 
 void
-Terminal::switch_screen(VteScreen *new_screen)
+Terminal::switch_screen(BteScreen *new_screen)
 {
         /* if (new_screen == m_screen) return; ? */
 
@@ -697,7 +697,7 @@ Terminal::clear_below_current()
 
 	/* If the cursor is actually on the screen, clear the rest of the
 	 * row the cursor is on and all of the rows below the cursor. */
-        VteRowData *rowdata;
+        BteRowData *rowdata;
         auto i = m_screen->cursor.row;
 	if (i < _bte_ring_next(m_screen->row_data)) {
 		/* Get the data for the row we're clipping. */
@@ -886,7 +886,7 @@ Terminal::set_cursor_coords1(bte::grid::row_t row,
 void
 Terminal::delete_character()
 {
-	VteRowData *rowdata;
+	BteRowData *rowdata;
 	long col;
 
         ensure_cursor_is_onscreen();
@@ -947,7 +947,7 @@ Terminal::move_cursor_down(bte::grid::row_t rows)
 void
 Terminal::erase_characters(long count)
 {
-	VteCell *cell;
+	BteCell *cell;
 	long col, i;
 
         ensure_cursor_is_onscreen();
@@ -1064,7 +1064,7 @@ Terminal::move_cursor_tab_forward(int count)
          * as a space each.
          */
 
-        VteRowData *rowdata = ensure_row();
+        BteRowData *rowdata = ensure_row();
         auto const old_len = _bte_row_data_length (rowdata);
         _bte_row_data_fill (rowdata, &basic_cell, newcol);
 
@@ -1076,8 +1076,8 @@ Terminal::move_cursor_tab_forward(int count)
          */
         if (col >= old_len && (newcol - col) <= VTE_TAB_WIDTH_MAX) {
                 glong i;
-                VteCell *cell = _bte_row_data_get_writable (rowdata, col);
-                VteCell tab = *cell;
+                BteCell *cell = _bte_row_data_get_writable (rowdata, col);
+                BteCell tab = *cell;
                 tab.attr.set_columns(newcol - col);
                 tab.c = '\t';
                 /* Save tab char */
@@ -2578,7 +2578,7 @@ Terminal::DECALN(bte::parser::Sequence const& seq)
 
                 emit_text_deleted();
 		/* Fill this row. */
-                VteCell cell;
+                BteCell cell;
 		cell.c = 'E';
 		cell.attr = basic_cell.attr;
 		cell.attr.set_columns(1);
@@ -5719,7 +5719,7 @@ Terminal::GnDm(bte::parser::Sequence const& seq)
 
         /* Since we mostly don't implement ECMA-35 anymore, we can mostly ignore this. */
 
-        VteCharacterReplacement replacement;
+        BteCharacterReplacement replacement;
         switch (seq.charset()) {
         case VTE_CHARSET_DEC_SPECIAL_GRAPHIC:
                 /* Some characters replaced by line drawing characters.

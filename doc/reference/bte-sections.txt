@@ -1,14 +1,14 @@
 <SECTION>
 <FILE>bte-terminal</FILE>
-<TITLE>VteTerminal</TITLE>
-VteTerminal
-VteCursorBlinkMode
-VteCursorShape
-VteEraseBinding
-VteTextBlinkMode
-VteFormat
-VteWriteFlags
-VteSelectionFunc
+<TITLE>BteTerminal</TITLE>
+BteTerminal
+BteCursorBlinkMode
+BteCursorShape
+BteEraseBinding
+BteTextBlinkMode
+BteFormat
+BteWriteFlags
+BteSelectionFunc
 bte_terminal_new
 bte_terminal_feed
 bte_terminal_feed_child
@@ -93,7 +93,7 @@ bte_terminal_event_check_regex_array
 bte_terminal_event_check_regex_simple
 
 <SUBSECTION>
-VteFeatureFlags
+BteFeatureFlags
 bte_get_user_shell
 bte_get_features
 bte_get_feature_flags
@@ -101,7 +101,7 @@ bte_get_encodings
 bte_get_encoding_supported
 
 <SUBSECTION>
-VteTerminalSpawnAsyncCallback
+BteTerminalSpawnAsyncCallback
 bte_terminal_spawn_async
 bte_terminal_spawn_with_fds_async
 bte_terminal_get_pty
@@ -163,14 +163,14 @@ bte_terminal_get_rewrap_on_resize
 bte_terminal_feed_child_binary
 
 <SUBSECTION Private>
-VteCharAttributes
-VteTerminalClassPrivate
+BteCharAttributes
+BteTerminalClassPrivate
 </SECTION>
 
 <SECTION>
 <FILE>bte-regex</FILE>
-<TITLE>VteRegex</TITLE>
-VteRegex
+<TITLE>BteRegex</TITLE>
+BteRegex
 bte_regex_ref
 bte_regex_unref
 bte_regex_new_for_match
@@ -187,10 +187,10 @@ bte_regex_error_quark
 
 <SECTION>
 <FILE>bte-pty</FILE>
-<TITLE>Vte PTY</TITLE>
-VtePtyFlags
-VtePtyError
-VtePty
+<TITLE>Bte PTY</TITLE>
+BtePtyFlags
+BtePtyError
+BtePty
 bte_pty_new_sync
 bte_pty_new_foreign_sync
 bte_pty_child_setup
@@ -222,7 +222,7 @@ VTE_PTY_CLASS
 VTE_IS_PTY
 VTE_IS_PTY_CLASS
 VTE_PTY_GET_CLASS
-VtePtyClass
+BtePtyClass
 
 <SUBSECTION Deprecated>
 bte_pty_close

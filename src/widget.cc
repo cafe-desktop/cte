@@ -136,7 +136,7 @@ catch (...)
         bte::log_exception();
 }
 
-Widget::Widget(VteTerminal* t)
+Widget::Widget(BteTerminal* t)
         : m_widget{&t->widget},
           m_hscroll_policy{CTK_SCROLL_NATURAL},
           m_vscroll_policy{CTK_SCROLL_NATURAL}
@@ -558,7 +558,7 @@ Widget::set_cursor(CursorType type) noexcept
 }
 
 bool
-Widget::set_pty(VtePty* pty_obj) noexcept
+Widget::set_pty(BtePty* pty_obj) noexcept
 {
         if (pty() == pty_obj)
                 return false;
@@ -590,7 +590,7 @@ Widget::unset_pty() noexcept
                 return;
 
         /* This is only called from Terminal, so we need
-         * to explicitly notify the VteTerminal:pty property,
+         * to explicitly notify the BteTerminal:pty property,
          * but we do NOT need to call Terminal::set_pty(nullptr).
          */
         m_pty.reset();

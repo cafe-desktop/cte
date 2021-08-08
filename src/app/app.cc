@@ -108,9 +108,9 @@ public:
         int verbosity{0};
         double cell_height_scale{1.0};
         double cell_width_scale{1.0};
-        VteCursorBlinkMode cursor_blink_mode{VTE_CURSOR_BLINK_SYSTEM};
-        VteCursorShape cursor_shape{VTE_CURSOR_SHAPE_BLOCK};
-        VteTextBlinkMode text_blink_mode{VTE_TEXT_BLINK_ALWAYS};
+        BteCursorBlinkMode cursor_blink_mode{VTE_CURSOR_BLINK_SYSTEM};
+        BteCursorShape cursor_shape{VTE_CURSOR_SHAPE_BLOCK};
+        BteTextBlinkMode text_blink_mode{VTE_TEXT_BLINK_ALWAYS};
         bte::glib::RefPtr<CtkCssProvider> css{};
 
         ~Options() {
@@ -334,7 +334,7 @@ private:
                 int v;
                 auto rv = that->parse_enum(VTE_TYPE_CURSOR_BLINK_MODE, value, v, error);
                 if (rv)
-                        that->cursor_blink_mode = VteCursorBlinkMode(v);
+                        that->cursor_blink_mode = BteCursorBlinkMode(v);
                 return rv;
         }
 
@@ -345,7 +345,7 @@ private:
                 int v;
                 auto rv = that->parse_enum(VTE_TYPE_CURSOR_SHAPE, value, v, error);
                 if (rv)
-                        that->cursor_shape = VteCursorShape(v);
+                        that->cursor_shape = BteCursorShape(v);
                 return rv;
         }
 
@@ -420,7 +420,7 @@ private:
                 int v;
                 auto rv = that->parse_enum(VTE_TYPE_TEXT_BLINK_MODE, value, v, error);
                 if (rv)
-                        that->text_blink_mode = VteTextBlinkMode(v);
+                        that->text_blink_mode = BteTextBlinkMode(v);
                 return rv;
         }
 
@@ -573,7 +573,7 @@ public:
                         { "no-systemd-scope", 0, 0, G_OPTION_ARG_NONE, &no_systemd_scope,
                           "Don't use systemd user scope", nullptr },
                         { "object-notifications", 'N', 0, G_OPTION_ARG_NONE, &object_notifications,
-                          "Print VteTerminal object notifications", nullptr },
+                          "Print BteTerminal object notifications", nullptr },
                         { "output-file", 0, 0, G_OPTION_ARG_FILENAME, &output_filename,
                           "Save terminal contents to file at exit", nullptr },
                         { "reverse", 0, 0, G_OPTION_ARG_NONE, &reverse,
@@ -689,7 +689,7 @@ verbose_fprintf(FILE* fp,
 /* regex */
 
 static void
-jit_regex(VteRegex* regex,
+jit_regex(BteRegex* regex,
           char const* pattern)
 {
         auto error = bte::glib::Error{};
@@ -700,7 +700,7 @@ jit_regex(VteRegex* regex,
         }
 }
 
-static VteRegex*
+static BteRegex*
 compile_regex_for_search(char const* pattern,
                          bool caseless,
                          GError** error)
@@ -716,7 +716,7 @@ compile_regex_for_search(char const* pattern,
         return regex;
 }
 
-static VteRegex*
+static BteRegex*
 compile_regex_for_match(char const* pattern,
                         bool caseless,
                         GError** error)
@@ -735,16 +735,16 @@ compile_regex_for_match(char const* pattern,
 /* search popover */
 
 #define VTEAPP_TYPE_SEARCH_POPOVER         (bteapp_search_popover_get_type())
-#define VTEAPP_SEARCH_POPOVER(o)           (G_TYPE_CHECK_INSTANCE_CAST((o), VTEAPP_TYPE_SEARCH_POPOVER, VteappSearchPopover))
-#define VTEAPP_SEARCH_POPOVER_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), VTEAPP_TYPE_SEARCH_POPOVER, VteappSearchPopoverClass))
+#define VTEAPP_SEARCH_POPOVER(o)           (G_TYPE_CHECK_INSTANCE_CAST((o), VTEAPP_TYPE_SEARCH_POPOVER, BteappSearchPopover))
+#define VTEAPP_SEARCH_POPOVER_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), VTEAPP_TYPE_SEARCH_POPOVER, BteappSearchPopoverClass))
 #define VTEAPP_IS_SEARCH_POPOVER(o)        (G_TYPE_CHECK_INSTANCE_TYPE((o), VTEAPP_TYPE_SEARCH_POPOVER))
 #define VTEAPP_IS_SEARCH_POPOVER_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE((k), VTEAPP_TYPE_SEARCH_POPOVER))
-#define VTEAPP_SEARCH_POPOVER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS((o), VTEAPP_TYPE_SEARCH_POPOVER, VteappSearchPopoverClass))
+#define VTEAPP_SEARCH_POPOVER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS((o), VTEAPP_TYPE_SEARCH_POPOVER, BteappSearchPopoverClass))
 
-typedef struct _VteappSearchPopover        VteappSearchPopover;
-typedef struct _VteappSearchPopoverClass   VteappSearchPopoverClass;
+typedef struct _BteappSearchPopover        BteappSearchPopover;
+typedef struct _BteappSearchPopoverClass   BteappSearchPopoverClass;
 
-struct _VteappSearchPopover {
+struct _BteappSearchPopover {
         CtkPopover parent;
 
         /* from CtkWidget template */
@@ -760,13 +760,13 @@ struct _VteappSearchPopover {
         CtkWidget* revealer;
         /* end */
 
-        VteTerminal *terminal;
+        BteTerminal *terminal;
         bool regex_caseless;
         bool has_regex;
         char* regex_pattern;
 };
 
-struct _VteappSearchPopoverClass {
+struct _BteappSearchPopoverClass {
         CtkPopoverClass parent;
 };
 
@@ -781,7 +781,7 @@ enum {
 static GParamSpec* search_popover_pspecs[SEARCH_POPOVER_N_PROPS];
 
 static void
-bteapp_search_popover_update_sensitivity(VteappSearchPopover* popover)
+bteapp_search_popover_update_sensitivity(BteappSearchPopover* popover)
 {
         bool can_search = popover->has_regex;
 
@@ -790,7 +790,7 @@ bteapp_search_popover_update_sensitivity(VteappSearchPopover* popover)
 }
 
 static void
-bteapp_search_popover_update_regex(VteappSearchPopover* popover)
+bteapp_search_popover_update_regex(BteappSearchPopover* popover)
 {
         char const* search_text = ctk_entry_get_text(CTK_ENTRY(popover->search_entry));
         bool caseless = ctk_toggle_button_get_active(popover->match_case_checkbutton) == FALSE;
@@ -840,13 +840,13 @@ bteapp_search_popover_update_regex(VteappSearchPopover* popover)
 
 static void
 bteapp_search_popover_wrap_around_toggled(CtkToggleButton* button,
-                                          VteappSearchPopover* popover)
+                                          BteappSearchPopover* popover)
 {
         bte_terminal_search_set_wrap_around(popover->terminal, ctk_toggle_button_get_active(button));
 }
 
 static void
-bteapp_search_popover_search_forward(VteappSearchPopover* popover)
+bteapp_search_popover_search_forward(BteappSearchPopover* popover)
 {
         if (!popover->has_regex)
                 return;
@@ -854,17 +854,17 @@ bteapp_search_popover_search_forward(VteappSearchPopover* popover)
 }
 
 static void
-bteapp_search_popover_search_backward(VteappSearchPopover* popover)
+bteapp_search_popover_search_backward(BteappSearchPopover* popover)
 {
         if (!popover->has_regex)
                 return;
         bte_terminal_search_find_previous(popover->terminal);
 }
 
-G_DEFINE_TYPE(VteappSearchPopover, bteapp_search_popover, CTK_TYPE_POPOVER)
+G_DEFINE_TYPE(BteappSearchPopover, bteapp_search_popover, CTK_TYPE_POPOVER)
 
 static void
-bteapp_search_popover_init(VteappSearchPopover* popover)
+bteapp_search_popover_init(BteappSearchPopover* popover)
 {
         ctk_widget_init_template(CTK_WIDGET(popover));
 
@@ -898,7 +898,7 @@ bteapp_search_popover_init(VteappSearchPopover* popover)
 static void
 bteapp_search_popover_finalize(GObject *object)
 {
-        VteappSearchPopover* popover = VTEAPP_SEARCH_POPOVER(object);
+        BteappSearchPopover* popover = VTEAPP_SEARCH_POPOVER(object);
 
         g_free(popover->regex_pattern);
 
@@ -911,11 +911,11 @@ bteapp_search_popover_set_property(GObject* object,
                                    const GValue* value,
                                    GParamSpec* pspec)
 {
-        VteappSearchPopover* popover = VTEAPP_SEARCH_POPOVER(object);
+        BteappSearchPopover* popover = VTEAPP_SEARCH_POPOVER(object);
 
         switch (prop_id) {
         case SEARCH_POPOVER_PROP_TERMINAL:
-                popover->terminal = reinterpret_cast<VteTerminal*>(g_value_get_object(value));
+                popover->terminal = reinterpret_cast<BteTerminal*>(g_value_get_object(value));
                 break;
         default:
                 G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -924,7 +924,7 @@ bteapp_search_popover_set_property(GObject* object,
 }
 
 static void
-bteapp_search_popover_class_init(VteappSearchPopoverClass* klass)
+bteapp_search_popover_class_init(BteappSearchPopoverClass* klass)
 {
         GObjectClass* gobject_class = G_OBJECT_CLASS(klass);
         gobject_class->finalize = bteapp_search_popover_finalize;
@@ -939,22 +939,22 @@ bteapp_search_popover_class_init(VteappSearchPopoverClass* klass)
 
         CtkWidgetClass* widget_class = CTK_WIDGET_CLASS(klass);
         ctk_widget_class_set_template_from_resource(widget_class, "/org/gnome/bte/app/ui/search-popover.ui");
-        ctk_widget_class_bind_template_child(widget_class, VteappSearchPopover, search_entry);
-        ctk_widget_class_bind_template_child(widget_class, VteappSearchPopover, search_prev_button);
-        ctk_widget_class_bind_template_child(widget_class, VteappSearchPopover, search_next_button);
-        ctk_widget_class_bind_template_child(widget_class, VteappSearchPopover, reveal_button);
-        ctk_widget_class_bind_template_child(widget_class, VteappSearchPopover, close_button);
-        ctk_widget_class_bind_template_child(widget_class, VteappSearchPopover, revealer);
-        ctk_widget_class_bind_template_child(widget_class, VteappSearchPopover, match_case_checkbutton);
-        ctk_widget_class_bind_template_child(widget_class, VteappSearchPopover, entire_word_checkbutton);
-        ctk_widget_class_bind_template_child(widget_class, VteappSearchPopover, regex_checkbutton);
-        ctk_widget_class_bind_template_child(widget_class, VteappSearchPopover, wrap_around_checkbutton);
+        ctk_widget_class_bind_template_child(widget_class, BteappSearchPopover, search_entry);
+        ctk_widget_class_bind_template_child(widget_class, BteappSearchPopover, search_prev_button);
+        ctk_widget_class_bind_template_child(widget_class, BteappSearchPopover, search_next_button);
+        ctk_widget_class_bind_template_child(widget_class, BteappSearchPopover, reveal_button);
+        ctk_widget_class_bind_template_child(widget_class, BteappSearchPopover, close_button);
+        ctk_widget_class_bind_template_child(widget_class, BteappSearchPopover, revealer);
+        ctk_widget_class_bind_template_child(widget_class, BteappSearchPopover, match_case_checkbutton);
+        ctk_widget_class_bind_template_child(widget_class, BteappSearchPopover, entire_word_checkbutton);
+        ctk_widget_class_bind_template_child(widget_class, BteappSearchPopover, regex_checkbutton);
+        ctk_widget_class_bind_template_child(widget_class, BteappSearchPopover, wrap_around_checkbutton);
 
         ctk_widget_class_set_css_name(widget_class, "bteapp-search-popover");
 }
 
 static CtkWidget*
-bteapp_search_popover_new(VteTerminal* terminal,
+bteapp_search_popover_new(BteTerminal* terminal,
                           CtkWidget* relative_to)
 {
         return reinterpret_cast<CtkWidget*>(g_object_new(VTEAPP_TYPE_SEARCH_POPOVER,
@@ -966,30 +966,30 @@ bteapp_search_popover_new(VteTerminal* terminal,
 /* terminal */
 
 #define VTEAPP_TYPE_TERMINAL         (bteapp_terminal_get_type())
-#define VTEAPP_TERMINAL(o)           (G_TYPE_CHECK_INSTANCE_CAST((o), VTEAPP_TYPE_TERMINAL, VteappTerminal))
-#define VTEAPP_TERMINAL_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), VTEAPP_TYPE_TERMINAL, VteappTerminalClass))
+#define VTEAPP_TERMINAL(o)           (G_TYPE_CHECK_INSTANCE_CAST((o), VTEAPP_TYPE_TERMINAL, BteappTerminal))
+#define VTEAPP_TERMINAL_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), VTEAPP_TYPE_TERMINAL, BteappTerminalClass))
 #define VTEAPP_IS_TERMINAL(o)        (G_TYPE_CHECK_INSTANCE_TYPE((o), VTEAPP_TYPE_TERMINAL))
 #define VTEAPP_IS_TERMINAL_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE((k), VTEAPP_TYPE_TERMINAL))
-#define VTEAPP_TERMINAL_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS((o), VTEAPP_TYPE_TERMINAL, VteappTerminalClass))
+#define VTEAPP_TERMINAL_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS((o), VTEAPP_TYPE_TERMINAL, BteappTerminalClass))
 
-typedef struct _VteappTerminal       VteappTerminal;
-typedef struct _VteappTerminalClass  VteappTerminalClass;
+typedef struct _BteappTerminal       BteappTerminal;
+typedef struct _BteappTerminalClass  BteappTerminalClass;
 
-struct _VteappTerminal {
-        VteTerminal parent;
+struct _BteappTerminal {
+        BteTerminal parent;
 
         cairo_pattern_t* background_pattern;
         bool has_backdrop;
         bool use_backdrop;
 };
 
-struct _VteappTerminalClass {
-        VteTerminalClass parent;
+struct _BteappTerminalClass {
+        BteTerminalClass parent;
 };
 
 static GType bteapp_terminal_get_type(void);
 
-G_DEFINE_TYPE(VteappTerminal, bteapp_terminal, VTE_TYPE_TERMINAL)
+G_DEFINE_TYPE(BteappTerminal, bteapp_terminal, VTE_TYPE_TERMINAL)
 
 #define BACKDROP_ALPHA (0.2)
 
@@ -998,7 +998,7 @@ bteapp_terminal_realize(CtkWidget* widget)
 {
         CTK_WIDGET_CLASS(bteapp_terminal_parent_class)->realize(widget);
 
-        VteappTerminal* terminal = VTEAPP_TERMINAL(widget);
+        BteappTerminal* terminal = VTEAPP_TERMINAL(widget);
         if (options.background_pixbuf != nullptr) {
                 auto surface = cdk_cairo_surface_create_from_pixbuf(options.background_pixbuf,
                                                                     0 /* take scale from window */,
@@ -1013,7 +1013,7 @@ bteapp_terminal_realize(CtkWidget* widget)
 static void
 bteapp_terminal_unrealize(CtkWidget* widget)
 {
-        VteappTerminal* terminal = VTEAPP_TERMINAL(widget);
+        BteappTerminal* terminal = VTEAPP_TERMINAL(widget);
         if (terminal->background_pattern != nullptr) {
                 cairo_pattern_destroy(terminal->background_pattern);
                 terminal->background_pattern = nullptr;
@@ -1026,7 +1026,7 @@ static gboolean
 bteapp_terminal_draw(CtkWidget* widget,
                      cairo_t* cr)
 {
-        VteappTerminal* terminal = VTEAPP_TERMINAL(widget);
+        BteappTerminal* terminal = VTEAPP_TERMINAL(widget);
         if (terminal->background_pattern != nullptr) {
                 cairo_push_group(cr);
 
@@ -1074,7 +1074,7 @@ bteapp_terminal_style_updated(CtkWidget* widget)
         auto context = ctk_widget_get_style_context(widget);
         auto flags = ctk_style_context_get_state(context);
 
-        VteappTerminal* terminal = VTEAPP_TERMINAL(widget);
+        BteappTerminal* terminal = VTEAPP_TERMINAL(widget);
         terminal->has_backdrop = (flags & CTK_STATE_FLAG_BACKDROP) != 0;
 
         if (options.use_theme_colors) {
@@ -1096,7 +1096,7 @@ bteapp_terminal_style_updated(CtkWidget* widget)
 }
 
 static void
-bteapp_terminal_class_init(VteappTerminalClass *klass)
+bteapp_terminal_class_init(BteappTerminalClass *klass)
 {
         CtkWidgetClass *widget_class = CTK_WIDGET_CLASS(klass);
         widget_class->realize = bteapp_terminal_realize;
@@ -1108,7 +1108,7 @@ bteapp_terminal_class_init(VteappTerminalClass *klass)
 }
 
 static void
-bteapp_terminal_init(VteappTerminal *terminal)
+bteapp_terminal_init(BteappTerminal *terminal)
 {
         terminal->background_pattern = nullptr;
         terminal->has_backdrop = false;
@@ -1127,16 +1127,16 @@ bteapp_terminal_new(void)
 /* terminal window */
 
 #define VTEAPP_TYPE_WINDOW         (bteapp_window_get_type())
-#define VTEAPP_WINDOW(o)           (G_TYPE_CHECK_INSTANCE_CAST((o), VTEAPP_TYPE_WINDOW, VteappWindow))
-#define VTEAPP_WINDOW_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), VTEAPP_TYPE_WINDOW, VteappWindowClass))
+#define VTEAPP_WINDOW(o)           (G_TYPE_CHECK_INSTANCE_CAST((o), VTEAPP_TYPE_WINDOW, BteappWindow))
+#define VTEAPP_WINDOW_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), VTEAPP_TYPE_WINDOW, BteappWindowClass))
 #define VTEAPP_IS_WINDOW(o)        (G_TYPE_CHECK_INSTANCE_TYPE((o), VTEAPP_TYPE_WINDOW))
 #define VTEAPP_IS_WINDOW_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE((k), VTEAPP_TYPE_WINDOW))
-#define VTEAPP_WINDOW_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS((o), VTEAPP_TYPE_WINDOW, VteappWindowClass))
+#define VTEAPP_WINDOW_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS((o), VTEAPP_TYPE_WINDOW, BteappWindowClass))
 
-typedef struct _VteappWindow       VteappWindow;
-typedef struct _VteappWindowClass  VteappWindowClass;
+typedef struct _BteappWindow       BteappWindow;
+typedef struct _BteappWindowClass  BteappWindowClass;
 
-struct _VteappWindow {
+struct _BteappWindow {
         CtkApplicationWindow parent;
 
         /* from CtkWidget template */
@@ -1150,7 +1150,7 @@ struct _VteappWindow {
         CtkMenuButton* gear_button;
         /* end */
 
-        VteTerminal* terminal;
+        BteTerminal* terminal;
         CtkClipboard* clipboard;
         GPid child_pid;
         CtkWidget* search_popover;
@@ -1166,7 +1166,7 @@ struct _VteappWindow {
         int cached_csd_height{0};
 };
 
-struct _VteappWindowClass {
+struct _BteappWindowClass {
         CtkApplicationWindowClass parent;
 };
 
@@ -1183,7 +1183,7 @@ static char const* const builtin_dingus[] = {
 #define MIN_ROWS    (2)
 
 static void
-bteapp_window_add_dingus(VteappWindow* window,
+bteapp_window_add_dingus(BteappWindow* window,
                          char const* const* dingus)
 {
         for (auto i = 0; dingus[i] != nullptr; i++) {
@@ -1206,7 +1206,7 @@ bteapp_window_add_dingus(VteappWindow* window,
 }
 
 static void
-bteapp_window_update_geometry(VteappWindow* window)
+bteapp_window_update_geometry(BteappWindow* window)
 {
         CtkWidget* window_widget = CTK_WIDGET(window);
         CtkWidget* terminal_widget = CTK_WIDGET(window->terminal);
@@ -1291,7 +1291,7 @@ bteapp_window_update_geometry(VteappWindow* window)
 }
 
 static void
-bteapp_window_resize(VteappWindow* window)
+bteapp_window_resize(BteappWindow* window)
 {
         /* Don't do this for maximised or tiled windows. */
         auto win = ctk_widget_get_window(CTK_WIDGET(window));
@@ -1310,14 +1310,14 @@ bteapp_window_resize(VteappWindow* window)
         int pixel_width = window->cached_chrome_width + window->cached_cell_width * columns;
         int pixel_height = window->cached_chrome_height + window->cached_cell_height * rows;
 
-        verbose_print("VteappWindow resize grid %dx%d pixel %dx%d\n",
+        verbose_print("BteappWindow resize grid %dx%d pixel %dx%d\n",
                       columns, rows, pixel_width, pixel_height);
 
         ctk_window_resize(CTK_WINDOW(window), pixel_width, pixel_height);
 }
 
 static void
-bteapp_window_parse_geometry(VteappWindow* window)
+bteapp_window_parse_geometry(BteappWindow* window)
 {
         /* First update the geometry hints, so that ctk_window_parse_geometry()
          * knows the char width/height and base size increments.
@@ -1366,7 +1366,7 @@ bteapp_window_parse_geometry(VteappWindow* window)
 }
 
 static void
-bteapp_window_adjust_font_size(VteappWindow* window,
+bteapp_window_adjust_font_size(BteappWindow* window,
                                double factor)
 {
         bte_terminal_set_font_scale(window->terminal,
@@ -1376,7 +1376,7 @@ bteapp_window_adjust_font_size(VteappWindow* window,
 }
 
 static void
-window_spawn_cb(VteTerminal* terminal,
+window_spawn_cb(BteTerminal* terminal,
                 GPid child_pid,
                 GError* error,
                 void* data)
@@ -1384,7 +1384,7 @@ window_spawn_cb(VteTerminal* terminal,
         if (terminal == nullptr) /* terminal destroyed while spawning */
                 return;
 
-        VteappWindow* window = VTEAPP_WINDOW(data);
+        BteappWindow* window = VTEAPP_WINDOW(data);
         window->child_pid = child_pid;
 
         if (child_pid != -1)
@@ -1402,7 +1402,7 @@ window_spawn_cb(VteTerminal* terminal,
 }
 
 static bool
-bteapp_window_launch_argv(VteappWindow* window,
+bteapp_window_launch_argv(BteappWindow* window,
                           char** argv,
                           GError** error)
 {
@@ -1427,7 +1427,7 @@ bteapp_window_launch_argv(VteappWindow* window,
 }
 
 static bool
-bteapp_window_launch_commandline(VteappWindow* window,
+bteapp_window_launch_commandline(BteappWindow* window,
                                  char* commandline,
                                  GError** error)
 {
@@ -1443,7 +1443,7 @@ bteapp_window_launch_commandline(VteappWindow* window,
 }
 
 static bool
-bteapp_window_launch_shell(VteappWindow* window,
+bteapp_window_launch_shell(BteappWindow* window,
                            GError** error)
 {
         char* shell = bte_get_user_shell();
@@ -1465,7 +1465,7 @@ bteapp_window_launch_shell(VteappWindow* window,
 }
 
 static bool
-bteapp_window_fork(VteappWindow* window,
+bteapp_window_fork(BteappWindow* window,
                    GError** error)
 {
         auto pty = bte_pty_new_sync(VTE_PTY_DEFAULT, nullptr, error);
@@ -1509,7 +1509,7 @@ bteapp_window_fork(VteappWindow* window,
 }
 
 static gboolean
-tick_cb(VteappWindow* window)
+tick_cb(BteappWindow* window)
 {
         static int i = 0;
         char buf[256];
@@ -1519,7 +1519,7 @@ tick_cb(VteappWindow* window)
 }
 
 static bool
-bteapp_window_tick(VteappWindow* window,
+bteapp_window_tick(BteappWindow* window,
                    GError** error)
 {
         g_timeout_add_seconds(1, (GSourceFunc) tick_cb, window);
@@ -1527,7 +1527,7 @@ bteapp_window_tick(VteappWindow* window,
 }
 
 static void
-bteapp_window_launch(VteappWindow* window)
+bteapp_window_launch(BteappWindow* window)
 {
         auto rv = bool{};
         auto error = bte::glib::Error{};
@@ -1548,7 +1548,7 @@ bteapp_window_launch(VteappWindow* window)
 }
 
 static void
-window_update_copy_sensitivity(VteappWindow* window)
+window_update_copy_sensitivity(BteappWindow* window)
 {
         auto action = g_action_map_lookup_action(G_ACTION_MAP(window), "copy");
         g_simple_action_set_enabled(G_SIMPLE_ACTION(action),
@@ -1556,7 +1556,7 @@ window_update_copy_sensitivity(VteappWindow* window)
 }
 
 static void
-window_update_paste_sensitivity(VteappWindow* window)
+window_update_paste_sensitivity(BteappWindow* window)
 {
         CdkAtom* targets;
         int n_targets;
@@ -1578,7 +1578,7 @@ window_action_copy_cb(GSimpleAction* action,
                       GVariant* parameter,
                       void* data)
 {
-        VteappWindow* window = VTEAPP_WINDOW(data);
+        BteappWindow* window = VTEAPP_WINDOW(data);
         char const* str = g_variant_get_string(parameter, nullptr);
 
         bte_terminal_copy_clipboard_format(window->terminal,
@@ -1591,7 +1591,7 @@ window_action_copy_match_cb(GSimpleAction* action,
                             GVariant* parameter,
                             void* data)
 {
-        VteappWindow* window = VTEAPP_WINDOW(data);
+        BteappWindow* window = VTEAPP_WINDOW(data);
         gsize len;
         char const* str = g_variant_get_string(parameter, &len);
         ctk_clipboard_set_text(window->clipboard, str, len);
@@ -1602,7 +1602,7 @@ window_action_paste_cb(GSimpleAction* action,
                        GVariant* parameter,
                        void* data)
 {
-        VteappWindow* window = VTEAPP_WINDOW(data);
+        BteappWindow* window = VTEAPP_WINDOW(data);
         bte_terminal_paste_clipboard(window->terminal);
 }
 
@@ -1611,7 +1611,7 @@ window_action_reset_cb(GSimpleAction* action,
                        GVariant* parameter,
                        void* data)
 {
-        VteappWindow* window = VTEAPP_WINDOW(data);
+        BteappWindow* window = VTEAPP_WINDOW(data);
         bool clear;
         CdkModifierType modifiers;
 
@@ -1630,7 +1630,7 @@ window_action_find_cb(GSimpleAction* action,
                       GVariant* parameter,
                       void* data)
 {
-        VteappWindow* window = VTEAPP_WINDOW(data);
+        BteappWindow* window = VTEAPP_WINDOW(data);
         ctk_toggle_button_set_active(window->find_button, true);
 }
 
@@ -1640,7 +1640,7 @@ window_action_fullscreen_state_cb (GSimpleAction *action,
                                    GVariant *state,
                                    void* data)
 {
-        VteappWindow* window = VTEAPP_WINDOW(data);
+        BteappWindow* window = VTEAPP_WINDOW(data);
 
         if (!ctk_widget_get_realized(CTK_WIDGET(window)))
                 return;
@@ -1654,7 +1654,7 @@ window_action_fullscreen_state_cb (GSimpleAction *action,
 }
 
 static bool
-bteapp_window_show_context_menu(VteappWindow* window,
+bteapp_window_show_context_menu(BteappWindow* window,
                                 guint button,
                                 guint32 timestamp,
                                 CdkEvent* event)
@@ -1736,7 +1736,7 @@ bteapp_window_show_context_menu(VteappWindow* window,
 
 static gboolean
 window_popup_menu_cb(CtkWidget* widget,
-                     VteappWindow* window)
+                     BteappWindow* window)
 {
         return bteapp_window_show_context_menu(window, 0, ctk_get_current_event_time(), nullptr);
 }
@@ -1744,7 +1744,7 @@ window_popup_menu_cb(CtkWidget* widget,
 static gboolean
 window_button_press_cb(CtkWidget* widget,
                        CdkEventButton* event,
-                       VteappWindow* window)
+                       BteappWindow* window)
 {
         if (event->button != CDK_BUTTON_SECONDARY)
                 return false;
@@ -1754,18 +1754,18 @@ window_button_press_cb(CtkWidget* widget,
 }
 
 static void
-window_cell_size_changed_cb(VteTerminal* term,
+window_cell_size_changed_cb(BteTerminal* term,
                             guint width,
                             guint height,
-                            VteappWindow* window)
+                            BteappWindow* window)
 {
         bteapp_window_update_geometry(window);
 }
 
 static void
-window_child_exited_cb(VteTerminal* term,
+window_child_exited_cb(BteTerminal* term,
                        int status,
-                       VteappWindow* window)
+                       BteappWindow* window)
 {
         if (WIFEXITED(status))
                 verbose_printerr("Child exited with status %x\n", WEXITSTATUS(status));
@@ -1804,28 +1804,28 @@ window_child_exited_cb(VteTerminal* term,
 static void
 window_clipboard_owner_change_cb(CtkClipboard* clipboard,
                                  CdkEvent* event,
-                                 VteappWindow* window)
+                                 BteappWindow* window)
 {
         window_update_paste_sensitivity(window);
 }
 
 static void
-window_decrease_font_size_cb(VteTerminal* terminal,
-                             VteappWindow* window)
+window_decrease_font_size_cb(BteTerminal* terminal,
+                             BteappWindow* window)
 {
         bteapp_window_adjust_font_size(window, 1.0 / 1.2);
 }
 
 static void
-window_increase_font_size_cb(VteTerminal* terminal,
-                             VteappWindow* window)
+window_increase_font_size_cb(BteTerminal* terminal,
+                             BteappWindow* window)
 {
         bteapp_window_adjust_font_size(window, 1.2);
 }
 
 static void
-window_deiconify_window_cb(VteTerminal* terminal,
-                           VteappWindow* window)
+window_deiconify_window_cb(BteTerminal* terminal,
+                           BteappWindow* window)
 {
         if (!options.allow_window_ops)
                 return;
@@ -1834,8 +1834,8 @@ window_deiconify_window_cb(VteTerminal* terminal,
 }
 
 static void
-window_iconify_window_cb(VteTerminal* terminal,
-                         VteappWindow* window)
+window_iconify_window_cb(BteTerminal* terminal,
+                         BteappWindow* window)
 {
         if (!options.allow_window_ops)
                 return;
@@ -1844,8 +1844,8 @@ window_iconify_window_cb(VteTerminal* terminal,
 }
 
 static void
-window_icon_title_changed_cb(VteTerminal* terminal,
-                         VteappWindow* window)
+window_icon_title_changed_cb(BteTerminal* terminal,
+                         BteappWindow* window)
 {
         if (!options.icon_title)
                 return;
@@ -1855,16 +1855,16 @@ window_icon_title_changed_cb(VteTerminal* terminal,
 }
 
 static void
-window_window_title_changed_cb(VteTerminal* terminal,
-                               VteappWindow* window)
+window_window_title_changed_cb(BteTerminal* terminal,
+                               BteappWindow* window)
 {
         ctk_window_set_title(CTK_WINDOW(window),
                              bte_terminal_get_window_title(window->terminal));
 }
 
 static void
-window_lower_window_cb(VteTerminal* terminal,
-                       VteappWindow* window)
+window_lower_window_cb(BteTerminal* terminal,
+                       BteappWindow* window)
 {
         if (!options.allow_window_ops)
                 return;
@@ -1875,8 +1875,8 @@ window_lower_window_cb(VteTerminal* terminal,
 }
 
 static void
-window_raise_window_cb(VteTerminal* terminal,
-                       VteappWindow* window)
+window_raise_window_cb(BteTerminal* terminal,
+                       BteappWindow* window)
 {
         if (!options.allow_window_ops)
                 return;
@@ -1887,8 +1887,8 @@ window_raise_window_cb(VteTerminal* terminal,
 }
 
 static void
-window_maximize_window_cb(VteTerminal* terminal,
-                          VteappWindow* window)
+window_maximize_window_cb(BteTerminal* terminal,
+                          BteappWindow* window)
 {
         if (!options.allow_window_ops)
                 return;
@@ -1897,8 +1897,8 @@ window_maximize_window_cb(VteTerminal* terminal,
 }
 
 static void
-window_restore_window_cb(VteTerminal* terminal,
-                         VteappWindow* window)
+window_restore_window_cb(BteTerminal* terminal,
+                         BteappWindow* window)
 {
         if (!options.allow_window_ops)
                 return;
@@ -1907,10 +1907,10 @@ window_restore_window_cb(VteTerminal* terminal,
 }
 
 static void
-window_move_window_cb(VteTerminal* terminal,
+window_move_window_cb(BteTerminal* terminal,
                       guint x,
                       guint y,
-                      VteappWindow* window)
+                      BteappWindow* window)
 {
         if (!options.allow_window_ops)
                 return;
@@ -1921,7 +1921,7 @@ window_move_window_cb(VteTerminal* terminal,
 static void
 window_notify_cb(GObject* object,
                  GParamSpec* pspec,
-                 VteappWindow* window)
+                 BteappWindow* window)
 {
         if (pspec->owner_type != VTE_TYPE_TERMINAL)
                 return;
@@ -1936,17 +1936,17 @@ window_notify_cb(GObject* object,
 }
 
 static void
-window_refresh_window_cb(VteTerminal* terminal,
-                         VteappWindow* window)
+window_refresh_window_cb(BteTerminal* terminal,
+                         BteappWindow* window)
 {
         ctk_widget_queue_draw(CTK_WIDGET(window));
 }
 
 static void
-window_resize_window_cb(VteTerminal* terminal,
+window_resize_window_cb(BteTerminal* terminal,
                         guint columns,
                         guint rows,
-                        VteappWindow* window)
+                        BteappWindow* window)
 {
         if (!options.allow_window_ops)
                 return;
@@ -1958,8 +1958,8 @@ window_resize_window_cb(VteTerminal* terminal,
 }
 
 static void
-window_selection_changed_cb(VteTerminal* terminal,
-                            VteappWindow* window)
+window_selection_changed_cb(BteTerminal* terminal,
+                            BteappWindow* window)
 {
         window_update_copy_sensitivity(window);
 }
@@ -1967,7 +1967,7 @@ window_selection_changed_cb(VteTerminal* terminal,
 static void
 window_input_enabled_state_cb(GAction* action,
                               GParamSpec* pspec,
-                              VteappWindow* window)
+                              BteappWindow* window)
 {
         ctk_widget_set_visible(window->readonly_emblem,
                                !g_variant_get_boolean(g_action_get_state(action)));
@@ -1975,7 +1975,7 @@ window_input_enabled_state_cb(GAction* action,
 
 static void
 window_search_popover_closed_cb(CtkPopover* popover,
-                                VteappWindow* window)
+                                BteappWindow* window)
 {
         if (ctk_toggle_button_get_active(window->find_button))
                 ctk_toggle_button_set_active(window->find_button, false);
@@ -1983,7 +1983,7 @@ window_search_popover_closed_cb(CtkPopover* popover,
 
 static void
 window_find_button_toggled_cb(CtkToggleButton* button,
-                              VteappWindow* window)
+                              BteappWindow* window)
 {
         auto active = ctk_toggle_button_get_active(button);
 
@@ -1991,10 +1991,10 @@ window_find_button_toggled_cb(CtkToggleButton* button,
                 ctk_widget_set_visible(CTK_WIDGET(window->search_popover), active);
 }
 
-G_DEFINE_TYPE(VteappWindow, bteapp_window, CTK_TYPE_APPLICATION_WINDOW)
+G_DEFINE_TYPE(BteappWindow, bteapp_window, CTK_TYPE_APPLICATION_WINDOW)
 
 static void
-bteapp_window_init(VteappWindow* window)
+bteapp_window_init(BteappWindow* window)
 {
         ctk_widget_init_template(CTK_WIDGET(window));
 
@@ -2004,7 +2004,7 @@ bteapp_window_init(VteappWindow* window)
 static void
 bteapp_window_constructed(GObject *object)
 {
-        VteappWindow* window = VTEAPP_WINDOW(object);
+        BteappWindow* window = VTEAPP_WINDOW(object);
 
         G_OBJECT_CLASS(bteapp_window_parent_class)->constructed(object);
 
@@ -2014,7 +2014,7 @@ bteapp_window_constructed(GObject *object)
                 ctk_window_set_decorated(CTK_WINDOW(window), false);
 
         /* Create terminal and connect scrollbar */
-        window->terminal = reinterpret_cast<VteTerminal*>(bteapp_terminal_new());
+        window->terminal = reinterpret_cast<BteTerminal*>(bteapp_terminal_new());
 
         auto margin = options.extra_margin;
         if (margin >= 0) {
@@ -2176,7 +2176,7 @@ bteapp_window_constructed(GObject *object)
 static void
 bteapp_window_dispose(GObject *object)
 {
-        VteappWindow* window = VTEAPP_WINDOW(object);
+        BteappWindow* window = VTEAPP_WINDOW(object);
 
         if (window->clipboard != nullptr) {
                 g_signal_handlers_disconnect_by_func(window->clipboard,
@@ -2199,8 +2199,8 @@ bteapp_window_realize(CtkWidget* widget)
         CTK_WIDGET_CLASS(bteapp_window_parent_class)->realize(widget);
 
         /* Now we can know the CSD size, and thus apply the geometry. */
-        VteappWindow* window = VTEAPP_WINDOW(widget);
-        verbose_print("VteappWindow::realize\n");
+        BteappWindow* window = VTEAPP_WINDOW(widget);
+        verbose_print("BteappWindow::realize\n");
         bteapp_window_resize(window);
 }
 
@@ -2210,8 +2210,8 @@ bteapp_window_show(CtkWidget* widget)
         CTK_WIDGET_CLASS(bteapp_window_parent_class)->show(widget);
 
         /* Re-apply the geometry. */
-        VteappWindow* window = VTEAPP_WINDOW(widget);
-        verbose_print("VteappWindow::show\n");
+        BteappWindow* window = VTEAPP_WINDOW(widget);
+        verbose_print("BteappWindow::show\n");
         bteapp_window_resize(window);
 }
 
@@ -2221,8 +2221,8 @@ bteapp_window_style_updated(CtkWidget* widget)
         CTK_WIDGET_CLASS(bteapp_window_parent_class)->style_updated(widget);
 
         /* Re-apply the geometry. */
-        VteappWindow* window = VTEAPP_WINDOW(widget);
-        verbose_print("VteappWindow::style-update\n");
+        BteappWindow* window = VTEAPP_WINDOW(widget);
+        verbose_print("BteappWindow::style-update\n");
         bteapp_window_resize(window);
 }
 
@@ -2230,7 +2230,7 @@ static gboolean
 bteapp_window_state_event (CtkWidget* widget,
                            CdkEventWindowState* event)
 {
-        VteappWindow* window = VTEAPP_WINDOW(widget);
+        BteappWindow* window = VTEAPP_WINDOW(widget);
 
         if (event->changed_mask & CDK_WINDOW_STATE_FULLSCREEN) {
                 window->fullscreen = (event->new_window_state & CDK_WINDOW_STATE_FULLSCREEN) != 0;
@@ -2243,7 +2243,7 @@ bteapp_window_state_event (CtkWidget* widget,
 }
 
 static void
-bteapp_window_class_init(VteappWindowClass* klass)
+bteapp_window_class_init(BteappWindowClass* klass)
 {
         GObjectClass* gobject_class = G_OBJECT_CLASS(klass);
         gobject_class->constructed  = bteapp_window_constructed;
@@ -2258,20 +2258,20 @@ bteapp_window_class_init(VteappWindowClass* klass)
         ctk_widget_class_set_template_from_resource(widget_class, "/org/gnome/bte/app/ui/window.ui");
         ctk_widget_class_set_css_name(widget_class, "bteapp-window");
 
-        ctk_widget_class_bind_template_child(widget_class, VteappWindow, window_box);
-        ctk_widget_class_bind_template_child(widget_class, VteappWindow, scrollbar);
-        /* ctk_widget_class_bind_template_child(widget_class, VteappWindow, notification_box); */
-        ctk_widget_class_bind_template_child(widget_class, VteappWindow, readonly_emblem);
-        /* ctk_widget_class_bind_template_child(widget_class, VteappWindow, copy_button); */
-        /* ctk_widget_class_bind_template_child(widget_class, VteappWindow, paste_button); */
-        ctk_widget_class_bind_template_child(widget_class, VteappWindow, find_button);
-        ctk_widget_class_bind_template_child(widget_class, VteappWindow, gear_button);
+        ctk_widget_class_bind_template_child(widget_class, BteappWindow, window_box);
+        ctk_widget_class_bind_template_child(widget_class, BteappWindow, scrollbar);
+        /* ctk_widget_class_bind_template_child(widget_class, BteappWindow, notification_box); */
+        ctk_widget_class_bind_template_child(widget_class, BteappWindow, readonly_emblem);
+        /* ctk_widget_class_bind_template_child(widget_class, BteappWindow, copy_button); */
+        /* ctk_widget_class_bind_template_child(widget_class, BteappWindow, paste_button); */
+        ctk_widget_class_bind_template_child(widget_class, BteappWindow, find_button);
+        ctk_widget_class_bind_template_child(widget_class, BteappWindow, gear_button);
 }
 
-static VteappWindow*
+static BteappWindow*
 bteapp_window_new(GApplication* app)
 {
-        return reinterpret_cast<VteappWindow*>(g_object_new(VTEAPP_TYPE_WINDOW,
+        return reinterpret_cast<BteappWindow*>(g_object_new(VTEAPP_TYPE_WINDOW,
                                                             "application", app,
                                                             nullptr));
 }
@@ -2279,22 +2279,22 @@ bteapp_window_new(GApplication* app)
 /* application */
 
 #define VTEAPP_TYPE_APPLICATION         (bteapp_application_get_type())
-#define VTEAPP_APPLICATION(o)           (G_TYPE_CHECK_INSTANCE_CAST((o), VTEAPP_TYPE_APPLICATION, VteappApplication))
-#define VTEAPP_APPLICATION_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), VTEAPP_TYPE_APPLICATION, VteappApplicationClass))
+#define VTEAPP_APPLICATION(o)           (G_TYPE_CHECK_INSTANCE_CAST((o), VTEAPP_TYPE_APPLICATION, BteappApplication))
+#define VTEAPP_APPLICATION_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), VTEAPP_TYPE_APPLICATION, BteappApplicationClass))
 #define VTEAPP_IS_APPLICATION(o)        (G_TYPE_CHECK_INSTANCE_TYPE((o), VTEAPP_TYPE_APPLICATION))
 #define VTEAPP_IS_APPLICATION_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE((k), VTEAPP_TYPE_APPLICATION))
-#define VTEAPP_APPLICATION_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS((o), VTEAPP_TYPE_APPLICATION, VteappApplicationClass))
+#define VTEAPP_APPLICATION_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS((o), VTEAPP_TYPE_APPLICATION, BteappApplicationClass))
 
-typedef struct _VteappApplication       VteappApplication;
-typedef struct _VteappApplicationClass  VteappApplicationClass;
+typedef struct _BteappApplication       BteappApplication;
+typedef struct _BteappApplicationClass  BteappApplicationClass;
 
-struct _VteappApplication {
+struct _BteappApplication {
         CtkApplication parent;
 
         guint input_source;
 };
 
-struct _VteappApplicationClass {
+struct _BteappApplicationClass {
         CtkApplicationClass parent;
 };
 
@@ -2326,7 +2326,7 @@ app_action_close_cb(GSimpleAction* action,
 static gboolean
 app_stdin_readable_cb(int fd,
                       GIOCondition condition,
-                      VteappApplication* application)
+                      BteappApplication* application)
 {
         auto eos = bool{false};
         if (condition & G_IO_IN) {
@@ -2354,10 +2354,10 @@ app_stdin_readable_cb(int fd,
         return G_SOURCE_CONTINUE;
 }
 
-G_DEFINE_TYPE(VteappApplication, bteapp_application, CTK_TYPE_APPLICATION)
+G_DEFINE_TYPE(BteappApplication, bteapp_application, CTK_TYPE_APPLICATION)
 
 static void
-bteapp_application_init(VteappApplication* application)
+bteapp_application_init(BteappApplication* application)
 {
         g_object_set(ctk_settings_get_default(),
                      "ctk-enable-mnemonics", FALSE,
@@ -2384,7 +2384,7 @@ bteapp_application_init(VteappApplication* application)
 static void
 bteapp_application_dispose(GObject* object)
 {
-        VteappApplication* application = VTEAPP_APPLICATION(object);
+        BteappApplication* application = VTEAPP_APPLICATION(object);
 
         if (application->input_source != 0) {
                 g_source_remove(application->input_source);
@@ -2419,7 +2419,7 @@ bteapp_application_activate(GApplication* application)
 }
 
 static void
-bteapp_application_class_init(VteappApplicationClass* klass)
+bteapp_application_class_init(BteappApplicationClass* klass)
 {
         GObjectClass* object_class = G_OBJECT_CLASS(klass);
         object_class->dispose = bteapp_application_dispose;
@@ -2433,7 +2433,7 @@ static GApplication*
 bteapp_application_new(void)
 {
         return reinterpret_cast<GApplication*>(g_object_new(VTEAPP_TYPE_APPLICATION,
-                                                            "application-id", "org.gnome.Vte.Application",
+                                                            "application-id", "org.gnome.Bte.Application",
                                                             "flags", guint(G_APPLICATION_NON_UNIQUE),
                                                             nullptr));
 }

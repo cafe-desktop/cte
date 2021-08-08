@@ -44,7 +44,7 @@
 #if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic ignored "-Wcast-function-type"
 #endif
-G_DEFINE_BOXED_TYPE(VteRegex, bte_regex,
+G_DEFINE_BOXED_TYPE(BteRegex, bte_regex,
                     bte_regex_ref, (GBoxedFreeFunc)bte_regex_unref)
 #pragma GCC diagnostic pop
 
@@ -52,14 +52,14 @@ G_DEFINE_QUARK(bte-regex-error, bte_regex_error)
 
 /**
  * bte_regex_ref:
- * @regex: (transfer none): a #VteRegex
+ * @regex: (transfer none): a #BteRegex
  *
  * Increases the reference count of @regex by one.
  *
  * Returns: @regex
  */
-VteRegex *
-bte_regex_ref(VteRegex *regex) noexcept
+BteRegex *
+bte_regex_ref(BteRegex *regex) noexcept
 {
         g_return_val_if_fail(regex != nullptr, nullptr);
 
@@ -68,15 +68,15 @@ bte_regex_ref(VteRegex *regex) noexcept
 
 /**
  * bte_regex_unref:
- * @regex: (transfer full): a #VteRegex
+ * @regex: (transfer full): a #BteRegex
  *
  * Decreases the reference count of @regex by one, and frees @regex
  * if the refcount reaches zero.
  *
  * Returns: %NULL
  */
-VteRegex *
-bte_regex_unref(VteRegex* regex) noexcept
+BteRegex *
+bte_regex_unref(BteRegex* regex) noexcept
 {
         g_return_val_if_fail(regex != nullptr, nullptr);
 
@@ -84,7 +84,7 @@ bte_regex_unref(VteRegex* regex) noexcept
         return nullptr;
 }
 
-static VteRegex*
+static BteRegex*
 bte_regex_new(bte::base::Regex::Purpose purpose,
               std::string_view const& pattern,
               uint32_t flags,
@@ -117,9 +117,9 @@ catch (...)
  * The regex will be compiled using %PCRE2_UTF and possibly other flags, in
  * addition to the flags supplied in @flags.
  *
- * Returns: (transfer full): a newly created #VteRegex, or %NULL with @error filled in
+ * Returns: (transfer full): a newly created #BteRegex, or %NULL with @error filled in
  */
-VteRegex *
+BteRegex *
 bte_regex_new_for_match(const char *pattern,
                         gssize      pattern_length,
                         guint32     flags,
@@ -155,9 +155,9 @@ catch (...)
  * The regex will be compiled using %PCRE2_UTF and possibly other flags, in
  * addition to the flags supplied in @flags.
  *
- * Returns: (transfer full): a newly created #VteRegex, or %NULL with @error filled in
+ * Returns: (transfer full): a newly created #BteRegex, or %NULL with @error filled in
  */
-VteRegex *
+BteRegex *
 bte_regex_new_for_search(const char *pattern,
                          gssize      pattern_length,
                          guint32     flags,
@@ -178,7 +178,7 @@ catch (...)
 
 /**
  * bte_regex_jit:
- * @regex: a #VteRegex
+ * @regex: a #BteRegex
  *
  * If the platform supports JITing, JIT compiles @regex.
  *
@@ -186,7 +186,7 @@ catch (...)
  *   JIT support), or %FALSE with @error filled in
  */
 gboolean
-bte_regex_jit(VteRegex *regex,
+bte_regex_jit(BteRegex *regex,
               guint     flags,
               GError  **error) noexcept
 try
@@ -201,7 +201,7 @@ catch (...)
 }
 
 bool
-_bte_regex_has_purpose(VteRegex *regex,
+_bte_regex_has_purpose(BteRegex *regex,
                        bte::base::Regex::Purpose purpose)
 {
         g_return_val_if_fail(regex != nullptr, false);
@@ -210,7 +210,7 @@ _bte_regex_has_purpose(VteRegex *regex,
 }
 
 bool
-_bte_regex_has_multiline_compile_flag(VteRegex *regex)
+_bte_regex_has_multiline_compile_flag(BteRegex *regex)
 {
         g_return_val_if_fail(regex != nullptr, 0);
 
@@ -219,7 +219,7 @@ _bte_regex_has_multiline_compile_flag(VteRegex *regex)
 
 /**
  * bte_regex_substitute:
- * @regex: a #VteRegex
+ * @regex: a #BteRegex
  * @subject: the subject string
  * @replacement: the replacement string
  * @flags: PCRE2 match flags
@@ -233,7 +233,7 @@ _bte_regex_has_multiline_compile_flag(VteRegex *regex)
  * Since: 0.56
  */
 char *
-bte_regex_substitute(VteRegex *regex,
+bte_regex_substitute(BteRegex *regex,
                      const char *subject,
                      const char *replacement,
                      guint32 flags,

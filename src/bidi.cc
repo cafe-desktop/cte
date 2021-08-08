@@ -200,7 +200,7 @@ is_arabic(gunichar c)
 void
 BidiRunner::explicit_line_shape(bte::grid::row_t row)
 {
-        const VteRowData *row_data = m_ringview->get_row(row);
+        const BteRowData *row_data = m_ringview->get_row(row);
 
         BidiRow *bidirow = m_ringview->get_bidirow_writable(row);
 
@@ -218,7 +218,7 @@ BidiRunner::explicit_line_shape(bte::grid::row_t row)
 
         int count;
 
-        const VteCell *cell;
+        const BteCell *cell;
         gunichar c;
         gunichar base;
         int i, j;  /* visual columns */
@@ -361,7 +361,7 @@ void
 BidiRunner::paragraph(bte::grid::row_t start, bte::grid::row_t end,
                       bool do_bidi, bool do_shaping)
 {
-        const VteRowData *row_data = m_ringview->get_row(start);
+        const BteRowData *row_data = m_ringview->get_row(start);
 
         if (G_UNLIKELY (m_ringview->get_width() > G_MAXUSHORT)) {
                 /* log2vis and vis2log mappings have 2 bytes per cell.
@@ -406,8 +406,8 @@ BidiRunner::explicit_paragraph(bte::grid::row_t start, bte::grid::row_t end,
 bool
 BidiRunner::implicit_paragraph(bte::grid::row_t start, bte::grid::row_t end, bool do_shaping)
 {
-        const VteCell *cell;
-        const VteRowData *row_data;
+        const BteCell *cell;
+        const BteRowData *row_data;
         bool rtl;
         bool autodir;
         bool has_foreign;

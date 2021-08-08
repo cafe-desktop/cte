@@ -113,13 +113,13 @@
  * VTE_HYPERLINK_COUNT_MAX inclusive, plus one more technical idx is also required, see below.
  * This is just a safety cap because the number of URIs is bound by the number of cells in the ring
  * (excluding the stream) which should be way lower than this at sane window sizes.
- * Make sure there are enough bits to store them in VteCellAttr.hyperlink_idx.
+ * Make sure there are enough bits to store them in BteCellAttr.hyperlink_idx.
  * Also make sure _bte_ring_hyperlink_gc() can allocate a large enough bitmap. */
 #define VTE_HYPERLINK_COUNT_MAX         ((1 << 20) - 2)
 
 /* Used when thawing a row from the stream in order to display it, to denote
  * hyperlinks whose target is currently irrelevant.
- * Make sure there are enough bits to store this in VteCellAttr.hyperlink_idx */
+ * Make sure there are enough bits to store this in BteCellAttr.hyperlink_idx */
 #define VTE_HYPERLINK_IDX_TARGET_IN_STREAM      (VTE_HYPERLINK_COUNT_MAX + 1)
 
 /* Max length allowed in the id= parameter of an OSC 8 sequence.
@@ -128,7 +128,7 @@
 
 /* Max length of all the hyperlink data stored in the streams as a string.
  * Currently the hyperlink data is the ID and URI and a separator in between.
- * Make sure there are enough bits to store this in VteStreamCellAttr.hyperlink_length */
+ * Make sure there are enough bits to store this in BteStreamCellAttr.hyperlink_length */
 #define VTE_HYPERLINK_TOTAL_LENGTH_MAX  (VTE_HYPERLINK_ID_LENGTH_MAX + 1 + VTE_HYPERLINK_URI_LENGTH_MAX)
 
 /* Max length of title */

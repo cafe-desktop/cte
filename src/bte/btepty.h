@@ -40,7 +40,7 @@ GQuark bte_pty_error_quark (void) _VTE_CXX_NOEXCEPT;
 /**
  * VTE_PTY_ERROR:
  *
- * Error domain for VTE PTY errors. Errors in this domain will be from the #VtePtyError
+ * Error domain for VTE PTY errors. Errors in this domain will be from the #BtePtyError
  * enumeration. See #GError for more information on error domains.
  */
 #define VTE_PTY_ERROR (bte_pty_error_quark ())
@@ -48,55 +48,55 @@ GQuark bte_pty_error_quark (void) _VTE_CXX_NOEXCEPT;
 /* VTE PTY object */
 
 #define VTE_TYPE_PTY            (bte_pty_get_type())
-#define VTE_PTY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), VTE_TYPE_PTY, VtePty))
-#define VTE_PTY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  VTE_TYPE_PTY, VtePtyClass))
+#define VTE_PTY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), VTE_TYPE_PTY, BtePty))
+#define VTE_PTY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  VTE_TYPE_PTY, BtePtyClass))
 #define VTE_IS_PTY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), VTE_TYPE_PTY))
 #define VTE_IS_PTY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  VTE_TYPE_PTY))
-#define VTE_PTY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  VTE_TYPE_PTY, VtePtyClass))
+#define VTE_PTY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  VTE_TYPE_PTY, BtePtyClass))
 
-typedef struct _VtePty        VtePty;
-typedef struct _VtePtyClass   VtePtyClass;
+typedef struct _BtePty        BtePty;
+typedef struct _BtePtyClass   BtePtyClass;
 
 _VTE_PUBLIC
 GType bte_pty_get_type (void);
 
 _VTE_PUBLIC
-VtePty *bte_pty_new_sync (VtePtyFlags flags,
+BtePty *bte_pty_new_sync (BtePtyFlags flags,
                           GCancellable *cancellable,
                           GError **error) _VTE_CXX_NOEXCEPT;
 
 _VTE_PUBLIC
-VtePty *bte_pty_new_foreign_sync (int fd,
+BtePty *bte_pty_new_foreign_sync (int fd,
                                   GCancellable *cancellable,
                                   GError **error) _VTE_CXX_NOEXCEPT;
 
 _VTE_PUBLIC
-int bte_pty_get_fd (VtePty *pty) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+int bte_pty_get_fd (BtePty *pty) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 _VTE_PUBLIC
-void bte_pty_child_setup (VtePty *pty) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+void bte_pty_child_setup (BtePty *pty) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 _VTE_PUBLIC
-gboolean bte_pty_get_size (VtePty *pty,
+gboolean bte_pty_get_size (BtePty *pty,
                            int *rows,
                            int *columns,
                            GError **error) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 _VTE_PUBLIC
-gboolean bte_pty_set_size (VtePty *pty,
+gboolean bte_pty_set_size (BtePty *pty,
                            int rows,
                            int columns,
                            GError **error) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
 _VTE_PUBLIC
-gboolean bte_pty_set_utf8 (VtePty *pty,
+gboolean bte_pty_set_utf8 (BtePty *pty,
                            gboolean utf8,
                            GError **error) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
-G_DEFINE_AUTOPTR_CLEANUP_FUNC(VtePty, g_object_unref)
+G_DEFINE_AUTOPTR_CLEANUP_FUNC(BtePty, g_object_unref)
 
 _VTE_PUBLIC
-void bte_pty_spawn_async(VtePty *pty,
+void bte_pty_spawn_async(BtePty *pty,
                          const char *working_directory,
                          char **argv,
                          char **envv,
@@ -110,7 +110,7 @@ void bte_pty_spawn_async(VtePty *pty,
                          gpointer user_data) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) _VTE_GNUC_NONNULL(3);
 
 _VTE_PUBLIC
-void bte_pty_spawn_with_fds_async(VtePty *pty,
+void bte_pty_spawn_with_fds_async(BtePty *pty,
                                   char const* working_directory,
                                   char const* const* argv,
                                   char const* const* envv,
@@ -128,7 +128,7 @@ void bte_pty_spawn_with_fds_async(VtePty *pty,
                                   gpointer user_data) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) _VTE_GNUC_NONNULL(3);
 
 _VTE_PUBLIC
-gboolean bte_pty_spawn_finish(VtePty *pty,
+gboolean bte_pty_spawn_finish(BtePty *pty,
                               GAsyncResult *result,
                               GPid *child_pid /* out */,
                               GError **error) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1) _VTE_GNUC_NONNULL(2);
