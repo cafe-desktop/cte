@@ -20,7 +20,7 @@
 [[ $- == *i* ]] || return 0
 
 # Not running under bte?
-[ "${VTE_VERSION:-0}" -ge 3405 ] || return 0
+[ "${BTE_VERSION:-0}" -ge 3405 ] || return 0
 
 __bte_osc7 () {
   printf "\033]7;file://%s%s\033\\" "${HOSTNAME}" "$(@libexecdir@/bte-urlencode-cwd)"

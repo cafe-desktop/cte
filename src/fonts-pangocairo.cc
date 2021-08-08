@@ -24,7 +24,7 @@
 #include "btedefines.hh"
 
 /* Have a space between letters to make sure ligatures aren't used when caching the glyphs: bug 793391. */
-#define VTE_DRAW_SINGLE_WIDE_CHARACTERS	\
+#define BTE_DRAW_SINGLE_WIDE_CHARACTERS	\
 					"  ! \" # $ % & ' ( ) * + , - . / " \
 					"0 1 2 3 4 5 6 7 8 9 " \
 					": ; < = > ? @ " \
@@ -154,14 +154,14 @@ FontInfo::cache_ascii()
 		ufi->using_cairo_glyph.scaled_font = cairo_scaled_font_reference (scaled_font);
 		ufi->using_cairo_glyph.glyph_index = glyph;
 
-#ifdef VTE_DEBUG
+#ifdef BTE_DEBUG
 		m_coverage_count[0]++;
 		m_coverage_count[(unsigned)uinfo->coverage()]++;
 #endif
 	}
 
-#ifdef VTE_DEBUG
-	_bte_debug_print (VTE_DEBUG_PANGOCAIRO,
+#ifdef BTE_DEBUG
+	_bte_debug_print (BTE_DEBUG_PANGOCAIRO,
 			  "btepangocairo: %p cached %d ASCII letters\n",
 			  (void*)this, m_coverage_count[0]);
 #endif
@@ -189,7 +189,7 @@ FontInfo::measure_font()
         }
 
         /* Use the sample text to get the baseline */
-	pango_layout_set_text(m_layout.get(), VTE_DRAW_SINGLE_WIDE_CHARACTERS, -1);
+	pango_layout_set_text(m_layout.get(), BTE_DRAW_SINGLE_WIDE_CHARACTERS, -1);
 	pango_layout_get_extents(m_layout.get(), nullptr, &logical);
 	/* We don't do CEIL for width since we are averaging;
 	 * rounding is more accurate */
@@ -209,14 +209,14 @@ FontInfo::measure_font()
 		m_ascent = PANGO_PIXELS_CEIL(pango_layout_get_baseline(m_layout.get()));
 	}
 
-	_bte_debug_print (VTE_DEBUG_MISC,
+	_bte_debug_print (BTE_DEBUG_MISC,
 			  "btepangocairo: %p font metrics = %dx%d (%d)\n",
 			  (void*)this, m_width, m_height, m_ascent);
 }
 
 FontInfo::FontInfo(PangoContext *context)
 {
-	_bte_debug_print (VTE_DEBUG_PANGOCAIRO,
+	_bte_debug_print (BTE_DEBUG_PANGOCAIRO,
 			  "btepangocairo: %p allocating FontInfo\n",
 			  (void*)this);
 
@@ -227,7 +227,7 @@ FontInfo::FontInfo(PangoContext *context)
 	pango_tab_array_free(tabs);
 
         // FIXME!!!
-	m_string = g_string_sized_new(VTE_UTF8_BPC+1);
+	m_string = g_string_sized_new(BTE_UTF8_BPC+1);
 
 	measure_font();
 
@@ -242,8 +242,8 @@ FontInfo::~FontInfo()
 	g_hash_table_remove(s_font_info_for_context,
                             pango_layout_get_context(m_layout.get()));
 
-#ifdef VTE_DEBUG
-	_bte_debug_print (VTE_DEBUG_PANGOCAIRO,
+#ifdef BTE_DEBUG
+	_bte_debug_print (BTE_DEBUG_PANGOCAIRO,
 			  "btepangocairo: %p freeing font_info.  coverages %d = %d + %d + %d\n",
 			  (void*)this,
 			  m_coverage_count[0],
@@ -317,7 +317,7 @@ FontInfo::find_for_context(bte::glib::RefPtr<PangoContext>& context)
 
 	auto info = reinterpret_cast<FontInfo*>(g_hash_table_lookup(s_font_info_for_context, context.get()));
 	if (G_LIKELY(info)) {
-		_bte_debug_print (VTE_DEBUG_PANGOCAIRO,
+		_bte_debug_print (BTE_DEBUG_PANGOCAIRO,
 				  "btepangocairo: %p found font_info in cache\n",
 				  info);
 		info = info->ref();
@@ -454,7 +454,7 @@ FontInfo::get_unistr_info(bteunistr c)
 	/* release internal layout resources */
 	pango_layout_set_text(m_layout.get(), "", -1);
 
-#ifdef VTE_DEBUG
+#ifdef BTE_DEBUG
 	m_coverage_count[0]++;
 	m_coverage_count[uinfo->m_coverage]++;
 #endif

@@ -33,8 +33,8 @@ typedef struct bte_seq_string_t {
         uint32_t* buf;
 } bte_seq_string_t;
 
-#define VTE_SEQ_STRING_DEFAULT_CAPACITY (1 << 7) /* must be power of two */
-#define VTE_SEQ_STRING_MAX_CAPACITY     (1 << 12)
+#define BTE_SEQ_STRING_DEFAULT_CAPACITY (1 << 7) /* must be power of two */
+#define BTE_SEQ_STRING_MAX_CAPACITY     (1 << 12)
 
 /*
  * bte_seq_string_init:
@@ -43,7 +43,7 @@ typedef struct bte_seq_string_t {
  */
 static inline void bte_seq_string_init(bte_seq_string_t* str) noexcept
 {
-        str->capacity = VTE_SEQ_STRING_DEFAULT_CAPACITY;
+        str->capacity = BTE_SEQ_STRING_DEFAULT_CAPACITY;
         str->len = 0;
         str->buf = (uint32_t*)g_malloc0_n(str->capacity, sizeof(uint32_t));
 }
@@ -72,7 +72,7 @@ static inline bool bte_seq_string_ensure_capacity(bte_seq_string_t* str) noexcep
 {
         if (str->len < str->capacity)
                 return true;
-        if (str->capacity >= VTE_SEQ_STRING_MAX_CAPACITY)
+        if (str->capacity >= BTE_SEQ_STRING_MAX_CAPACITY)
                 return false;
 
         str->capacity *= 2;

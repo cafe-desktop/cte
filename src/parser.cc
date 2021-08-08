@@ -30,9 +30,9 @@
 #include "parser-charset-tables.hh"
 
 #ifdef PARSER_INCLUDE_NOP
-#define _VTE_NOQ(...) _VTE_SEQ(__VA_ARGS__)
+#define _BTE_NOQ(...) _BTE_SEQ(__VA_ARGS__)
 #else
-#define _VTE_NOQ(...)
+#define _BTE_NOQ(...)
 #endif
 
 /*
@@ -87,30 +87,30 @@
  * plus (for CSI/DCS) an additional shift of 3 for the parameter character
  * which is stored at bits 0..2.
  *
- * VTE_SEQ_PARAMETER(u) extracts the parameter character
+ * BTE_SEQ_PARAMETER(u) extracts the parameter character
  *   of a CSI or DCS sequence
- * VTE_SEQ_REMOVE_PARAMETER(u) extracts the intermediates
+ * BTE_SEQ_REMOVE_PARAMETER(u) extracts the intermediates
  *   of a CSI or DCS sequence
- * VTE_SEQ_INTERMEDIATE(u) extracts the first intermediate from an
+ * BTE_SEQ_INTERMEDIATE(u) extracts the first intermediate from an
  *   intermediates value (for CSI/DCS, that must be without parameter
- *   character, see VTE_SEQ_REMOVE_PARAMETER)
- * VTE_SEQ_REMOVE_INTERMEDIATE(u) extracts the remaining intermediates
- *   after the first one; use VTE_SEQ_INTERMEDIATE on its return value
+ *   character, see BTE_SEQ_REMOVE_PARAMETER)
+ * BTE_SEQ_REMOVE_INTERMEDIATE(u) extracts the remaining intermediates
+ *   after the first one; use BTE_SEQ_INTERMEDIATE on its return value
  *   to extract the 2nd intermediate, and so on
  */
 
-#define VTE_SEQ_PARAMETER_BITS         (3)
-#define VTE_SEQ_INTERMEDIATE_BITS      (5)
-#define VTE_SEQ_INTERMEDIATE_MASK      ((1U << VTE_SEQ_INTERMEDIATE_BITS) - 1U)
-#define VTE_SEQ_PARAMETER_MASK         ((1U << VTE_SEQ_PARAMETER_BITS) - 1U)
-#define VTE_SEQ_PARAMETER(u)           ((u) & VTE_SEQ_PARAMETER_MASK)
-#define VTE_SEQ_REMOVE_PARAMETER(u)    ((u) >> VTE_SEQ_PARAMETER_BITS)
-#define VTE_SEQ_INTERMEDIATE(u)        ((u) & VTE_SEQ_INTERMEDIATE_MASK)
-#define VTE_SEQ_REMOVE_INTERMEDIATE(u) ((u) >> VTE_SEQ_INTERMEDIATE_BITS)
-#define VTE_MAKE_CHARSET(c,s)          ((c) | ((s) << VTE_CHARSET_SLOT_OFFSET))
+#define BTE_SEQ_PARAMETER_BITS         (3)
+#define BTE_SEQ_INTERMEDIATE_BITS      (5)
+#define BTE_SEQ_INTERMEDIATE_MASK      ((1U << BTE_SEQ_INTERMEDIATE_BITS) - 1U)
+#define BTE_SEQ_PARAMETER_MASK         ((1U << BTE_SEQ_PARAMETER_BITS) - 1U)
+#define BTE_SEQ_PARAMETER(u)           ((u) & BTE_SEQ_PARAMETER_MASK)
+#define BTE_SEQ_REMOVE_PARAMETER(u)    ((u) >> BTE_SEQ_PARAMETER_BITS)
+#define BTE_SEQ_INTERMEDIATE(u)        ((u) & BTE_SEQ_INTERMEDIATE_MASK)
+#define BTE_SEQ_REMOVE_INTERMEDIATE(u) ((u) >> BTE_SEQ_INTERMEDIATE_BITS)
+#define BTE_MAKE_CHARSET(c,s)          ((c) | ((s) << BTE_CHARSET_SLOT_OFFSET))
 
 /*
- * _VTE_SEQ_CODE_ESC(final, intermediates):
+ * _BTE_SEQ_CODE_ESC(final, intermediates):
  *
  * Make a value combining the final character and the intermediates,
  * to be used to match a sequence against known sequences.
@@ -121,27 +121,27 @@
  *
  * Final characters is 3/0..7/14, needing 7 bits.
  */
-#define _VTE_SEQ_CODE_ESC(f,i) (((f) - 0x30) | ((i) >> 1) << 7)
+#define _BTE_SEQ_CODE_ESC(f,i) (((f) - 0x30) | ((i) >> 1) << 7)
 
 /*
- * _VTE_SEQ_CODE_COMBINE(parameter, intermediates)
+ * _BTE_SEQ_CODE_COMBINE(parameter, intermediates)
  *
  * Combines intermediates and the parameter character into one
  * value to be used when matching a sequence against known sequences.
  */
-#define _VTE_SEQ_CODE_COMBINE(p,i) ((p) | ((i) << VTE_SEQ_PARAMETER_BITS))
+#define _BTE_SEQ_CODE_COMBINE(p,i) ((p) | ((i) << BTE_SEQ_PARAMETER_BITS))
 
 /*
- * _VTE_SEQ_CODE(final, intermediates):
+ * _BTE_SEQ_CODE(final, intermediates):
  *
  * Make a value combining the final character and the intermediates,
  * to be used to match a sequence against known sequences. Used for
- * CSI and DCS sequences; use _VTE_SEQ_CODE_COMBINE to combine
+ * CSI and DCS sequences; use _BTE_SEQ_CODE_COMBINE to combine
  * parameter and intermediates into one to pass as 2nd argument here.
  *
  * Final character is 4/0..7/14, needing 6 bits.
  */
-#define _VTE_SEQ_CODE(f,i) (((f) - 0x40) | ((i) << 6))
+#define _BTE_SEQ_CODE(f,i) (((f) - 0x40) | ((i) << 6))
 
 /*
  * @introducer: either a C1 control, or the final in the equivalent ESC F sequence
@@ -163,10 +163,10 @@ static unsigned int
 bte_parse_host_control(bte_seq_t const* seq)
 {
         switch (seq->terminator) {
-#define _VTE_SEQ(cmd,type,f,pi,ni,i0) case f: return VTE_CMD_##cmd;
+#define _BTE_SEQ(cmd,type,f,pi,ni,i0) case f: return BTE_CMD_##cmd;
 #include "parser-c01.hh"
-#undef _VTE_SEQ
-        default: return VTE_CMD_NONE;
+#undef _BTE_SEQ
+        default: return BTE_CMD_NONE;
         }
 }
 
@@ -176,48 +176,48 @@ bte_parse_charset_94(uint32_t raw,
 {
         assert (raw >= 0x30 && raw < 0x7f);
 
-        unsigned int remaining_intermediates = VTE_SEQ_REMOVE_INTERMEDIATE(intermediates);
+        unsigned int remaining_intermediates = BTE_SEQ_REMOVE_INTERMEDIATE(intermediates);
 
-        switch (VTE_SEQ_INTERMEDIATE(intermediates)) {
-        case VTE_SEQ_INTERMEDIATE_NONE:
+        switch (BTE_SEQ_INTERMEDIATE(intermediates)) {
+        case BTE_SEQ_INTERMEDIATE_NONE:
                 if (remaining_intermediates == 0 &&
                     raw < (0x30 + G_N_ELEMENTS(charset_graphic_94)))
                         return charset_graphic_94[raw - 0x30];
                 break;
 
-        case VTE_SEQ_INTERMEDIATE_SPACE:
-                return VTE_CHARSET_DRCS;
+        case BTE_SEQ_INTERMEDIATE_SPACE:
+                return BTE_CHARSET_DRCS;
 
-        case VTE_SEQ_INTERMEDIATE_BANG:
+        case BTE_SEQ_INTERMEDIATE_BANG:
                 if (remaining_intermediates == 0 &&
                     raw >= 0x40 && (raw < 0x40 + G_N_ELEMENTS(charset_graphic_94_with_2_1)))
                         return charset_graphic_94_with_2_1[raw - 0x40];
                 break;
 
-        case VTE_SEQ_INTERMEDIATE_DQUOTE:
+        case BTE_SEQ_INTERMEDIATE_DQUOTE:
                 if (remaining_intermediates == 0 &&
                     raw < (0x30 + G_N_ELEMENTS(charset_graphic_94_with_2_2)))
                         return charset_graphic_94_with_2_2[raw - 0x30];
                 break;
 
-        case VTE_SEQ_INTERMEDIATE_HASH:
-        case VTE_SEQ_INTERMEDIATE_CASH:
+        case BTE_SEQ_INTERMEDIATE_HASH:
+        case BTE_SEQ_INTERMEDIATE_CASH:
                 break;
 
-        case VTE_SEQ_INTERMEDIATE_PERCENT:
+        case BTE_SEQ_INTERMEDIATE_PERCENT:
                 if (remaining_intermediates == 0 &&
                     raw < (0x30 + G_N_ELEMENTS(charset_graphic_94_with_2_5)))
                         return charset_graphic_94_with_2_5[raw - 0x30];
                 break;
 
-        case VTE_SEQ_INTERMEDIATE_AND:
+        case BTE_SEQ_INTERMEDIATE_AND:
                 if (remaining_intermediates == 0 &&
                     raw < (0x30 + G_N_ELEMENTS(charset_graphic_94_with_2_6)))
                         return charset_graphic_94_with_2_6[raw - 0x30];
                 break;
         }
 
-        return VTE_CHARSET_NONE;
+        return BTE_CHARSET_NONE;
 }
 
 static unsigned int
@@ -226,20 +226,20 @@ bte_parse_charset_94_n(uint32_t raw,
 {
         assert (raw >= 0x30 && raw < 0x7f);
 
-        unsigned int remaining_intermediates = VTE_SEQ_REMOVE_INTERMEDIATE(intermediates);
+        unsigned int remaining_intermediates = BTE_SEQ_REMOVE_INTERMEDIATE(intermediates);
 
-        switch (VTE_SEQ_INTERMEDIATE(intermediates)) {
-        case VTE_SEQ_INTERMEDIATE_NONE:
+        switch (BTE_SEQ_INTERMEDIATE(intermediates)) {
+        case BTE_SEQ_INTERMEDIATE_NONE:
                 if (remaining_intermediates == 0 &&
                     raw < (0x30 + G_N_ELEMENTS(charset_graphic_94_n)))
                         return charset_graphic_94_n[raw - 0x30];
                 break;
 
-        case VTE_SEQ_INTERMEDIATE_SPACE:
-                return VTE_CHARSET_DRCS;
+        case BTE_SEQ_INTERMEDIATE_SPACE:
+                return BTE_CHARSET_DRCS;
         }
 
-        return VTE_CHARSET_NONE;
+        return BTE_CHARSET_NONE;
 }
 
 static unsigned int
@@ -248,30 +248,30 @@ bte_parse_charset_96(uint32_t raw,
 {
         assert (raw >= 0x30 && raw < 0x7f);
 
-        unsigned int remaining_intermediates = VTE_SEQ_REMOVE_INTERMEDIATE(intermediates);
+        unsigned int remaining_intermediates = BTE_SEQ_REMOVE_INTERMEDIATE(intermediates);
 
-        switch (VTE_SEQ_INTERMEDIATE(intermediates)) {
-        case VTE_SEQ_INTERMEDIATE_NONE:
+        switch (BTE_SEQ_INTERMEDIATE(intermediates)) {
+        case BTE_SEQ_INTERMEDIATE_NONE:
                 if (remaining_intermediates == 0 &&
                     raw < (0x30 + G_N_ELEMENTS(charset_graphic_96)))
                         return charset_graphic_96[raw - 0x30];
                 break;
 
-        case VTE_SEQ_INTERMEDIATE_SPACE:
-                return VTE_CHARSET_DRCS;
+        case BTE_SEQ_INTERMEDIATE_SPACE:
+                return BTE_CHARSET_DRCS;
         }
 
-        return VTE_CHARSET_NONE;
+        return BTE_CHARSET_NONE;
 }
 
 static unsigned int
 bte_parse_charset_96_n(uint32_t raw,
                        unsigned int intermediates)
 {
-        if (VTE_SEQ_INTERMEDIATE(intermediates) == VTE_SEQ_INTERMEDIATE_SPACE)
-                return VTE_CHARSET_DRCS;
+        if (BTE_SEQ_INTERMEDIATE(intermediates) == BTE_SEQ_INTERMEDIATE_SPACE)
+                return BTE_CHARSET_DRCS;
 
-        return VTE_CHARSET_NONE;
+        return BTE_CHARSET_NONE;
 }
 
 static unsigned int
@@ -280,33 +280,33 @@ bte_parse_charset_ocs(uint32_t raw,
 {
         assert (raw >= 0x30 && raw < 0x7f);
 
-        unsigned int remaining_intermediates = VTE_SEQ_REMOVE_INTERMEDIATE(intermediates);
+        unsigned int remaining_intermediates = BTE_SEQ_REMOVE_INTERMEDIATE(intermediates);
 
-        switch (VTE_SEQ_INTERMEDIATE(intermediates)) {
-        case VTE_SEQ_INTERMEDIATE_NONE:  /* OCS with standard return */
+        switch (BTE_SEQ_INTERMEDIATE(intermediates)) {
+        case BTE_SEQ_INTERMEDIATE_NONE:  /* OCS with standard return */
                 if (remaining_intermediates == 0 &&
                     raw >= 0x30 && raw < (0x30 + G_N_ELEMENTS(charset_ocs)))
                         return charset_ocs[raw - 0x30];
                 break;
 
-        case VTE_SEQ_INTERMEDIATE_SPACE: /* OCS with standard return */
+        case BTE_SEQ_INTERMEDIATE_SPACE: /* OCS with standard return */
                 if (remaining_intermediates == 0 &&
                     raw >= 0x30 && raw < (0x30 + G_N_ELEMENTS(charset_ocs_with_2_0)))
                         return charset_ocs_with_2_0[raw - 0x30];
-                /* Or should this return VTE_CHARSET_DRCS; ? */
+                /* Or should this return BTE_CHARSET_DRCS; ? */
                 break;
 
-        case VTE_SEQ_INTERMEDIATE_BANG ... VTE_SEQ_INTERMEDIATE_DOT: /* OCS with standard return */
+        case BTE_SEQ_INTERMEDIATE_BANG ... BTE_SEQ_INTERMEDIATE_DOT: /* OCS with standard return */
                 break;
 
-        case VTE_SEQ_INTERMEDIATE_SLASH: /* OCS without standard return */
+        case BTE_SEQ_INTERMEDIATE_SLASH: /* OCS without standard return */
                 if (remaining_intermediates == 0 &&
                     raw >= 0x40 && raw < (0x40 + G_N_ELEMENTS(charset_ocs_with_2_15)))
                         return charset_ocs_with_2_15[raw - 0x40];
                 break;
         }
 
-        return VTE_CHARSET_NONE;
+        return BTE_CHARSET_NONE;
 }
 
 static unsigned int
@@ -315,23 +315,23 @@ bte_parse_charset_control(uint32_t raw,
 {
         assert (raw >= 0x30 && raw < 0x7f);
 
-        unsigned int remaining_intermediates = VTE_SEQ_REMOVE_INTERMEDIATE(intermediates);
+        unsigned int remaining_intermediates = BTE_SEQ_REMOVE_INTERMEDIATE(intermediates);
 
-        switch (VTE_SEQ_INTERMEDIATE(intermediates)) {
-        case VTE_SEQ_INTERMEDIATE_BANG: /* C0 controls */
+        switch (BTE_SEQ_INTERMEDIATE(intermediates)) {
+        case BTE_SEQ_INTERMEDIATE_BANG: /* C0 controls */
                 if (remaining_intermediates == 0 &&
                     raw >= 0x40 && raw < (0x40 + G_N_ELEMENTS(charset_control_c0)))
                         return charset_control_c0[raw - 0x40];
                 break;
 
-        case VTE_SEQ_INTERMEDIATE_DQUOTE: /* C1 controls */
+        case BTE_SEQ_INTERMEDIATE_DQUOTE: /* C1 controls */
                 if (remaining_intermediates == 0 &&
                     raw >= 0x40 && raw < (0x40 + G_N_ELEMENTS(charset_control_c1)))
                         return charset_control_c1[raw - 0x40];
                 break;
         }
 
-        return VTE_CHARSET_NONE;
+        return BTE_CHARSET_NONE;
 }
 
 static unsigned int
@@ -339,41 +339,41 @@ bte_parse_host_escape(bte_seq_t const* seq,
                       unsigned int *cs_out)
 {
         unsigned int intermediates = seq->intermediates;
-        unsigned int intermediate0 = VTE_SEQ_INTERMEDIATE(intermediates);
+        unsigned int intermediate0 = BTE_SEQ_INTERMEDIATE(intermediates);
 
         /* Switch on the first intermediate */
         switch (intermediate0) {
-        case VTE_SEQ_INTERMEDIATE_NONE:
-        case VTE_SEQ_INTERMEDIATE_HASH: {  /* Single control functions */
-                switch (_VTE_SEQ_CODE_ESC(seq->terminator, intermediates)) {
-#define _VTE_SEQ(cmd,type,f,p,ni,i) \
-                        case _VTE_SEQ_CODE_ESC(f, VTE_SEQ_INTERMEDIATE_##i): return VTE_CMD_##cmd;
+        case BTE_SEQ_INTERMEDIATE_NONE:
+        case BTE_SEQ_INTERMEDIATE_HASH: {  /* Single control functions */
+                switch (_BTE_SEQ_CODE_ESC(seq->terminator, intermediates)) {
+#define _BTE_SEQ(cmd,type,f,p,ni,i) \
+                        case _BTE_SEQ_CODE_ESC(f, BTE_SEQ_INTERMEDIATE_##i): return BTE_CMD_##cmd;
 #include "parser-esc.hh"
-#undef _VTE_SEQ
-                default: return VTE_CMD_NONE;
+#undef _BTE_SEQ
+                default: return BTE_CMD_NONE;
                 }
                 break;
         }
 
-        case VTE_SEQ_INTERMEDIATE_SPACE:   /* Announce code structure */
-                if (VTE_SEQ_REMOVE_INTERMEDIATE(intermediates) == 0)
-                        return VTE_CMD_ACS;
+        case BTE_SEQ_INTERMEDIATE_SPACE:   /* Announce code structure */
+                if (BTE_SEQ_REMOVE_INTERMEDIATE(intermediates) == 0)
+                        return BTE_CMD_ACS;
                 break;
 
-        case VTE_SEQ_INTERMEDIATE_BANG:    /* C0-designate */
-        case VTE_SEQ_INTERMEDIATE_DQUOTE:  /* C1-designate */
-                *cs_out = VTE_MAKE_CHARSET(bte_parse_charset_control(seq->terminator, intermediates),
-                                           intermediate0 - VTE_SEQ_INTERMEDIATE_BANG);
-                return VTE_CMD_CnD;
+        case BTE_SEQ_INTERMEDIATE_BANG:    /* C0-designate */
+        case BTE_SEQ_INTERMEDIATE_DQUOTE:  /* C1-designate */
+                *cs_out = BTE_MAKE_CHARSET(bte_parse_charset_control(seq->terminator, intermediates),
+                                           intermediate0 - BTE_SEQ_INTERMEDIATE_BANG);
+                return BTE_CMD_CnD;
 
-        case VTE_SEQ_INTERMEDIATE_CASH: {  /* Designate multi-byte character sets */
-                unsigned int remaining_intermediates = VTE_SEQ_REMOVE_INTERMEDIATE(intermediates);
-                unsigned int intermediate1 = VTE_SEQ_INTERMEDIATE(remaining_intermediates);
-                remaining_intermediates = VTE_SEQ_REMOVE_INTERMEDIATE(remaining_intermediates);
+        case BTE_SEQ_INTERMEDIATE_CASH: {  /* Designate multi-byte character sets */
+                unsigned int remaining_intermediates = BTE_SEQ_REMOVE_INTERMEDIATE(intermediates);
+                unsigned int intermediate1 = BTE_SEQ_INTERMEDIATE(remaining_intermediates);
+                remaining_intermediates = BTE_SEQ_REMOVE_INTERMEDIATE(remaining_intermediates);
 
                 /* Check the 2nd intermediate */
                 switch (intermediate1) {
-                case VTE_SEQ_INTERMEDIATE_NONE:
+                case BTE_SEQ_INTERMEDIATE_NONE:
                         /* For compatibility with an earlier version of ISO-2022,
                          * ESC 2/4 4/0, ESC 2/4 4/1 and ESC 2/4 4/2 designate G0
                          * sets (i.e., without the 2/8 as 2nd intermediate byte).
@@ -382,106 +382,106 @@ bte_parse_host_escape(bte_seq_t const* seq,
                         case '@':
                         case 'A':
                         case 'B': /* G0-designate multibyte charset */
-                                *cs_out = VTE_MAKE_CHARSET(bte_parse_charset_94_n(seq->terminator,
+                                *cs_out = BTE_MAKE_CHARSET(bte_parse_charset_94_n(seq->terminator,
                                                                                   remaining_intermediates),
                                                            0);
-                                return VTE_CMD_GnDMm;
+                                return BTE_CMD_GnDMm;
                         }
                         break;
 
-                case VTE_SEQ_INTERMEDIATE_POPEN:  /* G0-designate 94^n-set */
-                case VTE_SEQ_INTERMEDIATE_PCLOSE: /* G1-designate 94^n-set */
-                case VTE_SEQ_INTERMEDIATE_MULT:   /* G2-designate 94^n-set */
-                case VTE_SEQ_INTERMEDIATE_PLUS:   /* G3-designate 94^n-set */
-                        *cs_out = VTE_MAKE_CHARSET(bte_parse_charset_94_n(seq->terminator,
+                case BTE_SEQ_INTERMEDIATE_POPEN:  /* G0-designate 94^n-set */
+                case BTE_SEQ_INTERMEDIATE_PCLOSE: /* G1-designate 94^n-set */
+                case BTE_SEQ_INTERMEDIATE_MULT:   /* G2-designate 94^n-set */
+                case BTE_SEQ_INTERMEDIATE_PLUS:   /* G3-designate 94^n-set */
+                        *cs_out = BTE_MAKE_CHARSET(bte_parse_charset_94_n(seq->terminator,
                                                                           remaining_intermediates),
-                                                   intermediate1 - VTE_SEQ_INTERMEDIATE_POPEN);
-                        return VTE_CMD_GnDMm;
+                                                   intermediate1 - BTE_SEQ_INTERMEDIATE_POPEN);
+                        return BTE_CMD_GnDMm;
 
-                case VTE_SEQ_INTERMEDIATE_COMMA:  /* Reserved for future standardisation */
+                case BTE_SEQ_INTERMEDIATE_COMMA:  /* Reserved for future standardisation */
                         break;
 
-                case VTE_SEQ_INTERMEDIATE_MINUS:  /* G1-designate 96^n-set */
-                case VTE_SEQ_INTERMEDIATE_DOT:    /* G2-designate 96^n-set */
-                case VTE_SEQ_INTERMEDIATE_SLASH:  /* G3-designate 96^n-set */
-                        *cs_out = VTE_MAKE_CHARSET(bte_parse_charset_96_n(seq->terminator,
+                case BTE_SEQ_INTERMEDIATE_MINUS:  /* G1-designate 96^n-set */
+                case BTE_SEQ_INTERMEDIATE_DOT:    /* G2-designate 96^n-set */
+                case BTE_SEQ_INTERMEDIATE_SLASH:  /* G3-designate 96^n-set */
+                        *cs_out = BTE_MAKE_CHARSET(bte_parse_charset_96_n(seq->terminator,
                                                                           remaining_intermediates),
-                                                   intermediate1 - VTE_SEQ_INTERMEDIATE_COMMA);
-                        return VTE_CMD_GnDMm;
+                                                   intermediate1 - BTE_SEQ_INTERMEDIATE_COMMA);
+                        return BTE_CMD_GnDMm;
                 }
                 break;
         }
 
-        case VTE_SEQ_INTERMEDIATE_PERCENT: /* Designate other coding system */
+        case BTE_SEQ_INTERMEDIATE_PERCENT: /* Designate other coding system */
                 *cs_out = bte_parse_charset_ocs(seq->terminator,
-                                                VTE_SEQ_REMOVE_INTERMEDIATE(intermediates));
-                return VTE_CMD_DOCS;
+                                                BTE_SEQ_REMOVE_INTERMEDIATE(intermediates));
+                return BTE_CMD_DOCS;
 
-        case VTE_SEQ_INTERMEDIATE_AND:     /* Identify revised registration */
-                if (VTE_SEQ_REMOVE_INTERMEDIATE(intermediates) == 0)
-                        return VTE_CMD_IRR;
+        case BTE_SEQ_INTERMEDIATE_AND:     /* Identify revised registration */
+                if (BTE_SEQ_REMOVE_INTERMEDIATE(intermediates) == 0)
+                        return BTE_CMD_IRR;
                 break;
 
-        case VTE_SEQ_INTERMEDIATE_SQUOTE:  /* Reserved for future standardisation */
+        case BTE_SEQ_INTERMEDIATE_SQUOTE:  /* Reserved for future standardisation */
                 break;
 
-        case VTE_SEQ_INTERMEDIATE_POPEN:   /* G0-designate 94-set */
-        case VTE_SEQ_INTERMEDIATE_PCLOSE:  /* G1-designate 94-set */
-        case VTE_SEQ_INTERMEDIATE_MULT:    /* G2-designate 94-set */
-        case VTE_SEQ_INTERMEDIATE_PLUS:    /* G3-designate 94-set */
-                *cs_out = VTE_MAKE_CHARSET(bte_parse_charset_94(seq->terminator,
-                                                                VTE_SEQ_REMOVE_INTERMEDIATE(intermediates)),
-                                           intermediate0 - VTE_SEQ_INTERMEDIATE_POPEN);
-                return VTE_CMD_GnDm;
+        case BTE_SEQ_INTERMEDIATE_POPEN:   /* G0-designate 94-set */
+        case BTE_SEQ_INTERMEDIATE_PCLOSE:  /* G1-designate 94-set */
+        case BTE_SEQ_INTERMEDIATE_MULT:    /* G2-designate 94-set */
+        case BTE_SEQ_INTERMEDIATE_PLUS:    /* G3-designate 94-set */
+                *cs_out = BTE_MAKE_CHARSET(bte_parse_charset_94(seq->terminator,
+                                                                BTE_SEQ_REMOVE_INTERMEDIATE(intermediates)),
+                                           intermediate0 - BTE_SEQ_INTERMEDIATE_POPEN);
+                return BTE_CMD_GnDm;
 
-        case VTE_SEQ_INTERMEDIATE_COMMA:   /* Reserved for future standardisation */
+        case BTE_SEQ_INTERMEDIATE_COMMA:   /* Reserved for future standardisation */
                 break;
 
-        case VTE_SEQ_INTERMEDIATE_MINUS:   /* G1-designate 96-set */
-        case VTE_SEQ_INTERMEDIATE_DOT:     /* G2-designate 96-set */
-        case VTE_SEQ_INTERMEDIATE_SLASH:   /* G3-designate 96-set */
-                *cs_out = VTE_MAKE_CHARSET(bte_parse_charset_96(seq->terminator,
-                                                                VTE_SEQ_REMOVE_INTERMEDIATE(intermediates)),
-                                           intermediate0 - VTE_SEQ_INTERMEDIATE_COMMA);
-                return VTE_CMD_GnDm;
+        case BTE_SEQ_INTERMEDIATE_MINUS:   /* G1-designate 96-set */
+        case BTE_SEQ_INTERMEDIATE_DOT:     /* G2-designate 96-set */
+        case BTE_SEQ_INTERMEDIATE_SLASH:   /* G3-designate 96-set */
+                *cs_out = BTE_MAKE_CHARSET(bte_parse_charset_96(seq->terminator,
+                                                                BTE_SEQ_REMOVE_INTERMEDIATE(intermediates)),
+                                           intermediate0 - BTE_SEQ_INTERMEDIATE_COMMA);
+                return BTE_CMD_GnDm;
         }
 
-        return VTE_CMD_NONE;
+        return BTE_CMD_NONE;
 }
 
 static unsigned int
 bte_parse_host_csi(bte_seq_t const* seq)
 {
-        switch (_VTE_SEQ_CODE(seq->terminator, seq->intermediates)) {
-#define _VTE_SEQ(cmd,type,f,p,ni,i) \
-                case _VTE_SEQ_CODE(f, _VTE_SEQ_CODE_COMBINE(VTE_SEQ_PARAMETER_##p, VTE_SEQ_INTERMEDIATE_##i)): return VTE_CMD_##cmd;
+        switch (_BTE_SEQ_CODE(seq->terminator, seq->intermediates)) {
+#define _BTE_SEQ(cmd,type,f,p,ni,i) \
+                case _BTE_SEQ_CODE(f, _BTE_SEQ_CODE_COMBINE(BTE_SEQ_PARAMETER_##p, BTE_SEQ_INTERMEDIATE_##i)): return BTE_CMD_##cmd;
 #include "parser-csi.hh"
-#undef _VTE_SEQ
-        default: return VTE_CMD_NONE;
+#undef _BTE_SEQ
+        default: return BTE_CMD_NONE;
         }
 }
 
 static unsigned int
 bte_parse_host_dcs(bte_seq_t const* seq)
 {
-        switch (_VTE_SEQ_CODE(seq->terminator, seq->intermediates)) {
-#define _VTE_SEQ(cmd,type,f,p,ni,i) \
-                case _VTE_SEQ_CODE(f, _VTE_SEQ_CODE_COMBINE(VTE_SEQ_PARAMETER_##p, VTE_SEQ_INTERMEDIATE_##i)): return VTE_CMD_##cmd;
+        switch (_BTE_SEQ_CODE(seq->terminator, seq->intermediates)) {
+#define _BTE_SEQ(cmd,type,f,p,ni,i) \
+                case _BTE_SEQ_CODE(f, _BTE_SEQ_CODE_COMBINE(BTE_SEQ_PARAMETER_##p, BTE_SEQ_INTERMEDIATE_##i)): return BTE_CMD_##cmd;
 #include "parser-dcs.hh"
-#undef _VTE_SEQ
-        default: return VTE_CMD_NONE;
+#undef _BTE_SEQ
+        default: return BTE_CMD_NONE;
         }
 }
 
 static unsigned int
 bte_parse_host_sci(bte_seq_t const* seq)
 {
-        switch (_VTE_SEQ_CODE(seq->terminator, 0)) {
-#define _VTE_SEQ(cmd,type,f,p,ni,i) \
-                case _VTE_SEQ_CODE(f, 0): return VTE_CMD_##cmd;
+        switch (_BTE_SEQ_CODE(seq->terminator, 0)) {
+#define _BTE_SEQ(cmd,type,f,p,ni,i) \
+                case _BTE_SEQ_CODE(f, 0): return BTE_CMD_##cmd;
 #include "parser-sci.hh"
-#undef _VTE_SEQ
-        default: return VTE_CMD_NONE;
+#undef _BTE_SEQ
+        default: return BTE_CMD_NONE;
         }
 }
 
@@ -536,7 +536,7 @@ static PTINLINE int
 parser_nop(bte_parser_t* parser,
            uint32_t raw)
 {
-        return VTE_SEQ_NONE;
+        return BTE_SEQ_NONE;
 }
 /* dispatch related actions */
 static PTINLINE int
@@ -554,7 +554,7 @@ parser_transition_no_action(bte_parser_t* parser,
                             unsigned int state)
 {
         parser->state = state;
-        return VTE_SEQ_NONE;
+        return BTE_SEQ_NONE;
 }
 
 /* perform state transition and dispatch related actions */
@@ -575,7 +575,7 @@ parser_transition(bte_parser_t* parser,
 
 /* nop */
 #define parser_nop(parser,raw) \
-        ({ VTE_SEQ_NONE; })
+        ({ BTE_SEQ_NONE; })
 
 /* dispatch related actions */
 #define parser_action(p,r,a) \
@@ -587,7 +587,7 @@ parser_transition(bte_parser_t* parser,
 #define parser_transition_no_action(p,r,s) \
         ({ \
                 parser->state = s; \
-                VTE_SEQ_NONE; \
+                BTE_SEQ_NONE; \
         })
 
 /* perform state transition and dispatch related actions */
@@ -630,7 +630,7 @@ parser_clear(bte_parser_t* parser,
          * and all this happens before the sequence is dispatched.
          * Therefore these fiedls need not be cleared in any case.
          */
-        return VTE_SEQ_NONE;
+        return BTE_SEQ_NONE;
 }
 
 static inline int
@@ -651,20 +651,20 @@ parser_clear_params(bte_parser_t* parser,
          * finialised, so it needs cleaning too. All further params
          * have not been touched, so need not be cleaned.
          */
-        unsigned int n_args = G_UNLIKELY(parser->seq.n_args >= VTE_PARSER_ARG_MAX)
-                ? VTE_PARSER_ARG_MAX
+        unsigned int n_args = G_UNLIKELY(parser->seq.n_args >= BTE_PARSER_ARG_MAX)
+                ? BTE_PARSER_ARG_MAX
                 : parser->seq.n_args + 1;
         memset(parser->seq.args, 0, n_args * sizeof(parser->seq.args[0]));
 #ifdef PARSER_EXTRA_CLEAN
         /* Assert that the assumed-clean params are actually clean. */
-        for (unsigned int n = n_args; n < VTE_PARSER_ARG_MAX; ++n)
-                g_assert_cmpuint(parser->seq.args[n], ==, VTE_SEQ_ARG_INIT_DEFAULT);
+        for (unsigned int n = n_args; n < BTE_PARSER_ARG_MAX; ++n)
+                g_assert_cmpuint(parser->seq.args[n], ==, BTE_SEQ_ARG_INIT_DEFAULT);
 #endif
 
         parser->seq.n_args = 0;
         parser->seq.n_final_args = 0;
 
-        return VTE_SEQ_NONE;
+        return BTE_SEQ_NONE;
 }
 
 static inline int
@@ -679,8 +679,8 @@ static int
 parser_ignore(bte_parser_t* parser,
               uint32_t raw)
 {
-        parser->seq.type = VTE_SEQ_IGNORE;
-        parser->seq.command = VTE_CMD_NONE;
+        parser->seq.type = BTE_SEQ_IGNORE;
+        parser->seq.command = BTE_CMD_NONE;
         parser->seq.terminator = raw;
 
         return parser->seq.type;
@@ -690,8 +690,8 @@ static int
 parser_print(bte_parser_t* parser,
              uint32_t raw)
 {
-        parser->seq.type = VTE_SEQ_GRAPHIC;
-        parser->seq.command = VTE_CMD_GRAPHIC;
+        parser->seq.type = BTE_SEQ_GRAPHIC;
+        parser->seq.command = BTE_CMD_GRAPHIC;
         parser->seq.terminator = raw;
 
         return parser->seq.type;
@@ -701,7 +701,7 @@ static int
 parser_execute(bte_parser_t* parser,
                uint32_t raw)
 {
-        parser->seq.type = VTE_SEQ_CONTROL;
+        parser->seq.type = BTE_SEQ_CONTROL;
         parser->seq.terminator = raw;
         parser->seq.command = bte_parse_host_control(&parser->seq);
 
@@ -717,9 +717,9 @@ parser_collect_esc(bte_parser_t* parser,
         /* ESCAPE sequences only have intermediates or 2/0..2/15, so there's no
          * need for the extra shift as below for CSI/DCS sequences
          */
-        parser->seq.intermediates |= (VTE_SEQ_MAKE_INTERMEDIATE(raw) << (VTE_SEQ_INTERMEDIATE_BITS * parser->seq.n_intermediates++));
+        parser->seq.intermediates |= (BTE_SEQ_MAKE_INTERMEDIATE(raw) << (BTE_SEQ_INTERMEDIATE_BITS * parser->seq.n_intermediates++));
 
-        return VTE_SEQ_NONE;
+        return BTE_SEQ_NONE;
 }
 
 static int
@@ -733,10 +733,10 @@ parser_collect_csi(bte_parser_t* parser,
          * start of the parameters (see parser_collect_parameter below);
          * that's what the extra shift is for.
          */
-        parser->seq.intermediates |= (VTE_SEQ_MAKE_INTERMEDIATE(raw) << (VTE_SEQ_PARAMETER_BITS +
-                                                                         VTE_SEQ_INTERMEDIATE_BITS * parser->seq.n_intermediates++));
+        parser->seq.intermediates |= (BTE_SEQ_MAKE_INTERMEDIATE(raw) << (BTE_SEQ_PARAMETER_BITS +
+                                                                         BTE_SEQ_INTERMEDIATE_BITS * parser->seq.n_intermediates++));
 
-        return VTE_SEQ_NONE;
+        return BTE_SEQ_NONE;
 }
 
 static int
@@ -752,9 +752,9 @@ parser_collect_parameter(bte_parser_t* parser,
          * already enforces that, so we do not need any additional checks
          * here.
          */
-        parser->seq.intermediates |= VTE_SEQ_MAKE_PARAMETER(raw);
+        parser->seq.intermediates |= BTE_SEQ_MAKE_PARAMETER(raw);
 
-        return VTE_SEQ_NONE;
+        return BTE_SEQ_NONE;
 }
 
 static void
@@ -763,7 +763,7 @@ parser_params_overflow(bte_parser_t* parser,
 {
         /* An overflow of the parameter number can only happen in
          * STATE_{CSI,DCS}_PARAM, and it occurs when
-         * seq.n_arg == VTE_PARSER_ARG_MAX, and either an 0…9
+         * seq.n_arg == BTE_PARSER_ARG_MAX, and either an 0…9
          * is encountered, starting the next param, or an
          * explicit ':' or ';' terminating a (defaulted) (sub)param,
          * or when the intermediates/final character(s) occur
@@ -787,27 +787,27 @@ static int
 parser_finish_param(bte_parser_t* parser,
                     uint32_t raw)
 {
-        if (G_LIKELY(parser->seq.n_args < VTE_PARSER_ARG_MAX - 1)) {
+        if (G_LIKELY(parser->seq.n_args < BTE_PARSER_ARG_MAX - 1)) {
                 bte_seq_arg_finish(&parser->seq.args[parser->seq.n_args], false);
                 ++parser->seq.n_args;
                 ++parser->seq.n_final_args;
         } else
                 parser_params_overflow(parser, raw);
 
-        return VTE_SEQ_NONE;
+        return BTE_SEQ_NONE;
 }
 
 static int
 parser_finish_subparam(bte_parser_t* parser,
                        uint32_t raw)
 {
-        if (G_LIKELY(parser->seq.n_args < VTE_PARSER_ARG_MAX - 1)) {
+        if (G_LIKELY(parser->seq.n_args < BTE_PARSER_ARG_MAX - 1)) {
                 bte_seq_arg_finish(&parser->seq.args[parser->seq.n_args], true);
                 ++parser->seq.n_args;
         } else
                 parser_params_overflow(parser, raw);
 
-        return VTE_SEQ_NONE;
+        return BTE_SEQ_NONE;
 }
 
 static int
@@ -816,12 +816,12 @@ parser_param(bte_parser_t* parser,
 {
         /* assert(raw >= '0' && raw <= '9'); */
 
-        if (G_LIKELY(parser->seq.n_args < VTE_PARSER_ARG_MAX))
+        if (G_LIKELY(parser->seq.n_args < BTE_PARSER_ARG_MAX))
                 bte_seq_arg_push(&parser->seq.args[parser->seq.n_args], raw);
         else
                 parser_params_overflow(parser, raw);
 
-        return VTE_SEQ_NONE;
+        return BTE_SEQ_NONE;
 }
 
 static inline int
@@ -833,7 +833,7 @@ parser_osc_start(bte_parser_t* parser,
         bte_seq_string_reset(&parser->seq.arg_str);
 
         parser->seq.introducer = raw;
-        return VTE_SEQ_NONE;
+        return BTE_SEQ_NONE;
 }
 
 static int
@@ -848,7 +848,7 @@ parser_osc_collect(bte_parser_t* parser,
         if (G_UNLIKELY(!bte_seq_string_push(&parser->seq.arg_str, raw)))
                 parser->state = STATE_ST_IGNORE;
 
-        return VTE_SEQ_NONE;
+        return BTE_SEQ_NONE;
 }
 
 static int
@@ -860,7 +860,7 @@ parser_dcs_start(bte_parser_t* parser,
         bte_seq_string_reset(&parser->seq.arg_str);
 
         parser->seq.introducer = raw;
-        return VTE_SEQ_NONE;
+        return BTE_SEQ_NONE;
 }
 
 static int
@@ -870,7 +870,7 @@ parser_dcs_consume(bte_parser_t* parser,
         /* parser->seq is cleared during DCS-START state, thus there's no need
          * to clear invalid fields here. */
 
-        if (G_LIKELY(parser->seq.n_args < VTE_PARSER_ARG_MAX)) {
+        if (G_LIKELY(parser->seq.n_args < BTE_PARSER_ARG_MAX)) {
                 if (parser->seq.n_args > 0 ||
                     bte_seq_arg_started(parser->seq.args[parser->seq.n_args])) {
                         bte_seq_arg_finish(&parser->seq.args[parser->seq.n_args], false);
@@ -879,11 +879,11 @@ parser_dcs_consume(bte_parser_t* parser,
                 }
         }
 
-        parser->seq.type = VTE_SEQ_DCS;
+        parser->seq.type = BTE_SEQ_DCS;
         parser->seq.terminator = raw;
         parser->seq.command = bte_parse_host_dcs(&parser->seq);
 
-        return VTE_SEQ_NONE;
+        return BTE_SEQ_NONE;
 }
 
 static int
@@ -893,16 +893,16 @@ parser_dcs_collect(bte_parser_t* parser,
         if (G_UNLIKELY(!bte_seq_string_push(&parser->seq.arg_str, raw)))
                 parser->state = STATE_DCS_IGNORE;
 
-        return VTE_SEQ_NONE;
+        return BTE_SEQ_NONE;
 }
 
 static int
 parser_esc(bte_parser_t* parser,
            uint32_t raw)
 {
-        parser->seq.type = VTE_SEQ_ESCAPE;
+        parser->seq.type = BTE_SEQ_ESCAPE;
         parser->seq.terminator = raw;
-        parser->seq.charset = VTE_CHARSET_NONE;
+        parser->seq.charset = BTE_CHARSET_NONE;
         parser->seq.command = bte_parse_host_escape(&parser->seq,
                                                     &parser->seq.charset);
 
@@ -916,7 +916,7 @@ parser_csi(bte_parser_t* parser,
         /* parser->seq is cleared during CSI-ENTER state, thus there's no need
          * to clear invalid fields here. */
 
-        if (G_LIKELY(parser->seq.n_args < VTE_PARSER_ARG_MAX)) {
+        if (G_LIKELY(parser->seq.n_args < BTE_PARSER_ARG_MAX)) {
                 if (parser->seq.n_args > 0 ||
                     bte_seq_arg_started(parser->seq.args[parser->seq.n_args])) {
                         bte_seq_arg_finish(&parser->seq.args[parser->seq.n_args], false);
@@ -925,7 +925,7 @@ parser_csi(bte_parser_t* parser,
                 }
         }
 
-        parser->seq.type = VTE_SEQ_CSI;
+        parser->seq.type = BTE_SEQ_CSI;
         parser->seq.terminator = raw;
         parser->seq.command = bte_parse_host_csi(&parser->seq);
 
@@ -946,10 +946,10 @@ parser_osc(bte_parser_t* parser,
          * C0 or both C1; we discard sequences with mixed controls.
          */
         if (!parser_check_matching_controls(parser->seq.introducer, raw))
-                return VTE_SEQ_IGNORE;
+                return BTE_SEQ_IGNORE;
 
-        parser->seq.type = VTE_SEQ_OSC;
-        parser->seq.command = VTE_CMD_OSC;
+        parser->seq.type = BTE_SEQ_OSC;
+        parser->seq.command = BTE_CMD_OSC;
         parser->seq.terminator = raw;
 
         return parser->seq.type;
@@ -968,7 +968,7 @@ parser_dcs(bte_parser_t* parser,
          * C0 or both C1; we discard sequences with mixed controls.
          */
         if (!parser_check_matching_controls(parser->seq.introducer, raw))
-                return VTE_SEQ_IGNORE;
+                return BTE_SEQ_IGNORE;
 
         return parser->seq.type;
 }
@@ -977,7 +977,7 @@ static int
 parser_sci(bte_parser_t* parser,
            uint32_t raw)
 {
-        parser->seq.type = VTE_SEQ_SCI;
+        parser->seq.type = BTE_SEQ_SCI;
         parser->seq.terminator = raw;
         parser->seq.command = bte_parse_host_sci(&parser->seq);
 
@@ -1387,7 +1387,7 @@ parser_feed_to_state(bte_parser_t* parser,
         }
 
         g_assert_not_reached();
-        return VTE_SEQ_NONE;
+        return BTE_SEQ_NONE;
 }
 
 int

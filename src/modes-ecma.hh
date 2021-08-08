@@ -22,7 +22,7 @@
 /*
  * Modes for SM_ECMA/RM_ECMA.
  *
- * Most of these are not implemented in VTE.
+ * Most of these are not implemented in BTE.
  *
  * References: ECMA-48 § 7
  *             WY370
@@ -48,7 +48,7 @@ MODE(IRM,  4)
  *             Terminal-wg/bidi
  *
  * Default in ECMA: reset
- * Default in Terminal-wg/bidi and VTE: set
+ * Default in Terminal-wg/bidi and BTE: set
  */
 MODE(BDSM, 8)
 
@@ -76,7 +76,7 @@ MODE_FIXED(PUM,  11, ALWAYS_RESET) /* ECMA-48 § F.4.1 Deprecated */
  * References: ECMA-48 § 7.2.15
  *             VT525
  *
- * Removed in VTE 0.60: issue #69
+ * Removed in BTE 0.60: issue #69
  */
 MODE_FIXED(SRM,  12, ALWAYS_SET)
 

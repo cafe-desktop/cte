@@ -16,38 +16,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __VTE_VTE_MACROS_H__
-#define __VTE_VTE_MACROS_H__
+#ifndef __BTE_BTE_MACROS_H__
+#define __BTE_BTE_MACROS_H__
 
-#if !defined (__VTE_VTE_H_INSIDE__) && !defined (VTE_COMPILATION)
+#if !defined (__BTE_BTE_H_INSIDE__) && !defined (BTE_COMPILATION)
 #error "Only <bte/bte.h> can be included directly."
 #endif
 
 #if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 6)
-#define _VTE_GNUC_PACKED __attribute__((__packed__))
+#define _BTE_GNUC_PACKED __attribute__((__packed__))
 #else
-#define _VTE_GNUC_PACKED
+#define _BTE_GNUC_PACKED
 #endif  /* !__GNUC__ */
 
-#ifdef VTE_COMPILATION
-#define _VTE_GNUC_NONNULL(position)
+#ifdef BTE_COMPILATION
+#define _BTE_GNUC_NONNULL(position)
 #else
 #if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ > 2)
-#define _VTE_GNUC_NONNULL(position) __attribute__((__nonnull__(position)))
+#define _BTE_GNUC_NONNULL(position) __attribute__((__nonnull__(position)))
 #else
-#define _VTE_GNUC_NONNULL(position)
+#define _BTE_GNUC_NONNULL(position)
 #endif
 #endif
 
-#define _VTE_PUBLIC __attribute__((__visibility__("default"))) extern
+#define _BTE_PUBLIC __attribute__((__visibility__("default"))) extern
 
-#if defined(VTE_COMPILATION) && defined(__cplusplus)
+#if defined(BTE_COMPILATION) && defined(__cplusplus)
 #if __cplusplus >= 201103L
-#define _VTE_CXX_NOEXCEPT noexcept
+#define _BTE_CXX_NOEXCEPT noexcept
 #endif
 #endif
-#ifndef _VTE_CXX_NOEXCEPT
-#define _VTE_CXX_NOEXCEPT
+#ifndef _BTE_CXX_NOEXCEPT
+#define _BTE_CXX_NOEXCEPT
 #endif
 
-#endif /* __VTE_VTE_MACROS_H__ */
+#endif /* __BTE_BTE_MACROS_H__ */

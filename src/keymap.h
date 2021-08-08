@@ -26,8 +26,8 @@
 
 G_BEGIN_DECLS
 
-#define VTE_ALT_MASK		CDK_MOD1_MASK
-#define VTE_NUMLOCK_MASK	CDK_MOD2_MASK
+#define BTE_ALT_MASK		CDK_MOD1_MASK
+#define BTE_NUMLOCK_MASK	CDK_MOD2_MASK
 
 /* Map the specified keyval/modifier setup, dependent on the mode, to either
  * a literal string or a capability name. */

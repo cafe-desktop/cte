@@ -60,7 +60,7 @@ _bte_cells_realloc (BteCells *cells, guint32 len)
 {
 	guint32 alloc_len = (1 << g_bit_storage (MAX (len, 80))) - 1;
 
-	_bte_debug_print(VTE_DEBUG_RING, "Enlarging cell array of %d cells to %d cells\n", cells ? cells->alloc_len : 0, alloc_len);
+	_bte_debug_print(BTE_DEBUG_RING, "Enlarging cell array of %d cells to %d cells\n", cells ? cells->alloc_len : 0, alloc_len);
 	cells = (BteCells *)g_realloc (cells, G_STRUCT_OFFSET (BteCells, cells) + alloc_len * sizeof (cells->cells[0]));
 	cells->alloc_len = alloc_len;
 
@@ -70,7 +70,7 @@ _bte_cells_realloc (BteCells *cells, guint32 len)
 static void
 _bte_cells_free (BteCells *cells)
 {
-	_bte_debug_print(VTE_DEBUG_RING, "Freeing cell array of %d cells\n", cells->alloc_len);
+	_bte_debug_print(BTE_DEBUG_RING, "Freeing cell array of %d cells\n", cells->alloc_len);
 	g_free (cells);
 }
 

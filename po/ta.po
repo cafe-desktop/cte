@@ -1,5 +1,5 @@
 # translation of bte.HEAD.po to TAMIL
-# Tamil VTE Translation.
+# Tamil BTE Translation.
 # Copyright (C) 2004 Tamil Translation Team
 # This file is distributed under the same license as the PACKAGE package.
 # vivek <vivekananthan_s@rediffmail.com>.

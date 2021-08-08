@@ -259,7 +259,7 @@ private:
         // FIXME: use std::string
 	GString* m_string{nullptr};
 
-#ifdef VTE_DEBUG
+#ifdef BTE_DEBUG
 	/* profiling info */
 	int m_coverage_count[4]{0, 0, 0, 0};
 #endif

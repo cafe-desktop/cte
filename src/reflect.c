@@ -24,7 +24,7 @@
 #include <unistd.h>
 #include <ctk/ctk.h>
 #include <atk/atk.h>
-#ifdef USE_VTE
+#ifdef USE_BTE
 #include <bte/bte.h>
 #endif
 
@@ -51,7 +51,7 @@ terminal_adjustment_text_view(CtkWidget *terminal)
         return ctk_scrollable_get_vadjustment(CTK_SCROLLABLE(terminal));
 }
 #endif
-#ifdef USE_VTE
+#ifdef USE_BTE
 /*
  * Implementation for a BteTerminal widget.
  */
@@ -71,8 +71,8 @@ terminal_shell_bte(CtkWidget *terminal)
 
         argv[0] = bte_get_user_shell ();
         argv[1] = NULL;
-	bte_terminal_spawn_sync(VTE_TERMINAL(terminal),
-                                       VTE_PTY_DEFAULT,
+	bte_terminal_spawn_sync(BTE_TERMINAL(terminal),
+                                       BTE_PTY_DEFAULT,
                                        g_get_home_dir() ? g_get_home_dir() : NULL,
                                        argv,
                                        NULL,
@@ -151,7 +151,7 @@ text_changed_insert(AtkObject *obj, gint offset, gint length, gpointer data)
 		p = g_utf8_next_char(p);
 	}
 
-#ifdef VTE_DEBUG
+#ifdef BTE_DEBUG
 	if ((getenv("REFLECT_VERBOSE") != NULL) &&
 	    (atol(getenv("REFLECT_VERBOSE")) != 0)) {
 		g_printerr("Inserted %d chars ('%.*s') at %d,",
@@ -177,7 +177,7 @@ text_changed_delete(AtkObject *obj, gint offset, gint length, gpointer data)
 		}
 		g_array_remove_index(contents, i);
 	}
-#ifdef VTE_DEBUG
+#ifdef BTE_DEBUG
 	if ((getenv("REFLECT_VERBOSE") != NULL) &&
 	    (atol(getenv("REFLECT_VERBOSE")) != 0)) {
 		g_printerr("Deleted %d chars at %d.\n", length, offset);
@@ -207,7 +207,7 @@ terminal_init(CtkWidget **terminal)
 	terminal_init_text_view(terminal);
 	return;
 #endif
-#ifdef USE_VTE
+#ifdef USE_BTE
 	terminal_init_bte(terminal);
 	return;
 #endif
@@ -220,7 +220,7 @@ terminal_shell(CtkWidget *terminal)
 	terminal_shell_text_view(terminal);
 	return;
 #endif
-#ifdef USE_VTE
+#ifdef USE_BTE
 	terminal_shell_bte(terminal);
 	return;
 #endif
@@ -232,7 +232,7 @@ terminal_adjustment(CtkWidget *terminal)
 #ifdef USE_TEXT_VIEW
 	return terminal_adjustment_text_view(terminal);
 #endif
-#ifdef USE_VTE
+#ifdef USE_BTE
 	return ctk_scrollable_get_vadjustment(CTK_SCROLLABLE(terminal));
 #endif
 	g_assert_not_reached();

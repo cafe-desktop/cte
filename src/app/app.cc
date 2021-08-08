@@ -108,9 +108,9 @@ public:
         int verbosity{0};
         double cell_height_scale{1.0};
         double cell_width_scale{1.0};
-        BteCursorBlinkMode cursor_blink_mode{VTE_CURSOR_BLINK_SYSTEM};
-        BteCursorShape cursor_shape{VTE_CURSOR_SHAPE_BLOCK};
-        BteTextBlinkMode text_blink_mode{VTE_TEXT_BLINK_ALWAYS};
+        BteCursorBlinkMode cursor_blink_mode{BTE_CURSOR_BLINK_SYSTEM};
+        BteCursorShape cursor_shape{BTE_CURSOR_SHAPE_BLOCK};
+        BteTextBlinkMode text_blink_mode{BTE_TEXT_BLINK_ALWAYS};
         bte::glib::RefPtr<CtkCssProvider> css{};
 
         ~Options() {
@@ -332,7 +332,7 @@ private:
         {
                 Options* that = static_cast<Options*>(data);
                 int v;
-                auto rv = that->parse_enum(VTE_TYPE_CURSOR_BLINK_MODE, value, v, error);
+                auto rv = that->parse_enum(BTE_TYPE_CURSOR_BLINK_MODE, value, v, error);
                 if (rv)
                         that->cursor_blink_mode = BteCursorBlinkMode(v);
                 return rv;
@@ -343,7 +343,7 @@ private:
         {
                 Options* that = static_cast<Options*>(data);
                 int v;
-                auto rv = that->parse_enum(VTE_TYPE_CURSOR_SHAPE, value, v, error);
+                auto rv = that->parse_enum(BTE_TYPE_CURSOR_SHAPE, value, v, error);
                 if (rv)
                         that->cursor_shape = BteCursorShape(v);
                 return rv;
@@ -418,7 +418,7 @@ private:
         {
                 Options* that = static_cast<Options*>(data);
                 int v;
-                auto rv = that->parse_enum(VTE_TYPE_TEXT_BLINK_MODE, value, v, error);
+                auto rv = that->parse_enum(BTE_TYPE_TEXT_BLINK_MODE, value, v, error);
                 if (rv)
                         that->text_blink_mode = BteTextBlinkMode(v);
                 return rv;
@@ -613,7 +613,7 @@ public:
                           &dummy_bool, nullptr, nullptr },
                         { "shell", 'S', G_OPTION_FLAG_REVERSE | G_OPTION_FLAG_HIDDEN,
                           G_OPTION_ARG_NONE, &no_shell, nullptr, nullptr },
-#ifdef VTE_DEBUG
+#ifdef BTE_DEBUG
                         { "test-mode", 0, 0, G_OPTION_ARG_NONE, &test_mode,
                           "Enable test mode", nullptr },
 #endif
@@ -642,7 +642,7 @@ public:
                         break;
                 }
 
-                auto context = g_option_context_new("[-- COMMAND …] — VTE test application");
+                auto context = g_option_context_new("[-- COMMAND …] — BTE test application");
                 g_option_context_set_help_enabled(context, true);
                 g_option_context_set_translation_domain(context, GETTEXT_PACKAGE);
 
@@ -695,7 +695,7 @@ jit_regex(BteRegex* regex,
         auto error = bte::glib::Error{};
         if (!bte_regex_jit(regex, PCRE2_JIT_COMPLETE, error) ||
             !bte_regex_jit(regex, PCRE2_JIT_PARTIAL_SOFT, error)) {
-                if (!error.matches(VTE_REGEX_ERROR, -45 /* PCRE2_ERROR_JIT_BADOPTION: JIT not supported */))
+                if (!error.matches(BTE_REGEX_ERROR, -45 /* PCRE2_ERROR_JIT_BADOPTION: JIT not supported */))
                         verbose_printerr("JITing regex \"%s\" failed: %s\n", pattern, error.message());
         }
 }
@@ -734,12 +734,12 @@ compile_regex_for_match(char const* pattern,
 
 /* search popover */
 
-#define VTEAPP_TYPE_SEARCH_POPOVER         (bteapp_search_popover_get_type())
-#define VTEAPP_SEARCH_POPOVER(o)           (G_TYPE_CHECK_INSTANCE_CAST((o), VTEAPP_TYPE_SEARCH_POPOVER, BteappSearchPopover))
-#define VTEAPP_SEARCH_POPOVER_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), VTEAPP_TYPE_SEARCH_POPOVER, BteappSearchPopoverClass))
-#define VTEAPP_IS_SEARCH_POPOVER(o)        (G_TYPE_CHECK_INSTANCE_TYPE((o), VTEAPP_TYPE_SEARCH_POPOVER))
-#define VTEAPP_IS_SEARCH_POPOVER_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE((k), VTEAPP_TYPE_SEARCH_POPOVER))
-#define VTEAPP_SEARCH_POPOVER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS((o), VTEAPP_TYPE_SEARCH_POPOVER, BteappSearchPopoverClass))
+#define BTEAPP_TYPE_SEARCH_POPOVER         (bteapp_search_popover_get_type())
+#define BTEAPP_SEARCH_POPOVER(o)           (G_TYPE_CHECK_INSTANCE_CAST((o), BTEAPP_TYPE_SEARCH_POPOVER, BteappSearchPopover))
+#define BTEAPP_SEARCH_POPOVER_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), BTEAPP_TYPE_SEARCH_POPOVER, BteappSearchPopoverClass))
+#define BTEAPP_IS_SEARCH_POPOVER(o)        (G_TYPE_CHECK_INSTANCE_TYPE((o), BTEAPP_TYPE_SEARCH_POPOVER))
+#define BTEAPP_IS_SEARCH_POPOVER_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE((k), BTEAPP_TYPE_SEARCH_POPOVER))
+#define BTEAPP_SEARCH_POPOVER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS((o), BTEAPP_TYPE_SEARCH_POPOVER, BteappSearchPopoverClass))
 
 typedef struct _BteappSearchPopover        BteappSearchPopover;
 typedef struct _BteappSearchPopoverClass   BteappSearchPopoverClass;
@@ -898,7 +898,7 @@ bteapp_search_popover_init(BteappSearchPopover* popover)
 static void
 bteapp_search_popover_finalize(GObject *object)
 {
-        BteappSearchPopover* popover = VTEAPP_SEARCH_POPOVER(object);
+        BteappSearchPopover* popover = BTEAPP_SEARCH_POPOVER(object);
 
         g_free(popover->regex_pattern);
 
@@ -911,7 +911,7 @@ bteapp_search_popover_set_property(GObject* object,
                                    const GValue* value,
                                    GParamSpec* pspec)
 {
-        BteappSearchPopover* popover = VTEAPP_SEARCH_POPOVER(object);
+        BteappSearchPopover* popover = BTEAPP_SEARCH_POPOVER(object);
 
         switch (prop_id) {
         case SEARCH_POPOVER_PROP_TERMINAL:
@@ -932,7 +932,7 @@ bteapp_search_popover_class_init(BteappSearchPopoverClass* klass)
 
         search_popover_pspecs[SEARCH_POPOVER_PROP_TERMINAL] =
                 g_param_spec_object("terminal", nullptr, nullptr,
-                                    VTE_TYPE_TERMINAL,
+                                    BTE_TYPE_TERMINAL,
                                     GParamFlags(G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT_ONLY));
 
         g_object_class_install_properties(gobject_class, G_N_ELEMENTS(search_popover_pspecs), search_popover_pspecs);
@@ -957,7 +957,7 @@ static CtkWidget*
 bteapp_search_popover_new(BteTerminal* terminal,
                           CtkWidget* relative_to)
 {
-        return reinterpret_cast<CtkWidget*>(g_object_new(VTEAPP_TYPE_SEARCH_POPOVER,
+        return reinterpret_cast<CtkWidget*>(g_object_new(BTEAPP_TYPE_SEARCH_POPOVER,
                                                          "terminal", terminal,
                                                          "relative-to", relative_to,
                                                          nullptr));
@@ -965,12 +965,12 @@ bteapp_search_popover_new(BteTerminal* terminal,
 
 /* terminal */
 
-#define VTEAPP_TYPE_TERMINAL         (bteapp_terminal_get_type())
-#define VTEAPP_TERMINAL(o)           (G_TYPE_CHECK_INSTANCE_CAST((o), VTEAPP_TYPE_TERMINAL, BteappTerminal))
-#define VTEAPP_TERMINAL_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), VTEAPP_TYPE_TERMINAL, BteappTerminalClass))
-#define VTEAPP_IS_TERMINAL(o)        (G_TYPE_CHECK_INSTANCE_TYPE((o), VTEAPP_TYPE_TERMINAL))
-#define VTEAPP_IS_TERMINAL_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE((k), VTEAPP_TYPE_TERMINAL))
-#define VTEAPP_TERMINAL_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS((o), VTEAPP_TYPE_TERMINAL, BteappTerminalClass))
+#define BTEAPP_TYPE_TERMINAL         (bteapp_terminal_get_type())
+#define BTEAPP_TERMINAL(o)           (G_TYPE_CHECK_INSTANCE_CAST((o), BTEAPP_TYPE_TERMINAL, BteappTerminal))
+#define BTEAPP_TERMINAL_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), BTEAPP_TYPE_TERMINAL, BteappTerminalClass))
+#define BTEAPP_IS_TERMINAL(o)        (G_TYPE_CHECK_INSTANCE_TYPE((o), BTEAPP_TYPE_TERMINAL))
+#define BTEAPP_IS_TERMINAL_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE((k), BTEAPP_TYPE_TERMINAL))
+#define BTEAPP_TERMINAL_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS((o), BTEAPP_TYPE_TERMINAL, BteappTerminalClass))
 
 typedef struct _BteappTerminal       BteappTerminal;
 typedef struct _BteappTerminalClass  BteappTerminalClass;
@@ -989,7 +989,7 @@ struct _BteappTerminalClass {
 
 static GType bteapp_terminal_get_type(void);
 
-G_DEFINE_TYPE(BteappTerminal, bteapp_terminal, VTE_TYPE_TERMINAL)
+G_DEFINE_TYPE(BteappTerminal, bteapp_terminal, BTE_TYPE_TERMINAL)
 
 #define BACKDROP_ALPHA (0.2)
 
@@ -998,7 +998,7 @@ bteapp_terminal_realize(CtkWidget* widget)
 {
         CTK_WIDGET_CLASS(bteapp_terminal_parent_class)->realize(widget);
 
-        BteappTerminal* terminal = VTEAPP_TERMINAL(widget);
+        BteappTerminal* terminal = BTEAPP_TERMINAL(widget);
         if (options.background_pixbuf != nullptr) {
                 auto surface = cdk_cairo_surface_create_from_pixbuf(options.background_pixbuf,
                                                                     0 /* take scale from window */,
@@ -1013,7 +1013,7 @@ bteapp_terminal_realize(CtkWidget* widget)
 static void
 bteapp_terminal_unrealize(CtkWidget* widget)
 {
-        BteappTerminal* terminal = VTEAPP_TERMINAL(widget);
+        BteappTerminal* terminal = BTEAPP_TERMINAL(widget);
         if (terminal->background_pattern != nullptr) {
                 cairo_pattern_destroy(terminal->background_pattern);
                 terminal->background_pattern = nullptr;
@@ -1026,7 +1026,7 @@ static gboolean
 bteapp_terminal_draw(CtkWidget* widget,
                      cairo_t* cr)
 {
-        BteappTerminal* terminal = VTEAPP_TERMINAL(widget);
+        BteappTerminal* terminal = BTEAPP_TERMINAL(widget);
         if (terminal->background_pattern != nullptr) {
                 cairo_push_group(cr);
 
@@ -1036,7 +1036,7 @@ bteapp_terminal_draw(CtkWidget* widget,
                                 ctk_widget_get_allocated_width(widget),
                                 ctk_widget_get_allocated_height(widget));
                 CdkRGBA bg;
-                bte_terminal_get_color_background_for_draw(VTE_TERMINAL(terminal), &bg);
+                bte_terminal_get_color_background_for_draw(BTE_TERMINAL(terminal), &bg);
                 cairo_set_source_rgba(cr, bg.red, bg.green, bg.blue, 1.0);
                 cairo_paint(cr);
 
@@ -1074,7 +1074,7 @@ bteapp_terminal_style_updated(CtkWidget* widget)
         auto context = ctk_widget_get_style_context(widget);
         auto flags = ctk_style_context_get_state(context);
 
-        BteappTerminal* terminal = VTEAPP_TERMINAL(widget);
+        BteappTerminal* terminal = BTEAPP_TERMINAL(widget);
         terminal->has_backdrop = (flags & CTK_STATE_FLAG_BACKDROP) != 0;
 
         if (options.use_theme_colors) {
@@ -1091,7 +1091,7 @@ bteapp_terminal_style_updated(CtkWidget* widget)
 
                 theme_fg.alpha = 1.;
                 theme_bg.alpha = options.get_alpha_bg();
-                bte_terminal_set_colors(VTE_TERMINAL(terminal), &theme_fg, &theme_bg, nullptr, 0);
+                bte_terminal_set_colors(BTE_TERMINAL(terminal), &theme_fg, &theme_bg, nullptr, 0);
         }
 }
 
@@ -1115,23 +1115,23 @@ bteapp_terminal_init(BteappTerminal *terminal)
         terminal->use_backdrop = options.backdrop;
 
         if (options.background_pixbuf != nullptr)
-                bte_terminal_set_clear_background(VTE_TERMINAL(terminal), false);
+                bte_terminal_set_clear_background(BTE_TERMINAL(terminal), false);
 }
 
 static CtkWidget *
 bteapp_terminal_new(void)
 {
-        return reinterpret_cast<CtkWidget*>(g_object_new(VTEAPP_TYPE_TERMINAL, nullptr));
+        return reinterpret_cast<CtkWidget*>(g_object_new(BTEAPP_TYPE_TERMINAL, nullptr));
 }
 
 /* terminal window */
 
-#define VTEAPP_TYPE_WINDOW         (bteapp_window_get_type())
-#define VTEAPP_WINDOW(o)           (G_TYPE_CHECK_INSTANCE_CAST((o), VTEAPP_TYPE_WINDOW, BteappWindow))
-#define VTEAPP_WINDOW_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), VTEAPP_TYPE_WINDOW, BteappWindowClass))
-#define VTEAPP_IS_WINDOW(o)        (G_TYPE_CHECK_INSTANCE_TYPE((o), VTEAPP_TYPE_WINDOW))
-#define VTEAPP_IS_WINDOW_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE((k), VTEAPP_TYPE_WINDOW))
-#define VTEAPP_WINDOW_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS((o), VTEAPP_TYPE_WINDOW, BteappWindowClass))
+#define BTEAPP_TYPE_WINDOW         (bteapp_window_get_type())
+#define BTEAPP_WINDOW(o)           (G_TYPE_CHECK_INSTANCE_CAST((o), BTEAPP_TYPE_WINDOW, BteappWindow))
+#define BTEAPP_WINDOW_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), BTEAPP_TYPE_WINDOW, BteappWindowClass))
+#define BTEAPP_IS_WINDOW(o)        (G_TYPE_CHECK_INSTANCE_TYPE((o), BTEAPP_TYPE_WINDOW))
+#define BTEAPP_IS_WINDOW_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE((k), BTEAPP_TYPE_WINDOW))
+#define BTEAPP_WINDOW_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS((o), BTEAPP_TYPE_WINDOW, BteappWindowClass))
 
 typedef struct _BteappWindow       BteappWindow;
 typedef struct _BteappWindowClass  BteappWindowClass;
@@ -1384,7 +1384,7 @@ window_spawn_cb(BteTerminal* terminal,
         if (terminal == nullptr) /* terminal destroyed while spawning */
                 return;
 
-        BteappWindow* window = VTEAPP_WINDOW(data);
+        BteappWindow* window = BTEAPP_WINDOW(data);
         window->child_pid = child_pid;
 
         if (child_pid != -1)
@@ -1407,12 +1407,12 @@ bteapp_window_launch_argv(BteappWindow* window,
                           GError** error)
 {
         auto const spawn_flags = GSpawnFlags(G_SPAWN_SEARCH_PATH_FROM_ENVP |
-                                             (options.no_systemd_scope ? VTE_SPAWN_NO_SYSTEMD_SCOPE : 0) |
-                                             (options.require_systemd_scope ? VTE_SPAWN_REQUIRE_SYSTEMD_SCOPE : 0));
+                                             (options.no_systemd_scope ? BTE_SPAWN_NO_SYSTEMD_SCOPE : 0) |
+                                             (options.require_systemd_scope ? BTE_SPAWN_REQUIRE_SYSTEMD_SCOPE : 0));
         auto fds = options.fds();
         auto map_fds = options.map_fds();
         bte_terminal_spawn_with_fds_async(window->terminal,
-                                          VTE_PTY_DEFAULT,
+                                          BTE_PTY_DEFAULT,
                                           options.working_directory,
                                           argv,
                                           options.environment,
@@ -1468,7 +1468,7 @@ static bool
 bteapp_window_fork(BteappWindow* window,
                    GError** error)
 {
-        auto pty = bte_pty_new_sync(VTE_PTY_DEFAULT, nullptr, error);
+        auto pty = bte_pty_new_sync(BTE_PTY_DEFAULT, nullptr, error);
         if (pty == nullptr)
                 return false;
 
@@ -1578,11 +1578,11 @@ window_action_copy_cb(GSimpleAction* action,
                       GVariant* parameter,
                       void* data)
 {
-        BteappWindow* window = VTEAPP_WINDOW(data);
+        BteappWindow* window = BTEAPP_WINDOW(data);
         char const* str = g_variant_get_string(parameter, nullptr);
 
         bte_terminal_copy_clipboard_format(window->terminal,
-                                           g_str_equal(str, "html") ? VTE_FORMAT_HTML : VTE_FORMAT_TEXT);
+                                           g_str_equal(str, "html") ? BTE_FORMAT_HTML : BTE_FORMAT_TEXT);
 
 }
 
@@ -1591,7 +1591,7 @@ window_action_copy_match_cb(GSimpleAction* action,
                             GVariant* parameter,
                             void* data)
 {
-        BteappWindow* window = VTEAPP_WINDOW(data);
+        BteappWindow* window = BTEAPP_WINDOW(data);
         gsize len;
         char const* str = g_variant_get_string(parameter, &len);
         ctk_clipboard_set_text(window->clipboard, str, len);
@@ -1602,7 +1602,7 @@ window_action_paste_cb(GSimpleAction* action,
                        GVariant* parameter,
                        void* data)
 {
-        BteappWindow* window = VTEAPP_WINDOW(data);
+        BteappWindow* window = BTEAPP_WINDOW(data);
         bte_terminal_paste_clipboard(window->terminal);
 }
 
@@ -1611,7 +1611,7 @@ window_action_reset_cb(GSimpleAction* action,
                        GVariant* parameter,
                        void* data)
 {
-        BteappWindow* window = VTEAPP_WINDOW(data);
+        BteappWindow* window = BTEAPP_WINDOW(data);
         bool clear;
         CdkModifierType modifiers;
 
@@ -1630,7 +1630,7 @@ window_action_find_cb(GSimpleAction* action,
                       GVariant* parameter,
                       void* data)
 {
-        BteappWindow* window = VTEAPP_WINDOW(data);
+        BteappWindow* window = BTEAPP_WINDOW(data);
         ctk_toggle_button_set_active(window->find_button, true);
 }
 
@@ -1640,7 +1640,7 @@ window_action_fullscreen_state_cb (GSimpleAction *action,
                                    GVariant *state,
                                    void* data)
 {
-        BteappWindow* window = VTEAPP_WINDOW(data);
+        BteappWindow* window = BTEAPP_WINDOW(data);
 
         if (!ctk_widget_get_realized(CTK_WIDGET(window)))
                 return;
@@ -1782,7 +1782,7 @@ window_child_exited_cb(BteTerminal* term,
                 if (stream != nullptr) {
                         bte_terminal_write_contents_sync(window->terminal,
                                                          G_OUTPUT_STREAM(stream),
-                                                         VTE_WRITE_DEFAULT,
+                                                         BTE_WRITE_DEFAULT,
                                                          nullptr, error);
                         g_object_unref(stream);
                 }
@@ -1923,7 +1923,7 @@ window_notify_cb(GObject* object,
                  GParamSpec* pspec,
                  BteappWindow* window)
 {
-        if (pspec->owner_type != VTE_TYPE_TERMINAL)
+        if (pspec->owner_type != BTE_TYPE_TERMINAL)
                 return;
 
         GValue value G_VALUE_INIT;
@@ -2004,7 +2004,7 @@ bteapp_window_init(BteappWindow* window)
 static void
 bteapp_window_constructed(GObject *object)
 {
-        BteappWindow* window = VTEAPP_WINDOW(object);
+        BteappWindow* window = BTEAPP_WINDOW(object);
 
         G_OBJECT_CLASS(bteapp_window_parent_class)->constructed(object);
 
@@ -2176,7 +2176,7 @@ bteapp_window_constructed(GObject *object)
 static void
 bteapp_window_dispose(GObject *object)
 {
-        BteappWindow* window = VTEAPP_WINDOW(object);
+        BteappWindow* window = BTEAPP_WINDOW(object);
 
         if (window->clipboard != nullptr) {
                 g_signal_handlers_disconnect_by_func(window->clipboard,
@@ -2199,7 +2199,7 @@ bteapp_window_realize(CtkWidget* widget)
         CTK_WIDGET_CLASS(bteapp_window_parent_class)->realize(widget);
 
         /* Now we can know the CSD size, and thus apply the geometry. */
-        BteappWindow* window = VTEAPP_WINDOW(widget);
+        BteappWindow* window = BTEAPP_WINDOW(widget);
         verbose_print("BteappWindow::realize\n");
         bteapp_window_resize(window);
 }
@@ -2210,7 +2210,7 @@ bteapp_window_show(CtkWidget* widget)
         CTK_WIDGET_CLASS(bteapp_window_parent_class)->show(widget);
 
         /* Re-apply the geometry. */
-        BteappWindow* window = VTEAPP_WINDOW(widget);
+        BteappWindow* window = BTEAPP_WINDOW(widget);
         verbose_print("BteappWindow::show\n");
         bteapp_window_resize(window);
 }
@@ -2221,7 +2221,7 @@ bteapp_window_style_updated(CtkWidget* widget)
         CTK_WIDGET_CLASS(bteapp_window_parent_class)->style_updated(widget);
 
         /* Re-apply the geometry. */
-        BteappWindow* window = VTEAPP_WINDOW(widget);
+        BteappWindow* window = BTEAPP_WINDOW(widget);
         verbose_print("BteappWindow::style-update\n");
         bteapp_window_resize(window);
 }
@@ -2230,7 +2230,7 @@ static gboolean
 bteapp_window_state_event (CtkWidget* widget,
                            CdkEventWindowState* event)
 {
-        BteappWindow* window = VTEAPP_WINDOW(widget);
+        BteappWindow* window = BTEAPP_WINDOW(widget);
 
         if (event->changed_mask & CDK_WINDOW_STATE_FULLSCREEN) {
                 window->fullscreen = (event->new_window_state & CDK_WINDOW_STATE_FULLSCREEN) != 0;
@@ -2271,19 +2271,19 @@ bteapp_window_class_init(BteappWindowClass* klass)
 static BteappWindow*
 bteapp_window_new(GApplication* app)
 {
-        return reinterpret_cast<BteappWindow*>(g_object_new(VTEAPP_TYPE_WINDOW,
+        return reinterpret_cast<BteappWindow*>(g_object_new(BTEAPP_TYPE_WINDOW,
                                                             "application", app,
                                                             nullptr));
 }
 
 /* application */
 
-#define VTEAPP_TYPE_APPLICATION         (bteapp_application_get_type())
-#define VTEAPP_APPLICATION(o)           (G_TYPE_CHECK_INSTANCE_CAST((o), VTEAPP_TYPE_APPLICATION, BteappApplication))
-#define VTEAPP_APPLICATION_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), VTEAPP_TYPE_APPLICATION, BteappApplicationClass))
-#define VTEAPP_IS_APPLICATION(o)        (G_TYPE_CHECK_INSTANCE_TYPE((o), VTEAPP_TYPE_APPLICATION))
-#define VTEAPP_IS_APPLICATION_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE((k), VTEAPP_TYPE_APPLICATION))
-#define VTEAPP_APPLICATION_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS((o), VTEAPP_TYPE_APPLICATION, BteappApplicationClass))
+#define BTEAPP_TYPE_APPLICATION         (bteapp_application_get_type())
+#define BTEAPP_APPLICATION(o)           (G_TYPE_CHECK_INSTANCE_CAST((o), BTEAPP_TYPE_APPLICATION, BteappApplication))
+#define BTEAPP_APPLICATION_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), BTEAPP_TYPE_APPLICATION, BteappApplicationClass))
+#define BTEAPP_IS_APPLICATION(o)        (G_TYPE_CHECK_INSTANCE_TYPE((o), BTEAPP_TYPE_APPLICATION))
+#define BTEAPP_IS_APPLICATION_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE((k), BTEAPP_TYPE_APPLICATION))
+#define BTEAPP_APPLICATION_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS((o), BTEAPP_TYPE_APPLICATION, BteappApplicationClass))
 
 typedef struct _BteappApplication       BteappApplication;
 typedef struct _BteappApplicationClass  BteappApplicationClass;
@@ -2331,7 +2331,7 @@ app_stdin_readable_cb(int fd,
         auto eos = bool{false};
         if (condition & G_IO_IN) {
                 auto window = ctk_application_get_active_window(CTK_APPLICATION(application));
-                auto terminal = VTEAPP_IS_WINDOW(window) ? VTEAPP_WINDOW(window)->terminal : nullptr;
+                auto terminal = BTEAPP_IS_WINDOW(window) ? BTEAPP_WINDOW(window)->terminal : nullptr;
 
                 char buf[4096];
                 auto r = int{0};
@@ -2384,7 +2384,7 @@ bteapp_application_init(BteappApplication* application)
 static void
 bteapp_application_dispose(GObject* object)
 {
-        BteappApplication* application = VTEAPP_APPLICATION(object);
+        BteappApplication* application = BTEAPP_APPLICATION(object);
 
         if (application->input_source != 0) {
                 g_source_remove(application->input_source);
@@ -2432,7 +2432,7 @@ bteapp_application_class_init(BteappApplicationClass* klass)
 static GApplication*
 bteapp_application_new(void)
 {
-        return reinterpret_cast<GApplication*>(g_object_new(VTEAPP_TYPE_APPLICATION,
+        return reinterpret_cast<GApplication*>(g_object_new(BTEAPP_TYPE_APPLICATION,
                                                             "application-id", "org.gnome.Bte.Application",
                                                             "flags", guint(G_APPLICATION_NON_UNIQUE),
                                                             nullptr));
@@ -2462,19 +2462,19 @@ main(int argc,
                return EXIT_FAILURE;
        }
 
-        if (g_getenv("VTE_CJK_WIDTH") != nullptr)
-                verbose_printerr("VTE_CJK_WIDTH is not supported anymore, use --cjk-width instead\n");
+        if (g_getenv("BTE_CJK_WIDTH") != nullptr)
+                verbose_printerr("BTE_CJK_WIDTH is not supported anymore, use --cjk-width instead\n");
 
        if (options.version) {
-               g_print("VTE Application %s %s\n", VERSION, bte_get_features());
+               g_print("BTE Application %s %s\n", VERSION, bte_get_features());
                return EXIT_SUCCESS;
        }
 
        if (options.debug)
                cdk_window_set_debug_updates(true);
-#ifdef VTE_DEBUG
+#ifdef BTE_DEBUG
        if (options.test_mode) {
-               bte_set_test_flags(VTE_TEST_FLAGS_ALL);
+               bte_set_test_flags(BTE_TEST_FLAGS_ALL);
                options.allow_window_ops = true;
        }
 #endif

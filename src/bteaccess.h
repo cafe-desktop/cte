@@ -26,12 +26,12 @@
 
 G_BEGIN_DECLS
 
-#define VTE_TYPE_TERMINAL_ACCESSIBLE            (_bte_terminal_accessible_get_type ())
-#define VTE_TERMINAL_ACCESSIBLE(object)         (G_TYPE_CHECK_INSTANCE_CAST ((object), VTE_TYPE_TERMINAL_ACCESSIBLE, BteTerminalAccessible))
-#define VTE_TERMINAL_ACCESSIBLE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), VTE_TYPE_TERMINAL_ACCESSIBLE, BteTerminalAccessibleClass))
-#define VTE_IS_TERMINAL_ACCESSIBLE(object)      (G_TYPE_CHECK_INSTANCE_TYPE ((object), VTE_TYPE_TERMINAL_ACCESSIBLE))
-#define VTE_IS_TERMINAL_ACCESSIBLE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), VTE_TYPE_TERMINAL_ACCESSIBLE))
-#define VTE_TERMINAL_ACCESSIBLE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), VTE_TYPE_TERMINAL_ACCESSIBLE, BteTerminalAccessibleClass))
+#define BTE_TYPE_TERMINAL_ACCESSIBLE            (_bte_terminal_accessible_get_type ())
+#define BTE_TERMINAL_ACCESSIBLE(object)         (G_TYPE_CHECK_INSTANCE_CAST ((object), BTE_TYPE_TERMINAL_ACCESSIBLE, BteTerminalAccessible))
+#define BTE_TERMINAL_ACCESSIBLE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), BTE_TYPE_TERMINAL_ACCESSIBLE, BteTerminalAccessibleClass))
+#define BTE_IS_TERMINAL_ACCESSIBLE(object)      (G_TYPE_CHECK_INSTANCE_TYPE ((object), BTE_TYPE_TERMINAL_ACCESSIBLE))
+#define BTE_IS_TERMINAL_ACCESSIBLE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), BTE_TYPE_TERMINAL_ACCESSIBLE))
+#define BTE_TERMINAL_ACCESSIBLE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), BTE_TYPE_TERMINAL_ACCESSIBLE, BteTerminalAccessibleClass))
 
 typedef struct _BteTerminalAccessible      BteTerminalAccessible;
 typedef struct _BteTerminalAccessibleClass BteTerminalAccessibleClass;

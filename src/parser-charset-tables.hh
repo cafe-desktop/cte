@@ -15,12 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define IR(num)    VTE_CHARSET_ISO_2375_IR_##num
-#define DEC(name)  VTE_CHARSET_DEC_##name
-#define NRCS(name) VTE_CHARSET_##name##_NRCS
-#define EMPTY      VTE_CHARSET_EMPTY
-#define NA         VTE_CHARSET_NONE
-#define RET        VTE_CHARSET_RETURN
+#define IR(num)    BTE_CHARSET_ISO_2375_IR_##num
+#define DEC(name)  BTE_CHARSET_DEC_##name
+#define NRCS(name) BTE_CHARSET_##name##_NRCS
+#define EMPTY      BTE_CHARSET_EMPTY
+#define NA         BTE_CHARSET_NONE
+#define RET        BTE_CHARSET_RETURN
 
 /* 94-character graphic character sets:
  * G0: ESC 2/8 F

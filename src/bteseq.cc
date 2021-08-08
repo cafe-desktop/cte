@@ -37,43 +37,43 @@
 #include "debug.h"
 
 #define BEL_C0 "\007"
-#define ST_C0 _VTE_CAP_ST
+#define ST_C0 _BTE_CAP_ST
 
 #include <algorithm>
 
 using namespace std::literals;
 
 enum {
-        VTE_XTERM_WM_RESTORE_WINDOW = 1,
-        VTE_XTERM_WM_MINIMIZE_WINDOW = 2,
-        VTE_XTERM_WM_SET_WINDOW_POSITION = 3,
-        VTE_XTERM_WM_SET_WINDOW_SIZE_PIXELS = 4,
-        VTE_XTERM_WM_RAISE_WINDOW = 5,
-        VTE_XTERM_WM_LOWER_WINDOW = 6,
-        VTE_XTERM_WM_REFRESH_WINDOW = 7,
-        VTE_XTERM_WM_SET_WINDOW_SIZE_CELLS = 8,
-        VTE_XTERM_WM_MAXIMIZE_WINDOW = 9,
-        VTE_XTERM_WM_FULLSCREEN_WINDOW = 10,
-        VTE_XTERM_WM_GET_WINDOW_STATE = 11,
-        VTE_XTERM_WM_GET_WINDOW_POSITION = 13,
-        VTE_XTERM_WM_GET_WINDOW_SIZE_PIXELS = 14,
-        VTE_XTERM_WM_GET_WINDOW_SIZE_CELLS = 18,
-        VTE_XTERM_WM_GET_SCREEN_SIZE_CELLS = 19,
-        VTE_XTERM_WM_GET_ICON_TITLE = 20,
-        VTE_XTERM_WM_GET_WINDOW_TITLE = 21,
-        VTE_XTERM_WM_TITLE_STACK_PUSH = 22,
-        VTE_XTERM_WM_TITLE_STACK_POP = 23,
+        BTE_XTERM_WM_RESTORE_WINDOW = 1,
+        BTE_XTERM_WM_MINIMIZE_WINDOW = 2,
+        BTE_XTERM_WM_SET_WINDOW_POSITION = 3,
+        BTE_XTERM_WM_SET_WINDOW_SIZE_PIXELS = 4,
+        BTE_XTERM_WM_RAISE_WINDOW = 5,
+        BTE_XTERM_WM_LOWER_WINDOW = 6,
+        BTE_XTERM_WM_REFRESH_WINDOW = 7,
+        BTE_XTERM_WM_SET_WINDOW_SIZE_CELLS = 8,
+        BTE_XTERM_WM_MAXIMIZE_WINDOW = 9,
+        BTE_XTERM_WM_FULLSCREEN_WINDOW = 10,
+        BTE_XTERM_WM_GET_WINDOW_STATE = 11,
+        BTE_XTERM_WM_GET_WINDOW_POSITION = 13,
+        BTE_XTERM_WM_GET_WINDOW_SIZE_PIXELS = 14,
+        BTE_XTERM_WM_GET_WINDOW_SIZE_CELLS = 18,
+        BTE_XTERM_WM_GET_SCREEN_SIZE_CELLS = 19,
+        BTE_XTERM_WM_GET_ICON_TITLE = 20,
+        BTE_XTERM_WM_GET_WINDOW_TITLE = 21,
+        BTE_XTERM_WM_TITLE_STACK_PUSH = 22,
+        BTE_XTERM_WM_TITLE_STACK_POP = 23,
 };
 
 enum {
-        VTE_SGR_COLOR_SPEC_RGB    = 2,
-        VTE_SGR_COLOR_SPEC_LEGACY = 5
+        BTE_SGR_COLOR_SPEC_RGB    = 2,
+        BTE_SGR_COLOR_SPEC_LEGACY = 5
 };
 
 void
 bte::parser::Sequence::print() const noexcept
 {
-#ifdef VTE_DEBUG
+#ifdef BTE_DEBUG
         auto c = m_seq != nullptr ? terminator() : 0;
         char c_buf[7];
         g_snprintf(c_buf, sizeof(c_buf), "%lc", c);
@@ -88,7 +88,7 @@ bte::parser::Sequence::print() const noexcept
                 }
                 g_printerr(" ]");
         }
-        if (m_seq->type == VTE_SEQ_OSC) {
+        if (m_seq->type == BTE_SEQ_OSC) {
                 char* str = string_param();
                 g_printerr(" \"%s\"", str);
                 g_free(str);
@@ -104,18 +104,18 @@ bte::parser::Sequence::type_string() const
                 return "(nil)";
 
         switch (type()) {
-        case VTE_SEQ_NONE:    return "NONE";
-        case VTE_SEQ_IGNORE:  return "IGNORE";
-        case VTE_SEQ_GRAPHIC: return "GRAPHIC";
-        case VTE_SEQ_CONTROL: return "CONTROL";
-        case VTE_SEQ_ESCAPE:  return "ESCAPE";
-        case VTE_SEQ_CSI:     return "CSI";
-        case VTE_SEQ_DCS:     return "DCS";
-        case VTE_SEQ_OSC:     return "OSC";
-        case VTE_SEQ_SCI:     return "SCI";
-        case VTE_SEQ_APC:     return "APC";
-        case VTE_SEQ_PM:      return "PM";
-        case VTE_SEQ_SOS:     return "SOS";
+        case BTE_SEQ_NONE:    return "NONE";
+        case BTE_SEQ_IGNORE:  return "IGNORE";
+        case BTE_SEQ_GRAPHIC: return "GRAPHIC";
+        case BTE_SEQ_CONTROL: return "CONTROL";
+        case BTE_SEQ_ESCAPE:  return "ESCAPE";
+        case BTE_SEQ_CSI:     return "CSI";
+        case BTE_SEQ_DCS:     return "DCS";
+        case BTE_SEQ_OSC:     return "OSC";
+        case BTE_SEQ_SCI:     return "SCI";
+        case BTE_SEQ_APC:     return "APC";
+        case BTE_SEQ_PM:      return "PM";
+        case BTE_SEQ_SOS:     return "SOS";
         default:
                 g_assert(false);
                 return nullptr;
@@ -129,11 +129,11 @@ bte::parser::Sequence::command_string() const
                 return "(nil)";
 
         switch (command()) {
-#define _VTE_CMD(cmd) case VTE_CMD_##cmd: return #cmd;
-#define _VTE_NOP(cmd)
+#define _BTE_CMD(cmd) case BTE_CMD_##cmd: return #cmd;
+#define _BTE_NOP(cmd)
 #include "parser-cmd.hh"
-#undef _VTE_CMD
-#undef _VTE_NOP
+#undef _BTE_CMD
+#undef _BTE_NOP
         default:
                 static char buf[32];
                 snprintf(buf, sizeof(buf), "NOP OR UNKOWN(%u)", command());
@@ -180,7 +180,7 @@ bte::parser::Sequence::ucs4_to_utf8(gunichar const* str,
 {
         if (len < 0)
                 len = bte_unichar_strlen(str);
-        auto outlen = (len * VTE_UTF8_BPC) + 1;
+        auto outlen = (len * BTE_UTF8_BPC) + 1;
 
         auto result = (char*)g_try_malloc(outlen);
         if (result == nullptr)
@@ -202,7 +202,7 @@ namespace terminal {
 void
 Terminal::emit_bell()
 {
-        _bte_debug_print(VTE_DEBUG_SIGNALS, "Emitting `bell'.\n");
+        _bte_debug_print(BTE_DEBUG_SIGNALS, "Emitting `bell'.\n");
         g_signal_emit(m_terminal, signals[SIGNAL_BELL], 0);
 }
 
@@ -211,7 +211,7 @@ void
 Terminal::emit_resize_window(guint columns,
                                        guint rows)
 {
-        _bte_debug_print(VTE_DEBUG_SIGNALS, "Emitting `resize-window'.\n");
+        _bte_debug_print(BTE_DEBUG_SIGNALS, "Emitting `resize-window'.\n");
         g_signal_emit(m_terminal, signals[SIGNAL_RESIZE_WINDOW], 0, columns, rows);
 }
 
@@ -227,7 +227,7 @@ Terminal::emit_resize_window(guint columns,
  * effect (e.g. color change) leave this special mode on.  There are
  * exceptions of course (e.g. scroll up).
  *
- * In VTE, a different technical approach is used.  The cursor is advanced to
+ * In BTE, a different technical approach is used.  The cursor is advanced to
  * the invisible column on the right, but it's set back to the visible
  * rightmost column whenever necessary (that is, before handling any of the
  * sequences that disable the special cased mode in xterm).  (Bug 731155.)
@@ -432,7 +432,7 @@ Terminal::set_mode_ecma(bte::parser::Sequence const& seq,
                 auto const param = seq.collect1(i);
                 auto const mode = m_modes_ecma.mode_from_param(param);
 
-                _bte_debug_print(VTE_DEBUG_MODES,
+                _bte_debug_print(BTE_DEBUG_MODES,
                                  "Mode %d (%s) %s\n",
                                  param, m_modes_ecma.mode_to_cstring(mode),
                                  set ? "set" : "reset");
@@ -443,10 +443,10 @@ Terminal::set_mode_ecma(bte::parser::Sequence const& seq,
                 m_modes_ecma.set(mode, set);
 
                 if (mode == m_modes_ecma.eBDSM) {
-                        _bte_debug_print(VTE_DEBUG_BIDI,
+                        _bte_debug_print(BTE_DEBUG_BIDI,
                                          "BiDi %s mode\n",
                                          set ? "implicit" : "explicit");
-                        maybe_apply_bidi_attributes(VTE_BIDI_FLAG_IMPLICIT);
+                        maybe_apply_bidi_attributes(BTE_BIDI_FLAG_IMPLICIT);
                 }
         }
 }
@@ -472,7 +472,7 @@ Terminal::update_mouse_protocol() noexcept
         /* Mouse pointer might change */
         apply_mouse_cursor();
 
-        _bte_debug_print(VTE_DEBUG_MODES,
+        _bte_debug_print(BTE_DEBUG_MODES,
                          "Mouse protocol is now %d\n", (int)m_mouse_tracking_mode);
 }
 
@@ -575,18 +575,18 @@ Terminal::set_mode_private(int mode,
                         feed_focus_event_initial();
                 break;
 
-        case bte::terminal::modes::Private::eVTE_BIDI_BOX_MIRROR:
-                _bte_debug_print(VTE_DEBUG_BIDI,
+        case bte::terminal::modes::Private::eBTE_BIDI_BOX_MIRROR:
+                _bte_debug_print(BTE_DEBUG_BIDI,
                                  "BiDi box drawing mirroring %s\n",
                                  set ? "enabled" : "disabled");
-                maybe_apply_bidi_attributes(VTE_BIDI_FLAG_BOX_MIRROR);
+                maybe_apply_bidi_attributes(BTE_BIDI_FLAG_BOX_MIRROR);
                 break;
 
-        case bte::terminal::modes::Private::eVTE_BIDI_AUTO:
-                        _bte_debug_print(VTE_DEBUG_BIDI,
+        case bte::terminal::modes::Private::eBTE_BIDI_AUTO:
+                        _bte_debug_print(BTE_DEBUG_BIDI,
                                          "BiDi dir autodetection %s\n",
                                          set ? "enabled" : "disabled");
-                maybe_apply_bidi_attributes(VTE_BIDI_FLAG_AUTO);
+                maybe_apply_bidi_attributes(BTE_BIDI_FLAG_AUTO);
                 break;
 
         default:
@@ -603,7 +603,7 @@ Terminal::set_mode_private(bte::parser::Sequence const& seq,
                 auto const param = seq.collect1(i);
                 auto const mode = m_modes_private.mode_from_param(param);
 
-                _bte_debug_print(VTE_DEBUG_MODES,
+                _bte_debug_print(BTE_DEBUG_MODES,
                                  "Private mode %d (%s) %s\n",
                                  param, m_modes_private.mode_to_cstring(mode),
                                  set ? "set" : "reset");
@@ -625,14 +625,14 @@ Terminal::save_mode_private(bte::parser::Sequence const& seq,
                 auto const mode = m_modes_private.mode_from_param(param);
 
                 if (mode < 0) {
-                        _bte_debug_print(VTE_DEBUG_MODES,
+                        _bte_debug_print(BTE_DEBUG_MODES,
                                          "Saving private mode %d (%s)\n",
                                          param, m_modes_private.mode_to_cstring(mode));
                         continue;
                 }
 
                 if (save) {
-                        _bte_debug_print(VTE_DEBUG_MODES,
+                        _bte_debug_print(BTE_DEBUG_MODES,
                                          "Saving private mode %d (%s) is %s\n",
                                          param, m_modes_private.mode_to_cstring(mode),
                                          m_modes_private.get(mode) ? "set" : "reset");
@@ -641,7 +641,7 @@ Terminal::save_mode_private(bte::parser::Sequence const& seq,
                 } else {
                         bool const set = m_modes_private.pop_saved(mode);
 
-                        _bte_debug_print(VTE_DEBUG_MODES,
+                        _bte_debug_print(BTE_DEBUG_MODES,
                                          "Restoring private mode %d (%s) to %s\n",
                                          param, m_modes_private.mode_to_cstring(mode),
                                          set ? "set" : "reset");
@@ -720,7 +720,7 @@ Terminal::clear_below_current()
 			_bte_row_data_shrink (rowdata, 0);
 	}
 	/* Now fill the cleared areas. */
-        bool const not_default_bg = (m_color_defaults.attr.back() != VTE_DEFAULT_BG);
+        bool const not_default_bg = (m_color_defaults.attr.back() != BTE_DEFAULT_BG);
 
         for (i = m_screen->cursor.row;
 	     i < m_screen->insert_delta + m_row_count;
@@ -771,7 +771,7 @@ Terminal::clear_to_eol()
 		/* We've modified the display.  Make a note of it. */
 		m_text_deleted_flag = TRUE;
 	}
-        bool const not_default_bg = (m_color_defaults.attr.back() != VTE_DEFAULT_BG);
+        bool const not_default_bg = (m_color_defaults.attr.back() != BTE_DEFAULT_BG);
 
         if (not_default_bg) {
 		/* Add enough cells to fill out the row. */
@@ -791,7 +791,7 @@ Terminal::clear_to_eol()
 void
 Terminal::set_cursor_column(bte::grid::column_t col)
 {
-	_bte_debug_print(VTE_DEBUG_PARSER,
+	_bte_debug_print(BTE_DEBUG_PARSER,
                          "Moving cursor to column %ld.\n", col);
         m_screen->cursor.col = CLAMP(col, 0, m_column_count - 1);
 }
@@ -899,7 +899,7 @@ Terminal::delete_character()
                 col = m_screen->cursor.col;
 		len = _bte_row_data_length (rowdata);
 
-                bool const not_default_bg = (m_color_defaults.attr.back() != VTE_DEFAULT_BG);
+                bool const not_default_bg = (m_color_defaults.attr.back() != BTE_DEFAULT_BG);
                 if (not_default_bg) {
                         _bte_row_data_fill(rowdata, &basic_cell, m_column_count);
                         len = m_column_count;
@@ -1024,7 +1024,7 @@ Terminal::line_feed()
 {
         ensure_cursor_is_onscreen();
         cursor_down(true);
-        maybe_apply_bidi_attributes(VTE_BIDI_FLAG_ALL);
+        maybe_apply_bidi_attributes(BTE_BIDI_FLAG_ALL);
 }
 
 void
@@ -1074,7 +1074,7 @@ Terminal::move_cursor_tab_forward(int count)
          *
          * Notable bugs here: 545924, 597242, 764330
          */
-        if (col >= old_len && (newcol - col) <= VTE_TAB_WIDTH_MAX) {
+        if (col >= old_len && (newcol - col) <= BTE_TAB_WIDTH_MAX) {
                 glong i;
                 BteCell *cell = _bte_row_data_get_writable (rowdata, col);
                 BteCell tab = *cell;
@@ -1145,7 +1145,7 @@ Terminal::seq_parse_sgr_color(bte::parser::Sequence const& seq,
         if (seq.param_nonfinal(idx)) {
                 /* Colon version */
                 switch (seq.param(++idx)) {
-                case VTE_SGR_COLOR_SPEC_RGB: {
+                case BTE_SGR_COLOR_SPEC_RGB: {
                         auto const n = seq.next(idx) - idx;
                         if (n < 4)
                                 return false;
@@ -1163,10 +1163,10 @@ Terminal::seq_parse_sgr_color(bte::parser::Sequence const& seq,
                             (blue & 0xff) != blue)
                                 return false;
 
-                        color = VTE_RGB_COLOR(redbits, greenbits, bluebits, red, green, blue);
+                        color = BTE_RGB_COLOR(redbits, greenbits, bluebits, red, green, blue);
                         return true;
                 }
-                case VTE_SGR_COLOR_SPEC_LEGACY: {
+                case BTE_SGR_COLOR_SPEC_LEGACY: {
                         auto const n = seq.next(idx) - idx;
                         if (n < 2)
                                 return false;
@@ -1184,7 +1184,7 @@ Terminal::seq_parse_sgr_color(bte::parser::Sequence const& seq,
 
                 idx = seq.next(idx);
                 switch (seq.param(idx)) {
-                case VTE_SGR_COLOR_SPEC_RGB: {
+                case BTE_SGR_COLOR_SPEC_RGB: {
                         /* Consume 3 more parameters */
                         idx = seq.next(idx);
                         int red = seq.param(idx);
@@ -1198,10 +1198,10 @@ Terminal::seq_parse_sgr_color(bte::parser::Sequence const& seq,
                             (blue & 0xff) != blue)
                                 return false;
 
-                        color = VTE_RGB_COLOR(redbits, greenbits, bluebits, red, green, blue);
+                        color = BTE_RGB_COLOR(redbits, greenbits, bluebits, red, green, blue);
                         return true;
                 }
-                case VTE_SGR_COLOR_SPEC_LEGACY: {
+                case BTE_SGR_COLOR_SPEC_LEGACY: {
                         /* Consume 1 more parameter */
                         idx = seq.next(idx);
                         int v = seq.param(idx);
@@ -1222,7 +1222,7 @@ void
 Terminal::erase_in_display(bte::parser::Sequence const& seq)
 {
         /* We don't implement the protected attribute, so we can ignore selective:
-         * bool selective = (seq.command() == VTE_CMD_DECSED);
+         * bool selective = (seq.command() == BTE_CMD_DECSED);
          */
 
         switch (seq.collect1(0)) {
@@ -1257,7 +1257,7 @@ void
 Terminal::erase_in_line(bte::parser::Sequence const& seq)
 {
         /* We don't implement the protected attribute, so we can ignore selective:
-         * bool selective = (seq.command() == VTE_CMD_DECSEL);
+         * bool selective = (seq.command() == BTE_CMD_DECSEL);
          */
 
         switch (seq.collect1(0)) {
@@ -1385,14 +1385,14 @@ Terminal::get_osc_color_index(int osc,
         if (value < 0)
                 return false;
 
-        if (osc == VTE_OSC_XTERM_SET_COLOR ||
-            osc == VTE_OSC_XTERM_RESET_COLOR) {
-                if (value < VTE_DEFAULT_FG) {
+        if (osc == BTE_OSC_XTERM_SET_COLOR ||
+            osc == BTE_OSC_XTERM_RESET_COLOR) {
+                if (value < BTE_DEFAULT_FG) {
                         index = value;
                         return true;
                 }
 
-                index = value - VTE_DEFAULT_FG;
+                index = value - BTE_DEFAULT_FG;
         } else {
                 index = value;
         }
@@ -1403,7 +1403,7 @@ Terminal::get_osc_color_index(int osc,
          * so that we can send a dummy reply when queried.
          */
         switch (index) {
-        case 0: index = VTE_BOLD_FG; return true; /* Bold */
+        case 0: index = BTE_BOLD_FG; return true; /* Bold */
         case 1: index = -1; return true; /* Underline */
         case 2: index = -1; return true; /* Blink */
         case 3: index = -1; return true; /* Reverse */
@@ -1459,17 +1459,17 @@ Terminal::set_color_index(bte::parser::Sequence const& seq,
                 }
 
                 if (number != -1)
-                        reply(seq, VTE_REPLY_OSC, {}, "%d;%d;rgb:%04x/%04x/%04x",
+                        reply(seq, BTE_REPLY_OSC, {}, "%d;%d;rgb:%04x/%04x/%04x",
                               osc, number, color.red, color.green, color.blue);
                 else
-                        reply(seq, VTE_REPLY_OSC, {}, "%d;rgb:%04x/%04x/%04x",
+                        reply(seq, BTE_REPLY_OSC, {}, "%d;rgb:%04x/%04x/%04x",
                               osc, color.red, color.green, color.blue);
         } else {
                 bte::color::rgb color;
 
                 if (index != -1 &&
                     color.parse(str.data())) {
-                        set_color(index, VTE_COLOR_SOURCE_ESCAPE, color);
+                        set_color(index, BTE_COLOR_SOURCE_ESCAPE, color);
                 }
         }
 }
@@ -1497,12 +1497,12 @@ Terminal::reset_color(bte::parser::Sequence const& seq,
         /* Empty param? Reset all */
         if (token == endtoken ||
             token.size_remaining() == 0) {
-                if (osc == VTE_OSC_XTERM_RESET_COLOR) {
-                        for (unsigned int idx = 0; idx < VTE_DEFAULT_FG; idx++)
-                                reset_color(idx, VTE_COLOR_SOURCE_ESCAPE);
+                if (osc == BTE_OSC_XTERM_RESET_COLOR) {
+                        for (unsigned int idx = 0; idx < BTE_DEFAULT_FG; idx++)
+                                reset_color(idx, BTE_COLOR_SOURCE_ESCAPE);
                 }
 
-                reset_color(VTE_BOLD_FG, VTE_COLOR_SOURCE_ESCAPE);
+                reset_color(BTE_BOLD_FG, BTE_COLOR_SOURCE_ESCAPE);
                 /* Add underline/blink/reverse/italic here if/when implemented */
 
                 return;
@@ -1516,7 +1516,7 @@ Terminal::reset_color(bte::parser::Sequence const& seq,
                 int index;
                 if (get_osc_color_index(osc, value, index) &&
                     index != -1) {
-                        reset_color(index, VTE_COLOR_SOURCE_ESCAPE);
+                        reset_color(index, BTE_COLOR_SOURCE_ESCAPE);
                 }
 
                 ++token;
@@ -1597,8 +1597,8 @@ Terminal::set_current_hyperlink(bte::parser::Sequence const& seq,
                 if (subtoken[0] != 'i' || subtoken[1] != 'd' || subtoken[2] != '=')
                         continue;
 
-                if (len > 3 + VTE_HYPERLINK_ID_LENGTH_MAX) {
-                        _bte_debug_print (VTE_DEBUG_HYPERLINK, "Overlong \"id\" ignored: \"%s\"\n",
+                if (len > 3 + BTE_HYPERLINK_ID_LENGTH_MAX) {
+                        _bte_debug_print (BTE_DEBUG_HYPERLINK, "Overlong \"id\" ignored: \"%s\"\n",
                                           subtoken.data());
                         break;
                 }
@@ -1614,7 +1614,7 @@ Terminal::set_current_hyperlink(bte::parser::Sequence const& seq,
                 char idbuf[24];
                 auto len = g_snprintf(idbuf, sizeof(idbuf), ":%ld", m_hyperlink_auto_id++);
                 hyperlink.append(idbuf, len);
-                _bte_debug_print (VTE_DEBUG_HYPERLINK, "Autogenerated id=\"%s\"\n", hyperlink.data());
+                _bte_debug_print (BTE_DEBUG_HYPERLINK, "Autogenerated id=\"%s\"\n", hyperlink.data());
         }
 
         /* Now get the URI */
@@ -1624,15 +1624,15 @@ Terminal::set_current_hyperlink(bte::parser::Sequence const& seq,
         hyperlink.push_back(';');
         guint idx;
         auto const len = token.size_remaining();
-        if (len > 0 && len <= VTE_HYPERLINK_URI_LENGTH_MAX) {
+        if (len > 0 && len <= BTE_HYPERLINK_URI_LENGTH_MAX) {
                 token.append_remaining(hyperlink);
 
-                _bte_debug_print (VTE_DEBUG_HYPERLINK, "OSC 8: id;uri=\"%s\"\n", hyperlink.data());
+                _bte_debug_print (BTE_DEBUG_HYPERLINK, "OSC 8: id;uri=\"%s\"\n", hyperlink.data());
 
                 idx = _bte_ring_get_hyperlink_idx(m_screen->row_data, hyperlink.data());
         } else {
-                if (G_UNLIKELY(len > VTE_HYPERLINK_URI_LENGTH_MAX))
-                        _bte_debug_print (VTE_DEBUG_HYPERLINK, "Overlong URI ignored (len %" G_GSIZE_FORMAT ")\n", len);
+                if (G_UNLIKELY(len > BTE_HYPERLINK_URI_LENGTH_MAX))
+                        _bte_debug_print (BTE_DEBUG_HYPERLINK, "Overlong URI ignored (len %" G_GSIZE_FORMAT ")\n", len);
 
                 /* idx = 0; also remove the previous current_idx so that it can be GC'd now. */
                 idx = _bte_ring_get_hyperlink_idx(m_screen->row_data, nullptr);
@@ -1643,7 +1643,7 @@ Terminal::set_current_hyperlink(bte::parser::Sequence const& seq,
 
 /*
  * Command Handlers
- * This is the unofficial documentation of all the VTE_CMD_* definitions.
+ * This is the unofficial documentation of all the BTE_CMD_* definitions.
  * Each handled command has a separate function with an extensive comment on
  * the semantics of the command.
  * Note that many semantics are unknown and need to be verified. This is mostly
@@ -1659,10 +1659,10 @@ void
 Terminal::GRAPHIC(bte::parser::Sequence const& seq)
 {
 #if 0
-        struct bte_char ch = VTE_CHAR_NULL;
+        struct bte_char ch = BTE_CHAR_NULL;
 
         if (screen->state.cursor_x + 1 == screen->page->width
-            && screen->flags & VTE_FLAG_PENDING_WRAP
+            && screen->flags & BTE_FLAG_PENDING_WRAP
             && screen->state.auto_wrap) {
                 screen_cursor_down(screen, 1, true);
                 screen_cursor_set(screen, 0, screen->state.cursor_y);
@@ -1681,7 +1681,7 @@ Terminal::GRAPHIC(bte::parser::Sequence const& seq)
                           false);
 
         if (screen->state.cursor_x + 1 == screen->page->width)
-                screen->flags |= VTE_FLAG_PENDING_WRAP;
+                screen->flags |= BTE_FLAG_PENDING_WRAP;
         else
                 screen_cursor_right(screen, 1);
 
@@ -1750,8 +1750,8 @@ Terminal::ACS(bte::parser::Sequence const& seq)
                  *             VT525
                  */
 #if 0
-                if (screen->conformance_level > VTE_CONFORMANCE_LEVEL_VT100)
-                        screen->flags |= VTE_FLAG_7BIT_MODE;
+                if (screen->conformance_level > BTE_CONFORMANCE_LEVEL_VT100)
+                        screen->flags |= BTE_FLAG_7BIT_MODE;
 #endif
                 break;
 
@@ -1767,8 +1767,8 @@ Terminal::ACS(bte::parser::Sequence const& seq)
                  *             VT525
                  */
 #if 0
-                if (screen->conformance_level > VTE_CONFORMANCE_LEVEL_VT100)
-                        screen->flags &= ~VTE_FLAG_7BIT_MODE;
+                if (screen->conformance_level > BTE_CONFORMANCE_LEVEL_VT100)
+                        screen->flags &= ~BTE_FLAG_7BIT_MODE;
 #endif
                 break;
 
@@ -2376,7 +2376,7 @@ Terminal::DA1(bte::parser::Sequence const& seq)
         if (seq.collect1(0, 0) != 0)
                 return;
 
-        reply(seq, VTE_REPLY_DECDA1R, {65, 1, 9});
+        reply(seq, BTE_REPLY_DECDA1R, {65, 1, 9});
 }
 
 void
@@ -2395,7 +2395,7 @@ Terminal::DA2(bte::parser::Sequence const& seq)
          * version encoded as major/minor (20 == 2.0) and KEYBOARD is 0 for STD
          * keyboard and 1 for PC keyboards.
          *
-         * We replace the firmware-version with the VTE version so clients
+         * We replace the firmware-version with the BTE version so clients
          * can decode it again.
          *
          * References: VT525
@@ -2405,8 +2405,8 @@ Terminal::DA2(bte::parser::Sequence const& seq)
         if (seq.collect1(0, 0) != 0)
                 return;
 
-        int const version = (VTE_MAJOR_VERSION * 100 + VTE_MINOR_VERSION) * 100 + VTE_MICRO_VERSION;
-        reply(seq, VTE_REPLY_DECDA2R, {65, version, 1});
+        int const version = (BTE_MAJOR_VERSION * 100 + BTE_MINOR_VERSION) * 100 + BTE_MICRO_VERSION;
+        reply(seq, BTE_REPLY_DECDA2R, {65, version, 1});
 }
 
 void
@@ -2421,13 +2421,13 @@ Terminal::DA3(bte::parser::Sequence const& seq)
          *   The first byte denotes the manufacturing site, the remaining
          *   three is the terminal's ID.
          *
-         * We always reply with '~VTE' encoded in hex.
+         * We always reply with '~BTE' encoded in hex.
          */
 
         if (seq.collect1(0, 0) != 0)
                 return;
 
-        reply(seq, VTE_REPLY_DECRPTUI, {});
+        reply(seq, BTE_REPLY_DECRPTUI, {});
 }
 
 void
@@ -2847,7 +2847,7 @@ Terminal::DECDMAC(bte::parser::Sequence const& seq)
          *
          * References: VT525
          *
-         * For security reasons, VTE does not implement this.
+         * For security reasons, BTE does not implement this.
          */
 }
 
@@ -2967,7 +2967,7 @@ Terminal::DECES(bte::parser::Sequence const& seq)
          *
          * References: VT525
          *
-         * VTE does not support sessions.
+         * BTE does not support sessions.
          */
 }
 
@@ -3069,7 +3069,7 @@ Terminal::DECINVM(bte::parser::Sequence const& seq)
          *
          * References: VT525
          *
-         * For security reasons, VTE does not implement this.
+         * For security reasons, BTE does not implement this.
          */
 }
 
@@ -3126,7 +3126,7 @@ Terminal::DECLANS(bte::parser::Sequence const& seq)
          *
          * References: VT525
          *
-         * For security reasons, VTE does not implement this.
+         * For security reasons, BTE does not implement this.
          */
 }
 
@@ -3209,7 +3209,7 @@ Terminal::DECPAK(bte::parser::Sequence const& seq)
          *
          * References: VT525
          *
-         * For security reasons, VTE does not implement this.
+         * For security reasons, BTE does not implement this.
          */
 }
 
@@ -3253,7 +3253,7 @@ Terminal::DECPFK(bte::parser::Sequence const& seq)
          *
          * References: VT525
          *
-         * For security reasons, VTE does not implement this.
+         * For security reasons, BTE does not implement this.
          */
 }
 
@@ -3272,7 +3272,7 @@ Terminal::DECPKA(bte::parser::Sequence const& seq)
          *
          * References: VT525
          *
-         * For security reasons, VTE does not implement this.
+         * For security reasons, BTE does not implement this.
          */
 }
 
@@ -3432,16 +3432,16 @@ Terminal::DECREQTPARM(bte::parser::Sequence const& seq)
         case -1:
         case 0:
                 #if 0
-                screen->flags &= ~VTE_FLAG_INHIBIT_TPARM;
+                screen->flags &= ~BTE_FLAG_INHIBIT_TPARM;
                 #endif
-                reply(seq, VTE_REPLY_DECREPTPARM,
+                reply(seq, BTE_REPLY_DECREPTPARM,
                       {2, 1, 1, 120, 120, 1, 0});
                 break;
         case 1:
                 #if 0
-                screen->flags |= VTE_FLAG_INHIBIT_TPARM;
+                screen->flags |= BTE_FLAG_INHIBIT_TPARM;
                 #endif
-                reply(seq, VTE_REPLY_DECREPTPARM,
+                reply(seq, BTE_REPLY_DECREPTPARM,
                       {3, 1, 1, 120, 120, 1, 0});
                 break;
         case 2:
@@ -3491,14 +3491,14 @@ Terminal::DECRQCRA(bte::parser::Sequence const& seq)
         unsigned int idx = 0;
         int id = seq.collect1(idx);
 
-#ifndef VTE_DEBUG
+#ifndef BTE_DEBUG
         /* Send a dummy reply */
-        return reply(seq, VTE_REPLY_DECCKSR, {id}, "0000");
+        return reply(seq, BTE_REPLY_DECCKSR, {id}, "0000");
 #else
 
         /* Not in test mode? Send a dummy reply */
-        if ((g_test_flags & VTE_TEST_FLAG_DECRQCRA) == 0) {
-                return reply(seq, VTE_REPLY_DECCKSR, {id}, "0000");
+        if ((g_test_flags & BTE_TEST_FLAG_DECRQCRA) == 0) {
+                return reply(seq, BTE_REPLY_DECCKSR, {id}, "0000");
         }
 
         idx = seq.next(idx);
@@ -3532,8 +3532,8 @@ Terminal::DECRQCRA(bte::parser::Sequence const& seq)
                                          bottom - 1 + m_screen->insert_delta,
                                          right - 1);
 
-        reply(seq, VTE_REPLY_DECCKSR, {id}, "%04X", checksum);
-#endif /* VTE_DEBUG */
+        reply(seq, BTE_REPLY_DECCKSR, {id}, "%04X", checksum);
+#endif /* BTE_DEBUG */
 }
 
 void
@@ -3604,12 +3604,12 @@ Terminal::DECRQM_ECMA(bte::parser::Sequence const& seq)
         default: assert(mode >= 0); value = m_modes_ecma.get(mode) ? 1 : 2; break;
         }
 
-        _bte_debug_print(VTE_DEBUG_MODES,
+        _bte_debug_print(BTE_DEBUG_MODES,
                          "Reporting mode %d (%s) is %d\n",
                          param, m_modes_ecma.mode_to_cstring(mode),
                          value);
 
-        reply(seq, VTE_REPLY_DECRPM_ECMA, {param, value});
+        reply(seq, BTE_REPLY_DECRPM_ECMA, {param, value});
 }
 
 void
@@ -3633,12 +3633,12 @@ Terminal::DECRQM_DEC(bte::parser::Sequence const& seq)
         default: assert(mode >= 0); value = m_modes_private.get(mode) ? 1 : 2; break;
         }
 
-        _bte_debug_print(VTE_DEBUG_MODES,
+        _bte_debug_print(BTE_DEBUG_MODES,
                          "Reporting private mode %d (%s) is %d\n",
                          param, m_modes_private.mode_to_cstring(mode),
                          value);
 
-        reply(seq, VTE_REPLY_DECRPM_DEC, {param, value});
+        reply(seq, BTE_REPLY_DECRPM_DEC, {param, value});
 }
 
 void
@@ -3719,9 +3719,9 @@ Terminal::DECRQSS(bte::parser::Sequence const& seq)
         bte::parser::Parser parser{};
         parser.feed(0x9b); /* CSI */
 
-        int rv = VTE_SEQ_NONE;
+        int rv = BTE_SEQ_NONE;
 
-        /* If at the end, the parser returns a VTE_SEQ_CSI sequence,
+        /* If at the end, the parser returns a BTE_SEQ_CSI sequence,
          * we interpret that; otherwise we ignore the request and
          * send only a dummy reply.
          * Note that this makes sure there is only one setting
@@ -3742,60 +3742,60 @@ Terminal::DECRQSS(bte::parser::Sequence const& seq)
          * is not a CSI sequence, or it has parameters, reject
          * the request as invalid.
          */
-        if (i != str.size() || rv != VTE_SEQ_CSI || request.size() > 0 /* any parameters */)
-                return reply(seq, VTE_REPLY_DECRPSS, {0});
+        if (i != str.size() || rv != BTE_SEQ_CSI || request.size() > 0 /* any parameters */)
+                return reply(seq, BTE_REPLY_DECRPSS, {0});
 
         switch (request.command()) {
 
-        case VTE_CMD_DECSCUSR:
-                return reply(seq, VTE_REPLY_DECRPSS, {1}, {VTE_REPLY_DECSCUSR, {int(m_cursor_style)}});
+        case BTE_CMD_DECSCUSR:
+                return reply(seq, BTE_REPLY_DECRPSS, {1}, {BTE_REPLY_DECSCUSR, {int(m_cursor_style)}});
 
-        case VTE_CMD_DECSTBM:
+        case BTE_CMD_DECSTBM:
                 if (m_scrolling_restricted)
-                        return reply(seq, VTE_REPLY_DECRPSS, {1},
-                                     {VTE_REPLY_DECSTBM,
+                        return reply(seq, BTE_REPLY_DECRPSS, {1},
+                                     {BTE_REPLY_DECSTBM,
                                                      {m_scrolling_region.start + 1,
                                                                      m_scrolling_region.end + 1}});
                 else
-                        return reply(seq, VTE_REPLY_DECRPSS, {1}, {VTE_REPLY_DECSTBM, {}});
+                        return reply(seq, BTE_REPLY_DECRPSS, {1}, {BTE_REPLY_DECSTBM, {}});
 
-        case VTE_CMD_DECAC:
-        case VTE_CMD_DECARR:
-        case VTE_CMD_DECATC:
-        case VTE_CMD_DECCRTST:
-        case VTE_CMD_DECDLDA:
-        case VTE_CMD_DECSACE:
-        case VTE_CMD_DECSASD:
-        case VTE_CMD_DECSCA:
-        case VTE_CMD_DECSCL:
-        case VTE_CMD_DECSCP:
-        case VTE_CMD_DECSCPP:
-        case VTE_CMD_DECSCS:
-        case VTE_CMD_DECSDDT:
-        case VTE_CMD_DECSDPT:
-        case VTE_CMD_DECSEST:
-        case VTE_CMD_DECSFC:
-        case VTE_CMD_DECSKCV:
-        case VTE_CMD_DECSLCK:
-        case VTE_CMD_DECSLPP:
-        case VTE_CMD_DECSLRM:
-        case VTE_CMD_DECSMBV:
-        case VTE_CMD_DECSNLS:
-        case VTE_CMD_DECSPMA:
-        case VTE_CMD_DECSPP:
-        case VTE_CMD_DECSPPCS:
-        case VTE_CMD_DECSPRTT:
-        case VTE_CMD_DECSSCLS:
-        case VTE_CMD_DECSSDT:
-        case VTE_CMD_DECSSL:
-        case VTE_CMD_DECSTGLT:
-        case VTE_CMD_DECSTRL:
-        case VTE_CMD_DECSWBV:
-        case VTE_CMD_DECSZS:
-        case VTE_CMD_DECTME:
-        case VTE_CMD_SGR:
+        case BTE_CMD_DECAC:
+        case BTE_CMD_DECARR:
+        case BTE_CMD_DECATC:
+        case BTE_CMD_DECCRTST:
+        case BTE_CMD_DECDLDA:
+        case BTE_CMD_DECSACE:
+        case BTE_CMD_DECSASD:
+        case BTE_CMD_DECSCA:
+        case BTE_CMD_DECSCL:
+        case BTE_CMD_DECSCP:
+        case BTE_CMD_DECSCPP:
+        case BTE_CMD_DECSCS:
+        case BTE_CMD_DECSDDT:
+        case BTE_CMD_DECSDPT:
+        case BTE_CMD_DECSEST:
+        case BTE_CMD_DECSFC:
+        case BTE_CMD_DECSKCV:
+        case BTE_CMD_DECSLCK:
+        case BTE_CMD_DECSLPP:
+        case BTE_CMD_DECSLRM:
+        case BTE_CMD_DECSMBV:
+        case BTE_CMD_DECSNLS:
+        case BTE_CMD_DECSPMA:
+        case BTE_CMD_DECSPP:
+        case BTE_CMD_DECSPPCS:
+        case BTE_CMD_DECSPRTT:
+        case BTE_CMD_DECSSCLS:
+        case BTE_CMD_DECSSDT:
+        case BTE_CMD_DECSSL:
+        case BTE_CMD_DECSTGLT:
+        case BTE_CMD_DECSTRL:
+        case BTE_CMD_DECSWBV:
+        case BTE_CMD_DECSZS:
+        case BTE_CMD_DECTME:
+        case BTE_CMD_SGR:
         default:
-                return reply(seq, VTE_REPLY_DECRPSS, {0});
+                return reply(seq, BTE_REPLY_DECRPSS, {0});
         }
 }
 
@@ -3822,7 +3822,7 @@ Terminal::DECRQTSR(bte::parser::Sequence const& seq)
                  * Reply: DECTSR
                  *   DATA: the report in an unspecified format
                  */
-                /* return reply(seq, VTE_REPLY_DECTSR, {1}, "FIXME"); */
+                /* return reply(seq, BTE_REPLY_DECTSR, {1}, "FIXME"); */
                 break;
 
         case 2:
@@ -3837,7 +3837,7 @@ Terminal::DECRQTSR(bte::parser::Sequence const& seq)
                  * Reply: DECTSR
                  *   DATA: the report
                  */
-                /* return reply(seq, VTE_REPLY_DECTSR, {2}, "FIXME"); */
+                /* return reply(seq, BTE_REPLY_DECTSR, {2}, "FIXME"); */
                 break;
 
         default:
@@ -4069,15 +4069,15 @@ Terminal::DECSCL(bte::parser::Sequence const& seq)
 
         switch (level) {
         case 61:
-                screen->conformance_level = VTE_CONFORMANCE_LEVEL_VT100;
-                screen->flags |= VTE_FLAG_7BIT_MODE;
+                screen->conformance_level = BTE_CONFORMANCE_LEVEL_VT100;
+                screen->flags |= BTE_FLAG_7BIT_MODE;
                 break;
         case 62 ... 69:
-                screen->conformance_level = VTE_CONFORMANCE_LEVEL_VT400;
+                screen->conformance_level = BTE_CONFORMANCE_LEVEL_VT400;
                 if (bit == 1)
-                        screen->flags |= VTE_FLAG_7BIT_MODE;
+                        screen->flags |= BTE_FLAG_7BIT_MODE;
                 else
-                        screen->flags &= ~VTE_FLAG_7BIT_MODE;
+                        screen->flags &= ~BTE_FLAG_7BIT_MODE;
                 break;
         }
 #endif
@@ -4396,7 +4396,7 @@ Terminal::DECSLPP(bte::parser::Sequence const& seq)
          *   args[0]: 0 (meaning 24)
          *
          * Note that VT525 only allows a limited number of choices,
-         * (24, 25, 36, 41, 42, 48, 52, 53, 72); VTE is not so limited
+         * (24, 25, 36, 41, 42, 48, 52, 53, 72); BTE is not so limited
          * and supports any value >= 24.
          *
          * Top and bottom scrolling margins are unaffected, unless their
@@ -4412,7 +4412,7 @@ Terminal::DECSLPP(bte::parser::Sequence const& seq)
         else if (param < 24)
                 return;
 
-        _bte_debug_print(VTE_DEBUG_EMULATION, "Resizing to %d rows.\n", param);
+        _bte_debug_print(BTE_DEBUG_EMULATION, "Resizing to %d rows.\n", param);
 
         emit_resize_window(m_column_count, param);
 }
@@ -4517,7 +4517,7 @@ Terminal::DECSNLS(bte::parser::Sequence const& seq)
         /*
          * DECSNLS - set-lines-per-screen
          * Sets the number of lines per screen.
-         * DEC only supports 26, 42, 53 lines here; but VTE has no
+         * DEC only supports 26, 42, 53 lines here; but BTE has no
          * such restriction.
          *
          * Arguments:
@@ -4541,7 +4541,7 @@ Terminal::DECSPMA(bte::parser::Sequence const& seq)
          *
          * References: VT525
          *
-         * VTE does not support sessions.
+         * BTE does not support sessions.
          */
 }
 
@@ -4611,7 +4611,7 @@ Terminal::DECSR(bte::parser::Sequence const& seq)
          */
         auto const token = seq.collect1(0);
 	reset(true, true);
-        send(VTE_REPLY_DECSRC, {token});
+        send(BTE_REPLY_DECSRC, {token});
 }
 
 void
@@ -4672,7 +4672,7 @@ Terminal::DECSSL(bte::parser::Sequence const& seq)
          *
          * References: VT525
          *
-         * VTE does not implement a set-up.
+         * BTE does not implement a set-up.
          *
          * or:
          *
@@ -4848,7 +4848,7 @@ Terminal::DECSTUI(bte::parser::Sequence const& seq)
          *
          * References: VT525
          *
-         * VTE does not implement this.
+         * BTE does not implement this.
          */
 }
 
@@ -4965,7 +4965,7 @@ Terminal::DECUDK(bte::parser::Sequence const& seq)
          *
          * References: VT525
          *
-         * For security reasons, VTE does not implement this.
+         * For security reasons, BTE does not implement this.
          */
 }
 
@@ -4977,7 +4977,7 @@ Terminal::DECUS(bte::parser::Sequence const& seq)
          *
          * References: VT525
          *
-         * VTE does not support sessions.
+         * BTE does not support sessions.
          */
 }
 
@@ -5095,7 +5095,7 @@ Terminal::DSR_ECMA(bte::parser::Sequence const& seq)
                  *     0 = ok
                  *     3 = malfunction
                  */
-                reply(seq, VTE_REPLY_DSR, {0});
+                reply(seq, BTE_REPLY_DSR, {0});
                 break;
 
         case 6:
@@ -5117,7 +5117,7 @@ Terminal::DSR_ECMA(bte::parser::Sequence const& seq)
                 rowval = m_screen->cursor.row - m_screen->insert_delta - origin;
                 rowval = CLAMP(rowval, 0, rowmax);
 
-                reply(seq, VTE_REPLY_CPR,
+                reply(seq, BTE_REPLY_CPR,
                       {int(rowval + 1), int(CLAMP(m_screen->cursor.col + 1, 1, m_column_count))});
                 break;
 
@@ -5164,7 +5164,7 @@ Terminal::DSR_DEC(bte::parser::Sequence const& seq)
                 rowval = m_screen->cursor.row - m_screen->insert_delta - origin;
                 rowval = CLAMP(rowval, 0, rowmax);
 
-                reply(seq, VTE_REPLY_DECXCPR,
+                reply(seq, BTE_REPLY_DECXCPR,
                       {int(rowval + 1), int(CLAMP(m_screen->cursor.col + 1, 1, m_column_count)), 1});
                 break;
 
@@ -5178,7 +5178,7 @@ Terminal::DSR_DEC(bte::parser::Sequence const& seq)
                  *     18 = printer busy
                  *     19 = printer assigned to another session
                  */
-                reply(seq, VTE_REPLY_DECDSR, {13});
+                reply(seq, BTE_REPLY_DECDSR, {13});
                 break;
 
         case 25:
@@ -5190,7 +5190,7 @@ Terminal::DSR_DEC(bte::parser::Sequence const& seq)
                  *
                  * Since we don't do UDK, we report them as locked.
                  */
-                reply(seq, VTE_REPLY_DECDSR, {21});
+                reply(seq, BTE_REPLY_DECDSR, {21});
                 break;
 
         case 26:
@@ -5211,7 +5211,7 @@ Terminal::DSR_DEC(bte::parser::Sequence const& seq)
                  *     4 = LK411
                  *     5 = PCXAL
                  */
-                reply(seq, VTE_REPLY_DECDSR, {27, 0, 0, 5});
+                reply(seq, BTE_REPLY_DECDSR, {27, 0, 0, 5});
                 break;
 
         case 53:
@@ -5227,7 +5227,7 @@ Terminal::DSR_DEC(bte::parser::Sequence const& seq)
                  * Since we don't implement the DEC locator mode,
                  * we reply with 53.
                  */
-                reply(seq, VTE_REPLY_DECDSR, {53});
+                reply(seq, BTE_REPLY_DECDSR, {53});
                 break;
 
         case 56:
@@ -5241,7 +5241,7 @@ Terminal::DSR_DEC(bte::parser::Sequence const& seq)
                  * Since we don't implement the DEC locator mode,
                  * we reply with 0.
                  */
-                reply(seq, VTE_REPLY_DECDSR, {57, 0});
+                reply(seq, BTE_REPLY_DECDSR, {57, 0});
                 break;
 
         case 62:
@@ -5249,7 +5249,7 @@ Terminal::DSR_DEC(bte::parser::Sequence const& seq)
                  * Reply: DECMSR
                  *   @arg[0]: floor((number of bytes available) / 16); we report 0
                  */
-                reply(seq, VTE_REPLY_DECMSR, {0});
+                reply(seq, BTE_REPLY_DECMSR, {0});
                 break;
 
         case 63:
@@ -5260,7 +5260,7 @@ Terminal::DSR_DEC(bte::parser::Sequence const& seq)
                  *
                  * Reply with a dummy checksum.
                  */
-                reply(seq, VTE_REPLY_DECCKSR, {seq.collect1(1)}, "0000");
+                reply(seq, BTE_REPLY_DECCKSR, {seq.collect1(1)}, "0000");
                 break;
 
         case 75:
@@ -5271,7 +5271,7 @@ Terminal::DSR_DEC(bte::parser::Sequence const& seq)
                  *     71 = malfunction or communication error
                  *     73 = no data loss since last power-up
                  */
-                reply(seq, VTE_REPLY_DECDSR, {70});
+                reply(seq, BTE_REPLY_DECDSR, {70});
                 break;
 
         case 85:
@@ -5281,7 +5281,7 @@ Terminal::DSR_DEC(bte::parser::Sequence const& seq)
                  *     ...
                  *     83 = not configured
                  */
-                reply(seq, VTE_REPLY_DECDSR, {83});
+                reply(seq, BTE_REPLY_DECDSR, {83});
                 break;
 
         default:
@@ -5683,7 +5683,7 @@ Terminal::GSM(bte::parser::Sequence const& seq)
          *
          * References: ECMA-48 § 8.3.55
          *
-         * Not applicable to VTE.
+         * Not applicable to BTE.
          */
 }
 
@@ -5701,7 +5701,7 @@ Terminal::GSS(bte::parser::Sequence const& seq)
          *
          * References: ECMA-48 § 8.3.56
          *
-         * Not applicable to VTE.
+         * Not applicable to BTE.
          */
 }
 
@@ -5721,15 +5721,15 @@ Terminal::GnDm(bte::parser::Sequence const& seq)
 
         BteCharacterReplacement replacement;
         switch (seq.charset()) {
-        case VTE_CHARSET_DEC_SPECIAL_GRAPHIC:
+        case BTE_CHARSET_DEC_SPECIAL_GRAPHIC:
                 /* Some characters replaced by line drawing characters.
                  * This is still used by ncurses :-(
                  */
-                replacement = VTE_CHARACTER_REPLACEMENT_LINE_DRAWING;
+                replacement = BTE_CHARACTER_REPLACEMENT_LINE_DRAWING;
                 break;
 
         default:
-                replacement = VTE_CHARACTER_REPLACEMENT_NONE;
+                replacement = BTE_CHARACTER_REPLACEMENT_NONE;
                 break;
         }
 
@@ -6138,7 +6138,7 @@ Terminal::LF(bte::parser::Sequence const& seq)
 
 #if 0
         screen_cursor_down(screen, 1, true);
-        if (screen->flags & VTE_FLAG_NEWLINE_MODE)
+        if (screen->flags & BTE_FLAG_NEWLINE_MODE)
                 screen_cursor_left(screen, screen->state.cursor_x);
 #endif
 
@@ -6358,7 +6358,7 @@ Terminal::NP(bte::parser::Sequence const& seq)
          * References: ECMA-48 § 8.3.87
          *             VT525
          *
-         * Since VTE only has one page, this is ignored.
+         * Since BTE only has one page, this is ignored.
          */
 }
 
@@ -6400,123 +6400,123 @@ Terminal::OSC(bte::parser::Sequence const& seq)
         ++it; /* could now be cend */
 
         switch (osc) {
-        case VTE_OSC_VTECWF:
+        case BTE_OSC_BTECWF:
                 set_current_file_uri(seq, it, cend);
                 break;
 
-        case VTE_OSC_VTECWD:
+        case BTE_OSC_BTECWD:
                 set_current_directory_uri(seq, it, cend);
                 break;
 
-        case VTE_OSC_VTEHYPER:
+        case BTE_OSC_BTEHYPER:
                 set_current_hyperlink(seq, it, cend);
                 break;
 
         case -1: /* default */
-        case VTE_OSC_XTERM_SET_WINDOW_AND_ICON_TITLE:
-        case VTE_OSC_XTERM_SET_WINDOW_TITLE: {
+        case BTE_OSC_XTERM_SET_WINDOW_AND_ICON_TITLE:
+        case BTE_OSC_XTERM_SET_WINDOW_TITLE: {
                 /* Only sets window title; icon title is not supported */
                 std::string title;
                 if (it != cend &&
-                    it.size_remaining() < VTE_WINDOW_TITLE_MAX_LENGTH)
+                    it.size_remaining() < BTE_WINDOW_TITLE_MAX_LENGTH)
                         title = it.string_remaining();
                 m_window_title_pending.swap(title);
                 m_window_title_changed = true;
                 break;
         }
 
-        case VTE_OSC_XTERM_SET_COLOR:
-        case VTE_OSC_XTERM_SET_COLOR_SPECIAL:
+        case BTE_OSC_XTERM_SET_COLOR:
+        case BTE_OSC_XTERM_SET_COLOR_SPECIAL:
                 set_color(seq, it, cend, osc);
                 break;
 
-        case VTE_OSC_XTERM_SET_COLOR_TEXT_FG:
-                set_special_color(seq, it, cend, VTE_DEFAULT_FG, -1, osc);
+        case BTE_OSC_XTERM_SET_COLOR_TEXT_FG:
+                set_special_color(seq, it, cend, BTE_DEFAULT_FG, -1, osc);
                 break;
 
-        case VTE_OSC_XTERM_SET_COLOR_TEXT_BG:
-                set_special_color(seq, it, cend, VTE_DEFAULT_BG, -1, osc);
+        case BTE_OSC_XTERM_SET_COLOR_TEXT_BG:
+                set_special_color(seq, it, cend, BTE_DEFAULT_BG, -1, osc);
                 break;
 
-        case VTE_OSC_XTERM_SET_COLOR_CURSOR_BG:
-                set_special_color(seq, it, cend, VTE_CURSOR_BG, VTE_DEFAULT_FG, osc);
+        case BTE_OSC_XTERM_SET_COLOR_CURSOR_BG:
+                set_special_color(seq, it, cend, BTE_CURSOR_BG, BTE_DEFAULT_FG, osc);
                 break;
 
-        case VTE_OSC_XTERM_SET_COLOR_HIGHLIGHT_BG:
-                set_special_color(seq, it, cend, VTE_HIGHLIGHT_BG, VTE_DEFAULT_FG, osc);
+        case BTE_OSC_XTERM_SET_COLOR_HIGHLIGHT_BG:
+                set_special_color(seq, it, cend, BTE_HIGHLIGHT_BG, BTE_DEFAULT_FG, osc);
                 break;
 
-        case VTE_OSC_XTERM_SET_COLOR_HIGHLIGHT_FG:
-                set_special_color(seq, it, cend, VTE_HIGHLIGHT_FG, VTE_DEFAULT_BG, osc);
+        case BTE_OSC_XTERM_SET_COLOR_HIGHLIGHT_FG:
+                set_special_color(seq, it, cend, BTE_HIGHLIGHT_FG, BTE_DEFAULT_BG, osc);
                 break;
 
-        case VTE_OSC_XTERM_RESET_COLOR:
-        case VTE_OSC_XTERM_RESET_COLOR_SPECIAL:
+        case BTE_OSC_XTERM_RESET_COLOR:
+        case BTE_OSC_XTERM_RESET_COLOR_SPECIAL:
                 reset_color(seq, it, cend, osc);
                 break;
 
-        case VTE_OSC_XTERM_RESET_COLOR_TEXT_FG:
-                reset_color(VTE_DEFAULT_FG, VTE_COLOR_SOURCE_ESCAPE);
+        case BTE_OSC_XTERM_RESET_COLOR_TEXT_FG:
+                reset_color(BTE_DEFAULT_FG, BTE_COLOR_SOURCE_ESCAPE);
                 break;
 
-        case VTE_OSC_XTERM_RESET_COLOR_TEXT_BG:
-                reset_color(VTE_DEFAULT_BG, VTE_COLOR_SOURCE_ESCAPE);
+        case BTE_OSC_XTERM_RESET_COLOR_TEXT_BG:
+                reset_color(BTE_DEFAULT_BG, BTE_COLOR_SOURCE_ESCAPE);
                 break;
 
-        case VTE_OSC_XTERM_RESET_COLOR_CURSOR_BG:
-                reset_color(VTE_CURSOR_BG, VTE_COLOR_SOURCE_ESCAPE);
+        case BTE_OSC_XTERM_RESET_COLOR_CURSOR_BG:
+                reset_color(BTE_CURSOR_BG, BTE_COLOR_SOURCE_ESCAPE);
                 break;
 
-        case VTE_OSC_XTERM_RESET_COLOR_HIGHLIGHT_BG:
-                reset_color(VTE_HIGHLIGHT_BG, VTE_COLOR_SOURCE_ESCAPE);
+        case BTE_OSC_XTERM_RESET_COLOR_HIGHLIGHT_BG:
+                reset_color(BTE_HIGHLIGHT_BG, BTE_COLOR_SOURCE_ESCAPE);
                 break;
 
-        case VTE_OSC_XTERM_RESET_COLOR_HIGHLIGHT_FG:
-                reset_color(VTE_HIGHLIGHT_FG, VTE_COLOR_SOURCE_ESCAPE);
+        case BTE_OSC_XTERM_RESET_COLOR_HIGHLIGHT_FG:
+                reset_color(BTE_HIGHLIGHT_FG, BTE_COLOR_SOURCE_ESCAPE);
                 break;
 
-        case VTE_OSC_XTERM_SET_ICON_TITLE:
-        case VTE_OSC_XTERM_SET_XPROPERTY:
-        case VTE_OSC_XTERM_SET_COLOR_MOUSE_CURSOR_FG:
-        case VTE_OSC_XTERM_SET_COLOR_MOUSE_CURSOR_BG:
-        case VTE_OSC_XTERM_SET_COLOR_TEK_FG:
-        case VTE_OSC_XTERM_SET_COLOR_TEK_BG:
-        case VTE_OSC_XTERM_SET_COLOR_TEK_CURSOR:
-        case VTE_OSC_XTERM_LOGFILE:
-        case VTE_OSC_XTERM_SET_FONT:
-        case VTE_OSC_XTERM_SET_XSELECTION:
-        case VTE_OSC_XTERM_SET_COLOR_MODE:
-        case VTE_OSC_XTERM_RESET_COLOR_MOUSE_CURSOR_FG:
-        case VTE_OSC_XTERM_RESET_COLOR_MOUSE_CURSOR_BG:
-        case VTE_OSC_XTERM_RESET_COLOR_TEK_FG:
-        case VTE_OSC_XTERM_RESET_COLOR_TEK_BG:
-        case VTE_OSC_XTERM_RESET_COLOR_TEK_CURSOR:
-        case VTE_OSC_EMACS_51:
-        case VTE_OSC_ITERM2_133:
-        case VTE_OSC_ITERM2_1337:
-        case VTE_OSC_ITERM2_GROWL:
-        case VTE_OSC_KONSOLE_30:
-        case VTE_OSC_KONSOLE_31:
-        case VTE_OSC_RLOGIN_SET_KANJI_MODE:
-        case VTE_OSC_RLOGIN_SPEECH:
-        case VTE_OSC_RXVT_SET_BACKGROUND_PIXMAP:
-        case VTE_OSC_RXVT_SET_COLOR_FG:
-        case VTE_OSC_RXVT_SET_COLOR_BG:
-        case VTE_OSC_RXVT_DUMP_SCREEN:
-        case VTE_OSC_URXVT_SET_LOCALE:
-        case VTE_OSC_URXVT_VERSION:
-        case VTE_OSC_URXVT_SET_COLOR_TEXT_ITALIC:
-        case VTE_OSC_URXVT_SET_COLOR_TEXT_BOLD:
-        case VTE_OSC_URXVT_SET_COLOR_UNDERLINE:
-        case VTE_OSC_URXVT_SET_COLOR_BORDER:
-        case VTE_OSC_URXVT_SET_FONT:
-        case VTE_OSC_URXVT_SET_FONT_BOLD:
-        case VTE_OSC_URXVT_SET_FONT_ITALIC:
-        case VTE_OSC_URXVT_SET_FONT_BOLD_ITALIC:
-        case VTE_OSC_URXVT_VIEW_UP:
-        case VTE_OSC_URXVT_VIEW_DOWN:
-        case VTE_OSC_URXVT_EXTENSION:
-        case VTE_OSC_YF_RQGWR:
+        case BTE_OSC_XTERM_SET_ICON_TITLE:
+        case BTE_OSC_XTERM_SET_XPROPERTY:
+        case BTE_OSC_XTERM_SET_COLOR_MOUSE_CURSOR_FG:
+        case BTE_OSC_XTERM_SET_COLOR_MOUSE_CURSOR_BG:
+        case BTE_OSC_XTERM_SET_COLOR_TEK_FG:
+        case BTE_OSC_XTERM_SET_COLOR_TEK_BG:
+        case BTE_OSC_XTERM_SET_COLOR_TEK_CURSOR:
+        case BTE_OSC_XTERM_LOGFILE:
+        case BTE_OSC_XTERM_SET_FONT:
+        case BTE_OSC_XTERM_SET_XSELECTION:
+        case BTE_OSC_XTERM_SET_COLOR_MODE:
+        case BTE_OSC_XTERM_RESET_COLOR_MOUSE_CURSOR_FG:
+        case BTE_OSC_XTERM_RESET_COLOR_MOUSE_CURSOR_BG:
+        case BTE_OSC_XTERM_RESET_COLOR_TEK_FG:
+        case BTE_OSC_XTERM_RESET_COLOR_TEK_BG:
+        case BTE_OSC_XTERM_RESET_COLOR_TEK_CURSOR:
+        case BTE_OSC_EMACS_51:
+        case BTE_OSC_ITERM2_133:
+        case BTE_OSC_ITERM2_1337:
+        case BTE_OSC_ITERM2_GROWL:
+        case BTE_OSC_KONSOLE_30:
+        case BTE_OSC_KONSOLE_31:
+        case BTE_OSC_RLOGIN_SET_KANJI_MODE:
+        case BTE_OSC_RLOGIN_SPEECH:
+        case BTE_OSC_RXVT_SET_BACKGROUND_PIXMAP:
+        case BTE_OSC_RXVT_SET_COLOR_FG:
+        case BTE_OSC_RXVT_SET_COLOR_BG:
+        case BTE_OSC_RXVT_DUMP_SCREEN:
+        case BTE_OSC_URXVT_SET_LOCALE:
+        case BTE_OSC_URXVT_VERSION:
+        case BTE_OSC_URXVT_SET_COLOR_TEXT_ITALIC:
+        case BTE_OSC_URXVT_SET_COLOR_TEXT_BOLD:
+        case BTE_OSC_URXVT_SET_COLOR_UNDERLINE:
+        case BTE_OSC_URXVT_SET_COLOR_BORDER:
+        case BTE_OSC_URXVT_SET_FONT:
+        case BTE_OSC_URXVT_SET_FONT_BOLD:
+        case BTE_OSC_URXVT_SET_FONT_ITALIC:
+        case BTE_OSC_URXVT_SET_FONT_BOLD_ITALIC:
+        case BTE_OSC_URXVT_VIEW_UP:
+        case BTE_OSC_URXVT_VIEW_DOWN:
+        case BTE_OSC_URXVT_EXTENSION:
+        case BTE_OSC_YF_RQGWR:
         default:
                 break;
         }
@@ -6530,7 +6530,7 @@ Terminal::PEC(bte::parser::Sequence const& seq)
          *
          * References: ECMA-48 § 8.3.90
          *
-         * Not applicable in VTE.
+         * Not applicable in BTE.
          */
 }
 
@@ -6542,7 +6542,7 @@ Terminal::PFS(bte::parser::Sequence const& seq)
          *
          * References: ECMA-48 § 8.3.91
          *
-         * Not applicable in VTE.
+         * Not applicable in BTE.
          */
 }
 
@@ -6587,7 +6587,7 @@ Terminal::PP(bte::parser::Sequence const& seq)
          * References: ECMA-48 § 8.3.95
          *             VT525
          *
-         * Since VTE only has one page, this is ignored.
+         * Since BTE only has one page, this is ignored.
          */
 }
 
@@ -6609,7 +6609,7 @@ Terminal::PPA(bte::parser::Sequence const& seq)
          * References: ECMA-48 § 8.3.96
          *             VT525
          *
-         * Since VTE only has one page, this is ignored.
+         * Since BTE only has one page, this is ignored.
          */
 }
 
@@ -6630,7 +6630,7 @@ Terminal::PPB(bte::parser::Sequence const& seq)
          * References: ECMA-48 § 8.3.97
          *             VT525
          *
-         * Since VTE only has one page, this is ignored.
+         * Since BTE only has one page, this is ignored.
          */
 }
 
@@ -6651,7 +6651,7 @@ Terminal::PPR(bte::parser::Sequence const& seq)
          * References: ECMA-48 § 8.3.98
          *             VT525
          *
-         * Since VTE only has one page, this is ignored.
+         * Since BTE only has one page, this is ignored.
          */
 }
 
@@ -6679,7 +6679,7 @@ Terminal::PTX(bte::parser::Sequence const& seq)
          * References: ECMA-48 § 8.3.99
          *             VT525
          *
-         * Since VTE only has one page, this is ignored.
+         * Since BTE only has one page, this is ignored.
          */
 }
 
@@ -6896,7 +6896,7 @@ Terminal::SACS(bte::parser::Sequence const& seq)
          *
          * References: ECMA-48 § 8.3.107
          *
-         * Not applicable in VTE.
+         * Not applicable in BTE.
          */
 }
 
@@ -6947,12 +6947,12 @@ Terminal::SCP(bte::parser::Sequence const& seq)
          *
          * Arguments:
          *   args[0]: path
-         *     0 in Terminal-wg/bidi and VTE = terminal's default
+         *     0 in Terminal-wg/bidi and BTE = terminal's default
          *     1 = LTR or TTB (for horizontal/vertical line orientation)
          *     2 = RTL or BTT (for horizontal/vertical line orientation)
          *   args[1]: effect
          *     0 in ECMA = implementation-defined
-         *     0 in Terminal-wg/bidi and VTE = see Terminal-wg/bidi
+         *     0 in Terminal-wg/bidi and BTE = see Terminal-wg/bidi
          *     1 = ...
          *     2 = ...
          *
@@ -6972,21 +6972,21 @@ Terminal::SCP(bte::parser::Sequence const& seq)
         case 0:
                 /* FIXME switch to the emulator's default, once we have that concept */
                 m_bidi_rtl = FALSE;
-                _bte_debug_print(VTE_DEBUG_BIDI, "BiDi: default direction restored\n");
+                _bte_debug_print(BTE_DEBUG_BIDI, "BiDi: default direction restored\n");
                 break;
         case 1:
                 m_bidi_rtl = FALSE;
-                _bte_debug_print(VTE_DEBUG_BIDI, "BiDi: switch to LTR\n");
+                _bte_debug_print(BTE_DEBUG_BIDI, "BiDi: switch to LTR\n");
                 break;
         case 2:
                 m_bidi_rtl = TRUE;
-                _bte_debug_print(VTE_DEBUG_BIDI, "BiDi: switch to RTL\n");
+                _bte_debug_print(BTE_DEBUG_BIDI, "BiDi: switch to RTL\n");
                 break;
         default:
                 return;
         }
 
-        maybe_apply_bidi_attributes(VTE_BIDI_FLAG_RTL);
+        maybe_apply_bidi_attributes(BTE_BIDI_FLAG_RTL);
 }
 
 void
@@ -7145,19 +7145,19 @@ Terminal::SGR(bte::parser::Sequence const& seq)
                 auto const param = seq.param(i);
                 switch (param) {
                 case -1:
-                case VTE_SGR_RESET_ALL:
+                case BTE_SGR_RESET_ALL:
                         reset_default_attributes(false);
                         break;
-                case VTE_SGR_SET_BOLD:
+                case BTE_SGR_SET_BOLD:
                         m_defaults.attr.set_bold(true);
                         break;
-                case VTE_SGR_SET_DIM:
+                case BTE_SGR_SET_DIM:
                         m_defaults.attr.set_dim(true);
                         break;
-                case VTE_SGR_SET_ITALIC:
+                case BTE_SGR_SET_ITALIC:
                         m_defaults.attr.set_italic(true);
                         break;
-                case VTE_SGR_SET_UNDERLINE: {
+                case BTE_SGR_SET_UNDERLINE: {
                         unsigned int v = 1;
                         /* If we have a subparameter, get it */
                         if (seq.param_nonfinal(i)) {
@@ -7166,92 +7166,92 @@ Terminal::SGR(bte::parser::Sequence const& seq)
                         m_defaults.attr.set_underline(v);
                         break;
                 }
-                case VTE_SGR_SET_BLINK:
-                case VTE_SGR_SET_BLINK_RAPID:
+                case BTE_SGR_SET_BLINK:
+                case BTE_SGR_SET_BLINK_RAPID:
                         m_defaults.attr.set_blink(true);
                         break;
-                case VTE_SGR_SET_REVERSE:
+                case BTE_SGR_SET_REVERSE:
                         m_defaults.attr.set_reverse(true);
                         break;
-                case VTE_SGR_SET_INVISIBLE:
+                case BTE_SGR_SET_INVISIBLE:
                         m_defaults.attr.set_invisible(true);
                         break;
-                case VTE_SGR_SET_STRIKETHROUGH:
+                case BTE_SGR_SET_STRIKETHROUGH:
                         m_defaults.attr.set_strikethrough(true);
                         break;
-                case VTE_SGR_SET_UNDERLINE_DOUBLE:
+                case BTE_SGR_SET_UNDERLINE_DOUBLE:
                         m_defaults.attr.set_underline(2);
                         break;
-                case VTE_SGR_RESET_BOLD_AND_DIM:
-                        m_defaults.attr.unset(VTE_ATTR_BOLD_MASK | VTE_ATTR_DIM_MASK);
+                case BTE_SGR_RESET_BOLD_AND_DIM:
+                        m_defaults.attr.unset(BTE_ATTR_BOLD_MASK | BTE_ATTR_DIM_MASK);
                         break;
-                case VTE_SGR_RESET_ITALIC:
+                case BTE_SGR_RESET_ITALIC:
                         m_defaults.attr.set_italic(false);
                         break;
-                case VTE_SGR_RESET_UNDERLINE:
+                case BTE_SGR_RESET_UNDERLINE:
                         m_defaults.attr.set_underline(0);
                         break;
-                case VTE_SGR_RESET_BLINK:
+                case BTE_SGR_RESET_BLINK:
                         m_defaults.attr.set_blink(false);
                         break;
-                case VTE_SGR_RESET_REVERSE:
+                case BTE_SGR_RESET_REVERSE:
                         m_defaults.attr.set_reverse(false);
                         break;
-                case VTE_SGR_RESET_INVISIBLE:
+                case BTE_SGR_RESET_INVISIBLE:
                         m_defaults.attr.set_invisible(false);
                         break;
-                case VTE_SGR_RESET_STRIKETHROUGH:
+                case BTE_SGR_RESET_STRIKETHROUGH:
                         m_defaults.attr.set_strikethrough(false);
                         break;
-                case VTE_SGR_SET_FORE_LEGACY_START ... VTE_SGR_SET_FORE_LEGACY_END:
-                        m_defaults.attr.set_fore(VTE_LEGACY_COLORS_OFFSET + (param - 30));
+                case BTE_SGR_SET_FORE_LEGACY_START ... BTE_SGR_SET_FORE_LEGACY_END:
+                        m_defaults.attr.set_fore(BTE_LEGACY_COLORS_OFFSET + (param - 30));
                         break;
-                case VTE_SGR_SET_FORE_SPEC: {
+                case BTE_SGR_SET_FORE_SPEC: {
                         uint32_t fore;
                         if (G_LIKELY((seq_parse_sgr_color<8, 8, 8>(seq, i, fore))))
                                 m_defaults.attr.set_fore(fore);
                         break;
                 }
-                case VTE_SGR_RESET_FORE:
+                case BTE_SGR_RESET_FORE:
                         /* default foreground */
-                        m_defaults.attr.set_fore(VTE_DEFAULT_FG);
+                        m_defaults.attr.set_fore(BTE_DEFAULT_FG);
                         break;
-                case VTE_SGR_SET_BACK_LEGACY_START ... VTE_SGR_SET_BACK_LEGACY_END:
-                        m_defaults.attr.set_back(VTE_LEGACY_COLORS_OFFSET + (param - 40));
+                case BTE_SGR_SET_BACK_LEGACY_START ... BTE_SGR_SET_BACK_LEGACY_END:
+                        m_defaults.attr.set_back(BTE_LEGACY_COLORS_OFFSET + (param - 40));
                         break;
-                case VTE_SGR_SET_BACK_SPEC: {
+                case BTE_SGR_SET_BACK_SPEC: {
                         uint32_t back;
                         if (G_LIKELY((seq_parse_sgr_color<8, 8, 8>(seq, i, back))))
                                 m_defaults.attr.set_back(back);
                         break;
                 }
-                case VTE_SGR_RESET_BACK:
+                case BTE_SGR_RESET_BACK:
                         /* default background */
-                        m_defaults.attr.set_back(VTE_DEFAULT_BG);
+                        m_defaults.attr.set_back(BTE_DEFAULT_BG);
                         break;
-                case VTE_SGR_SET_OVERLINE:
+                case BTE_SGR_SET_OVERLINE:
                         m_defaults.attr.set_overline(true);
                         break;
-                case VTE_SGR_RESET_OVERLINE:
+                case BTE_SGR_RESET_OVERLINE:
                         m_defaults.attr.set_overline(false);
                         break;
-                case VTE_SGR_SET_DECO_SPEC: {
+                case BTE_SGR_SET_DECO_SPEC: {
                         uint32_t deco;
                         if (G_LIKELY((seq_parse_sgr_color<4, 5, 4>(seq, i, deco))))
                                 m_defaults.attr.set_deco(deco);
                         break;
                 }
-                case VTE_SGR_RESET_DECO:
+                case BTE_SGR_RESET_DECO:
                         /* default decoration color, that is, same as the cell's foreground */
-                        m_defaults.attr.set_deco(VTE_DEFAULT_FG);
+                        m_defaults.attr.set_deco(BTE_DEFAULT_FG);
                         break;
-                case VTE_SGR_SET_FORE_LEGACY_BRIGHT_START ... VTE_SGR_SET_FORE_LEGACY_BRIGHT_END:
-                        m_defaults.attr.set_fore(VTE_LEGACY_COLORS_OFFSET + (param - 90) +
-                                                 VTE_COLOR_BRIGHT_OFFSET);
+                case BTE_SGR_SET_FORE_LEGACY_BRIGHT_START ... BTE_SGR_SET_FORE_LEGACY_BRIGHT_END:
+                        m_defaults.attr.set_fore(BTE_LEGACY_COLORS_OFFSET + (param - 90) +
+                                                 BTE_COLOR_BRIGHT_OFFSET);
                         break;
-                case VTE_SGR_SET_BACK_LEGACY_BRIGHT_START ... VTE_SGR_SET_BACK_LEGACY_BRIGHT_END:
-                        m_defaults.attr.set_back(VTE_LEGACY_COLORS_OFFSET + (param - 100) +
-                                                 VTE_COLOR_BRIGHT_OFFSET);
+                case BTE_SGR_SET_BACK_LEGACY_BRIGHT_START ... BTE_SGR_SET_BACK_LEGACY_BRIGHT_END:
+                        m_defaults.attr.set_back(BTE_LEGACY_COLORS_OFFSET + (param - 100) +
+                                                 BTE_COLOR_BRIGHT_OFFSET);
                         break;
                 }
         }
@@ -7274,7 +7274,7 @@ Terminal::SHS(bte::parser::Sequence const& seq)
          *
          * References: ECMA-48 § 8.3.118
          *
-         * Not applicable in VTE.
+         * Not applicable in BTE.
          */
 }
 
@@ -7368,7 +7368,7 @@ Terminal::SLS(bte::parser::Sequence const& seq)
          *
          * References: ECMA-48 § 8.3.124
          *
-         * Not applicable in VTE.
+         * Not applicable in BTE.
          */
 }
 
@@ -7464,17 +7464,17 @@ Terminal::SPD(bte::parser::Sequence const& seq)
         case -1:
         case 0:
                 m_bidi_rtl = FALSE;
-                _bte_debug_print(VTE_DEBUG_BIDI, "BiDi: switch to LTR\n");
+                _bte_debug_print(BTE_DEBUG_BIDI, "BiDi: switch to LTR\n");
                 break;
         case 3:
                 m_bidi_rtl = TRUE;
-                _bte_debug_print(VTE_DEBUG_BIDI, "BiDi: switch to RTL\n");
+                _bte_debug_print(BTE_DEBUG_BIDI, "BiDi: switch to RTL\n");
                 break;
         default:
                 return;
         }
 
-        maybe_apply_bidi_attributes(VTE_BIDI_FLAG_RTL);
+        maybe_apply_bidi_attributes(BTE_BIDI_FLAG_RTL);
 
         /* FIXME maybe apply to all the onscreen lines? */
 }
@@ -7586,7 +7586,7 @@ Terminal::SRCS(bte::parser::Sequence const& seq)
          *
          * References: ECMA-48 § 8.3.136
          *
-         * Not applicable in VTE.
+         * Not applicable in BTE.
          */
 }
 
@@ -7959,7 +7959,7 @@ Terminal::TSS(bte::parser::Sequence const& seq)
          *
          * References: ECMA-48 § 8.3.157
          *
-         * Not applicable in VTE.
+         * Not applicable in BTE.
          */
 }
 
@@ -8581,24 +8581,24 @@ Terminal::XTERM_WM(bte::parser::Sequence const& seq)
         case 0:
                 break;
 
-        case VTE_XTERM_WM_RESTORE_WINDOW:
+        case BTE_XTERM_WM_RESTORE_WINDOW:
                 m_xterm_wm_iconified = false;
                 break;
 
-        case VTE_XTERM_WM_MINIMIZE_WINDOW:
+        case BTE_XTERM_WM_MINIMIZE_WINDOW:
                 m_xterm_wm_iconified = true;
                 break;
 
-        case VTE_XTERM_WM_SET_WINDOW_POSITION:
+        case BTE_XTERM_WM_SET_WINDOW_POSITION:
                 /* No-op */
                 break;
 
-        case VTE_XTERM_WM_SET_WINDOW_SIZE_PIXELS: {
+        case BTE_XTERM_WM_SET_WINDOW_SIZE_PIXELS: {
                 int width, height;
                 seq.collect(1, {&height, &width});
 
                 if (width != -1 && height != -1) {
-                        _bte_debug_print(VTE_DEBUG_EMULATION,
+                        _bte_debug_print(BTE_DEBUG_EMULATION,
                                          "Resizing window to %dx%d pixels, grid size %dx%d.\n",
                                          width, height,
                                          width / int(m_cell_height), height / int(m_cell_width));
@@ -8607,21 +8607,21 @@ Terminal::XTERM_WM(bte::parser::Sequence const& seq)
                 break;
         }
 
-        case VTE_XTERM_WM_RAISE_WINDOW:
+        case BTE_XTERM_WM_RAISE_WINDOW:
                 break;
 
-        case VTE_XTERM_WM_LOWER_WINDOW:
+        case BTE_XTERM_WM_LOWER_WINDOW:
                 break;
 
-        case VTE_XTERM_WM_REFRESH_WINDOW:
+        case BTE_XTERM_WM_REFRESH_WINDOW:
                 break;
 
-        case VTE_XTERM_WM_SET_WINDOW_SIZE_CELLS: {
+        case BTE_XTERM_WM_SET_WINDOW_SIZE_CELLS: {
                 int width, height;
                 seq.collect(1, {&height, &width});
 
                 if (width != -1 && height != -1) {
-                        _bte_debug_print(VTE_DEBUG_EMULATION,
+                        _bte_debug_print(BTE_DEBUG_EMULATION,
                                          "Resizing window to %d columns, %d rows.\n",
                                          width, height);
                         emit_resize_window(width, height);
@@ -8629,7 +8629,7 @@ Terminal::XTERM_WM(bte::parser::Sequence const& seq)
                 break;
         }
 
-        case VTE_XTERM_WM_MAXIMIZE_WINDOW:
+        case BTE_XTERM_WM_MAXIMIZE_WINDOW:
                 switch (seq.collect1(1)) {
                 case -1: /* default */
                 case 0:
@@ -8649,78 +8649,78 @@ Terminal::XTERM_WM(bte::parser::Sequence const& seq)
                 }
                 break;
 
-        case VTE_XTERM_WM_FULLSCREEN_WINDOW:
+        case BTE_XTERM_WM_FULLSCREEN_WINDOW:
                 break;
 
-        case VTE_XTERM_WM_GET_WINDOW_STATE:
-                reply(seq, VTE_REPLY_XTERM_WM, {m_xterm_wm_iconified ? 2 : 1});
+        case BTE_XTERM_WM_GET_WINDOW_STATE:
+                reply(seq, BTE_REPLY_XTERM_WM, {m_xterm_wm_iconified ? 2 : 1});
                 break;
 
-        case VTE_XTERM_WM_GET_WINDOW_POSITION:
+        case BTE_XTERM_WM_GET_WINDOW_POSITION:
                 /* Reply with fixed origin. */
-                reply(seq, VTE_REPLY_XTERM_WM, {3, 0, 0});
+                reply(seq, BTE_REPLY_XTERM_WM, {3, 0, 0});
                 break;
 
-        case VTE_XTERM_WM_GET_WINDOW_SIZE_PIXELS: {
+        case BTE_XTERM_WM_GET_WINDOW_SIZE_PIXELS: {
                 int width = m_row_count * m_cell_height;
                 int height = m_column_count * m_cell_width;
-                reply(seq, VTE_REPLY_XTERM_WM, {4, height, width});
+                reply(seq, BTE_REPLY_XTERM_WM, {4, height, width});
                 break;
         }
 
-        case VTE_XTERM_WM_GET_WINDOW_SIZE_CELLS:
-                reply(seq, VTE_REPLY_XTERM_WM,
+        case BTE_XTERM_WM_GET_WINDOW_SIZE_CELLS:
+                reply(seq, BTE_REPLY_XTERM_WM,
                       {8, (int)m_row_count, (int)m_column_count});
                 break;
 
-        case VTE_XTERM_WM_GET_SCREEN_SIZE_CELLS: {
+        case BTE_XTERM_WM_GET_SCREEN_SIZE_CELLS: {
                 /* FIMXE: this should really report the monitor's workarea,
                  * or even just a fixed value.
                  */
                 auto cdkscreen = ctk_widget_get_screen(m_widget);
                 int height = cdk_screen_get_height(cdkscreen);
                 int width = cdk_screen_get_width(cdkscreen);
-                _bte_debug_print(VTE_DEBUG_EMULATION,
+                _bte_debug_print(BTE_DEBUG_EMULATION,
                                  "Reporting screen size as %dx%d cells.\n",
                                  height / int(m_cell_height), width / int(m_cell_width));
 
-                reply(seq, VTE_REPLY_XTERM_WM,
+                reply(seq, BTE_REPLY_XTERM_WM,
                       {9, height / int(m_cell_height), width / int(m_cell_width)});
                 break;
         }
 
-        case VTE_XTERM_WM_GET_ICON_TITLE:
+        case BTE_XTERM_WM_GET_ICON_TITLE:
                 /* Report a static icon title, since the real
                  * icon title should NEVER be reported, as it
                  * creates a security vulnerability.  See
                  * http://marc.info/?l=bugtraq&m=104612710031920&w=2
                  * and CVE-2003-0070.
                  */
-                _bte_debug_print(VTE_DEBUG_EMULATION,
+                _bte_debug_print(BTE_DEBUG_EMULATION,
                                  "Reporting empty icon title.\n");
 
-                send(seq, bte::parser::u8SequenceBuilder{VTE_SEQ_OSC, "L"s});
+                send(seq, bte::parser::u8SequenceBuilder{BTE_SEQ_OSC, "L"s});
                 break;
 
-        case VTE_XTERM_WM_GET_WINDOW_TITLE:
+        case BTE_XTERM_WM_GET_WINDOW_TITLE:
                 /* Report a static window title, since the real
                  * window title should NEVER be reported, as it
                  * creates a security vulnerability.  See
                  * http://marc.info/?l=bugtraq&m=104612710031920&w=2
                  * and CVE-2003-0070.
                  */
-                _bte_debug_print(VTE_DEBUG_EMULATION,
+                _bte_debug_print(BTE_DEBUG_EMULATION,
                                  "Reporting empty window title.\n");
 
-                send(seq, bte::parser::u8SequenceBuilder{VTE_SEQ_OSC, "l"s});
+                send(seq, bte::parser::u8SequenceBuilder{BTE_SEQ_OSC, "l"s});
                 break;
 
-        case VTE_XTERM_WM_TITLE_STACK_PUSH:
+        case BTE_XTERM_WM_TITLE_STACK_PUSH:
                 switch (seq.collect1(1)) {
                 case -1:
-                case VTE_OSC_XTERM_SET_WINDOW_AND_ICON_TITLE:
-                case VTE_OSC_XTERM_SET_WINDOW_TITLE:
-                        if (m_window_title_stack.size() >= VTE_WINDOW_TITLE_STACK_MAX_DEPTH) {
+                case BTE_OSC_XTERM_SET_WINDOW_AND_ICON_TITLE:
+                case BTE_OSC_XTERM_SET_WINDOW_TITLE:
+                        if (m_window_title_stack.size() >= BTE_WINDOW_TITLE_STACK_MAX_DEPTH) {
                                 /* Drop the bottommost item */
                                 m_window_title_stack.erase(m_window_title_stack.cbegin());
                         }
@@ -8732,20 +8732,20 @@ Terminal::XTERM_WM(bte::parser::Sequence const& seq)
                                 m_window_title_stack.emplace(m_window_title_stack.cend(),
                                                              m_window_title);
 
-                        g_assert_cmpuint(m_window_title_stack.size(), <=, VTE_WINDOW_TITLE_STACK_MAX_DEPTH);
+                        g_assert_cmpuint(m_window_title_stack.size(), <=, BTE_WINDOW_TITLE_STACK_MAX_DEPTH);
                         break;
 
-                case VTE_OSC_XTERM_SET_ICON_TITLE:
+                case BTE_OSC_XTERM_SET_ICON_TITLE:
                 default:
                         break;
                 }
                 break;
 
-        case VTE_XTERM_WM_TITLE_STACK_POP:
+        case BTE_XTERM_WM_TITLE_STACK_POP:
                 switch (seq.collect1(1)) {
                 case -1:
-                case VTE_OSC_XTERM_SET_WINDOW_AND_ICON_TITLE:
-                case VTE_OSC_XTERM_SET_WINDOW_TITLE:
+                case BTE_OSC_XTERM_SET_WINDOW_AND_ICON_TITLE:
+                case BTE_OSC_XTERM_SET_WINDOW_TITLE:
                         if (m_window_title_stack.empty())
                                 break;
 
@@ -8754,7 +8754,7 @@ Terminal::XTERM_WM(bte::parser::Sequence const& seq)
                         m_window_title_stack.pop_back();
                         break;
 
-                case VTE_OSC_XTERM_SET_ICON_TITLE:
+                case BTE_OSC_XTERM_SET_ICON_TITLE:
                 default:
                         break;
                 }

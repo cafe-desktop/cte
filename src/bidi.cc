@@ -57,7 +57,7 @@ static_assert (sizeof (FriBidiChar) == sizeof (gunichar), "Unexpected FriBidiCha
 #endif
 
 /* Don't do Arabic ligatures as per bug 142. */
-#define VTE_ARABIC_SHAPING_FLAGS (FRIBIDI_FLAGS_ARABIC & ~FRIBIDI_FLAG_SHAPE_ARAB_LIGA)
+#define BTE_ARABIC_SHAPING_FLAGS (FRIBIDI_FLAGS_ARABIC & ~FRIBIDI_FLAG_SHAPE_ARAB_LIGA)
 
 using namespace bte::base;
 
@@ -279,7 +279,7 @@ BidiRunner::explicit_line_shape(bte::grid::row_t row)
 
                 /* Shaping. */
                 fribidi_join_arabic (fribidi_chartypes, count, fribidi_levels, fribidi_joiningtypes);
-                fribidi_shape_arabic (VTE_ARABIC_SHAPING_FLAGS, fribidi_levels, count, fribidi_joiningtypes, fribidi_chars);
+                fribidi_shape_arabic (BTE_ARABIC_SHAPING_FLAGS, fribidi_levels, count, fribidi_joiningtypes, fribidi_chars);
 
                 /* If we have the shortcut notation for the trivial LTR mapping, we need to
                  * expand it to the nontrivial notation, in order to store the shaped character. */
@@ -379,14 +379,14 @@ BidiRunner::paragraph(bte::grid::row_t start, bte::grid::row_t end,
         /* Have a consistent limit on the number of rows in a paragraph
          * that can get implicit BiDi treatment, which is independent from
          * the current scroll position. */
-        if ((row_data->attr.bidi_flags & VTE_BIDI_FLAG_IMPLICIT) &&
-            end - start <= VTE_RINGVIEW_PARAGRAPH_LENGTH_MAX) {
+        if ((row_data->attr.bidi_flags & BTE_BIDI_FLAG_IMPLICIT) &&
+            end - start <= BTE_RINGVIEW_PARAGRAPH_LENGTH_MAX) {
                 if (implicit_paragraph(start, end, do_shaping))
                         return;
         }
 #endif
 
-        explicit_paragraph(start, end, row_data->attr.bidi_flags & VTE_BIDI_FLAG_RTL, do_shaping);
+        explicit_paragraph(start, end, row_data->attr.bidi_flags & BTE_BIDI_FLAG_RTL, do_shaping);
 }
 
 /* Set up the mapping according to explicit mode, for all the lines
@@ -426,10 +426,10 @@ BidiRunner::implicit_paragraph(bte::grid::row_t start, bte::grid::row_t end, boo
         auto width = m_ringview->get_width();
 
         row_data = m_ringview->get_row(start);
-        rtl = row_data->attr.bidi_flags & VTE_BIDI_FLAG_RTL;
-        autodir = row_data->attr.bidi_flags & VTE_BIDI_FLAG_AUTO;
+        rtl = row_data->attr.bidi_flags & BTE_BIDI_FLAG_RTL;
+        autodir = row_data->attr.bidi_flags & BTE_BIDI_FLAG_AUTO;
 
-        int lines[VTE_RINGVIEW_PARAGRAPH_LENGTH_MAX + 1];  /* offsets to the beginning of lines */
+        int lines[BTE_RINGVIEW_PARAGRAPH_LENGTH_MAX + 1];  /* offsets to the beginning of lines */
         lines[0] = 0;
         int line = 0;   /* line number within the paragraph */
         int count;      /* total character count */
@@ -588,7 +588,7 @@ BidiRunner::implicit_paragraph(bte::grid::row_t start, bte::grid::row_t end, boo
         if (do_shaping) {
                 /* Arabic shaping (on the entire paragraph in a single run). */
                 fribidi_join_arabic (fribidi_chartypes, count, fribidi_levels, fribidi_joiningtypes);
-                fribidi_shape_arabic (VTE_ARABIC_SHAPING_FLAGS, fribidi_levels, count, fribidi_joiningtypes, fribidi_chars);
+                fribidi_shape_arabic (BTE_ARABIC_SHAPING_FLAGS, fribidi_levels, count, fribidi_joiningtypes, fribidi_chars);
         }
 
         /* For convenience, from now on this variable contains the resolved (i.e. possibly autodetected) value. */
@@ -716,7 +716,7 @@ BidiRunner::implicit_paragraph(bte::grid::row_t start, bte::grid::row_t end, boo
 
                 /* From vis2log create the log2vis mapping too.
                  * In debug mode assert that we have a bijective mapping. */
-                if (_bte_debug_on (VTE_DEBUG_BIDI)) {
+                if (_bte_debug_on (BTE_DEBUG_BIDI)) {
                         for (tl = 0; tl < width; tl++) {
                                 bidirow->m_log2vis[tl] = -1;
                         }
@@ -726,7 +726,7 @@ BidiRunner::implicit_paragraph(bte::grid::row_t start, bte::grid::row_t end, boo
                         bidirow->m_log2vis[bidirow->m_vis2log[tv]] = tv;
                 }
 
-                if (_bte_debug_on (VTE_DEBUG_BIDI)) {
+                if (_bte_debug_on (BTE_DEBUG_BIDI)) {
                         for (tl = 0; tl < width; tl++) {
                                 g_assert_cmpint (bidirow->m_log2vis[tl], !=, -1);
                         }

@@ -58,7 +58,7 @@ im_preedit_start_cb(CtkIMContext* im_context,
                     Widget* that) noexcept
 try
 {
-        _bte_debug_print(VTE_DEBUG_EVENTS, "Input method pre-edit started.\n");
+        _bte_debug_print(BTE_DEBUG_EVENTS, "Input method pre-edit started.\n");
         that->terminal()->im_preedit_set_active(true);
 }
 catch (...)
@@ -71,7 +71,7 @@ im_preedit_end_cb(CtkIMContext* im_context,
                   Widget* that) noexcept
 try
 {
-        _bte_debug_print(VTE_DEBUG_EVENTS, "Input method pre-edit ended.\n");
+        _bte_debug_print(BTE_DEBUG_EVENTS, "Input method pre-edit ended.\n");
         that->terminal()->im_preedit_set_active(false);
 }
 catch (...)
@@ -96,7 +96,7 @@ im_retrieve_surrounding_cb(CtkIMContext* im_context,
                            Widget* that) noexcept
 try
 {
-        _bte_debug_print(VTE_DEBUG_EVENTS, "Input method retrieve-surrounding.\n");
+        _bte_debug_print(BTE_DEBUG_EVENTS, "Input method retrieve-surrounding.\n");
         return that->terminal()->im_retrieve_surrounding();
 }
 catch (...)
@@ -112,7 +112,7 @@ im_delete_surrounding_cb(CtkIMContext* im_context,
                          Widget* that) noexcept
 try
 {
-        _bte_debug_print(VTE_DEBUG_EVENTS,
+        _bte_debug_print(BTE_DEBUG_EVENTS,
                          "Input method delete-surrounding offset %d n-chars %d.\n",
                          offset, n_chars);
         return that->terminal()->im_delete_surrounding(offset, n_chars);
@@ -243,14 +243,14 @@ Widget::dispose() noexcept
 void
 Widget::emit_child_exited(int status) noexcept
 {
-        _bte_debug_print(VTE_DEBUG_SIGNALS, "Emitting `child-exited'.\n");
+        _bte_debug_print(BTE_DEBUG_SIGNALS, "Emitting `child-exited'.\n");
         g_signal_emit(object(), signals[SIGNAL_CHILD_EXITED], 0, status);
 }
 
 void
 Widget::emit_eof() noexcept
 {
-        _bte_debug_print(VTE_DEBUG_SIGNALS, "Emitting `eof'.\n");
+        _bte_debug_print(BTE_DEBUG_SIGNALS, "Emitting `eof'.\n");
         g_signal_emit(object(), signals[SIGNAL_EOF], 0);
 }
 
@@ -283,7 +283,7 @@ Widget::im_preedit_changed() noexcept
 	int cursorpos = 0;
 
         ctk_im_context_get_preedit_string(m_im_context.get(), &str, &attrs, &cursorpos);
-        _bte_debug_print(VTE_DEBUG_EVENTS, "Input method pre-edit changed (%s,%d).\n",
+        _bte_debug_print(BTE_DEBUG_EVENTS, "Input method pre-edit changed (%s,%d).\n",
                          str, cursorpos);
 
         if (str != nullptr)
@@ -341,7 +341,7 @@ Widget::key_event_translate_ctrlkey(bte::terminal::KeyEvent const& event) const 
                                                      i,
                                                      &keyval, NULL, NULL, &consumed_modifiers);
 		if (keyval < 128) {
-			_bte_debug_print (VTE_DEBUG_EVENTS,
+			_bte_debug_print (BTE_DEBUG_EVENTS,
                                           "ctrl+Key, group=%d de-grouped into keyval=0x%x\n",
                                           event.group(), keyval);
                         break;
@@ -432,14 +432,14 @@ Widget::realize() noexcept
         //        m_mouse_cursor_over_widget = false;  /* We'll receive an enter_notify_event if the window appears under the cursor. */
 
 	/* Create stock cursors */
-	m_default_cursor = create_cursor(VTE_DEFAULT_CURSOR);
+	m_default_cursor = create_cursor(BTE_DEFAULT_CURSOR);
 	m_invisible_cursor = create_cursor(CDK_BLANK_CURSOR);
-	m_mousing_cursor = create_cursor(VTE_MOUSING_CURSOR);
-        if (_bte_debug_on(VTE_DEBUG_HYPERLINK))
+	m_mousing_cursor = create_cursor(BTE_MOUSING_CURSOR);
+        if (_bte_debug_on(BTE_DEBUG_HYPERLINK))
                 /* Differ from the standard regex match cursor in debug mode. */
-                m_hyperlink_cursor = create_cursor(VTE_HYPERLINK_CURSOR_DEBUG);
+                m_hyperlink_cursor = create_cursor(BTE_HYPERLINK_CURSOR_DEBUG);
         else
-                m_hyperlink_cursor = create_cursor(VTE_HYPERLINK_CURSOR);
+                m_hyperlink_cursor = create_cursor(BTE_HYPERLINK_CURSOR);
 
 	/* Create an input window for the widget. */
         auto allocation = m_terminal->get_allocated_rect();
@@ -539,7 +539,7 @@ Widget::settings_changed() noexcept
                      "ctk-cursor-blink-timeout", &blink_timeout,
                      nullptr);
 
-        _bte_debug_print(VTE_DEBUG_MISC,
+        _bte_debug_print(BTE_DEBUG_MISC,
                          "Cursor blinking settings: blink=%d time=%d timeout=%d\n",
                          blink, blink_time, blink_timeout);
 

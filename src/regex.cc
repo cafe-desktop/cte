@@ -34,7 +34,7 @@ set_gerror_from_pcre_error(int errcode,
         PCRE2_UCHAR8 buf[256];
         int n = pcre2_get_error_message_8(errcode, buf, sizeof(buf));
         assert(n >= 0);
-        g_set_error_literal(error, VTE_REGEX_ERROR, errcode, (char const*)buf);
+        g_set_error_literal(error, BTE_REGEX_ERROR, errcode, (char const*)buf);
         return false;
 }
 
@@ -59,7 +59,7 @@ Regex::check_pcre_config_unicode(GError** error)
         guint32 v;
         int r = pcre2_config_8(PCRE2_CONFIG_UNICODE, &v);
         if (r != 0 || v != 1) {
-                g_set_error(error, VTE_REGEX_ERROR, VTE_REGEX_ERROR_INCOMPATIBLE,
+                g_set_error(error, BTE_REGEX_ERROR, BTE_REGEX_ERROR_INCOMPATIBLE,
                             "PCRE2 library was built without unicode support");
                 return false;
         }

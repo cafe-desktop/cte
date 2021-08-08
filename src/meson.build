@@ -226,10 +226,10 @@ incs = [
 ]
 
 libbte_common_cppflags = [
-  '-DG_LOG_DOMAIN="VTE"',
+  '-DG_LOG_DOMAIN="BTE"',
   '-DLOCALEDIR="@0@"'.format(bte_prefix / bte_localedir),
-  '-DVTE_DISABLE_DEPRECATION_WARNINGS',
-  '-DVTE_COMPILATION',
+  '-DBTE_DISABLE_DEPRECATION_WARNINGS',
+  '-DBTE_COMPILATION',
   '-UPARSER_INCLUDE_NOP',
 ]
 
@@ -260,7 +260,7 @@ if get_option('ctk3')
     libbte_ctk3,
     version: bte_version,
     name: 'bte',
-    description: 'VTE widget for CTK+ 3.0',
+    description: 'BTE widget for CTK+ 3.0',
     filebase: bte_ctk3_api_name,
     subdirs: bte_ctk3_api_name,
     requires: libbte_ctk3_public_deps,
@@ -366,8 +366,8 @@ reflect_bte = executable(
   sources: reflect_sources,
   dependencies: [ctk3_dep, libbte_ctk3_dep],
   c_args: [
-    '-DUSE_VTE',
-    '-DVTE_DISABLE_DEPRECATION_WARNINGS',
+    '-DUSE_BTE',
+    '-DBTE_DISABLE_DEPRECATION_WARNINGS',
   ],
   include_directories: top_inc,
   install: false,
@@ -400,7 +400,7 @@ xticker = executable(
   'xticker',
   sources: xticker_sources,
   dependencies: [glib_dep],
-  c_args: ['-DVTE_DISABLE_DEPRECATION_WARNINGS',],
+  c_args: ['-DBTE_DISABLE_DEPRECATION_WARNINGS',],
   include_directories: top_inc,
   install: false,
 )
@@ -477,7 +477,7 @@ test_stream = executable(
   'test-stream',
   sources: test_stream_sources,
   dependencies: [gio_dep, gnutls_dep, zlib_dep],
-  cpp_args: ['-DVTESTREAM_MAIN'],
+  cpp_args: ['-DBTESTREAM_MAIN'],
   include_directories: top_inc,
   install: false,
 )
@@ -517,7 +517,7 @@ test_btetypes = executable(
 )
 
 test_env = [
-  'VTE_DEBUG=0'
+  'BTE_DEBUG=0'
 ]
 
 # apparently there is no way to get a name back from an executable(), so it this ugly way

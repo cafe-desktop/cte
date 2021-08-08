@@ -1,5 +1,5 @@
 ╔════════════════╗
-║ VTE rewrapping ║
+║ BTE rewrapping ║
 ╚════════════════╝
 
 as per the feature request and discussions at
@@ -16,7 +16,7 @@ is resized.
 
 In order to implement this, we need to remember for each line whether we
 advanced to the next because a newline (a.k.a. linefeed) was printed, or
-because the end of line was reached. VTE and most other terminals already
+because the end of line was reached. BTE and most other terminals already
 remember this (even if they don't support rewrap) for copy-paste purposes.
 
 Let's use the following terminology:
@@ -82,11 +82,11 @@ printable character.)
 Other generic expectations
 ──────────────────────────
 
-Window managers can be configured to resize applications (and hence the VTE
+Window managers can be configured to resize applications (and hence the BTE
 widget) only once for the final size, and can resize it continuously. It's
 expected that these two should lead to the same result (as much as possible).
 
-Some terminal emulators scroll to the bottom on resize. VTE has traditionally
+Some terminal emulators scroll to the bottom on resize. BTE has traditionally
 been cleverer, it kept the scroll position. I believe it's a nice feature and
 we should try to keep it the same.
 
@@ -98,7 +98,7 @@ paragraphs were and still are shorter than the width, rewrapping shouldn't
 change the scroll offset. If there was only 1 paragraph that needed to be
 rewrapped from one line to two lines, the content shouldn't scroll by more
 than 1 line anywhere on the screen. If you change the height only, the
-behavior would be the same as with old non-rewrapping VTE. In this case the
+behavior would be the same as with old non-rewrapping BTE. In this case the
 rewrapping code is actually skipped (because it's an expensive operation), but
 even if it was executed, the behavior should remain the same.
 
@@ -118,7 +118,7 @@ The alternate screen should not be rewrapped. It is used by applications that
 have full control over the entire area and they will repaint it themselves.
 Rewrapping by bte would cause ugly artifacts after bte rewraps but before the
 application catches up, e.g. characters aligned below each other would become
-arranged diagonally for a short while. (Moreover, with current VTE design,
+arranged diagonally for a short while. (Moreover, with current BTE design,
 rewrapping the alternate screen would require many new fds to be used: main
 bug comment 60).
 
@@ -189,7 +189,7 @@ Shell prompt
 If you resize the terminal to be narrower than your shell prompt (plus the
 command you're entering) while the shell is waiting for your command, you see
 weird behavior there. This is not a bug in rewrapping: it's because the shell
-redisplays its prompt (and command line) on every resize. There's not much VTE
+redisplays its prompt (and command line) on every resize. There's not much BTE
 could do here.
 
 As a long term goal, maybe readline could have an option where it knows that
@@ -431,7 +431,7 @@ say this is a small glitch we can easily live with.
 Caveats
 ═══════
 
-With extremely large scrollback buffers (let's not forget: VTE supports
+With extremely large scrollback buffers (let's not forget: BTE supports
 infinite scrollback) rewrapping might become slow. On my computer (average
 laptop with Intel(R) Core(TM) i3 CPU, old-fashioned HDD) resizing 1 million
 lines take about 0.2 seconds wall clock time, this is close to the boundary of

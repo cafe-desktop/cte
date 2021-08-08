@@ -16,10 +16,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __VTE_VTE_VERSION_H__
-#define __VTE_VTE_VERSION_H__
+#ifndef __BTE_BTE_VERSION_H__
+#define __BTE_BTE_VERSION_H__
 
-#if !defined (__VTE_VTE_H_INSIDE__) && !defined (VTE_COMPILATION)
+#if !defined (__BTE_BTE_H_INSIDE__) && !defined (BTE_COMPILATION)
 #error "Only <bte/bte.h> can be included directly."
 #endif
 
@@ -37,53 +37,53 @@ G_BEGIN_DECLS
  */
 
 /**
- * VTE_MAJOR_VERSION:
+ * BTE_MAJOR_VERSION:
  *
- * The major version number of the VTE library
+ * The major version number of the BTE library
  * (e.g. in version 3.1.4 this is 3).
  */
-#define VTE_MAJOR_VERSION (@VTE_MAJOR_VERSION@)
+#define BTE_MAJOR_VERSION (@BTE_MAJOR_VERSION@)
 
 /**
- * VTE_MINOR_VERSION:
+ * BTE_MINOR_VERSION:
  *
- * The minor version number of the VTE library
+ * The minor version number of the BTE library
  * (e.g. in version 3.1.4 this is 1).
  */
-#define VTE_MINOR_VERSION (@VTE_MINOR_VERSION@)
+#define BTE_MINOR_VERSION (@BTE_MINOR_VERSION@)
 
 /**
- * VTE_MICRO_VERSION:
+ * BTE_MICRO_VERSION:
  *
- * The micro version number of the VTE library
+ * The micro version number of the BTE library
  * (e.g. in version 3.1.4 this is 4).
  */
-#define VTE_MICRO_VERSION (@VTE_MICRO_VERSION@)
+#define BTE_MICRO_VERSION (@BTE_MICRO_VERSION@)
 
 /**
- * VTE_CHECK_VERSION:
+ * BTE_CHECK_VERSION:
  * @major: required major version
  * @minor: required minor version
  * @micro: required micro version
  *
  * Macro to check the library version at compile time.
- * It returns %1 if the version of VTE is greater or
+ * It returns %1 if the version of BTE is greater or
  * equal to the required one, and %0 otherwise.
  */
-#define VTE_CHECK_VERSION(major,minor,micro) \
-  (VTE_MAJOR_VERSION > (major) || \
-   (VTE_MAJOR_VERSION == (major) && VTE_MINOR_VERSION > (minor)) || \
-   (VTE_MAJOR_VERSION == (major) && VTE_MINOR_VERSION == (minor) && VTE_MICRO_VERSION >= (micro)))
+#define BTE_CHECK_VERSION(major,minor,micro) \
+  (BTE_MAJOR_VERSION > (major) || \
+   (BTE_MAJOR_VERSION == (major) && BTE_MINOR_VERSION > (minor)) || \
+   (BTE_MAJOR_VERSION == (major) && BTE_MINOR_VERSION == (minor) && BTE_MICRO_VERSION >= (micro)))
 
-_VTE_PUBLIC
-guint bte_get_major_version (void) _VTE_CXX_NOEXCEPT G_GNUC_CONST;
+_BTE_PUBLIC
+guint bte_get_major_version (void) _BTE_CXX_NOEXCEPT G_GNUC_CONST;
 
-_VTE_PUBLIC
-guint bte_get_minor_version (void) _VTE_CXX_NOEXCEPT G_GNUC_CONST;
+_BTE_PUBLIC
+guint bte_get_minor_version (void) _BTE_CXX_NOEXCEPT G_GNUC_CONST;
 
-_VTE_PUBLIC
-guint bte_get_micro_version (void) _VTE_CXX_NOEXCEPT G_GNUC_CONST;
+_BTE_PUBLIC
+guint bte_get_micro_version (void) _BTE_CXX_NOEXCEPT G_GNUC_CONST;
 
 G_END_DECLS
 
-#endif /* __VTE_VTE_VERSION_H__ */
+#endif /* __BTE_BTE_VERSION_H__ */

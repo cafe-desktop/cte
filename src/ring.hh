@@ -48,7 +48,7 @@ public:
         typedef gulong row_t;
         typedef glong column_t;
 
-        static const row_t kDefaultMaxRows = VTE_SCROLLBACK_INIT;
+        static const row_t kDefaultMaxRows = BTE_SCROLLBACK_INIT;
 
         Ring(row_t max_rows = kDefaultMaxRows,
              bool has_streams = false);
@@ -100,7 +100,7 @@ public:
 
 private:
 
-        #ifdef VTE_DEBUG
+        #ifdef BTE_DEBUG
         void validate() const;
         #endif
 
@@ -218,8 +218,8 @@ private:
         row_t m_visible_rows{0};  /* to keep at least a screenful of lines in memory, bug 646098 comment 12 */
 
         GPtrArray *m_hyperlinks;  /* The hyperlink pool. Contains GString* items.
-                                   [0] points to an empty GString, [1] to [VTE_HYPERLINK_COUNT_MAX] contain the id;uri pairs. */
-        char m_hyperlink_buf[VTE_HYPERLINK_TOTAL_LENGTH_MAX + 1];  /* One more hyperlink buffer to get the value if it's not placed in the pool. */
+                                   [0] points to an empty GString, [1] to [BTE_HYPERLINK_COUNT_MAX] contain the id;uri pairs. */
+        char m_hyperlink_buf[BTE_HYPERLINK_TOTAL_LENGTH_MAX + 1];  /* One more hyperlink buffer to get the value if it's not placed in the pool. */
         hyperlink_idx_t m_hyperlink_highest_used_idx{0};  /* 0 if no hyperlinks at all in the pool. */
         hyperlink_idx_t m_hyperlink_current_idx{0};  /* The hyperlink idx used for newly created cells.
                                                    Must not be GC'd even if doesn't occur onscreen. */

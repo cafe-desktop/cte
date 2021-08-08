@@ -20,20 +20,20 @@
 #define NRCS_NAME(name) name##_NRCS
 #define SUPPLEMENTAL_NAME(name) ISO_##name##_SUPPLEMENTAL
 
-#define IR(num) _VTE_CHARSET(IR_NAME(num))
-#define DEC(name) _VTE_CHARSET(DEC_NAME(name))
-#define NRCS(name) _VTE_CHARSET(NRCS_NAME(name))
-#define ALIAS(name1,name2) _VTE_CHARSET_ALIAS(name1,name2)
+#define IR(num) _BTE_CHARSET(IR_NAME(num))
+#define DEC(name) _BTE_CHARSET(DEC_NAME(name))
+#define NRCS(name) _BTE_CHARSET(NRCS_NAME(name))
+#define ALIAS(name1,name2) _BTE_CHARSET_ALIAS(name1,name2)
 
-_VTE_CHARSET(NONE)
+_BTE_CHARSET(NONE)
 
 /* See ECMA-35 § 14.4 for the meaning of this */
-_VTE_CHARSET(DRCS)
+_BTE_CHARSET(DRCS)
 
-_VTE_CHARSET(EMPTY)
+_BTE_CHARSET(EMPTY)
 
 /* Return to ISO-2022 */
-_VTE_CHARSET(RETURN)
+_BTE_CHARSET(RETURN)
 
 /* ISO 2375 IR sets */
 

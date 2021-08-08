@@ -85,7 +85,7 @@ public:
         /* type:
          *
          *
-         * Returns: the type of the sequence, a value from the VTE_SEQ_* enum
+         * Returns: the type of the sequence, a value from the BTE_SEQ_* enum
          */
         inline constexpr unsigned int type() const noexcept
         {
@@ -95,7 +95,7 @@ public:
         /* command:
          *
          * Returns: the command the sequence codes for, a value
-         *   from the VTE_CMD_* enum, or %VTE_CMD_NONE if the command is
+         *   from the BTE_CMD_* enum, or %BTE_CMD_NONE if the command is
          *   unknown
          */
         inline constexpr unsigned int command() const noexcept
@@ -105,26 +105,26 @@ public:
 
         /* charset:
          *
-         * This is the charset to use in a %VTE_CMD_GnDm, %VTE_CMD_GnDMm,
-         * %VTE_CMD_CnD or %VTE_CMD_DOCS command.
+         * This is the charset to use in a %BTE_CMD_GnDm, %BTE_CMD_GnDMm,
+         * %BTE_CMD_CnD or %BTE_CMD_DOCS command.
          *
-         * Returns: the charset, a value from the VTE_CHARSET_* enum.
+         * Returns: the charset, a value from the BTE_CHARSET_* enum.
          */
         inline constexpr unsigned int charset() const noexcept
         {
-                return VTE_CHARSET_GET_CHARSET(m_seq->charset);
+                return BTE_CHARSET_GET_CHARSET(m_seq->charset);
         }
 
         /* slot:
          *
-         * This is the slot in a %VTE_CMD_GnDm, %VTE_CMD_GnDMm,
-         * or %VTE_CMD_CnD command.
+         * This is the slot in a %BTE_CMD_GnDm, %BTE_CMD_GnDMm,
+         * or %BTE_CMD_CnD command.
          *
          * Returns: the slot, a value from the 0..3 for Gn*, or 0..1 for CnD
          */
         inline constexpr unsigned int slot() const noexcept
         {
-                return VTE_CHARSET_GET_SLOT(m_seq->charset);
+                return BTE_CHARSET_GET_SLOT(m_seq->charset);
         }
 
         /* introducer:
@@ -141,7 +141,7 @@ public:
         /* terminator:
          *
          * This is the character terminating the sequence, or, for a
-         * %VTE_SEQ_GRAPHIC sequence, the graphic character.
+         * %BTE_SEQ_GRAPHIC sequence, the graphic character.
          *
          * Returns: the terminating character
          */
@@ -457,7 +457,7 @@ private:
         encoder_type m_encoder;
 
 public:
-        SequenceBuilder(unsigned int type = VTE_SEQ_NONE)
+        SequenceBuilder(unsigned int type = BTE_SEQ_NONE)
         {
                 memset(&m_seq, 0, sizeof(m_seq));
                 set_type(type);
@@ -581,27 +581,27 @@ private:
                 /* Introducer */
                 if (c1) {
                         switch (m_seq.type) {
-                        case VTE_SEQ_ESCAPE: m_encoder.put(s, 0x1b); break; // ESC
-                        case VTE_SEQ_CSI:    m_encoder.put(s, 0x9b); break; // CSI
-                        case VTE_SEQ_DCS:    m_encoder.put(s, 0x90); break; // DCS
-                        case VTE_SEQ_OSC:    m_encoder.put(s, 0x9d); break; // OSC
-                        case VTE_SEQ_APC:    m_encoder.put(s, 0x9f); break; // APC
-                        case VTE_SEQ_PM:     m_encoder.put(s, 0x9e); break; // PM
-                        case VTE_SEQ_SOS:    m_encoder.put(s, 0x98); break; // SOS
-                        case VTE_SEQ_SCI:    m_encoder.put(s, 0x9a); break; // SCI
+                        case BTE_SEQ_ESCAPE: m_encoder.put(s, 0x1b); break; // ESC
+                        case BTE_SEQ_CSI:    m_encoder.put(s, 0x9b); break; // CSI
+                        case BTE_SEQ_DCS:    m_encoder.put(s, 0x90); break; // DCS
+                        case BTE_SEQ_OSC:    m_encoder.put(s, 0x9d); break; // OSC
+                        case BTE_SEQ_APC:    m_encoder.put(s, 0x9f); break; // APC
+                        case BTE_SEQ_PM:     m_encoder.put(s, 0x9e); break; // PM
+                        case BTE_SEQ_SOS:    m_encoder.put(s, 0x98); break; // SOS
+                        case BTE_SEQ_SCI:    m_encoder.put(s, 0x9a); break; // SCI
                         default: return;
                         }
                 } else {
                         s.push_back(0x1B); // ESC
                         switch (m_seq.type) {
-                        case VTE_SEQ_ESCAPE:                    break; // nothing more
-                        case VTE_SEQ_CSI:    s.push_back(0x5b); break; // [
-                        case VTE_SEQ_DCS:    s.push_back(0x50); break; // P
-                        case VTE_SEQ_OSC:    s.push_back(0x5d); break; // ]
-                        case VTE_SEQ_APC:    s.push_back(0x5f); break; // _
-                        case VTE_SEQ_PM:     s.push_back(0x5e); break; // ^
-                        case VTE_SEQ_SOS:    s.push_back(0x58); break; // X
-                        case VTE_SEQ_SCI:    s.push_back(0x5a); break; // Z
+                        case BTE_SEQ_ESCAPE:                    break; // nothing more
+                        case BTE_SEQ_CSI:    s.push_back(0x5b); break; // [
+                        case BTE_SEQ_DCS:    s.push_back(0x50); break; // P
+                        case BTE_SEQ_OSC:    s.push_back(0x5d); break; // ]
+                        case BTE_SEQ_APC:    s.push_back(0x5f); break; // _
+                        case BTE_SEQ_PM:     s.push_back(0x5e); break; // ^
+                        case BTE_SEQ_SOS:    s.push_back(0x58); break; // X
+                        case BTE_SEQ_SCI:    s.push_back(0x5a); break; // Z
                         default: return;
                         }
                 }
@@ -629,8 +629,8 @@ private:
         {
                 /* Parameters */
                 switch (m_seq.type) {
-                case VTE_SEQ_CSI:
-                case VTE_SEQ_DCS: {
+                case BTE_SEQ_CSI:
+                case BTE_SEQ_DCS: {
 
                         if (m_param_intro != 0)
                                 s.push_back(m_param_intro);
@@ -658,13 +658,13 @@ private:
         {
                 /* Intermediates and Final */
                 switch (m_seq.type) {
-                case VTE_SEQ_ESCAPE:
-                case VTE_SEQ_CSI:
-                case VTE_SEQ_DCS:
+                case BTE_SEQ_ESCAPE:
+                case BTE_SEQ_CSI:
+                case BTE_SEQ_DCS:
                         for (unsigned char n = 0; n < m_n_intermediates; n++)
                                 s.push_back(m_intermediates[n]);
                         [[fallthrough]];
-                case VTE_SEQ_SCI:
+                case BTE_SEQ_SCI:
                         if (m_seq.terminator != 0)
                                 s.push_back(m_seq.terminator);
                         break;
@@ -680,8 +680,8 @@ private:
         {
                 /* String and ST */
                 switch (m_seq.type) {
-                case VTE_SEQ_DCS:
-                case VTE_SEQ_OSC:
+                case BTE_SEQ_DCS:
+                case BTE_SEQ_OSC:
 
                         if (max_arg_str_len < 0)
                                 s.append(m_arg_str, 0, max_arg_str_len);
@@ -746,8 +746,8 @@ public:
                 assert_equal(seq);
 
                 auto type = seq.type();
-                if (type == VTE_SEQ_CSI ||
-                    type == VTE_SEQ_DCS) {
+                if (type == BTE_SEQ_CSI ||
+                    type == BTE_SEQ_DCS) {
                         /* We may get one arg less back, if it's at default */
                         if (m_seq.n_args != seq.size()) {
                                 g_assert_cmpuint(m_seq.n_args, ==, seq.size() + 1);
@@ -768,21 +768,21 @@ public:
                      std::initializer_list<int> params)
         {
                 switch (reply) {
-#define _VTE_REPLY_PARAMS(params) append_params(params);
-#define _VTE_REPLY_STRING(str) set_string(str);
-#define _VTE_REPLY(cmd,type,final,pintro,intermediate,code) \
-                case VTE_REPLY_##cmd: \
-                        set_type(VTE_SEQ_##type); \
+#define _BTE_REPLY_PARAMS(params) append_params(params);
+#define _BTE_REPLY_STRING(str) set_string(str);
+#define _BTE_REPLY(cmd,type,final,pintro,intermediate,code) \
+                case BTE_REPLY_##cmd: \
+                        set_type(BTE_SEQ_##type); \
                         set_final(final); \
-                        set_param_intro(VTE_SEQ_PARAMETER_CHAR_##pintro); \
-                        if (VTE_SEQ_INTERMEDIATE_CHAR_##intermediate != VTE_SEQ_INTERMEDIATE_CHAR_NONE) \
-                                append_intermediate(VTE_SEQ_INTERMEDIATE_CHAR_##intermediate); \
+                        set_param_intro(BTE_SEQ_PARAMETER_CHAR_##pintro); \
+                        if (BTE_SEQ_INTERMEDIATE_CHAR_##intermediate != BTE_SEQ_INTERMEDIATE_CHAR_NONE) \
+                                append_intermediate(BTE_SEQ_INTERMEDIATE_CHAR_##intermediate); \
                         code \
                         break;
 #include "parser-reply.hh"
-#undef _VTE_REPLY
-#undef _VTE_REPLY_PARAMS
-#undef _VTE_REPLY_STRING
+#undef _BTE_REPLY
+#undef _BTE_REPLY_PARAMS
+#undef _BTE_REPLY_STRING
                 default:
                         assert(false);
                         break;

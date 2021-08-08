@@ -1063,8 +1063,8 @@ class App : Ctk.Application
   {
     Intl.setlocale (LocaleCategory.ALL, "");
 
-    if (Environment.get_variable("VTE_CJK_WIDTH") != null) {
-      printerr("VTE_CJK_WIDTH is not supported anymore, use --cjk-width instead\n");
+    if (Environment.get_variable("BTE_CJK_WIDTH") != null) {
+      printerr("BTE_CJK_WIDTH is not supported anymore, use --cjk-width instead\n");
     }
     /* Not interested in silly debug spew, bug #749195 */
     if (Environment.get_variable("G_ENABLE_DIAGNOSTIC") == null) {
@@ -1074,7 +1074,7 @@ class App : Ctk.Application
     Environment.set_application_name("Terminal");
 
     try {
-      var context = new OptionContext("— simple VTE test application");
+      var context = new OptionContext("— simple BTE test application");
       context.set_help_enabled(true);
       context.add_main_entries(Options.entries, null);
       context.add_group(Ctk.get_option_group(true));
@@ -1085,7 +1085,7 @@ class App : Ctk.Application
     }
 
     if (Options.version) {
-      print("Simple VTE Test Application %s\n", Config.VERSION);
+      print("Simple BTE Test Application %s\n", Config.VERSION);
       return 0;
     }
 

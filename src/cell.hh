@@ -41,41 +41,41 @@
 #include "attr.hh"
 #include "color-triple.hh"
 
-#define VTE_TAB_WIDTH_MAX		((1 << VTE_ATTR_COLUMNS_BITS) - 1)
+#define BTE_TAB_WIDTH_MAX		((1 << BTE_ATTR_COLUMNS_BITS) - 1)
 
-#define VTE_CELL_ATTR_COMMON_BYTES      12  /* The number of common bytes in BteCellAttr and BteStreamCellAttr */
+#define BTE_CELL_ATTR_COMMON_BYTES      12  /* The number of common bytes in BteCellAttr and BteStreamCellAttr */
 
 /*
  * BteCellAttr: A single cell style attributes
  *
  * When adding new attributes, keep in sync with BteStreamCellAttr and
- * update VTE_CELL_ATTR_COMMON_BYTES accordingly.
+ * update BTE_CELL_ATTR_COMMON_BYTES accordingly.
  * Also don't forget to update basic_cell below!
  */
 
 #define CELL_ATTR_BOOL(lname,uname) \
         inline void set_##lname(bool value) \
         { \
-                bte_attr_set_bool(&attr, VTE_ATTR_##uname##_MASK, value); \
+                bte_attr_set_bool(&attr, BTE_ATTR_##uname##_MASK, value); \
         } \
         \
         inline constexpr bool lname() const \
         { \
-                return bte_attr_get_bool(attr, VTE_ATTR_##uname##_SHIFT); \
+                return bte_attr_get_bool(attr, BTE_ATTR_##uname##_SHIFT); \
         }
 
 #define CELL_ATTR_UINT(lname,uname) \
         inline void set_##lname(unsigned int value) \
         { \
-                bte_attr_set_value(&attr, VTE_ATTR_##uname##_MASK, VTE_ATTR_##uname##_SHIFT, value); \
+                bte_attr_set_value(&attr, BTE_ATTR_##uname##_MASK, BTE_ATTR_##uname##_SHIFT, value); \
         } \
         \
         inline constexpr uint32_t lname() const \
         { \
-                return bte_attr_get_value(attr, VTE_ATTR_##uname##_VALUE_MASK, VTE_ATTR_##uname##_SHIFT); \
+                return bte_attr_get_value(attr, BTE_ATTR_##uname##_VALUE_MASK, BTE_ATTR_##uname##_SHIFT); \
         }
 
-typedef struct _VTE_GNUC_PACKED BteCellAttr {
+typedef struct _BTE_GNUC_PACKED BteCellAttr {
         uint32_t attr;
 
 	/* 4-byte boundary (8-byte boundary in BteCell) */
@@ -83,12 +83,12 @@ typedef struct _VTE_GNUC_PACKED BteCellAttr {
 
         /* 12-byte boundary (16-byte boundary in BteCell) */
         uint32_t hyperlink_idx; /* a unique hyperlink index at a time for the ring's cells,
-                                   0 means not a hyperlink, VTE_HYPERLINK_IDX_TARGET_IN_STREAM
+                                   0 means not a hyperlink, BTE_HYPERLINK_IDX_TARGET_IN_STREAM
                                    means the target is irrelevant/unknown at the moment.
                                    If bitpacking, choose a size big enough to hold a different idx
                                    for every cell in the ring but not yet in the stream
                                    (currently the height rounded up to the next power of two, times width)
-                                   for supported VTE sizes, and update VTE_HYPERLINK_IDX_TARGET_IN_STREAM. */
+                                   for supported BTE sizes, and update BTE_HYPERLINK_IDX_TARGET_IN_STREAM. */
 
         /* Methods */
 
@@ -149,30 +149,30 @@ typedef struct _VTE_GNUC_PACKED BteCellAttr {
         /* ATTR_BOOL(boxed, BOXED) */
 } BteCellAttr;
 static_assert(sizeof (BteCellAttr) == 16, "BteCellAttr has wrong size");
-static_assert(offsetof (BteCellAttr, hyperlink_idx) == VTE_CELL_ATTR_COMMON_BYTES, "BteCellAttr layout is wrong");
+static_assert(offsetof (BteCellAttr, hyperlink_idx) == BTE_CELL_ATTR_COMMON_BYTES, "BteCellAttr layout is wrong");
 
 /*
  * BteStreamCellAttr: Variant of BteCellAttr to be stored in attr_stream.
  *
  * When adding new attributes, keep in sync with BteCellAttr and
- * update VTE_CELL_ATTR_COMMON_BYTES accordingly.
+ * update BTE_CELL_ATTR_COMMON_BYTES accordingly.
  */
 
-typedef struct _VTE_GNUC_PACKED _BteStreamCellAttr {
+typedef struct _BTE_GNUC_PACKED _BteStreamCellAttr {
         uint32_t attr; /* Same as BteCellAttr. We only access columns
                         * and fragment, however.
                         */
         /* 4-byte boundary */
         uint64_t colors;
         /* 12-byte boundary */
-        guint16 hyperlink_length;       /* make sure it fits VTE_HYPERLINK_TOTAL_LENGTH_MAX */
+        guint16 hyperlink_length;       /* make sure it fits BTE_HYPERLINK_TOTAL_LENGTH_MAX */
 
         /* Methods */
         CELL_ATTR_UINT(columns, COLUMNS)
         CELL_ATTR_BOOL(fragment, FRAGMENT)
 } BteStreamCellAttr;
 static_assert(sizeof (BteStreamCellAttr) == 14, "BteStreamCellAttr has wrong size");
-static_assert(offsetof (BteStreamCellAttr, hyperlink_length) == VTE_CELL_ATTR_COMMON_BYTES, "BteStreamCellAttr layout is wrong");
+static_assert(offsetof (BteStreamCellAttr, hyperlink_length) == BTE_CELL_ATTR_COMMON_BYTES, "BteStreamCellAttr layout is wrong");
 
 #undef CELL_ATTR_BOOL
 #undef CELL_ATTR_UINT
@@ -181,7 +181,7 @@ static_assert(offsetof (BteStreamCellAttr, hyperlink_length) == VTE_CELL_ATTR_CO
  * BteCell: A single cell's data
  */
 
-typedef struct _VTE_GNUC_PACKED _BteCell {
+typedef struct _BTE_GNUC_PACKED _BteCell {
 	bteunistr c;
 	BteCellAttr attr;
 } BteCell;
@@ -191,8 +191,8 @@ static_assert(sizeof (BteCell) == 20, "BteCell has wrong size");
 static const BteCell basic_cell = {
 	0,
 	{
-                VTE_ATTR_DEFAULT, /* attr */
-                VTE_COLOR_TRIPLE_INIT_DEFAULT, /* colors */
+                BTE_ATTR_DEFAULT, /* attr */
+                BTE_COLOR_TRIPLE_INIT_DEFAULT, /* colors */
                 0, /* hyperlink_idx */
 	}
 };

@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __VTE_UTILS_H__
-#define __VTE_UTILS_H__
+#ifndef __BTE_UTILS_H__
+#define __BTE_UTILS_H__
 
 #include <glib.h>
 
@@ -27,4 +27,4 @@ int _bte_mkstemp (void);
 
 G_END_DECLS
 
-#endif /* __VTE_UTILS_H__ */
+#endif /* __BTE_UTILS_H__ */

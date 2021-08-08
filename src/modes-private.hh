@@ -22,7 +22,7 @@
 /*
  * Modes for SM_DEC/RM_DEC.
  *
- * Most of these are not implemented in VTE.
+ * Most of these are not implemented in BTE.
  *
  * References: VT525
  *             XTERM
@@ -128,7 +128,7 @@ MODE(DEC_APPLICATION_KEYPAD, 66)
  *
  * Reference: Terminal-wg/bidi
  */
-MODE(VTE_BIDI_SWAP_ARROW_KEYS, 1243)
+MODE(BTE_BIDI_SWAP_ARROW_KEYS, 1243)
 
 /*
  * Whether box drawing characters in the U+2500..U+257F range
@@ -136,14 +136,14 @@ MODE(VTE_BIDI_SWAP_ARROW_KEYS, 1243)
  *
  * Reference: Terminal-wg/bidi
  */
-MODE(VTE_BIDI_BOX_MIRROR, 2500)
+MODE(BTE_BIDI_BOX_MIRROR, 2500)
 
 /*
  * Whether BiDi paragraph direction is autodetected.
  *
  * Reference: Terminal-wg/bidi
  */
-MODE(VTE_BIDI_AUTO, 2501)
+MODE(BTE_BIDI_AUTO, 2501)
 
 /* XTERM */
 
@@ -622,7 +622,7 @@ MODE_FIXED(DECKLHIM, 110, ALWAYS_RESET)
  *
  * References: VT525
  *
- * VTE does not support sessions.
+ * BTE does not support sessions.
  */
 MODE_FIXED(DECFWM,    111, ALWAYS_RESET)
 
@@ -630,7 +630,7 @@ MODE_FIXED(DECFWM,    111, ALWAYS_RESET)
  * DECRPL - review previous lines mode
  * If set, allows to view the scrollback.
  *
- * Default: set (VTE)
+ * Default: set (BTE)
  *
  * References: VT525
  *

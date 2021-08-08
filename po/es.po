@@ -1,8 +1,8 @@
 # traducción de es.po al Spanish
 # translation of bte.HEAD.po to Spanish
-# VTE Spanish translation file.
+# BTE Spanish translation file.
 # Copyright (C) 2002,2003, 2004, 2007 Free Software Foundation, Inc.
-# This file is distributed under the same license as the VTE package.
+# This file is distributed under the same license as the BTE package.
 #
 # Pablo Gonzalo del Campo <pablodc@bigfoot.com>, 2002.
 # Germán Poo Caamaño <gpoo@ubiobio.cl>, 2002.

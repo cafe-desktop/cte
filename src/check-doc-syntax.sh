@@ -4,7 +4,7 @@ LC_ALL=C
 export LC_ALL
 
 prefix=bte
-PREFIX=VTE
+PREFIX=BTE
 
 if grep --version 2>/dev/null | grep GNU >/dev/null; then
 	:

@@ -89,7 +89,7 @@ _bte_pty_get_impl(BtePty* pty)
 #define IMPL(wrapper) (_bte_pty_get_impl(wrapper))
 
 /**
- * VTE_SPAWN_NO_PARENT_ENVV:
+ * BTE_SPAWN_NO_PARENT_ENVV:
  *
  * Use this as a spawn flag (together with flags from #GSpawnFlags) in
  * bte_pty_spawn_async().
@@ -100,7 +100,7 @@ _bte_pty_get_impl(BtePty* pty)
  */
 
 /**
- * VTE_SPAWN_NO_SYSTEMD_SCOPE:
+ * BTE_SPAWN_NO_SYSTEMD_SCOPE:
  *
  * Use this as a spawn flag (together with flags from #GSpawnFlags) in
  * bte_pty_spawn_async().
@@ -112,7 +112,7 @@ _bte_pty_get_impl(BtePty* pty)
  */
 
 /**
- * VTE_SPAWN_REQUIRE_SYSTEMD_SCOPE
+ * BTE_SPAWN_REQUIRE_SYSTEMD_SCOPE
  *
  * Use this as a spawn flag (together with flags from #GSpawnFlags) in
  * bte_pty_spawn_async().
@@ -179,7 +179,7 @@ _bte_pty_set_size(BtePty *pty,
                   GError **error) noexcept
 try
 {
-        g_return_val_if_fail(VTE_IS_PTY(pty), FALSE);
+        g_return_val_if_fail(BTE_IS_PTY(pty), FALSE);
         auto impl = IMPL(pty);
         g_return_val_if_fail(impl != nullptr, FALSE);
 
@@ -220,7 +220,7 @@ bte_pty_get_size(BtePty *pty,
                  GError **error) noexcept
 try
 {
-        g_return_val_if_fail(VTE_IS_PTY(pty), FALSE);
+        g_return_val_if_fail(BTE_IS_PTY(pty), FALSE);
         auto impl = IMPL(pty);
         g_return_val_if_fail(impl != nullptr, FALSE);
 
@@ -257,7 +257,7 @@ bte_pty_set_utf8(BtePty *pty,
                  GError **error) noexcept
 try
 {
-        g_return_val_if_fail(VTE_IS_PTY(pty), FALSE);
+        g_return_val_if_fail(BTE_IS_PTY(pty), FALSE);
         auto impl = IMPL(pty);
         g_return_val_if_fail(impl != nullptr, FALSE);
 
@@ -288,7 +288,7 @@ bte_pty_close (BtePty *pty) noexcept
         /* impl->close(); */
 }
 
-/* VTE PTY class */
+/* BTE PTY class */
 
 enum {
         PROP_0,
@@ -304,7 +304,7 @@ bte_pty_initable_init (GInitable *initable,
                        GError **error) noexcept
 try
 {
-        BtePty *pty = VTE_PTY (initable);
+        BtePty *pty = BTE_PTY (initable);
         BtePtyPrivate *priv = pty->priv;
 
         if (priv->foreign_fd != -1) {
@@ -349,14 +349,14 @@ bte_pty_init (BtePty *pty)
 
         priv->pty = nullptr;
         priv->foreign_fd = -1;
-        priv->flags = VTE_PTY_DEFAULT;
+        priv->flags = BTE_PTY_DEFAULT;
 }
 
 static void
 bte_pty_finalize (GObject *object) noexcept
 try
 {
-        BtePty *pty = VTE_PTY (object);
+        BtePty *pty = BTE_PTY (object);
         BtePtyPrivate *priv = pty->priv;
 
         auto implptr = bte::base::RefPtr<bte::base::Pty>{priv->pty}; // moved
@@ -374,7 +374,7 @@ bte_pty_get_property (GObject    *object,
                        GValue     *value,
                        GParamSpec *pspec)
 {
-        BtePty *pty = VTE_PTY (object);
+        BtePty *pty = BTE_PTY (object);
         BtePtyPrivate *priv = pty->priv;
 
         switch (property_id) {
@@ -397,7 +397,7 @@ bte_pty_set_property (GObject      *object,
                        const GValue *value,
                        GParamSpec   *pspec)
 {
-        BtePty *pty = VTE_PTY (object);
+        BtePty *pty = BTE_PTY (object);
         BtePtyPrivate *priv = pty->priv;
 
         switch (property_id) {
@@ -432,8 +432,8 @@ bte_pty_class_init (BtePtyClass *klass)
                 (object_class,
                  PROP_FLAGS,
                  g_param_spec_flags ("flags", NULL, NULL,
-                                     VTE_TYPE_PTY_FLAGS,
-                                     VTE_PTY_DEFAULT,
+                                     BTE_TYPE_PTY_FLAGS,
+                                     BTE_PTY_DEFAULT,
                                      (GParamFlags) (G_PARAM_READWRITE |
                                                     G_PARAM_CONSTRUCT_ONLY |
                                                     G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY)));
@@ -458,10 +458,10 @@ bte_pty_class_init (BtePtyClass *klass)
 /**
  * bte_pty_error_quark:
  *
- * Error domain for VTE PTY errors. Errors in this domain will be from the #BtePtyError
+ * Error domain for BTE PTY errors. Errors in this domain will be from the #BtePtyError
  * enumeration. See #GError for more information on error domains.
  *
- * Returns: the error domain for VTE PTY errors
+ * Returns: the error domain for BTE PTY errors
  */
 GQuark
 bte_pty_error_quark(void) noexcept
@@ -514,7 +514,7 @@ bte_pty_new_sync (BtePtyFlags flags,
                   GCancellable *cancellable,
                   GError **error) noexcept
 {
-        return (BtePty *) g_initable_new (VTE_TYPE_PTY,
+        return (BtePty *) g_initable_new (BTE_TYPE_PTY,
                                           cancellable,
                                           error,
                                           "flags", flags,
@@ -543,7 +543,7 @@ bte_pty_new_foreign_sync (int fd,
 {
         g_return_val_if_fail(fd != -1, nullptr);
 
-        return (BtePty *) g_initable_new (VTE_TYPE_PTY,
+        return (BtePty *) g_initable_new (BTE_TYPE_PTY,
                                           cancellable,
                                           error,
                                           "fd", fd,
@@ -562,7 +562,7 @@ int
 bte_pty_get_fd (BtePty *pty) noexcept
 try
 {
-        g_return_val_if_fail(VTE_IS_PTY(pty), FALSE);
+        g_return_val_if_fail(BTE_IS_PTY(pty), FALSE);
         return IMPL(pty)->fd();
 }
 catch (...)
@@ -583,9 +583,9 @@ all_spawn_flags() noexcept
                            G_SPAWN_FILE_AND_ARGV_ZERO |
                            G_SPAWN_SEARCH_PATH_FROM_ENVP |
                            G_SPAWN_CLOEXEC_PIPES |
-                           VTE_SPAWN_NO_PARENT_ENVV |
-                           VTE_SPAWN_NO_SYSTEMD_SCOPE |
-                           VTE_SPAWN_REQUIRE_SYSTEMD_SCOPE);
+                           BTE_SPAWN_NO_PARENT_ENVV |
+                           BTE_SPAWN_NO_SYSTEMD_SCOPE |
+                           BTE_SPAWN_REQUIRE_SYSTEMD_SCOPE);
 }
 
 static constexpr inline auto
@@ -634,12 +634,12 @@ spawn_context_from_args(BtePty* pty,
                 context.set_argv(argv[0], argv);
 
         context.set_environ(envv);
-        if (spawn_flags & VTE_SPAWN_NO_PARENT_ENVV)
+        if (spawn_flags & BTE_SPAWN_NO_PARENT_ENVV)
                 context.set_no_inherit_environ();
 
-        if (spawn_flags & VTE_SPAWN_NO_SYSTEMD_SCOPE)
+        if (spawn_flags & BTE_SPAWN_NO_SYSTEMD_SCOPE)
                 context.set_no_systemd_scope();
-        if (spawn_flags & VTE_SPAWN_REQUIRE_SYSTEMD_SCOPE)
+        if (spawn_flags & BTE_SPAWN_REQUIRE_SYSTEMD_SCOPE)
                 context.set_require_systemd_scope();
 
         context.add_fds(fds, n_fds);
@@ -762,9 +762,9 @@ _bte_pty_check_envv(char const* const* strv) noexcept
  * open for use in the child process, you need to use a child setup function
  * that unsets the FD_CLOEXEC flag on that file descriptor manually.)
  *
- * Beginning with 0.60, and on linux only, and unless %VTE_SPAWN_NO_SYSTEMD_SCOPE is
+ * Beginning with 0.60, and on linux only, and unless %BTE_SPAWN_NO_SYSTEMD_SCOPE is
  * passed in @spawn_flags, the newly created child process will be moved to its own
- * systemd user scope; and if %VTE_SPAWN_REQUIRE_SYSTEMD_SCOPE is passed, and creation
+ * systemd user scope; and if %BTE_SPAWN_REQUIRE_SYSTEMD_SCOPE is passed, and creation
  * of the systemd user scope fails, the whole spawn will fail.
  * You can override the options used for the systemd user scope by
  * providing a systemd override file for 'bte-spawn-.scope' unit. See man:systemd.unit(5)
@@ -902,7 +902,7 @@ bte_pty_spawn_finish(BtePty* pty,
                      GPid* child_pid /* out */,
                      GError** error) noexcept
 {
-        g_return_val_if_fail (VTE_IS_PTY(pty), false);
+        g_return_val_if_fail (BTE_IS_PTY(pty), false);
         g_return_val_if_fail (G_IS_TASK(result), false);
         g_return_val_if_fail (g_task_get_source_tag(G_TASK (result)) == bte_pty_spawn_async, false);
         g_return_val_if_fail(error == nullptr || *error == nullptr, false);

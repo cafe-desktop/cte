@@ -37,25 +37,25 @@
  */
 typedef int bte_seq_arg_t;
 
-#define VTE_SEQ_ARG_FLAG_VALUE    (1 << 16)
-#define VTE_SEQ_ARG_FLAG_NONFINAL (1 << 17)
-#define VTE_SEQ_ARG_FLAG_MASK     (VTE_SEQ_ARG_FLAG_VALUE | VTE_SEQ_ARG_FLAG_NONFINAL)
-#define VTE_SEQ_ARG_VALUE_MASK    (0xffff)
+#define BTE_SEQ_ARG_FLAG_VALUE    (1 << 16)
+#define BTE_SEQ_ARG_FLAG_NONFINAL (1 << 17)
+#define BTE_SEQ_ARG_FLAG_MASK     (BTE_SEQ_ARG_FLAG_VALUE | BTE_SEQ_ARG_FLAG_NONFINAL)
+#define BTE_SEQ_ARG_VALUE_MASK    (0xffff)
 
 /*
- * VTE_SEQ_ARG_INIT_DEFAULT:
+ * BTE_SEQ_ARG_INIT_DEFAULT:
  *
  * Returns: a parameter with default value
  */
-#define VTE_SEQ_ARG_INIT_DEFAULT (0)
+#define BTE_SEQ_ARG_INIT_DEFAULT (0)
 
 /*
- * VTE_SEQ_ARG_INIT:
+ * BTE_SEQ_ARG_INIT:
  * @value:
  *
  * Returns: a parameter with value @value
  */
-#define VTE_SEQ_ARG_INIT(value) ((value & VTE_SEQ_ARG_VALUE_MASK) | VTE_SEQ_ARG_FLAG_VALUE)
+#define BTE_SEQ_ARG_INIT(value) ((value & BTE_SEQ_ARG_VALUE_MASK) | BTE_SEQ_ARG_FLAG_VALUE)
 
 /*
  * bte_seq_arg_init:
@@ -66,9 +66,9 @@ typedef int bte_seq_arg_t;
 static constexpr inline bte_seq_arg_t bte_seq_arg_init(int value)
 {
         if (value == -1)
-                return VTE_SEQ_ARG_INIT_DEFAULT;
+                return BTE_SEQ_ARG_INIT_DEFAULT;
         else
-                return VTE_SEQ_ARG_INIT(value);
+                return BTE_SEQ_ARG_INIT(value);
 }
 
 /*
@@ -83,7 +83,7 @@ static constexpr inline bte_seq_arg_t bte_seq_arg_init(int value)
 static inline void bte_seq_arg_push(bte_seq_arg_t* arg,
                                     uint32_t c)
 {
-        auto value = *arg & VTE_SEQ_ARG_VALUE_MASK;
+        auto value = *arg & BTE_SEQ_ARG_VALUE_MASK;
         value = value * 10 + (c - '0');
 
         /*
@@ -95,7 +95,7 @@ static inline void bte_seq_arg_push(bte_seq_arg_t* arg,
         if (value > 0xffff)
                 value = 0xffff;
 
-        *arg = value | VTE_SEQ_ARG_FLAG_VALUE;
+        *arg = value | BTE_SEQ_ARG_FLAG_VALUE;
 }
 
 /*
@@ -113,16 +113,16 @@ static inline void bte_seq_arg_finish(bte_seq_arg_t* arg,
                                       bool nonfinal = false)
 {
         if (nonfinal)
-                *arg |= VTE_SEQ_ARG_FLAG_NONFINAL;
+                *arg |= BTE_SEQ_ARG_FLAG_NONFINAL;
 }
 
 static inline void bte_seq_arg_refinish(bte_seq_arg_t* arg,
                                         bool nonfinal = false)
 {
         if (nonfinal)
-                *arg |= VTE_SEQ_ARG_FLAG_NONFINAL;
+                *arg |= BTE_SEQ_ARG_FLAG_NONFINAL;
         else
-                *arg &= ~VTE_SEQ_ARG_FLAG_NONFINAL;
+                *arg &= ~BTE_SEQ_ARG_FLAG_NONFINAL;
 }
 
 /*
@@ -133,7 +133,7 @@ static inline void bte_seq_arg_refinish(bte_seq_arg_t* arg,
  */
 static constexpr inline bool bte_seq_arg_started(bte_seq_arg_t arg)
 {
-        return arg & VTE_SEQ_ARG_FLAG_VALUE;
+        return arg & BTE_SEQ_ARG_FLAG_VALUE;
 }
 
 /*
@@ -144,7 +144,7 @@ static constexpr inline bool bte_seq_arg_started(bte_seq_arg_t arg)
  */
 static constexpr inline bool bte_seq_arg_default(bte_seq_arg_t arg)
 {
-        return !(arg & VTE_SEQ_ARG_FLAG_VALUE);
+        return !(arg & BTE_SEQ_ARG_FLAG_VALUE);
 }
 
 /*
@@ -156,7 +156,7 @@ static constexpr inline bool bte_seq_arg_default(bte_seq_arg_t arg)
  */
 static constexpr inline int bte_seq_arg_nonfinal(bte_seq_arg_t arg)
 {
-        return (arg & VTE_SEQ_ARG_FLAG_NONFINAL);
+        return (arg & BTE_SEQ_ARG_FLAG_NONFINAL);
 }
 
 /*
@@ -169,7 +169,7 @@ static constexpr inline int bte_seq_arg_nonfinal(bte_seq_arg_t arg)
 static constexpr inline int bte_seq_arg_value(bte_seq_arg_t arg,
                                               int default_value = -1)
 {
-        return (arg & VTE_SEQ_ARG_FLAG_VALUE) ? (arg & VTE_SEQ_ARG_VALUE_MASK) : default_value;
+        return (arg & BTE_SEQ_ARG_FLAG_VALUE) ? (arg & BTE_SEQ_ARG_VALUE_MASK) : default_value;
 }
 
 /*
@@ -182,5 +182,5 @@ static constexpr inline int bte_seq_arg_value(bte_seq_arg_t arg,
 static constexpr inline int bte_seq_arg_value_final(bte_seq_arg_t arg,
                                                     int default_value = -1)
 {
-        return ((arg & VTE_SEQ_ARG_FLAG_MASK) == VTE_SEQ_ARG_FLAG_VALUE) ? (arg & VTE_SEQ_ARG_VALUE_MASK) : default_value;
+        return ((arg & BTE_SEQ_ARG_FLAG_MASK) == BTE_SEQ_ARG_FLAG_VALUE) ? (arg & BTE_SEQ_ARG_VALUE_MASK) : default_value;
 }

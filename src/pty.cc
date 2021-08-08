@@ -100,14 +100,14 @@ Pty::get_peer(bool cloexec) const noexcept
         if (!m_pty_fd)
                 return -1;
 
-        /* FIXME? else if (m_flags & VTE_PTY_NO_CTTTY)
+        /* FIXME? else if (m_flags & BTE_PTY_NO_CTTTY)
          * No session and no controlling TTY wanted, do we need to lose our controlling TTY,
          * perhaps by open("/dev/tty") + ioctl(TIOCNOTTY) ?
          */
 
         /* Now open the PTY peer. Note that this also makes the PTY our controlling TTY. */
         auto const fd_flags = int{O_RDWR |
-                                  ((m_flags & VTE_PTY_NO_CTTY) ? O_NOCTTY : 0) |
+                                  ((m_flags & BTE_PTY_NO_CTTY) ? O_NOCTTY : 0) |
                                   (cloexec ? O_CLOEXEC : 0)};
 
         auto peer_fd = bte::libc::FD{};
@@ -123,7 +123,7 @@ Pty::get_peer(bool cloexec) const noexcept
             errno != EINVAL &&
             errno != ENOTTY) {
                 auto errsv = bte::libc::ErrnoSaver{};
-                _bte_debug_print(VTE_DEBUG_PTY, "%s failed: %s\n",
+                _bte_debug_print(BTE_DEBUG_PTY, "%s failed: %s\n",
                                  "ioctl(TIOCGPTPEER)", g_strerror(errsv));
                 return -1;
         }
@@ -135,19 +135,19 @@ Pty::get_peer(bool cloexec) const noexcept
                 auto const name = ptsname(m_pty_fd.get());
                 if (name == nullptr) {
                         auto errsv = bte::libc::ErrnoSaver{};
-                        _bte_debug_print(VTE_DEBUG_PTY, "%s failed: %s\n",
+                        _bte_debug_print(BTE_DEBUG_PTY, "%s failed: %s\n",
                                          "ptsname", g_strerror(errsv));
                         return -1;
                 }
 
-                _bte_debug_print (VTE_DEBUG_PTY,
+                _bte_debug_print (BTE_DEBUG_PTY,
                                   "Setting up child pty: master FD = %d name = %s\n",
                                   m_pty_fd.get(), name);
 
                 peer_fd = ::open(name, fd_flags);
                 if (!peer_fd) {
                         auto errsv = bte::libc::ErrnoSaver{};
-                        _bte_debug_print (VTE_DEBUG_PTY, "Failed to open PTY: %s\n",
+                        _bte_debug_print (BTE_DEBUG_PTY, "Failed to open PTY: %s\n",
                                           g_strerror(errsv));
                         return -1;
                 }
@@ -187,7 +187,7 @@ Pty::child_setup() const noexcept
         sigemptyset(&set);
         if (pthread_sigmask(SIG_SETMASK, &set, nullptr) == -1) {
                 auto errsv = bte::libc::ErrnoSaver{};
-                _bte_debug_print(VTE_DEBUG_PTY, "%s failed: %s\n",
+                _bte_debug_print(BTE_DEBUG_PTY, "%s failed: %s\n",
                                  "pthread_sigmask", g_strerror(errsv));
                 _exit(127);
         }
@@ -202,14 +202,14 @@ Pty::child_setup() const noexcept
                 signal(n, SIG_DFL);
         }
 
-        if (!(m_flags & VTE_PTY_NO_SESSION)) {
+        if (!(m_flags & BTE_PTY_NO_SESSION)) {
                 /* This starts a new session; we become its process-group leader,
                  * and lose our controlling TTY.
                  */
-                _bte_debug_print (VTE_DEBUG_PTY, "Starting new session\n");
+                _bte_debug_print (BTE_DEBUG_PTY, "Starting new session\n");
                 if (setsid() == -1) {
                         auto errsv = bte::libc::ErrnoSaver{};
-                        _bte_debug_print(VTE_DEBUG_PTY, "%s failed: %s\n",
+                        _bte_debug_print(BTE_DEBUG_PTY, "%s failed: %s\n",
                                          "setsid", g_strerror(errsv));
                         _exit(127);
                 }
@@ -224,10 +224,10 @@ Pty::child_setup() const noexcept
          * previously there was none, after the setsid() call). However, it appears that e.g.
          * on *BSD, that doesn't happen, so we need this explicit ioctl here.
          */
-        if (!(m_flags & VTE_PTY_NO_CTTY)) {
+        if (!(m_flags & BTE_PTY_NO_CTTY)) {
                 if (ioctl(peer_fd, TIOCSCTTY, peer_fd) != 0) {
                         auto errsv = bte::libc::ErrnoSaver{};
-                        _bte_debug_print(VTE_DEBUG_PTY, "%s failed: %s\n",
+                        _bte_debug_print(BTE_DEBUG_PTY, "%s failed: %s\n",
                                          "ioctl(TIOCSCTTY)", g_strerror(errsv));
                         _exit(127);
                 }
@@ -263,11 +263,11 @@ Pty::child_setup() const noexcept
         /* Now set the TERM environment variable */
         /* FIXME: Setting environment here seems to have no effect, the merged envp2 will override on exec.
          * By the way, we'd need to set the one from there, if any. */
-        g_setenv("TERM", VTE_TERMINFO_NAME, TRUE);
+        g_setenv("TERM", BTE_TERMINFO_NAME, TRUE);
 
         char version[7];
-        g_snprintf (version, sizeof (version), "%u", VTE_VERSION_NUMERIC);
-        g_setenv ("VTE_VERSION", version, TRUE);
+        g_snprintf (version, sizeof (version), "%u", BTE_VERSION_NUMERIC);
+        g_setenv ("BTE_VERSION", version, TRUE);
 }
 
 /*
@@ -294,14 +294,14 @@ Pty::set_size(int rows,
 	memset(&size, 0, sizeof(size));
 	size.ws_row = rows > 0 ? rows : 24;
 	size.ws_col = columns > 0 ? columns : 80;
-	_bte_debug_print(VTE_DEBUG_PTY,
+	_bte_debug_print(BTE_DEBUG_PTY,
 			"Setting size on fd %d to (%d,%d).\n",
 			master, columns, rows);
         auto ret = ioctl(master, TIOCSWINSZ, &size);
 
         if (ret != 0) {
                 auto errsv = bte::libc::ErrnoSaver{};
-                _bte_debug_print(VTE_DEBUG_PTY,
+                _bte_debug_print(BTE_DEBUG_PTY,
                                  "Failed to set size on %d: %s\n",
                                  master, g_strerror(errsv));
         }
@@ -336,14 +336,14 @@ Pty::get_size(int* rows,
 		if (rows != nullptr) {
 			*rows = size.ws_row;
 		}
-		_bte_debug_print(VTE_DEBUG_PTY,
+		_bte_debug_print(BTE_DEBUG_PTY,
 				"Size on fd %d is (%d,%d).\n",
 				master, size.ws_col, size.ws_row);
                 return true;
 	}
 
         auto errsv = bte::libc::ErrnoSaver{};
-        _bte_debug_print(VTE_DEBUG_PTY,
+        _bte_debug_print(BTE_DEBUG_PTY,
                          "Failed to read size from fd %d: %s\n",
                          master, g_strerror(errsv));
 
@@ -364,21 +364,21 @@ fd_setup(bte::libc::FD& fd)
 {
         if (grantpt(fd.get()) != 0) {
                 auto errsv = bte::libc::ErrnoSaver{};
-                _bte_debug_print(VTE_DEBUG_PTY, "%s failed: %s\n",
+                _bte_debug_print(BTE_DEBUG_PTY, "%s failed: %s\n",
                                  "grantpt", g_strerror(errsv));
                 return -1;
         }
 
         if (unlockpt(fd.get()) != 0) {
                 auto errsv = bte::libc::ErrnoSaver{};
-                _bte_debug_print(VTE_DEBUG_PTY, "%s failed: %s\n",
+                _bte_debug_print(BTE_DEBUG_PTY, "%s failed: %s\n",
                                  "unlockpt", g_strerror(errsv));
                 return -1;
         }
 
         if (bte::libc::fd_set_cloexec(fd.get()) < 0) {
                 auto errsv = bte::libc::ErrnoSaver{};
-                _bte_debug_print(VTE_DEBUG_PTY,
+                _bte_debug_print(BTE_DEBUG_PTY,
                                  "%s failed: %s",
                                  "Setting CLOEXEC flag", g_strerror(errsv));
                 return -1;
@@ -386,7 +386,7 @@ fd_setup(bte::libc::FD& fd)
 
         if (bte::libc::fd_set_nonblock(fd.get()) < 0) {
                 auto errsv = bte::libc::ErrnoSaver{};
-                _bte_debug_print(VTE_DEBUG_PTY,
+                _bte_debug_print(BTE_DEBUG_PTY,
                                  "%s failed: %s",
                                  "Setting O_NONBLOCK flag", g_strerror(errsv));
                 return -1;
@@ -394,7 +394,7 @@ fd_setup(bte::libc::FD& fd)
 
         if (fd_set_cpkt(fd) < 0) {
                 auto errsv = bte::libc::ErrnoSaver{};
-                _bte_debug_print(VTE_DEBUG_PTY,
+                _bte_debug_print(BTE_DEBUG_PTY,
                                  "%s failed: %s",
                                  "ioctl(TIOCPKT)", g_strerror(errsv));
                 return -1;
@@ -434,7 +434,7 @@ _bte_pty_open_posix(void)
 
         if (!fd) {
                 auto errsv = bte::libc::ErrnoSaver{};
-                _bte_debug_print(VTE_DEBUG_PTY,
+                _bte_debug_print(BTE_DEBUG_PTY,
                                  "%s failed: %s",
                                  "posix_openpt", g_strerror(errsv));
                 return {};
@@ -443,7 +443,7 @@ _bte_pty_open_posix(void)
 #ifndef __linux__
         if (need_cloexec && bte::libc::fd_set_cloexec(fd.get()) < 0) {
                 auto errsv = bte::libc::ErrnoSaver{};
-                _bte_debug_print(VTE_DEBUG_PTY,
+                _bte_debug_print(BTE_DEBUG_PTY,
                                  "%s failed: %s",
                                  "Setting CLOEXEC flag", g_strerror(errsv));
                 return {};
@@ -451,7 +451,7 @@ _bte_pty_open_posix(void)
 
         if (need_nonblocking && bte::libc::fd_set_nonblock(fd.get()) < 0) {
                 auto errsv = bte::libc::ErrnoSaver{};
-                _bte_debug_print(VTE_DEBUG_PTY,
+                _bte_debug_print(BTE_DEBUG_PTY,
                                  "%s failed: %s",
                                  "Setting NONBLOCK flag", g_strerror(errsv));
                 return {};
@@ -460,7 +460,7 @@ _bte_pty_open_posix(void)
 
         if (fd_set_cpkt(fd) < 0) {
                 auto errsv = bte::libc::ErrnoSaver{};
-                _bte_debug_print(VTE_DEBUG_PTY,
+                _bte_debug_print(BTE_DEBUG_PTY,
                                  "%s failed: %s",
                                  "ioctl(TIOCPKT)", g_strerror(errsv));
                 return {};
@@ -468,19 +468,19 @@ _bte_pty_open_posix(void)
 
         if (grantpt(fd.get()) != 0) {
                 auto errsv = bte::libc::ErrnoSaver{};
-                _bte_debug_print(VTE_DEBUG_PTY, "%s failed: %s\n",
+                _bte_debug_print(BTE_DEBUG_PTY, "%s failed: %s\n",
                                  "grantpt", g_strerror(errsv));
                 return {};
         }
 
         if (unlockpt(fd.get()) != 0) {
                 auto errsv = bte::libc::ErrnoSaver{};
-                _bte_debug_print(VTE_DEBUG_PTY, "%s failed: %s\n",
+                _bte_debug_print(BTE_DEBUG_PTY, "%s failed: %s\n",
                                  "unlockpt", g_strerror(errsv));
                 return {};
         }
 
-	_bte_debug_print(VTE_DEBUG_PTY, "Allocated pty on fd %d.\n", fd.get());
+	_bte_debug_print(BTE_DEBUG_PTY, "Allocated pty on fd %d.\n", fd.get());
 
         return fd;
 }
@@ -517,7 +517,7 @@ Pty::set_utf8(bool utf8) const noexcept
 	struct termios tio;
         if (tcgetattr(fd(), &tio) == -1) {
                 auto errsv = bte::libc::ErrnoSaver{};
-                _bte_debug_print(VTE_DEBUG_PTY, "%s failed: %s",
+                _bte_debug_print(BTE_DEBUG_PTY, "%s failed: %s",
                                  "tcgetattr", g_strerror(errsv));
                 return false;
         }
@@ -533,7 +533,7 @@ Pty::set_utf8(bool utf8) const noexcept
         if (saved_cflag != tio.c_iflag &&
             tcsetattr(fd(), TCSANOW, &tio) == -1) {
                 auto errsv = bte::libc::ErrnoSaver{};
-                _bte_debug_print(VTE_DEBUG_PTY, "%s failed: %s",
+                _bte_debug_print(BTE_DEBUG_PTY, "%s failed: %s",
                                  "tcsetattr", g_strerror(errsv));
                 return false;
 	}
