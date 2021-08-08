@@ -76,15 +76,15 @@ if get_option('ctk3')
   ctk3_prefix = ctk3_dep.get_pkgconfig_variable('prefix')
 
   fixxref_args = [
-    '--html-dir=' + (vte_prefix / gnome.ctkdoc_html_dir(vte_ctk3_api_name)),
-    '--extra-dir=' + (glib_prefix / gnome.ctkdoc_html_dir('glib')),
-    '--extra-dir=' + (glib_prefix / gnome.ctkdoc_html_dir('gio')),
-    '--extra-dir=' + (ctk3_prefix / gnome.ctkdoc_html_dir('cdk')),
-    '--extra-dir=' + (ctk3_prefix / gnome.ctkdoc_html_dir('gdk-pixbuf')),
-    '--extra-dir=' + (ctk3_prefix / gnome.ctkdoc_html_dir('ctk')),
+    '--html-dir=' + (vte_prefix / gnome.gtkdoc_html_dir(vte_ctk3_api_name)),
+    '--extra-dir=' + (glib_prefix / gnome.gtkdoc_html_dir('glib')),
+    '--extra-dir=' + (glib_prefix / gnome.gtkdoc_html_dir('gio')),
+    '--extra-dir=' + (ctk3_prefix / gnome.gtkdoc_html_dir('cdk')),
+    '--extra-dir=' + (ctk3_prefix / gnome.gtkdoc_html_dir('gdk-pixbuf')),
+    '--extra-dir=' + (ctk3_prefix / gnome.gtkdoc_html_dir('ctk')),
   ]
 
-  gnome.ctkdoc(
+  gnome.gtkdoc(
     'vte',
     main_xml: 'vte-docs.xml',
     module_version: vte_api_version,
