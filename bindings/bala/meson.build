@@ -19,10 +19,10 @@ assert(get_option('ctk3'), 'bala support only available for ctk3')
 
 add_languages('vala', required: false)
 
-balac = meson.get_compiler('bala')
-assert(balac.version().version_compare('>= 0.24.0'), 'bala >= 0.24 required')
+#balac = meson.get_compiler('bala')
+#assert(balac.version().version_compare('>= 0.24.0'), 'bala >= 0.24 required')
 
-posix_dep = balac.find_library('posix')
+#posix_dep = balac.find_library('posix')
 
 libvte_ctk3_bapi_deps = [
   'gio-2.0',
@@ -67,13 +67,13 @@ vapp_balaflags = [
   '--enable-deprecated'
 ]
 
-if balac.version().version_compare('>= 0.31.1')
+#if balac.version().version_compare('>= 0.31.1')
   vapp_balaflags += '--disable-since-check'
-endif
+#endif
 
-if ctk3_dep.version().version_compare('>= 3.16')
+#if ctk3_dep.version().version_compare('>= 3.16')
   vapp_balaflags += '--define=CTK_3_16'
-endif
+#endif
 
 vapp_incs = [
   top_inc,
