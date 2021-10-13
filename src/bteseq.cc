@@ -6413,9 +6413,27 @@ Terminal::OSC(bte::parser::Sequence const& seq)
                 break;
 
         case -1: /* default */
-        case BTE_OSC_XTERM_SET_WINDOW_AND_ICON_TITLE:
+        case BTE_OSC_XTERM_SET_WINDOW_AND_ICON_TITLE: {
+                std::string title;
+                if (it != cend)
+                        title = it.string_remaining();
+                m_icon_title_pending = title;
+                m_window_title_pending.swap(title);
+                m_icon_title_changed = true;
+                m_window_title_changed = true;
+                break;
+        }
+
+        case BTE_OSC_XTERM_SET_ICON_TITLE: {
+                std::string title;
+                if (it != cend)
+                        title = it.string_remaining();
+                m_icon_title_pending.swap(title);
+                m_icon_title_changed = true;
+                break;
+        }
+
         case BTE_OSC_XTERM_SET_WINDOW_TITLE: {
-                /* Only sets window title; icon title is not supported */
                 std::string title;
                 if (it != cend &&
                     it.size_remaining() < BTE_WINDOW_TITLE_MAX_LENGTH)
@@ -6475,7 +6493,6 @@ Terminal::OSC(bte::parser::Sequence const& seq)
                 reset_color(BTE_HIGHLIGHT_FG, BTE_COLOR_SOURCE_ESCAPE);
                 break;
 
-        case BTE_OSC_XTERM_SET_ICON_TITLE:
         case BTE_OSC_XTERM_SET_XPROPERTY:
         case BTE_OSC_XTERM_SET_COLOR_MOUSE_CURSOR_FG:
         case BTE_OSC_XTERM_SET_COLOR_MOUSE_CURSOR_BG:

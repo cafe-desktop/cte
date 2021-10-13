@@ -114,10 +114,6 @@ void bte_terminal_set_geometry_hints_for_window(BteTerminal *terminal,
 
 _BTE_DEPRECATED
 _BTE_PUBLIC
-const char *bte_terminal_get_icon_title(BteTerminal *terminal) _BTE_CXX_NOEXCEPT _BTE_GNUC_NONNULL(1);
-
-_BTE_DEPRECATED
-_BTE_PUBLIC
 gboolean bte_terminal_set_encoding(BteTerminal *terminal,
                                    const char *codeset,
                                    GError **error) _BTE_CXX_NOEXCEPT _BTE_GNUC_NONNULL(1);
