@@ -143,14 +143,6 @@ gboolean bte_terminal_get_rewrap_on_resize(BteTerminal *terminal) _BTE_CXX_NOEXC
 
 _BTE_DEPRECATED
 _BTE_PUBLIC
-void bte_terminal_set_allow_bold(BteTerminal *terminal,
-                                 gboolean allow_bold) _BTE_CXX_NOEXCEPT _BTE_GNUC_NONNULL(1);
-_BTE_DEPRECATED
-_BTE_PUBLIC
-gboolean bte_terminal_get_allow_bold(BteTerminal *terminal) _BTE_CXX_NOEXCEPT _BTE_GNUC_NONNULL(1);
-
-_BTE_DEPRECATED
-_BTE_PUBLIC
 void bte_terminal_feed_child_binary(BteTerminal *terminal,
                                     const guint8 *data,
                                     gsize length) _BTE_CXX_NOEXCEPT _BTE_GNUC_NONNULL(1);
