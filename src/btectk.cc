@@ -1624,8 +1624,6 @@ bte_terminal_class_init(BteTerminalClass *klass)
          *
          * Controls whether or not the terminal will attempt to draw bold text,
          * by using a bold font variant.
-         *
-         * Deprecated: 0.60: There's probably no reason for this feature to exist.
          */
         pspecs[PROP_ALLOW_BOLD] =
                 g_param_spec_boolean ("allow-bold", NULL, NULL,
@@ -3859,8 +3857,6 @@ catch (...)
  * by using a bold font variant.
  *
  * Returns: %TRUE if bolding is enabled, %FALSE if not
- *
- * Deprecated: 0.60: There's probably no reason for this feature to exist.
  */
 gboolean
 bte_terminal_get_allow_bold(BteTerminal *terminal) noexcept
@@ -3882,8 +3878,6 @@ catch (...)
  *
  * Controls whether or not the terminal will attempt to draw bold text,
  * by using a bold font variant.
- *
- * Deprecated: 0.60: There's probably no reason for this feature to exist.
  */
 void
 bte_terminal_set_allow_bold(BteTerminal *terminal,
