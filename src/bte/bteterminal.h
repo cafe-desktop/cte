@@ -482,6 +482,8 @@ glong bte_terminal_get_column_count(BteTerminal *terminal) _BTE_CXX_NOEXCEPT _BT
 _BTE_PUBLIC
 const char *bte_terminal_get_window_title(BteTerminal *terminal) _BTE_CXX_NOEXCEPT _BTE_GNUC_NONNULL(1);
 _BTE_PUBLIC
+const char *bte_terminal_get_icon_title(BteTerminal *terminal) _BTE_CXX_NOEXCEPT _BTE_GNUC_NONNULL(1);
+_BTE_PUBLIC
 const char *bte_terminal_get_current_directory_uri(BteTerminal *terminal) _BTE_CXX_NOEXCEPT _BTE_GNUC_NONNULL(1);
 _BTE_PUBLIC
 const char *bte_terminal_get_current_file_uri(BteTerminal *terminal) _BTE_CXX_NOEXCEPT _BTE_GNUC_NONNULL(1);

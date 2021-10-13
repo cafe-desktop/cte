@@ -1038,7 +1038,7 @@ bte_terminal_class_init(BteTerminalClass *klass)
          * BteTerminal::icon-title-changed:
          * @bteterminal: the object which received the signal
          *
-         * Deprecated: 0.54: This signal is never emitted.
+         * Emitted when the terminal's %icon_title field is modified.
          */
         signals[SIGNAL_ICON_TITLE_CHANGED] =
                 g_signal_new(I_("icon-title-changed"),
@@ -1840,7 +1840,7 @@ bte_terminal_class_init(BteTerminalClass *klass)
         /**
          * BteTerminal:icon-title:
          *
-         * Deprecated: 0.54: This property is always %NULL.
+         * The terminal's so-called icon title, or %NULL if no icon title has been set.
          */
         pspecs[PROP_ICON_TITLE] =
                 g_param_spec_string ("icon-title", NULL, NULL,
@@ -5080,14 +5080,12 @@ catch (...)
  * bte_terminal_get_icon_title:
  * @terminal: a #BteTerminal
  *
- * Returns: (nullable) (transfer none): %NULL
- *
- * Deprecated: 0.54:
+ * Returns: (transfer none): the icon title
  */
 const char *
 bte_terminal_get_icon_title(BteTerminal *terminal) noexcept
 {
-	return nullptr;
+	return IMPL(terminal)->m_icon_title.data();
 }
 
 /**
