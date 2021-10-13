@@ -10165,8 +10165,8 @@ Terminal::emit_pending_signals()
 
                         _bte_debug_print(BTE_DEBUG_SIGNALS,
                                          "Emitting `icon-title-changed'.\n");
-                        g_signal_emit(object, signals[SIGNAL_ICON_TITLE_CHANGED], 0);
-                        g_object_notify_by_pspec(object, pspecs[PROP_ICON_TITLE]);
+                        g_signal_emit(freezer.get(), signals[SIGNAL_ICON_TITLE_CHANGED], 0);
+                        g_object_notify_by_pspec(freezer.get(), pspecs[PROP_ICON_TITLE]);
                 }
 
 		m_icon_title_pending.clear();
