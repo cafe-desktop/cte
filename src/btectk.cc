@@ -1126,8 +1126,6 @@ bte_terminal_class_init(BteTerminalClass *klass)
          * @bteterminal: the object which received the signal
          *
          * Emitted whenever the terminal's current encoding has changed.
-         *
-         * Note: support for non-UTF-8 is deprecated.
          */
         signals[SIGNAL_ENCODING_CHANGED] =
                 g_signal_new(I_("encoding-changed"),
@@ -1814,9 +1812,6 @@ bte_terminal_class_init(BteTerminalClass *klass)
          * be encoded with.  For certain terminal types, applications executing in the
          * terminal can change the encoding.  The default is defined by the
          * application's locale settings.
-         *
-         * Deprecated: 0.54: Instead of using this, you should use a tool like
-         *   luit(1) when support for non-UTF-8 is required
          */
         pspecs[PROP_ENCODING] =
                 g_param_spec_string ("encoding", NULL, NULL,
@@ -4709,8 +4704,6 @@ catch (...)
  * encoded, or %NULL if UTF-8 is in use.
  *
  * Returns: (nullable) (transfer none): the current encoding for the terminal
- *
- * Deprecated: 0.54: Support for non-UTF-8 is deprecated.
  */
 const char *
 bte_terminal_get_encoding(BteTerminal *terminal) noexcept
@@ -4735,14 +4728,8 @@ catch (...)
  * be encoded with.  For certain terminal types, applications executing in the
  * terminal can change the encoding. If @codeset is %NULL, it uses "UTF-8".
  *
- * Note: Support for non-UTF-8 is deprecated and may get removed altogether.
- * Instead of this function, you should use a wrapper like luit(1) when
- * spawning the child process.
- *
  * Returns: %TRUE if the encoding could be changed to the specified one,
  *  or %FALSE with @error set to %G_CONVERT_ERROR_NO_CONVERSION.
- *
- * Deprecated: 0.54: Support for non-UTF-8 is deprecated.
  */
 gboolean
 bte_terminal_set_encoding(BteTerminal *terminal,
