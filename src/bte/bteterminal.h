@@ -456,6 +456,14 @@ gboolean  bte_terminal_search_find_previous   (BteTerminal *terminal) _BTE_CXX_N
 _BTE_PUBLIC
 gboolean  bte_terminal_search_find_next       (BteTerminal *terminal) _BTE_CXX_NOEXCEPT _BTE_GNUC_NONNULL(1);
 
+/* Set the character encoding.  Most of the time you won't need this. */
+_BTE_PUBLIC
+gboolean bte_terminal_set_encoding(BteTerminal *terminal,
+                                   const char *codeset,
+                                   GError **error) _BTE_CXX_NOEXCEPT _BTE_GNUC_NONNULL(1);
+
+_BTE_PUBLIC
+const char *bte_terminal_get_encoding(BteTerminal *terminal) _BTE_CXX_NOEXCEPT _BTE_GNUC_NONNULL(1);
 
 /* CJK compatibility setting */
 _BTE_PUBLIC
