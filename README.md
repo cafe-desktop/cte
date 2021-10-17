@@ -1,13 +1,13 @@
-Virtual TErminal
+Basic TErminal
 ================
 
-BTE provides a virtual terminal widget for CTK applications.
+BTE provides a basic terminal widget for CTK applications.
 
 Installation
 ------------
 
 ```
-$ git clone https://gitlab.gnome.org/GNOME/bte  # Get the source code of BTE
+$ git clone https://github.com/cafe-desktop/bte # Get the source code of BTE
 $ cd bte                                        # Change to the toplevel directory
 $ meson _build                                  # Run the configure script
 $ ninja -C _build                               # Build BTE
@@ -52,10 +52,10 @@ For logging level information, please refer to enum [BteDebugFlags](src/debug.h)
 Contributing
 ------------
 
-Bugs should be filed here: https://gitlab.gnome.org/GNOME/bte/issues/
+Bugs should be filed here: https://github.com/cafe-desktop/bte/issues
 Please note that this is *not a support forum*; if you are a end user,
 always file bugs in your distribution's bug tracker, or use their
 support forums.
 
-If you want to provide a patch, please attach them to an issue in GNOME
-GitLab, in the format output by the git format-patch command.
+If you want to provide a patch, please attach them to an issue in
+github, in the format output by the git format-patch command.
