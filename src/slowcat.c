@@ -81,7 +81,7 @@ main(int argc, char **argv)
 	int i, c;
 	long delay = 200000, chunksize = 1, tmp;
 	char *p;
-	GList *files = NULL, *file;
+	GList *files = NULL;
 
 	while ((c = getopt(argc, argv, "t:c:")) != -1) {
 		switch (c) {
@@ -108,6 +108,7 @@ main(int argc, char **argv)
 	}
 
 	if (files) {
+		GList *file;
 		for (file = files; file != NULL; file = g_list_next(file)) {
 			catfile((const char*)file->data, delay, chunksize);
 		}

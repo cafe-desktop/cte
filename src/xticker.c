@@ -46,7 +46,7 @@ my_usleep(long delay)
 int
 main(int argc, char **argv)
 {
-	long length = DEFAULT_WIDTH, delay = DEFAULT_DELAY, fd, i, j;
+	long length = DEFAULT_WIDTH, delay = DEFAULT_DELAY, i, j;
 	int c;
 	struct stat st;
 	char *buffer, *outbuf;
@@ -75,7 +75,7 @@ main(int argc, char **argv)
 	outbuf = g_malloc(length + 5);
 
 	for (i = optind; i < argc; i++) {
-		fd = open(argv[i], O_RDONLY);
+		long fd = open(argv[i], O_RDONLY);
 		if (fd != -1) {
 			if (fstat(fd, &st) != -1) {
 				buffer = g_malloc(st.st_size);

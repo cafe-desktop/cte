@@ -947,7 +947,7 @@ _bte_keymap_key_add_key_modifiers(guint keyval,
 				  char **normal,
 				  gsize *normal_length)
 {
-	int modifier, offset;
+	int modifier;
 	char *nnormal;
 	enum _bte_modifier_encoding_method modifier_encoding_method;
 	guint significant_modifiers;
@@ -1008,7 +1008,7 @@ _bte_keymap_key_add_key_modifiers(guint keyval,
 		}
 
 		/* Get the offset of the last character. */
-		offset = strlen(nnormal) - 1;
+		int offset = strlen(nnormal) - 1;
 		if (g_ascii_isdigit(nnormal[offset - 1])) {
 			/* Stuff a semicolon and the modifier in right before
 			 * that last character. */
