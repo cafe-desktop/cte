@@ -55,8 +55,8 @@ before_scripts:
 
 build_scripts:
   - export TITLESCANBUILD="${REPO_NAME} (clang-tools `dpkg -s clang-tools|grep -i version|cut -d " " -f 2`) - scan-build results"
-  - scan-build $CHECKERS --keep-cc meson _build 2>&1 | tee -a ./html-report/output_${TRAVIS_COMMIT}
-  - scan-build $CHECKERS --keep-cc -o html-report --html-title="$TITLESCANBUILD" ninja -C _build 2>&1 | tee -a ./html-report/output_${TRAVIS_COMMIT}
+  - scan-build $CHECKERS --keep-cc meson _build 2>&1 | tee -a --output-error=exit ./html-report/output_${TRAVIS_COMMIT}
+  - scan-build $CHECKERS --keep-cc -o html-report --html-title="$TITLESCANBUILD" ninja -C _build 2>&1 | tee -a --output-error=exit ./html-report/output_${TRAVIS_COMMIT}
   - ./after-build
 
 after_scripts:
