@@ -54,16 +54,7 @@ before_scripts:
   - cppcheck --force --xml --output-file=cppcheck.xml --enable=warning,style,performance,portability,information,missingInclude .
   - cppcheck-htmlreport --title="$TITLECPPCHECK" --file=cppcheck.xml --report-dir=cppcheck-htmlreport
 
-  # Install required ctk .deb packages
-  - git clone https://github.com/cafe-desktop/ctk.git -b master ctk-master
-  - cd ctk-master
-  - wget https://github.com/cafe-desktop/ctk/releases/download/`git describe --abbrev=0 --tags`/libctk-3-dev_`git describe --abbrev=0 --tags|sed 's/^.//'`-1_amd64.deb
-  - wget https://github.com/cafe-desktop/ctk/releases/download/`git describe --abbrev=0 --tags`/gir1.2-ctk-3.0_`git describe --abbrev=0 --tags|sed 's/^.//'`-1_amd64.deb
-  - wget https://github.com/cafe-desktop/ctk/releases/download/`git describe --abbrev=0 --tags`/libctk-3-common_`git describe --abbrev=0 --tags|sed 's/^.//'`-1_all.deb
-  - wget https://github.com/cafe-desktop/ctk/releases/download/`git describe --abbrev=0 --tags`/libctk-3-0_`git describe --abbrev=0 --tags|sed 's/^.//'`-1_amd64.deb
-  - dpkg -i *.deb
-  - cd ..
-  - rm -rf ctk-master
+  - ./install-from-debs https://github.com/cafe-desktop/ctk master libctk-3-dev gir1.2-ctk-3.0 libctk-3-common libctk-3-0
 
 build_scripts:
   - export TITLESCANBUILD="${REPO_NAME} (clang-tools `dpkg -s clang-tools|grep -i version|cut -d " " -f 2`) - scan-build results"
