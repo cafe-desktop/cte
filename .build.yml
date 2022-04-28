@@ -17,6 +17,7 @@ requires:
     - libsystemd-dev
     - libxml2-utils
     - meson
+    - expect #required for unbuffer
     - wget
 
     #packages required for ctk
