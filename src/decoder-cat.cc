@@ -111,25 +111,32 @@ public:
                         auto charset = StrArg{&m_charset, nullptr};
                         auto filenames = StrvArg{&m_filenames, nullptr};
                         GOptionEntry const entries[] = {
-                                { "benchmark", 'b', 0, G_OPTION_ARG_NONE, benchmark.ptr(),
-                                  "Measure time spent parsing each file", nullptr },
-                                { "codepoints", 'u', 0, G_OPTION_ARG_NONE, codepoints.ptr(),
-                                  "Output unicode code points by number", nullptr },
-                                { "charset", 'f', 0, G_OPTION_ARG_STRING, charset.ptr(),
-                                  "Input charset", "CHARSET" },
-                                { "list-charsets", 'l', 0, G_OPTION_ARG_NONE, list.ptr(),
-                                  "List available charsets", nullptr },
-                                { "quiet", 'q', 0, G_OPTION_ARG_NONE, quiet.ptr(),
-                                  "Suppress output except for statistics and benchmark", nullptr },
-                                { "repeat", 'r', 0, G_OPTION_ARG_INT, repeat.ptr(),
-                                  "Repeat each file COUNT times", "COUNT" },
-                                { "statistics", 's', 0, G_OPTION_ARG_NONE, statistics.ptr(),
-                                  "Output statistics", nullptr },
-                                { "utf-8", '8', 0, G_OPTION_ARG_NONE, utf8.ptr(),
-                                  "UTF-8 input (default)", nullptr },
-                                { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, filenames.ptr(),
-                                  nullptr, nullptr },
-                                { nullptr },
+                                { .long_name = "benchmark",        .short_name = 'b', .flags = 0, .arg = G_OPTION_ARG_NONE,           .arg_data = benchmark.ptr(),
+                                  .description = "Measure time spent parsing each file",                .arg_description = nullptr },
+
+                                { .long_name = "codepoints",       .short_name = 'u', .flags = 0, .arg = G_OPTION_ARG_NONE,           .arg_data = codepoints.ptr(),
+                                  .description = "Output unicode code points by number",                .arg_description = nullptr },
+
+                                { .long_name = "charset",          .short_name = 'f', .flags = 0, .arg = G_OPTION_ARG_STRING,         .arg_data = charset.ptr(),
+                                  .description = "Input charset",                                       .arg_description = "CHARSET" },
+
+                                { .long_name = "list-charsets",    .short_name = 'l', .flags = 0, .arg = G_OPTION_ARG_NONE,           .arg_data = list.ptr(),
+                                  .description = "List available charsets",                             .arg_description = nullptr },
+
+                                { .long_name = "quiet",            .short_name = 'q', .flags = 0, .arg = G_OPTION_ARG_NONE,           .arg_data = quiet.ptr(),
+                                  .description = "Suppress output except for statistics and benchmark", .arg_description = nullptr },
+
+                                { .long_name = "repeat",           .short_name = 'r', .flags = 0, .arg = G_OPTION_ARG_INT,            .arg_data = repeat.ptr(),
+                                  .description = "Repeat each file COUNT times",                        .arg_description = "COUNT" },
+
+                                { .long_name = "statistics",       .short_name = 's', .flags = 0, .arg = G_OPTION_ARG_NONE,           .arg_data = statistics.ptr(),
+                                  .description = "Output statistics",                                   .arg_description = nullptr },
+
+                                { .long_name = "utf-8",            .short_name = '8', .flags = 0, .arg = G_OPTION_ARG_NONE,           .arg_data = utf8.ptr(),
+                                  .description = "UTF-8 input (default)",                               .arg_description = nullptr },
+
+                                { .long_name = G_OPTION_REMAINING, .short_name = 0,   .flags = 0, .arg = G_OPTION_ARG_FILENAME_ARRAY, .arg_data = filenames.ptr(),
+                                  .description = nullptr,                                               .arg_description = nullptr },
                         };
 
                         auto context = g_option_context_new("[FILE…] — decoder cat");
