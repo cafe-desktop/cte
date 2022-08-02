@@ -2032,12 +2032,12 @@ bteapp_window_constructed(GObject *object)
 
         /* Create actions */
         GActionEntry const entries[] = {
-                { "copy",        window_action_copy_cb,       "s", nullptr, nullptr },
-                { "copy-match",  window_action_copy_match_cb, "s", nullptr, nullptr },
-                { "paste",       window_action_paste_cb,  nullptr, nullptr, nullptr },
-                { "reset",       window_action_reset_cb,      "b", nullptr, nullptr },
-                { "find",        window_action_find_cb,   nullptr, nullptr, nullptr },
-                { "fullscreen",  nullptr,                 nullptr, "false", window_action_fullscreen_state_cb },
+                { .name = "copy",        .activate = window_action_copy_cb,       .parameter_type = "s",     .state = nullptr, .change_state = nullptr, .padding = { 0 } },
+                { .name = "copy-match",  .activate = window_action_copy_match_cb, .parameter_type = "s",     .state = nullptr, .change_state = nullptr, .padding = { 0 } },
+                { .name = "paste",       .activate = window_action_paste_cb,      .parameter_type = nullptr, .state = nullptr, .change_state = nullptr, .padding = { 0 } },
+                { .name = "reset",       .activate = window_action_reset_cb,      .parameter_type = "b",     .state = nullptr, .change_state = nullptr, .padding = { 0 } },
+                { .name = "find",        .activate = window_action_find_cb,       .parameter_type = nullptr, .state = nullptr, .change_state = nullptr, .padding = { 0 } },
+                { .name = "fullscreen",  .activate = nullptr,                     .parameter_type = nullptr, .state = "false", .change_state = window_action_fullscreen_state_cb, .padding = { 0 } },
         };
 
         GActionMap* map = G_ACTION_MAP(window);
@@ -2398,8 +2398,8 @@ bteapp_application_startup(GApplication* application)
 {
         /* Create actions */
         GActionEntry const entries[] = {
-                { "new",   app_action_new_cb,   nullptr, nullptr, nullptr },
-                { "close", app_action_close_cb, nullptr, nullptr, nullptr },
+                { .name = "new",   .activate = app_action_new_cb,   .parameter_type = nullptr, .state = nullptr, .change_state = nullptr, .padding = { 0 } },
+                { .name = "close", .activate = app_action_close_cb, .parameter_type = nullptr, .state = nullptr, .change_state = nullptr, .padding = { 0 } },
         };
 
         GActionMap* map = G_ACTION_MAP(application);
