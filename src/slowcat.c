@@ -21,6 +21,7 @@
 #include <sys/types.h>
 #include <errno.h>
 #include <signal.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -35,9 +36,11 @@ catfile(const char *pathname, long delay, long chunksize)
 	char *buf;
 	int c;
 	long i;
+	bool is_opened = FALSE;
 
 	if (!((pathname == NULL) || (strcmp(pathname, "-") == 0))) {
 		fp = fopen(pathname, "r");
+		is_opened = TRUE;
 		if (fp == NULL) {
 			g_warning("Error opening file `%s': %s.\n",
 				  pathname, strerror(errno));
@@ -70,7 +73,7 @@ catfile(const char *pathname, long delay, long chunksize)
 
 	g_free(buf);
 
-	if (fp != stdin) {
+	if (is_opened) {
 		fclose(fp);
 	}
 }
