@@ -303,18 +303,18 @@ Minifont::draw_graphic(DrawingContext const& context,
         case 0x257f: /* box drawings heavy up and light down */
         {
                 guint32 bitmap = _bte_draw_box_drawing_bitmaps[c - 0x2500];
-                int xboundaries[6] = { 0,
-                                       left_half - heavy_line_width / 2,
-                                       left_half - light_line_width / 2,
-                                       left_half - light_line_width / 2 + light_line_width,
-                                       left_half - heavy_line_width / 2 + heavy_line_width,
-                                       width};
-                int yboundaries[6] = { 0,
-                                       upper_half - heavy_line_width / 2,
-                                       upper_half - light_line_width / 2,
-                                       upper_half - light_line_width / 2 + light_line_width,
-                                       upper_half - heavy_line_width / 2 + heavy_line_width,
-                                       height};
+                int const xboundaries[6] = { 0,
+                                             left_half - heavy_line_width / 2,
+                                             left_half - light_line_width / 2,
+                                             left_half - light_line_width / 2 + light_line_width,
+                                             left_half - heavy_line_width / 2 + heavy_line_width,
+                                             width};
+                int const yboundaries[6] = { 0,
+                                             upper_half - heavy_line_width / 2,
+                                             upper_half - light_line_width / 2,
+                                             upper_half - light_line_width / 2 + light_line_width,
+                                             upper_half - heavy_line_width / 2 + heavy_line_width,
+                                             height};
                 int xi, yi;
                 cairo_set_line_width(cr, 0);
                 for (yi = 4; yi >= 0; yi--) {
