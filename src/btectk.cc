@@ -2111,7 +2111,7 @@ bte_get_features (void) noexcept
 BteFeatureFlags
 bte_get_feature_flags(void) noexcept
 {
-        return BteFeatureFlags(0ULL |
+        return BteFeatureFlags(
 #ifdef WITH_FRIBIDI
                                BTE_FEATURE_FLAG_BIDI |
 #endif
