@@ -129,8 +129,8 @@ clear(void)
 }
 
 static gsize
-parse_legacy_mouse_mode(guint8 *data,
-                        gsize len)
+parse_legacy_mouse_mode(const guint8 *data,
+                               gsize  len)
 {
         int button = 0;
         const char *shift = "", *control = "", *alt = "";
