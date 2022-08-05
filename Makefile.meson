@@ -16,7 +16,6 @@
 srcdir=@srcdir@
 builddir=@builddir@
 bte_ctk3_api_version = @bte_ctk3_api_version@
-bte_ctk4_api_version = @bte_ctk4_api_version@
 
 #
 

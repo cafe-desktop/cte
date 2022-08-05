@@ -72,13 +72,6 @@ option(
 )
 
 option(
-  'ctk4',
-  type: 'boolean',
-  value: false,
-  description: 'Enable CTK+ 4.0 widget',
-)
-
-option(
   'icu',
   type: 'boolean',
   value: true,

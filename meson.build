@@ -34,7 +34,6 @@ project(
 ctk3_req_version          = '3.20.0'
 ctk3_min_req_version      = '3.18'
 ctk3_max_allowed_version  = '3.20'
-ctk4_req_version          = '4.0.0'
 
 fribidi_req_version       = '1.0.0'
 gio_req_version           = '2.52.0'
@@ -55,13 +54,10 @@ bte_api_version = '@0@.@1@'.format(bte_api_major_version, bte_api_minor_version)
 bte_api_name = 'bte-@0@.@1@'.format(bte_api_major_version, bte_api_minor_version)
 
 bte_ctk3_api_version = '@0@.@1@'.format(bte_api_major_version, bte_api_minor_version)
-bte_ctk4_api_version = '@0@.@1@'.format(bte_api_major_version + 1, bte_api_minor_version)
 
 bte_ctk3_api_name = 'bte-' + bte_ctk3_api_version
-bte_ctk4_api_name = 'bte-' + bte_ctk4_api_version
 
 bte_ctk3_api_path = bte_ctk3_api_name / 'bte'
-bte_ctk4_api_path = bte_ctk4_api_name / 'bte'
 
 # Library versioning
 
@@ -78,7 +74,6 @@ lt_age = bte_minor_version * 100 + bte_micro_version - lt_revision
 lt_current = bte_major_version + lt_age
 
 libbte_ctk3_soversion = '@0@.@1@.@2@'.format(libbte_soversion, lt_current, lt_revision)
-libbte_ctk4_soversion = libbte_soversion.to_string()
 
 # i18n
 
@@ -424,12 +419,6 @@ else
   ctk3_dep = dependency('', required: false)
 endif
 
-if get_option('ctk4')
-  ctk4_dep = dependency('ctk+-4.0', version: '>=' + ctk4_req_version)
-else
-  ctk4_dep = dependency('', required: false)
-endif
-
 if get_option('icu')
   icu_dep = dependency('icu-uc', version: '>=' + icu_uc_req_version)
 else
@@ -467,7 +456,6 @@ makefile_conf = configuration_data()
 makefile_conf.set('srcdir', meson.current_source_dir())
 makefile_conf.set('builddir', meson.current_build_dir())
 makefile_conf.set('bte_ctk3_api_version', bte_ctk3_api_version)
-makefile_conf.set('bte_ctk4_api_version', bte_ctk4_api_version)
 
 configure_file(
   input: 'Makefile.meson',
@@ -501,7 +489,6 @@ output += '  Docs:         ' + get_option('docs').to_string() + '\n'
 output += '  FRIBIDI:      ' + get_option('fribidi').to_string() + '\n'
 output += '  GNUTLS:       ' + get_option('gnutls').to_string() + '\n'
 output += '  CTK+ 3.0:     ' + get_option('ctk3').to_string() + '\n'
-output += '  CTK+ 4.0:     ' + get_option('ctk4').to_string() + '\n'
 output += '  ICU:          ' + get_option('icu').to_string() + '\n'
 output += '  GIR:          ' + get_option('gir').to_string() + '\n'
 output += '  systemd:      ' + systemd_dep.found().to_string() + '\n'

@@ -102,7 +102,3 @@ if get_option('ctk3')
     install: true,
   )
 endif
-
-if get_option('ctk4')
-  assert(false, 'not yet supported')
-endif
