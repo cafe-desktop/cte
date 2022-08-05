@@ -1,5 +1,3 @@
-bindings/vala/app.ui
-bindings/vala/search-popover.ui
 src/btespawn.cc
 src/app/app.cc
 src/app/appmenu.ui

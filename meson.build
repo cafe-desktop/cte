@@ -505,7 +505,6 @@ output += '  CTK+ 4.0:     ' + get_option('ctk4').to_string() + '\n'
 output += '  ICU:          ' + get_option('icu').to_string() + '\n'
 output += '  GIR:          ' + get_option('gir').to_string() + '\n'
 output += '  systemd:      ' + systemd_dep.found().to_string() + '\n'
-output += '  Vala:         ' + get_option('vapi').to_string() + '\n'
 output += '\n'
 output += '  Prefix:       ' + get_option('prefix') + '\n'
 message(output)
