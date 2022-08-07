@@ -17,7 +17,7 @@
 project(
   'bte',
   ['c', 'cpp'],
-  version: '0.64.0',
+  version: '0.65.0',
   license: ['LGPL-3.0-or-later', 'GPL-3.0-or-later'],
   default_options: [
     'buildtype=release',
