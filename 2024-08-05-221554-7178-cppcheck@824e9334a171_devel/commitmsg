@@ -1,0 +1,11 @@
+btepty: Do not typecast to GSpawnFlags
+
+based in vte commit:
+https://gitlab.gnome.org/GNOME/vte/-/commit/9b41cd1014299d01111b64b705f013e28398821a
+
+Fixes the error:
+
+../src/btepty.cc:577:16: error: integer value 234881535 is outside the valid range of values [0, 4095] for this enumeration type [-Wenum-constexpr-conversion]
+        return GSpawnFlags(G_SPAWN_LEAVE_DESCRIPTORS_OPEN |
+               ^
+1 error generated.
